@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>真实 CT 人工 QC 审核</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="stylesheet" href="/static/qc_review.css" />
+</head>
+<body>
+  <header class="topbar qc-topbar">
+    <div>
+      <div class="eyebrow">MANUAL QUALITY CONTROL</div>
+      <h1>真实 CT 人工 QC 审核</h1>
+      <p>CTSpine1K / MSD-T10 工程子集 · 逐例检查三视图、骨窗与标签对齐</p>
+    </div>
+    <div class="qc-header-actions">
+      <span id="progressBadge" class="badge badge-work">正在加载…</span>
+      <a class="btn btn-secondary" href="/">返回分析平台</a>
+    </div>
+  </header>
+
+  <main class="qc-layout">
+    <aside class="card qc-sidebar">
+      <div class="card-head">
+        <div><span class="step">CASES</span><h2>病例</h2></div>
+      </div>
+      <div class="notice warning">
+        自动审计通过 ≠ 人工审核通过。只有你明确保存后才会写入 <code>manual_qc_review.csv</code>。
+      </div>
+      <div id="caseList" class="case-list"></div>
+    </aside>
+
+    <section class="card qc-main">
+      <div class="card-head qc-case-head">
+        <div>
+          <span class="step">REVIEW</span>
+          <h2 id="caseTitle">等待加载</h2>
+        </div>
+        <span id="caseStatus" class="tag">未审核</span>
+      </div>
+
+      <div class="qc-image-wrap">
+        <div id="imagePlaceholder" class="preview-placeholder">正在加载 QC contact sheet…</div>
+        <img id="qcImage" class="qc-image hidden" alt="三视图、骨窗和标签叠加 QC 图" />
+      </div>
+
+      <div class="mpr-review-panel">
+        <div class="mpr-review-head">
+          <div><span class="step">MPR</span><strong>逐层检查 Label Overlay</strong></div>
+          <div class="mpr-review-controls">
+            <label>平面
+              <select id="mprPlane">
+                <option value="axial">Axial</option>
+                <option value="coronal">Coronal</option>
+                <option value="sagittal">Sagittal</option>
+              </select>
+            </label>
+            <label class="mpr-position-label">层面 <span id="mprPositionText">50%</span>
+              <input id="mprPosition" type="range" min="0" max="100" value="50" step="1" />
+            </label>
+            <label class="overlay-toggle"><input id="mprOverlay" type="checkbox" checked /> 标签叠加</label>
+          </div>
+        </div>
+        <div class="mpr-review-image-wrap">
+          <div id="mprPlaceholder" class="preview-placeholder">等待病例加载</div>
+          <img id="mprImage" class="mpr-review-image hidden" alt="交互式 MPR label overlay" />
+        </div>
+        <div id="mprIndexText" class="mpr-index-text">—</div>
+      </div>
+
+      <div class="qc-meta">
+        <div><small>自动检测标签</small><strong id="labelValues">—</strong></div>
+        <div><small>审核原则</small><strong>逐项人工确认，不自动代签</strong></div>
+      </div>
+
+      <form id="reviewForm" class="review-form">
+        <div class="check-grid">
+          <label class="check-card"><input id="orientationOk" type="checkbox" /><span><strong>Orientation 正确</strong><small>无明显轴交换、翻转或方向异常</small></span></label>
+          <label class="check-card"><input id="spacingOk" type="checkbox" /><span><strong>Spacing / 重采样合理</strong><small>三视图连续，无明显拉伸或层间异常</small></span></label>
+          <label class="check-card"><input id="alignmentOk" type="checkbox" /><span><strong>Label 对齐正确</strong><small>标签与椎体位置/边界无整体平移错位</small></span></label>
+          <label class="check-card"><input id="boneWindowOk" type="checkbox" /><span><strong>Bone window 正常</strong><small>骨性结构可辨，窗宽窗位无明显异常</small></span></label>
+        </div>
+
+        <div class="form-grid">
+          <label>审核结论
+            <select id="reviewStatus">
+              <option value="">请选择</option>
+              <option value="pass">通过</option>
+              <option value="needs_review">需复核</option>
+              <option value="fail">不通过</option>
+            </select>
+          </label>
+          <label>审核人
+            <input id="reviewer" type="text" maxlength="80" placeholder="请输入项目成员姓名/代号" />
+          </label>
+        </div>
+
+        <label class="notes-field">备注
+          <textarea id="notes" maxlength="2000" rows="4" placeholder="记录异常层面、标签问题或需要回查的事项"></textarea>
+        </label>
+
+        <div class="actions qc-actions">
+          <button id="prevBtn" type="button" class="btn btn-secondary">← 上一例</button>
+          <button id="saveBtn" type="submit" class="btn btn-primary">保存人工审核</button>
+          <button id="nextBtn" type="button" class="btn btn-secondary">下一例 →</button>
+        </div>
+        <div id="reviewMessage" class="message"></div>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <span>科研工程 QC · 不替代医学诊断或临床验证</span>
+    <span>人工记录将写回本地项目 CSV</span>
+  </footer>
+
+  <script src="/static/qc_review.js"></script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "_meta": {
+    "purpose": "engineering_smoke_only",
+    "formal_experiment": false,
+    "dataset": "CTSpine1K/MSD-T10",
+    "created": "2026-08-16",
+    "note": "仅用于真实数据工程链验证。train/validation 各取官方 trainset 1 例；test 使用官方 test_private liver_169。样本量极小，任何指标均不得写入论文 Results。"
+  },
+  "train": [
+    "ctspine1k-msd-t10-liver_0"
+  ],
+  "validation": [
+    "ctspine1k-msd-t10-liver_1"
+  ],
+  "test": [
+    "ctspine1k-msd-t10-liver_169"
+  ]
+}

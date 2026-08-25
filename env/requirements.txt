@@ -1,0 +1,50 @@
+# 项目基础依赖（Python 3.11）
+# PyTorch 单独由 setup_env.ps1 安装，以区分 CPU / CUDA 11.8。
+
+# 医学影像
+pydicom==2.4.4
+SimpleITK==2.3.1
+nibabel==5.1.0
+monai==1.2.0
+
+# SegFormer3D 上游核心依赖
+accelerate==0.23.0
+einops==0.7.0
+h5py==3.9.0
+kornia==0.7.2
+lightning==2.0.9
+pytorch-lightning==2.0.9
+safetensors==0.3.1
+timm==0.6.13
+torchmetrics==0.11.4
+wandb==0.15.12
+
+# 科学计算与图像
+numpy==1.26.4
+scipy==1.13.0
+scikit-image==0.23.1
+scikit-learn==1.2.2
+pandas==2.2.2
+matplotlib==3.7.1
+imageio==2.35.1
+opencv-python-headless==4.7.0.72
+
+# Web 后端
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+python-multipart==0.0.9
+pydantic==1.10.13
+
+# 工程工具
+PyYAML==6.0.2
+tqdm==4.65.0
+typer==0.12.5
+rich==13.8.1
+
+# 兼容 lightning 2.0.9（setuptools 81+ 移除 pkg_resources）
+setuptools==80.9.0
+
+# 测试/质量
+pytest==8.3.2
+pytest-cov==5.0.0
+ruff==0.6.4

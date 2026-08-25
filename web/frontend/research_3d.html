@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>真实骨结构 3D 工程查看器</title>
+  <link rel="stylesheet" href="/static/styles.css?v=20260816-2" />
+  <link rel="stylesheet" href="/static/research_3d.css?v=20260816-2" />
+</head>
+<body>
+  <header class="topbar viewer-topbar">
+    <div>
+      <div class="eyebrow">PHYSICAL-SPACE MESH VIEWER</div>
+      <h1>真实骨结构 3D 工程查看器</h1>
+      <p>CTSpine1K 真值 label → 物理空间 Marching Cubes → 本地 WebGL2</p>
+    </div>
+    <div class="viewer-header-actions">
+      <span id="viewerStatus" class="badge badge-neutral">等待加载</span>
+      <a class="btn btn-secondary" href="/">返回分析平台</a>
+    </div>
+  </header>
+
+  <main class="viewer-layout">
+    <section class="card viewer-controls-card">
+      <div class="notice warning">
+        <strong>工程演示：</strong> 当前显示的是公开数据的真值标签网格，不是 SegFormer3D 模型预测，也不是临床诊断结果。
+      </div>
+      <div class="viewer-controls">
+        <label>病例
+          <select id="caseSelect"></select>
+        </label>
+        <label>标签
+          <select id="classSelect"></select>
+        </label>
+        <label>表面方法
+          <select id="surfaceSelect">
+            <option value="mask" selected>原始 Marching Cubes</option>
+            <option value="sdf">SDF 物理平滑</option>
+          </select>
+        </label>
+        <label id="sdfSigmaLabel" class="hidden">SDF σ
+          <select id="sdfSigmaSelect">
+            <option value="0.3">0.3 mm · 近原始</option>
+            <option value="0.4" selected>0.4 mm · 工程候选</option>
+            <option value="0.5">0.5 mm · 较强</option>
+            <option value="0.8">0.8 mm · 风险扫描/可能拒绝</option>
+          </select>
+        </label>
+        <label>Web 网格精度
+          <select id="simplifySelect">
+            <option value="1.5" selected>平衡 · 1.5 mm</option>
+            <option value="2.0">快速 · 2.0 mm</option>
+            <option value="full">全分辨率</option>
+          </select>
+        </label>
+        <button id="buildBtn" class="btn btn-primary">生成 / 刷新 Mesh</button>
+        <button id="loadBtn" class="btn btn-secondary">加载 3D</button>
+        <button id="resetViewBtn" class="btn btn-secondary">重置视角</button>
+      </div>
+      <div id="viewerMessage" class="message"></div>
+    </section>
+
+    <section class="card viewer-card">
+      <div class="viewer-canvas-wrap">
+        <canvas id="meshCanvas"></canvas>
+        <div id="canvasPlaceholder" class="viewer-placeholder">
+          <strong>选择病例后加载 Mesh</strong>
+          <span>鼠标左键拖拽旋转 · 滚轮缩放</span>
+        </div>
+      </div>
+    </section>
+
+    <aside class="card viewer-info-card">
+      <div class="card-head">
+        <div><span class="step">MESH</span><h2>几何信息</h2></div>
+      </div>
+      <div id="meshStats" class="mesh-stats">
+        <div><small>病例</small><strong>—</strong></div>
+        <div><small>选择</small><strong>—</strong></div>
+        <div><small>顶点</small><strong>—</strong></div>
+        <div><small>三角面</small><strong>—</strong></div>
+        <div><small>表面积</small><strong>—</strong></div>
+        <div><small>物理包围盒</small><strong>—</strong></div>
+      </div>
+      <div class="notice viewer-note">
+        表面积和包围盒仅用于几何工程追踪。若后续用于论文/临床测量，必须先验证网格重建误差、标签定义和测量协议。
+      </div>
+
+      <div class="measurement-panel">
+        <div class="card-head">
+          <div><span class="step">MEASURE</span><h2>物理坐标测量</h2></div>
+        </div>
+        <p class="measurement-help">输入物理 XYZ 坐标（mm）。距离使用 A–B，角度使用 ∠ABC（B 为顶点）。</p>
+        <div class="point-row"><strong>A</strong><input id="ax" type="number" step="any" placeholder="X" /><input id="ay" type="number" step="any" placeholder="Y" /><input id="az" type="number" step="any" placeholder="Z" /></div>
+        <div class="point-row"><strong>B</strong><input id="bx" type="number" step="any" placeholder="X" /><input id="by" type="number" step="any" placeholder="Y" /><input id="bz" type="number" step="any" placeholder="Z" /></div>
+        <div class="point-row"><strong>C</strong><input id="cx" type="number" step="any" placeholder="X" /><input id="cy" type="number" step="any" placeholder="Y" /><input id="cz" type="number" step="any" placeholder="Z" /></div>
+        <div class="measurement-actions">
+          <button id="distanceBtn" class="btn btn-secondary" type="button">计算 A–B 距离</button>
+          <button id="angleBtn" class="btn btn-secondary" type="button">计算 ∠ABC</button>
+        </div>
+        <div id="measurementResult" class="measurement-result">等待输入坐标</div>
+      </div>
+    </aside>
+  </main>
+
+  <footer>
+    <span>纯本地 WebGL2 · 不依赖外部 CDN</span>
+    <span>Research prototype · Ground-truth engineering view</span>
+  </footer>
+
+  <script src="/static/research_3d.js?v=20260816-3"></script>
+</body>
+</html>

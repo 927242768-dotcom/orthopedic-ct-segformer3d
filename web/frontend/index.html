@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>骨科 CT 智能辅助分析研究平台</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <div class="eyebrow">ORTHOPEDIC CT RESEARCH</div>
+      <h1>骨科 CT 智能辅助分析研究平台</h1>
+      <p>科研原型 · DICOM/NIfTI 质控 · CT 预览 · SegFormer3D 分割 · 三维重建</p>
+    </div>
+    <div class="header-actions">
+      <a class="btn btn-secondary" href="/qc-review">审核真实 QC</a>
+      <a class="btn btn-secondary" href="/research-3d">真实 3D 工程查看</a>
+      <a class="btn btn-secondary" href="/results-review">评估结果复核</a>
+      <div id="healthBadge" class="badge badge-neutral">正在检查系统…</div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="card hero-card">
+      <div class="card-head">
+        <div>
+          <span class="step">01</span>
+          <h2>导入研究病例</h2>
+        </div>
+        <span class="tag">本机处理</span>
+      </div>
+
+      <div class="notice warning">
+        <strong>科研用途声明：</strong> 本系统当前不是医疗器械，不输出独立临床诊断。上传临床数据前必须完成合法授权与脱敏。
+      </div>
+
+      <label class="upload-zone" for="caseFiles">
+        <input id="caseFiles" type="file" multiple />
+        <div class="upload-icon">＋</div>
+        <div>
+          <strong>选择一个病例的 DICOM 文件，或单个 NIfTI</strong>
+          <p>浏览器将文件发送到本机 FastAPI 服务；后端使用随机 case ID，不保留原始文件名。</p>
+        </div>
+      </label>
+
+      <div class="actions">
+        <button id="uploadBtn" class="btn btn-primary">上传并检查</button>
+        <button id="clearBtn" class="btn btn-secondary">清空界面</button>
+      </div>
+      <div id="uploadMessage" class="message"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <span class="step">02</span>
+          <h2>影像质量与空间信息</h2>
+        </div>
+        <span id="caseId" class="mono tag">尚未创建病例</span>
+      </div>
+      <div id="inspectionEmpty" class="empty-state">上传后将在这里显示 series、尺寸、spacing、QC warning 等信息。</div>
+      <pre id="inspectionJson" class="json-panel hidden"></pre>
+    </section>
+
+    <section class="card preview-card">
+      <div class="card-head">
+        <div>
+          <span class="step">03</span>
+          <h2>MPR 三视图预览</h2>
+        </div>
+        <div class="window-controls">
+          <label>窗位 <input id="windowCenter" type="number" value="500" /></label>
+          <label>窗宽 <input id="windowWidth" type="number" value="2000" min="1" /></label>
+          <label>位置 <input id="slicePosition" type="range" value="50" min="0" max="100" /></label>
+          <button id="refreshPreviewBtn" class="btn btn-small">刷新</button>
+        </div>
+      </div>
+      <div id="previewPlaceholder" class="preview-placeholder">等待病例上传</div>
+      <div id="mprGrid" class="mpr-grid hidden">
+        <figure>
+          <figcaption>Axial · 轴位</figcaption>
+          <img id="previewAxial" class="ct-preview" alt="CT axial preview" />
+        </figure>
+        <figure>
+          <figcaption>Coronal · 冠状位</figcaption>
+          <img id="previewCoronal" class="ct-preview" alt="CT coronal preview" />
+        </figure>
+        <figure>
+          <figcaption>Sagittal · 矢状位</figcaption>
+          <img id="previewSagittal" class="ct-preview" alt="CT sagittal preview" />
+        </figure>
+      </div>
+    </section>
+
+    <section class="card pipeline-card">
+      <div class="card-head">
+        <div>
+          <span class="step">04</span>
+          <h2>模型与三维分析</h2>
+        </div>
+        <span class="tag tag-muted">逐步接入</span>
+      </div>
+
+      <div class="pipeline">
+        <div class="pipeline-node active">DICOM/NIfTI</div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node active">QC / 预处理</div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node pending">SegFormer3D</div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node pending">不确定性精修</div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node pending">3D / 测量</div>
+      </div>
+
+      <div class="actions">
+        <button id="inferBtn" class="btn btn-primary">尝试模型分割</button>
+      </div>
+      <div id="inferMessage" class="message"></div>
+    </section>
+
+    <section class="card status-card">
+      <div class="card-head">
+        <div>
+          <span class="step">STATUS</span>
+          <h2>当前研究状态</h2>
+        </div>
+      </div>
+      <div class="status-grid">
+        <div><span class="dot ok"></span><strong>Web 上传 / QC / MPR</strong><small>上传、基础 QC 与三视图预览已建立</small></div>
+        <div><span class="dot work"></span><strong>DICOM 标准化 pipeline</strong><small>代码首版，等待公开数据验证</small></div>
+        <div><span class="dot wait"></span><strong>SegFormer3D baseline</strong><small>等待 Python 3.11 / 数据 / 训练环境</small></div>
+        <div><span class="dot work"></span><strong>联合损失与精修</strong><small>联合 loss 与 uncertainty refinement 工程候选已实现，等待真实消融</small></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>基于 SegFormer 的骨科 CT 影像智能分割与三维重建研究</span>
+    <span>Research prototype · v0.1</span>
+  </footer>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

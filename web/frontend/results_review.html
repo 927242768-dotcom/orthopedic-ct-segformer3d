@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>模型评估结果复核</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="stylesheet" href="/static/results_review.css" />
+</head>
+<body>
+  <header class="topbar results-topbar">
+    <div>
+      <div class="eyebrow">EVALUATION ARTIFACT REVIEW</div>
+      <h1>模型评估结果复核</h1>
+      <p>直接读取 evaluate.py 产物 · 逐病例指标 · Prediction / Uncertainty MPR</p>
+    </div>
+    <div class="header-actions">
+      <a class="btn btn-secondary" href="/">返回分析平台</a>
+      <a class="btn btn-secondary" href="/research-3d">3D 工程查看</a>
+      <span id="evaluationBadge" class="badge badge-work">正在扫描评估目录…</span>
+    </div>
+  </header>
+
+  <main class="results-layout">
+    <section class="card results-controls">
+      <div class="notice warning">
+        <strong>结果边界：</strong> 本页只展示磁盘中已有的 <code>evaluate.py</code> 输出，不会生成或修改论文指标。没有真实 checkpoint 评估时应保持空列表。
+      </div>
+      <div class="control-grid">
+        <label>评估运行
+          <select id="evaluationSelect"></select>
+        </label>
+        <label>病例
+          <select id="caseSelect"></select>
+        </label>
+        <label>叠加类型
+          <select id="modeSelect">
+            <option value="prediction">Prediction</option>
+            <option value="uncertainty">Uncertainty</option>
+          </select>
+        </label>
+        <label>平面
+          <select id="planeSelect">
+            <option value="axial">Axial</option>
+            <option value="coronal">Coronal</option>
+            <option value="sagittal">Sagittal</option>
+          </select>
+        </label>
+        <label>位置 <span id="positionText">50%</span>
+          <input id="positionRange" type="range" min="0" max="100" value="50" />
+        </label>
+        <label>叠加强度 <span id="alphaText">45%</span>
+          <input id="alphaRange" type="range" min="0" max="100" value="45" />
+        </label>
+      </div>
+      <div class="actions">
+        <button id="refreshBtn" class="btn btn-primary">刷新当前切片</button>
+      </div>
+      <div id="resultMessage" class="message"></div>
+    </section>
+
+    <section class="card results-main">
+      <div class="card-head">
+        <div>
+          <span class="step">CASE</span>
+          <h2 id="caseTitle">等待真实评估结果</h2>
+        </div>
+        <span id="artifactBadge" class="tag">未加载</span>
+      </div>
+
+      <div class="result-image-wrap">
+        <div id="imagePlaceholder" class="preview-placeholder">当前没有可显示的评估影像</div>
+        <img id="resultImage" class="result-image hidden" alt="模型评估 MPR overlay" />
+      </div>
+
+      <div class="metrics-panel">
+        <div class="card-head compact-head">
+          <div><span class="step">METRICS</span><h2>逐病例指标</h2></div>
+        </div>
+        <div id="metricsGrid" class="metrics-grid"><div class="empty-state">等待评估结果</div></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>科研评估产物浏览器 · 不重新计算论文结果</span>
+    <span>只有独立 test split 才能作为最终测试结果</span>
+  </footer>
+
+  <script src="/static/results_review.js"></script>
+</body>
+</html>

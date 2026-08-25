@@ -1,0 +1,72 @@
+# Python
+.python/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# IDE / OS / local assistant runtime
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+.devspace-computer/
+NUL
+
+# Medical data / privacy
+*.dcm
+*.dicom
+*.nii
+*.nii.gz
+*.nrrd
+*.mha
+*.mhd
+*.raw
+*.h5
+*.hdf5
+*.npz
+*.npy
+
+data/raw_public/
+data/raw_clinical/
+data/interim/
+data/processed/
+data/processed_*/
+data/qc/
+!data/README.md
+!data/datasets.json
+!data/splits/
+!data/splits/*.json
+
+# Third-party source checkout (keep only our documentation in root project)
+third_party/SegFormer3D/
+
+# Models / experiments
+*.pt
+*.pth
+*.ckpt
+*.bin
+*.onnx
+wandb/
+runs/
+outputs/
+experiments/
+
+# Generated presentation binaries / local build logs
+# Keep the Markdown/JSON/PowerShell sources in Git; regenerate slides locally when needed.
+*.pptx
+*.ppt
+*.log
+
+# Web runtime data
+web/runtime/
+web/backend/runtime/
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key

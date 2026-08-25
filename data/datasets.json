@@ -1,0 +1,103 @@
+{
+  "registry_version": "1.1",
+  "last_verified": "2026-08-16",
+  "policy": {
+    "clinical_data_allowed": false,
+    "raw_data_committed_to_git": false,
+    "license_must_be_verified_before_download_or_redistribution": true,
+    "primary_engineering_baseline": "verse_complete"
+  },
+  "datasets": [
+    {
+      "id": "verse_complete",
+      "name": "VerSe: Large Scale Vertebrae Segmentation Challenge complete restructured dataset",
+      "role": "primary_engineering_baseline",
+      "final_scientific_scope_confirmed": false,
+      "modality": "CT",
+      "anatomy": "spine/vertebrae",
+      "task": "vertebral labelling and multi-label vertebra segmentation",
+      "scan_count": 374,
+      "patient_count": 355,
+      "format": "NIfTI",
+      "label_summary": "1-7=C1-C7, 8-19=T1-T12, 20-25=L1-L6, 28=T13; 26/27 are not labelled in the complete dataset description",
+      "license": "CC BY-SA 4.0 for the complete restructured data according to the maintained VerSe repository",
+      "license_note": "The older VerSe'20 challenge page mentions CC BY-SA 2.0. Use the maintained complete-dataset repository terms for the restructured release and preserve attribution/share-alike requirements; re-check before publication or redistribution.",
+      "official_home": "https://github.com/anjany/verse",
+      "download_sources": [
+        "https://s3.bonescreen.de/public/VerSe-complete/dataset-verse19training.zip",
+        "https://s3.bonescreen.de/public/VerSe-complete/dataset-verse19validation.zip",
+        "https://s3.bonescreen.de/public/VerSe-complete/dataset-verse19test.zip",
+        "https://s3.bonescreen.de/public/VerSe-complete/dataset-verse20training.zip",
+        "https://s3.bonescreen.de/public/VerSe-complete/dataset-verse20validation.zip",
+        "https://s3.bonescreen.de/public/VerSe-complete/dataset-verse20test.zip"
+      ],
+      "verified_on": "2026-08-16",
+      "local_status": "not_downloaded"
+    },
+    {
+      "id": "ctspine1k",
+      "name": "CTSpine1K",
+      "role": "secondary_training_or_external_generalization",
+      "final_scientific_scope_confirmed": false,
+      "modality": "CT",
+      "anatomy": "spine/vertebrae",
+      "task": "vertebra segmentation",
+      "scan_count": 1005,
+      "patient_count": null,
+      "format": "assembled release uses NIfTI; constituent sources include DICOM and NIfTI",
+      "label_summary": "more than 11,000 labelled vertebrae; annotations curated across four open-source CT collections",
+      "license": "CC-BY-NC-SA family inherited from constituent open datasets; exact source-specific terms must be checked before use/redistribution",
+      "license_note": "The maintained CTSpine1K repository states that existing constituent datasets are under CC-BY-NC-SA and that their licenses are kept unchanged. Do not assume one blanket license version for every constituent source.",
+      "official_home": "https://github.com/MIRACLE-Center/CTSpine1K",
+      "download_sources": [
+        "https://huggingface.co/datasets/alexanderdann/CTSpine1K",
+        "official repository also maintains Google Drive / XNAT / Baidu mirror links"
+      ],
+      "verified_on": "2026-08-16",
+      "local_status": "10_case_engineering_subset_downloaded_and_processed",
+      "local_subset": {
+        "sub_dataset": "MSD-T10",
+        "case_ids": ["liver_0", "liver_1", "liver_2", "liver_3", "liver_4", "liver_5", "liver_6", "liver_7", "liver_8", "liver_169"],
+        "source_split_counts": {
+          "trainset": 9,
+          "test_private": 1
+        },
+        "downloaded_on": "2026-08-16",
+        "raw_root": "data/raw_public/CTSpine1K/MSD-T10",
+        "processed_root": "data/processed_ctspine1k_real",
+        "preprocessing_version": "0.3.0",
+        "target_spacing_xyz_mm": [1.0, 1.0, 1.0],
+        "automatic_audit": "10/10 pass",
+        "qc_contact_sheets": 10,
+        "manual_review_csv": "data/processed_ctspine1k_real/manual_qc_review.csv",
+        "manual_review_status": "pending_human_signoff"
+      },
+      "local_access_note": "2026-08-16 browser-based sequential Hugging Face downloads succeeded for a 10-case MSD-T10 engineering subset after earlier timeouts/parallel-download failures. Command-line and parallel download reliability remain inconsistent. The subset is for preprocessing/QC and engineering smoke tests only; it is not a formal paper train/validation/test split."
+    },
+    {
+      "id": "totalsegmentator_ct_v2_0_1",
+      "name": "TotalSegmentator CT dataset v2.0.1",
+      "role": "multi-bone_pretraining_or_external_generalization",
+      "final_scientific_scope_confirmed": false,
+      "modality": "CT",
+      "anatomy": "whole body including vertebrae and many bones",
+      "task": "117-class anatomical segmentation",
+      "scan_count": 1228,
+      "patient_count": 1228,
+      "format": "NIfTI dataset archive",
+      "label_summary": "117 anatomical structures in v2; suitable for broader bone representation and external generalization experiments",
+      "version": "2.0.1",
+      "doi": "10.5281/zenodo.10047292",
+      "archive_size": "23.6 GB",
+      "archive_md5": "fe250e5718e0a3b5df4c4ea9d58a62fe",
+      "license": "VERIFY_BEFORE_USE",
+      "license_note": "Do not infer the dataset license from the Apache-2.0 software repository. Verify the rights field on the specific Zenodo dataset record before dataset use or redistribution.",
+      "official_home": "https://zenodo.org/records/10047292",
+      "download_sources": [
+        "https://zenodo.org/records/10047292"
+      ],
+      "verified_on": "2026-08-16",
+      "local_status": "not_downloaded"
+    }
+  ]
+}

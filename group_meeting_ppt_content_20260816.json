@@ -1,0 +1,52 @@
+{
+  "output_file": "8.16组会_项目阶段进展汇报.pptx",
+  "cover_title": "基于 SegFormer 的骨科 CT 影像智能分割与三维重建研究",
+  "cover_subtitle": "阶段组会汇报｜7.21 → 8.16：从方案框架推进到真实数据端到端工程验证",
+  "cover_status": "当前状态：真实数据链路已跑通，正式 GPU baseline 待启动",
+  "cover_chips": ["10 例真实 CT+label", "10/10 自动审计通过", "38 passed / Ruff clean"],
+  "slide2_title": "01  当前总体进度",
+  "slide2_subtitle": "核心变化：项目已从“方案与代码框架”进入“真实数据可验证、正式实验可启动”的阶段",
+  "progress": [
+    {"name": "数据预处理", "pct": 90, "status": "10 例真实数据已标准化 / QC"},
+    {"name": "模型适配", "pct": 55, "status": "SegFormer3D + 联合损失已落地"},
+    {"name": "训练/评估", "pct": 85, "status": "训练链与独立 evaluation 已完成"},
+    {"name": "Web 原型", "pct": 55, "status": "上传 / QC / 三视图 MPR 可用"},
+    {"name": "三维重建", "pct": 48, "status": "物理空间 mesh / PLY 已验证"}
+  ],
+  "slide2_stats": [
+    {"num": "10", "label": "真实 CT+label 已落盘"},
+    {"num": "10/10", "label": "自动几何/标签/标准化审计通过"},
+    {"num": "38", "label": "pytest 全部通过"}
+  ],
+  "slide2_callout": "当前瓶颈已从“没有真实数据/链路未跑通”转为“人工 QC + 固定任务/split + GPU 正式训练”。",
+  "slide3_title": "02  已完成的关键工作与工程证据",
+  "slide3_subtitle": "真实 CT+label、SegFormer3D 训练链、Web MPR 与物理空间网格均已有可复核成果",
+  "slide3_groups": [
+    {"head": "真实数据链路", "body": "CTSpine1K MSD-T10 10 例真实 CT+label；1 mm 重采样、HU clip、case-wise z-score、骨窗、label 最近邻重采样；10/10 自动审计通过。"},
+    {"head": "模型与训练框架", "body": "SegFormer3D adapter、Region + Boundary + Topology 联合损失、困难增强、predictive entropy、ROI refinement、sliding-window evaluation 已实现；真实病例单 patch forward/backward/AdamW.step 通过。"},
+    {"head": "Web 与三维", "body": "Web 已支持 axial / coronal / sagittal MPR 与窗宽窗位；真实 label 已完成 Marching Cubes → 物理空间 PLY 导出，131,983 顶点 / 264,362 面。"}
+  ],
+  "slide3_badges": ["pipeline 0.3.0", "real patch train-step PASS", "mesh export PASS"],
+  "slide3_image1_caption": "真实病例 QC：三视图 × normalized / bone-window / label overlay",
+  "slide3_image2_caption": "本地 Web3D 工程查看器：当前展示真值标签网格，不伪装为模型预测",
+  "slide4_title": "03  当前不足与下一步",
+  "slide4_subtitle": "接下来优先把工程链转换为第一版可写入论文的正式 baseline 结果",
+  "slide4_left_head": "尚未完成 / 当前风险",
+  "slide4_left_items": [
+    "10 例 manual_qc_review.csv 仍待人工逐例签字",
+    "首个任务标签定义与正式 patient-level split 尚未固定",
+    "本机当前为 CPU PyTorch，NVIDIA GPU / CUDA 训练环境待确认",
+    "尚无可写入论文的 DSC / HD95 / ASSD；Results 继续保持 TBD",
+    "临床脱敏数据与伦理/授权仍是外部依赖"
+  ],
+  "slide4_right_head": "下一阶段 5 步",
+  "slide4_steps": [
+    {"n": "01", "t": "人工 QC 签字", "d": "完成 10 例真实病例三视图与标签对齐审核"},
+    {"n": "02", "t": "固定任务与 split", "d": "优先按脊柱/椎体任务确定标签与正式划分"},
+    {"n": "03", "t": "GPU baseline", "d": "先跑 CT-only SegFormer3D，保存 config/split/checkpoint/log"},
+    {"n": "04", "t": "独立评价", "d": "生成 metrics_per_case.csv，报告 DSC / HD95 / ASSD / 推理时间"},
+    {"n": "05", "t": "按顺序做消融", "d": "骨窗 → Boundary → Topology → hard augmentation → uncertainty refinement，并接入 Web"}
+  ],
+  "footer": "国创项目阶段进展汇报｜2026.08.16",
+  "conclusion": "汇报结论：系统与实验链已具备正式实验基础；下一阶段目标是尽快得到第一版可追溯的 DSC / HD95 / ASSD baseline，并据此开展联合损失与不确定性消融。"
+}

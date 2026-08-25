@@ -1,0 +1,73 @@
+project: orthopedic_ct_segformer3d
+experiment_name: baseline_ct_only_dicece
+seed: 42
+
+# 数据参数（具体数据集路径在下载/授权后填写）
+data:
+  dataset_name: TBD
+  processed_root: data/processed
+  split_file: data/splits/TBD.json
+  input_channels:
+    - ct_normalized
+  label_mode: binary
+  foreground_probability: 0.7
+  target_spacing_xyz_mm: [1.0, 1.0, 1.0]
+  hu_clip: [-1000, 2000]
+  roi_size_dhw: [128, 128, 128]
+  num_classes: 2
+
+# 参考 SegFormer3D 官方 B0 风格参数；最终需根据骨科 CT 显存/ROI 调整。
+model:
+  name: segformer3d
+  in_channels: 1
+  sr_ratios: [4, 2, 1, 1]
+  embed_dims: [32, 64, 160, 256]
+  patch_kernel_size: [7, 3, 3, 3]
+  patch_stride: [4, 2, 2, 2]
+  patch_padding: [3, 1, 1, 1]
+  mlp_ratios: [4, 4, 4, 4]
+  num_heads: [1, 2, 5, 8]
+  depths: [2, 2, 2, 2]
+  decoder_head_embedding_dim: 256
+  decoder_dropout: 0.0
+  num_classes: 2
+
+loss:
+  type: region_dice_ce
+  weights:
+    region: 1.0
+    boundary: 0.0
+    topology: 0.0
+  include_background: false
+
+optimizer:
+  type: adamw
+  lr: 0.0001
+  weight_decay: 0.01
+
+scheduler:
+  type: cosine_annealing_warm_restarts
+  warmup_epochs: 20
+  t0_epochs: 400
+  min_lr: 0.000006
+
+training:
+  epochs: 800
+  batch_size: 1
+  gradient_accumulation_steps: 1
+  num_workers: 4
+  amp: true
+  save_metric: dice
+  early_stopping_patience: 100
+
+inference:
+  sliding_window: true
+  roi_size_dhw: [128, 128, 128]
+  sw_batch_size: 1
+  overlap: 0.5
+
+logging:
+  wandb_mode: offline
+  save_per_case_metrics: true
+  save_predictions: true
+  save_uncertainty: false
