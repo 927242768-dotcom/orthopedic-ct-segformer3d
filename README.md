@@ -127,6 +127,8 @@ SegFormer3D 上游仓库使用 GPL-3.0 许可证。若后续直接复用或修�
 
 ## 多人协作
 
+公开 GitHub 仓库：`https://github.com/927242768-dotcom/orthopedic-ct-segformer3d`
+
 建议所有协作者从 `TASKS.md` 领取任务，在独立 feature/docs 分支开发，通过 Pull Request 合并到 `main`。代码修改至少执行 `pytest tests -q` 与 `ruff check src web tests`；正式论文实验必须先通过 task lock、人工 QC、正式 patient-level split、GPU/CUDA 检查和 `formal_readiness ready=true`。
 
 公开仓库只保存**代码、配置、测试、文档、数据来源/匿名 split 和可复现脚本**。真实医学影像、处理后体数据、checkpoint、runtime、虚拟环境、第三方 checkout 和大型生成 PPT 默认不进入 Git，完整规则见 [`docs/09_public_repository_manifest.md`](./docs/09_public_repository_manifest.md)。

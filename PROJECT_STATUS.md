@@ -1067,9 +1067,12 @@ python -m src.modeling.train --config configs\orthopedic_ct_baseline.yaml
 - 用 `git check-ignore` 实际确认真实 `label.nii.gz`、QC 图片、DevSpace 截图、大型组会 PPT、SegFormer3D checkout、Web runtime 均被排除；首批可提交文件只包含源码/配置/测试/论文/文档/匿名数据元信息；
 - 公开前扫描未发现 GitHub token/private key 等真实凭据；命中的 `token` 仅为代码变量，处理后数据中的数字模式均处于已忽略目录；
 - 再次全量回归：`pytest tests -q → 88 passed`；`ruff check src web tests → All checks passed!`；
-- GitHub 浏览器创建页已打开，但当前浏览器处于 GitHub **未登录**状态，因此远程公开仓库创建和 push 仍需账户本人先完成登录。计划仓库名：`orthopedic-ct-segformer3d`。
+- 已完成本地首个公开协作提交 `5576a82b1025a0c3060d461f0d84cef0efdfea24`（`chore: initialize public collaboration repository`）；仓库级 Git 邮箱使用 `noreply@users.noreply.github.com`，避免把电脑全局个人邮箱写入公开 commit；
+- 已在 GitHub 账号 `927242768-dotcom` 下创建 **Public** 仓库 `orthopedic-ct-segformer3d`，未让 GitHub额外初始化 README/.gitignore/license，避免与本地历史冲突；
+- 已添加远程 `origin=https://github.com/927242768-dotcom/orthopedic-ct-segformer3d.git`，并成功执行 `main → origin/main` 首次 push，当前本地 `main` 已跟踪 `origin/main`；
+- GitHub 页面已实机确认仓库为 Public，首个 commit、源码、配置、测试、论文、文献、任务清单、协作文档和 Issue/PR 模板均已可见；真实 CT/处理后数据/checkpoint/runtime/第三方 checkout/大型 PPT 未进入公开历史。
 
-**当前 GitHub 发布状态：**本地公开安全版本已经整理完成并可提交；远程仓库尚未创建，唯一外部阻塞是 GitHub 账号登录。登录后应创建 public repository `orthopedic-ct-segformer3d`，添加 `origin`，推送 `main`，再把最终仓库 URL 回写本台账。
+**当前 GitHub 发布状态：✅ 已完成。** 公开仓库：`https://github.com/927242768-dotcom/orthopedic-ct-segformer3d`。团队成员可以直接浏览/clone/fork/提 Issue/PR；如需要朋友直接 push 到主仓库，需再按其 GitHub 用户名添加 collaborator。后续所有协作以 `TASKS.md` + Issues/PR + `PROJECT_STATUS.md` 为主线。
 
 ---
 
