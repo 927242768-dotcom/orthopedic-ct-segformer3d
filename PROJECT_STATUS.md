@@ -89,7 +89,7 @@
 | patient-level 数据划分 | ✅ 已完成（10例 formal pilot） | 96% | 已固定 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，patient-level 互斥；官方 `test_private liver_169` 只进入 test、不参与训练/调参；`formal_experiment=true`。最终论文仍需扩大病例规模 |
 | 公开数据集整理 | 🟡 进行中 | 94% | CTSpine1K `MSD-T10` 10 个真实 CT+label 已落盘：`liver_0`—`liver_8` + `liver_169`，官方 split 为 9 `trainset` + 1 `test_private`；真实文件接管执行 SHA-256 校验，10 例全部标准化/QC。该子集仍是工程验证，不替代正式论文主数据集/split |
 | 临床脱敏数据 | 🔴 阻塞 | 0% | 当前项目目录无临床数据；必须等待合法授权、脱敏与伦理/使用范围确认 |
-| SegFormer3D 骨科适配 | 🟡 进行中 | 90% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。balanced fullval v3 的 epoch 1 仍是当前最佳 validation checkpoint（两例 Dice≈0.05407），但 epoch 3 已背景塌缩。v4 已证实 CE=0.25 会放大全卷前景假阳性与碎片化，因此不继续；现已新建 v5，恢复 Region Dice/CE=1:1，保持 v3 sampling/ROI/full-volume validation 不变，仅把 optimizer peak lr 从 `1e-4` 降到 `5e-5`，readiness 已通过，待真实训练验证 |
+| SegFormer3D 骨科适配 | 🟡 进行中 | 90% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。balanced fullval v3 的 epoch 1 仍是当前最佳 validation checkpoint（两例 Dice≈0.05407），但 epoch 3 已背景塌缩。v4 已证实 CE=0.25 会放大全卷前景假阳性与碎片化；v5 将 peak lr 降到 5e-5 但保留 2-epoch warmup 后，epoch 1/2 val Dice 仅≈0.03185/0.03269，detailed validation 出现 Recall≈0.89–0.94、prediction/GT foreground ratio≈55× 的严重前景泛滥，因此 v4/v5 均停止。下一实验将第一轮直接达到 5e-5，之后始终不超过 5e-5，以复现 v3 epoch 1 的有效起点并避免再升到 1e-4 |
 | 区域损失 | ✅ 已完成（代码） | 90% | Dice + CE/BCE 可运行并有 backward 测试 |
 | Boundary Loss | 🟠 待真实验证 | 55% | SDF 边界损失首版已实现；需真实训练、表面指标与效率验证 |
 | Topology Loss | 🟠 待真实验证 | 45% | 3D soft-clDice 候选已实现；骨折/非管状骨结构适用性必须单独验证 |
@@ -1892,3 +1892,23 @@ git diff --check
 ```
 
 云端最终验收：修复提交 `6c5eac1` 推送到 `origin/main` 后触发 GitHub Actions CI run `32978966080`（run #18）。`Fetch pinned SegFormer3D upstream`、`Run Ruff`、`Run pytest` 全部 success；`Python tests and lint` 与 `Frontend and repository static checks` 两个 job 均最终为 `success`。因此可以正式确认：此前邮件中的 GitHub Actions Python CI 失败已修复，新鲜 Ubuntu runner 能按公开仓库内容自动获取固定上游、应用兼容补丁并完成全套 CI。
+
+
+### 2026-08-26｜阶段 AG：v5 低峰值学习率实验确认前景泛滥（GitHub 同步点 #18）
+
+v5 run：`experiments/20260826_221337_cpu_binary_balanced_lr_v5_roi64`。该配置保持 v3 的 CT-only、64³ ROI、`foreground_probability=0.25`、`patches_per_case=4`、Region Dice/CE=1:1 与 full-volume validation 不变，仅将 optimizer peak lr 从 `1e-4` 降到 `5e-5`；但仍保留 `warmup_epochs=2`。
+
+真实训练：
+
+- epoch 1：train loss≈`2.29635`，两例 full-volume val Dice≈`0.0318517`，lr=`2.5e-5`；
+- epoch 2：train loss≈`2.08801`，两例 full-volume val Dice≈`0.0326909`，lr=`5e-5`；
+- `best.pt` 对应 epoch 2。
+
+对 v5 `best.pt` 的 validation detailed evaluation：
+
+- `liver_7`：Dice≈`0.03185`，Precision≈`0.01621`，Recall≈`0.89485`，HD95≈`210.68 mm`，ASSD≈`60.61 mm`，prediction/GT foreground ratio≈`55.19`，pred/target components=`207/3`，component error=`204`；
+- `liver_8`：Dice≈`0.03353`，Precision≈`0.01707`，Recall≈`0.93585`，HD95≈`202.54 mm`，ASSD≈`61.76 mm`，prediction/GT foreground ratio≈`54.82`，pred/target components=`187/2`，component error=`185`。
+
+结论：v5 不是背景塌缩，而是严重前景泛滥。降低 peak lr 同时保留 2-epoch warmup，使 epoch 1 实际 lr 只有 `2.5e-5`，模型到 epoch 2 仍保持极高 Recall、极低 Precision 和约 55× 的全卷前景膨胀；这明显劣于 v3 epoch 1 的两例平均 Dice≈`0.05407`、Precision≈`0.03510`、foreground ratio≈`3.42`。因此不继续 v5 epoch 3。
+
+下一实验不再把“更低 lr”与“更长 warmup”混在一起：保留 v3 其它条件，第一轮直接达到 `5e-5`，之后学习率始终不超过 `5e-5`。这样更接近 v3 epoch 1 的有效起点，同时避免 v3 epoch 2 升到 `1e-4` 后性能下降。整个 v5 训练和评估只使用 train + `liver_7/liver_8` validation，未访问 `liver_169`。
