@@ -642,7 +642,9 @@ CTSpine1K Hugging Face 在早期也出现超时和并行下载失败；但改为
 - [x] 已新建 `configs/orthopedic_ct_cpu_binary_balanced_fullval_v3.yaml`：foreground_probability=0.25、patches_per_case=4、64³ CT-only、Region Dice+CE 保持不变，`validation.patch_mode=false`；`formal_readiness --allow-cpu` 实测 ready=true / blocker_count=0；
 - [x] balanced v3 已真实完成 epoch 1/2：epoch 1 full-volume val Dice≈0.05407、epoch 2≈0.04084，当前 `best.pt=epoch 1`；
 - [x] 已对 v3 `best.pt` 分病例 detailed validation：`liver_7/liver_8` Dice≈0.04323/0.06491，Precision≈0.02753/0.04267，prediction/target foreground ratio≈3.65/3.18；相对 long-v2 约 24–27 倍已显著改善；
-- [ ] 继续 v3 epoch 3，并以 full-volume Dice、foreground ratio、Precision 和 component fragmentation 联合判断是否继续；当前两例 component count error=1578/1597，不能仅因前景比例改善就认为 baseline 已完成；
+- [x] v3 epoch 3 已续训并明确失败：train loss≈1.63162，但两例 full-volume val Dice≈1.3e-11；detailed validation 两例 Dice/Precision/Recall=0，prediction/GT foreground ratio≈0.47/0.26，已停止继续 epoch 4；
+- [x] 根因检查发现 RegionDiceCELoss3D 当前为 foreground Dice + 未加权全体素 CE 默认 1:1，且 `train.build_criterion()` 未读取 YAML 的内部 `dice_weight/ce_weight`；balanced sampling 增加背景后 CE 背景主导与 epoch 3 collapse 现象一致；
+- [ ] 下一版保持 v3 sampling 不变，只增加/调整 Dice:CE 内部权重，先验证是否避免背景塌缩；
 - [ ] 继续核对 Region Dice+CE 背景抑制、label mapping、normalization、sliding-window stitching/logits resize/threshold；当前没有发现 label mapping 或 resize 的直接错误证据；
 - [ ] 对 v3 validation 继续记录概率/置信度分布、connected components 与 false-positive 空间分布；
 - [ ] 只有 CT-only baseline 的 full-volume validation 明显改善后，才继续 CT+bone-window、Region+Boundary、augmentation/hard sampling 消融；
@@ -1700,6 +1702,14 @@ v3 run：`experiments/20260826_173511_cpu_binary_balanced_fullval_v3_roi64`。�
 本阶段回归：`pytest tests -q → 103 passed`；`ruff check src web tests → All checks passed`；`git diff --check → 通过`。
 
 下一步先继续 epoch 3；若 full-volume Dice 不回升、foreground ratio/Precision 恶化或 fragmentation 继续严重，则停止机械续训并优先检查 Region Dice+CE 权重、背景分类约束与 sampling 参数。
+
+### 2026-08-26｜阶段 AC：v3 epoch 3 背景塌缩诊断（GitHub 同步点 #14）
+
+从同一 v3 run 的 `last.pt` resume 到总 epoch 3，真实结果：train loss≈`1.63162`，full-volume val Dice≈`1.30e-11`，说明训练损失继续下降但全卷泛化发生灾难性塌缩，因此没有继续 epoch 4。
+
+对 epoch 3 `last.pt` 的 validation detailed evaluation：`liver_7` Dice/Precision/Recall=`0/0/0`，prediction foreground≈`0.326%`、GT≈`0.700%`、ratio≈`0.466`，pred components=`351`；`liver_8` Dice/Precision/Recall=`0/0/0`，prediction foreground≈`0.150%`、GT≈`0.566%`、ratio≈`0.265`，pred components=`341`。这些预测与真实前景完全不重叠，属于背景塌缩/错误位置少量碎片，而不是继续训练可自然恢复的普通波动。
+
+代码检查显示 `RegionDiceCELoss3D` 当前把 foreground Dice loss 与未加权全体素 CrossEntropy 以默认 `1:1` 相加；`train.build_criterion()` 对 `region_dice_ce` 只传 `include_background`，尚未读取 YAML 的 `dice_weight/ce_weight`。在 v3 已大幅增加背景 patch 的条件下，这一实现会让 CE 的海量背景体素更容易主导优化，和 epoch 3 collapse 的方向一致。下一步采用最小可归因修复：保持 sampling 不变，仅让 YAML 可配置 Dice/CE 内部权重并降低 CE 权重做新 run validation。
 
 
 ### 2026-08-26｜阶段 W：实现并实测可靠 checkpoint resume（GitHub 同步点 #7）

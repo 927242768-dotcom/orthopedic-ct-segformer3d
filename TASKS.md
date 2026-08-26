@@ -280,7 +280,9 @@
 - [x] 新建 `configs/orthopedic_ct_cpu_binary_balanced_fullval_v3.yaml`：foreground_probability=0.25、patches_per_case=4、64³ CT-only、Region Dice+CE 不变，`validation.patch_mode=false`，checkpoint/early stopping 直接依据两例 full-volume validation；`formal_readiness --allow-cpu` 实测 ready=true / blocker_count=0
 - [x] balanced fullval v3 已真实完成 epoch 1/2：run=`experiments/20260826_173511_cpu_binary_balanced_fullval_v3_roi64`；epoch 1 train loss≈2.5537、两例 full-volume val Dice≈0.05407，epoch 2 train loss≈1.9402、val Dice≈0.04084；当前 `best.pt=epoch 1`
 - [x] 已对 v3 `best.pt` 分别完成 `liver_7/liver_8` detailed full-volume validation：Dice≈0.04323/0.06491，Precision≈0.02753/0.04267，prediction/target foreground ratio≈3.65/3.18；相比 long-v2 的约 24–27 倍前景膨胀已大幅压低，证明 balanced sampling 方向有效
-- [ ] v3 仍有严重碎片化：`liver_7/liver_8` component count error=1578/1597，平均≈1587.5；继续 epoch 3 并只依据 full-volume validation 判断是否保留/早停，同时继续检查 Region Dice+CE 背景/结构约束
+- [x] v3 epoch 3 已按同一 run 续训并触发明确失败：train loss≈1.6316，但两例 full-volume val Dice≈1.3e-11；detailed validation 两例 Dice/Precision/Recall 均为 0，prediction/GT foreground ratio≈0.47/0.26，说明模型已从过预测转为背景塌缩/真实前景无重叠，因此停止机械继续 epoch 4
+- [x] 已检查 Region Dice+CE 实现：foreground Dice 与未加权全体素 CrossEntropy 默认 1:1；当前 `train.build_criterion()` 未从 YAML 读取 `dice_weight/ce_weight`，balanced sampling 增加背景后 CE 背景主导与 epoch 3 collapse 现象一致
+- [ ] 下一版只做最小 loss-weight 修复：让 YAML 可配置 Dice/CE 内部权重，并在保持 v3 sampling 不变的情况下先降低 CE 权重做 validation，避免同时修改多个变量
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
 - [x] formal-pilot 输出 `metrics_per_case.csv` + prediction NIfTI + entropy NIfTI
 - [x] formal-pilot 记录 Dice / HD95 / ASSD / IoU / Precision / Recall / 结构指标
