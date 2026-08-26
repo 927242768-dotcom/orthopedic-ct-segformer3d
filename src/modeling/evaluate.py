@@ -211,6 +211,7 @@ def evaluate_checkpoint(
     *,
     split: str = "test",
     output_dir: str | Path | None = None,
+    case_id: str | None = None,
 ) -> Path:
     config_path = _resolve_project_path(config_path)
     checkpoint_path = _resolve_project_path(checkpoint_path)
@@ -249,6 +250,11 @@ def evaluate_checkpoint(
         label_mode=str(data_cfg.get("label_mode", "binary")),
         seed=int(config.get("seed", 42)),
     )
+    if case_id is not None:
+        case_id = str(case_id)
+        if case_id not in dataset.case_ids:
+            raise ValueError(f"case_id={case_id!r} 不属于 split={split!r}")
+        dataset.case_ids = [case_id]
     loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=0)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -432,6 +438,7 @@ def evaluate_checkpoint(
     summary = {
         "evaluated_at": datetime.now().isoformat(),
         "split": split,
+        "case_filter": case_id,
         "checkpoint": str(checkpoint_path),
         "config": str(config_path),
         "device": str(device),
@@ -465,6 +472,12 @@ def main() -> None:
     parser.add_argument("--split", choices=("validation", "test"), default="test")
     parser.add_argument("--output-dir", type=Path, default=None)
     parser.add_argument(
+        "--case-id",
+        type=str,
+        default=None,
+        help="只评估当前 validation/test split 内指定病例；用于 CPU 分病例执行，方法和指标不变",
+    )
+    parser.add_argument(
         "--preflight-mode",
         choices=("formal", "engineering"),
         default="formal",
@@ -493,6 +506,7 @@ def main() -> None:
         args.checkpoint,
         split=args.split,
         output_dir=args.output_dir,
+        case_id=args.case_id,
     )
     print(f"Evaluation completed: {output}")
 

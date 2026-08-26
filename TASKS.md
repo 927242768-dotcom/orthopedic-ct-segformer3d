@@ -270,7 +270,8 @@
 - [x] 真实 64³ resume smoke：同一 run 完成 epoch 1 后从 `last.pt` 续训到 epoch 2，history 保持 1→2 连续
 - [x] 基于修复后的 epoch-aware sampling 与 64³ ROI 启动 long-v2 CT-only CPU baseline；按预设 early stopping patience=8 于 epoch 9 正常停止，最佳固定 patch-val Dice≈0.3613（epoch 1），run=`experiments/20260826_162919_cpu_binary_long_v2_ct_only_roi64`
 - [ ] 扩大数据规模后的正式 SegFormer3D CT-only 主实验训练
-- [ ] 使用 `liver_7 / liver_8` full-volume validation 复核 long-v2 `best.pt` / 候选 checkpoint；只用 validation 锁定最终 baseline，禁止使用 `liver_169` 调参
+- [x] `evaluate.py` 新增安全 `--case-id`：只能评估当前 validation/test split 内指定病例，用于 CPU 分病例 full-volume 执行；越界病例直接拒绝
+- [ ] 使用 `liver_7 / liver_8` 分病例 full-volume validation 复核 long-v2 `best.pt` / 候选 checkpoint；只用 validation 锁定最终 baseline，禁止使用 `liver_169` 调参
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
 - [x] formal-pilot 输出 `metrics_per_case.csv` + prediction NIfTI + entropy NIfTI
 - [x] formal-pilot 记录 Dice / HD95 / ASSD / IoU / Precision / Recall / 结构指标

@@ -4,6 +4,7 @@ from pathlib import Path
 
 import nibabel as nib
 import numpy as np
+import pytest
 import torch
 import yaml
 
@@ -86,6 +87,7 @@ def test_evaluate_checkpoint_writes_traceable_outputs(tmp_path: Path) -> None:
         checkpoint_path,
         split="test",
         output_dir=tmp_path / "evaluation",
+        case_id="case_eval",
     )
 
     metrics_csv = output / "metrics_per_case.csv"
@@ -117,10 +119,36 @@ def test_evaluate_checkpoint_writes_traceable_outputs(tmp_path: Path) -> None:
 
     summary = json.loads(summary_json.read_text(encoding="utf-8"))
     assert summary["split"] == "test"
+    assert summary["case_filter"] == "case_eval"
     assert summary["metrics"]["case_count"] == 1
     assert "uncertainty_error_rate" in summary["metrics"]
     assert "calibration_expected_calibration_error" in summary["metrics"]
     assert "calibration_brier_score" in summary["metrics"]
+
+
+def test_evaluate_checkpoint_rejects_case_outside_requested_split(tmp_path: Path) -> None:
+    processed = tmp_path / "processed"
+    _write_case(processed)
+    split_file = tmp_path / "split.json"
+    split_file.write_text(
+        json.dumps({"train": ["case_eval"], "validation": ["case_eval"], "test": ["case_eval"]}),
+        encoding="utf-8",
+    )
+    config = _config(processed, split_file)
+    config_path = tmp_path / "config.yaml"
+    config_path.write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8")
+    model = build_orthopedic_segformer3d(config)
+    checkpoint_path = tmp_path / "checkpoint.pt"
+    torch.save({"model_state_dict": model.state_dict()}, checkpoint_path)
+
+    with pytest.raises(ValueError, match="不属于 split"):
+        evaluate_checkpoint(
+            config_path,
+            checkpoint_path,
+            split="validation",
+            output_dir=tmp_path / "evaluation_invalid",
+            case_id="case_other",
+        )
 
 
 def test_multiclass_macro_excludes_classes_absent_from_both_prediction_and_target() -> None:

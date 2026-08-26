@@ -96,7 +96,7 @@
 | 困难样本增强 | 🟠 待真实验证 | 68% | 已落地可配置 3D flip/小角度旋转/各向同性缩放、gamma、Gaussian noise、HU shift 与 boundary-proxy hard sampling；强度增强已兼容 z-score CT 并使用 metadata 精确回到 HU 域。金属伪影与基于真实模型误差/uncertainty 的 hard mining 仍待实验 |
 | 不确定性机制 | 🟠 待真实验证 | 82% | predictive entropy、Top-percent ROI、膨胀、uncertainty→error AUROC/AUPRC、错误/正确平均熵、Top-percent error recall/ROI error rate 已实现；新增体素级 calibration：ECE、MCE、multiclass Brier score、NLL、mean confidence、accuracy、confidence gap，并以固定 seed 采样控制大体积内存；局部残差 refinement 已补 ROI-only 二阶段训练闭环。尚无真实 baseline checkpoint 条件下的定量收益、校准结论与消融 |
 | 训练/验证框架 | 🟡 进行中 | 99% | DataLoader/AdamW/AMP/gradient accumulation/sliding-window、scheduler、完整 run 追踪已接入；修复 PyTorch 2.1 CPU `GradScaler/autocast` 兼容问题，新增工程 `patch_mode` validation；`train.py` 支持 `--allow-cpu` 与可靠 `--resume`，每 epoch 写 `last.pt` 并恢复 model/optimizer/scheduler/epoch/best metric/early-stopping/RNG，在原 run 追加 history。binary task + 7/2/1 formal-pilot split 下 readiness 实测通过 |
-| 评价指标 | ✅ 已完成（代码+首个真实 pilot test） | 100% | Dice、IoU、Precision、Recall、HD95、ASSD、component count/error、false merge/break 已接入；包含 uncertainty→error 与 ECE/MCE/Brier/NLL 等指标；`evaluate.py` 可统一写入逐病例 CSV 与 summary。5-epoch formal-pilot 已对独立 `liver_169` 完成 full-volume CPU evaluation：Dice≈0.0221、HD95≈190.93 mm、ASSD≈53.42 mm、inference≈9.29 s，prediction/entropy/metrics 均真实生成；该结果显示模型严重欠训练，只能作为 10 例流程 pilot，禁止作为论文正式结果 |
+| 评价指标 | ✅ 已完成（代码+首个真实 pilot test） | 100% | Dice、IoU、Precision、Recall、HD95、ASSD、component count/error、false merge/break 已接入；包含 uncertainty→error 与 ECE/MCE/Brier/NLL 等指标；`evaluate.py` 可统一写入逐病例 CSV 与 summary，并新增安全 `--case-id` 以支持 CPU 分病例 full-volume 执行，且强制病例必须属于当前 validation/test split。5-epoch formal-pilot 已对独立 `liver_169` 完成 full-volume CPU evaluation；该旧结果仅为 10 例流程 pilot，禁止作为论文正式结果 |
 | Web 科研辅助分析原型 | 🟡 进行中 | 85% | 首页/上传/健康检查、MPR、10 例人工 QC reviewer、C1–L6 可读标签、真值 PLY WebGL2 3D、简化/物理测量均已完成；QC reviewer 已修复全站 `.card` grid-column 与 QC 网格冲突，病例选择后使用 `hidden + display:none!important` 彻底关闭病例层并进入主审核区，“上一例 / 下一例”保持审核区，悬浮按钮可随时重新打开病例列表；已在本机 Edge 对真实 `liver_0` 完成点击关闭/重新展开实机验证。另有 SDF surface 选择与 evaluation results-review，可读取未来 prediction/entropy MPR。当前 `/api/research/evaluations` 实测 200 且 total=0，真实 checkpoint/prediction 仍不存在，系统没有伪造结果 |
 | 三维重建 | 🟡 进行中 | 86% | 已实现 physical-space Marching Cubes、PLY/JSON、vertex-clustering、SDF surface、WebGL2 与物理测量；新增相邻法向变化驱动的特征保护 vertex-clustering 候选，真实 `liver_0` 在 2.0 mm/同 30,260 顶点下将高特征区域 mean-NN 约 0.679→0.620 mm、HD95 约 1.068→1.000 mm，作为真值网格工程证据；0.4 mm SDF 保持 2→2 连通域，0.8 mm 因 2→3 被保护机制拒绝。仍缺真实 prediction surface 上的正式验证 |
 | 论文 | 🟡 进行中 | 60% | 中文技术初稿已补 formal preflight、uncertainty/ROI refinement、calibration、物理表面/特征保护重建；Related Work 已加入 SpineMamba、解剖变异 Transformer、VertebraFormer、2026 Residual-Encoder nnU-Net、2025 骨折 pipeline、金属植入物与低骨密度 fusion/split 困难病例证据；42 条英文 BibTeX / 44 条矩阵已同步。Results 继续保持 TBD，禁止提前填结果 |
@@ -1580,6 +1580,22 @@ ROI 决策：
 - train loss 明显低于早期 epoch，但固定 patch-val 未再超过 epoch 1，提示小样本下可能存在泛化下降或 validation proxy 偏差，不能仅凭 patch proxy 选择最终 baseline；
 - 下一步只对 `liver_7/liver_8` 做 full-volume validation，比较 long-v2 `best.pt` 与必要候选 checkpoint，使用 Dice/IoU/Precision/Recall/HD95/ASSD/结构/uncertainty/calibration 与 inference time 锁定 baseline；
 - 在 validation 完成并固定 ROI/训练设置/checkpoint 前，禁止再次访问 `liver_169` 做选择。
+
+
+### 2026-08-26｜阶段 X：支持 CPU 分病例 full-volume evaluation（GitHub 同步点 #9）
+
+在 long-v2 `best.pt` 对整个 validation split 一次性 full-volume 评估时，单条命令超过 300 秒工具执行上限；超时前已真实生成 `liver_7` prediction/entropy，说明评估本身可执行，但两例连续运行不适合当前工具时间窗。
+
+为保持评估方法不变且避免重复浪费算力：
+
+- `src/modeling/evaluate.py` 新增 `case_id` 参数与 CLI `--case-id`；
+- 指定病例必须已经属于所选 `validation` 或 `test` split，否则直接 `ValueError`，不能借该参数跨 split 绕过数据隔离；
+- formal preflight 仍在 case filter 前执行，配置/task/split/QC 保护不降低；
+- 单病例仍使用完全相同的 full-volume sliding-window、区域/表面/结构、uncertainty、calibration 指标与 prediction/entropy 输出；
+- `summary.json` 增加 `case_filter` 追踪字段；
+- `tests/test_evaluate_smoke.py` 增加合法 case filter 与 split 越界拒绝回归测试；定向测试 `4 passed`、Ruff clean、`git diff --check` 通过。
+
+下一步分别运行 `liver_7`、`liver_8` 的 long-v2 `best.pt` validation，再以同样方式评估必要候选 checkpoint，并只依据两例 validation 汇总锁定 baseline。
 
 
 ### 2026-08-26｜阶段 W：实现并实测可靠 checkpoint resume（GitHub 同步点 #7）
