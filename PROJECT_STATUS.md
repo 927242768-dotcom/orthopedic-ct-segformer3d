@@ -89,7 +89,7 @@
 | patient-level 数据划分 | ✅ 已完成（10例 formal pilot） | 96% | 已固定 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，patient-level 互斥；官方 `test_private liver_169` 只进入 test、不参与训练/调参；`formal_experiment=true`。最终论文仍需扩大病例规模 |
 | 公开数据集整理 | 🟡 进行中 | 94% | CTSpine1K `MSD-T10` 10 个真实 CT+label 已落盘：`liver_0`—`liver_8` + `liver_169`，官方 split 为 9 `trainset` + 1 `test_private`；真实文件接管执行 SHA-256 校验，10 例全部标准化/QC。该子集仍是工程验证，不替代正式论文主数据集/split |
 | 临床脱敏数据 | 🔴 阻塞 | 0% | 当前项目目录无临床数据；必须等待合法授权、脱敏与伦理/使用范围确认 |
-| SegFormer3D 骨科适配 | 🟡 进行中 | 90% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。balanced fullval v3 的 epoch 1 为当前最佳 validation checkpoint（两例 Dice≈0.05407），但 epoch 3 已出现背景塌缩。现已完成 v4 最小 loss-weight 工程修复：`region_dice_ce` 可从 YAML 读取 `dice_weight/ce_weight`，新增权重合法性检查与回归测试；v4 保持 v3 sampling/ROI/输入/full-volume validation 不变，仅将 CE 权重设为 0.25，readiness 已通过，待真实 epoch 1 validation 判断是否缓解塌缩 |
+| SegFormer3D 骨科适配 | 🟡 进行中 | 90% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。balanced fullval v3 的 epoch 1 仍是当前最佳 validation checkpoint（两例 Dice≈0.05407），但 epoch 3 已背景塌缩。v4 已真实验证 CE=0.25：epoch 1 两例平均 Dice≈0.04762、Precision≈0.02780、foreground ratio≈5.97、component error≈1993，整体劣于 v3 epoch 1，说明 CE 降得过低会重新放大全卷前景假阳性与碎片化；因此停止 v4 机械续训，下一单变量优先转向降低 peak learning rate |
 | 区域损失 | ✅ 已完成（代码） | 90% | Dice + CE/BCE 可运行并有 backward 测试 |
 | Boundary Loss | 🟠 待真实验证 | 55% | SDF 边界损失首版已实现；需真实训练、表面指标与效率验证 |
 | Topology Loss | 🟠 待真实验证 | 45% | 3D soft-clDice 候选已实现；骨折/非管状骨结构适用性必须单独验证 |
@@ -1788,3 +1788,43 @@ git diff --check
 ```
 
 下一步直接启动新的 v4 run，先只跑 epoch 1；随后仅对 `liver_7/liver_8` 做 full-volume validation 与 detailed evaluation，联合检查 Dice、Precision、Recall、HD95、ASSD、prediction/target foreground ratio、component fragmentation、uncertainty/calibration 与 inference time。若 epoch 1 明显改善再续训 epoch 2/3；若仍出现“epoch 1 尚可、后续塌缩”，下一优先变量是把学习率从 `1e-4` 降到 `5e-5`，而不是继续机械增加 epoch。
+
+
+### 2026-08-26｜阶段 AE：v4 epoch 1 真实验证——CE=0.25 导致前景约束过弱（GitHub 同步点 #16）
+
+v4 run：`experiments/20260826_213818_cpu_binary_balanced_loss_v4_roi64`。本阶段只训练到 epoch 1，不访问独立 test `liver_169`。
+
+真实训练/full-volume validation：
+
+- epoch 1 train loss≈`1.350736`；
+- 两例 full-volume validation mean Dice≈`0.047625`，std≈`0.001878`；
+- validation inference total≈`134.19 s`；
+- epoch 1 lr=`5e-5`；
+- 当前 v4 `best.pt` 即 epoch 1：`experiments/20260826_213818_cpu_binary_balanced_loss_v4_roi64/checkpoint/best.pt`。
+
+分病例 detailed validation：
+
+- `liver_7`：Dice≈`0.04950`，Precision≈`0.02888`，Recall≈`0.17306`，HD95≈`218.02 mm`，ASSD≈`55.76 mm`，prediction/GT foreground ratio≈`5.99`，pred/target components=`2128/3`，component error=`2125`，false merge=`1`，false break=`89`，inference≈`54.62 s`；
+- `liver_8`：Dice≈`0.04575`，Precision≈`0.02672`，Recall≈`0.15878`，HD95≈`208.74 mm`，ASSD≈`54.91 mm`，prediction/GT foreground ratio≈`5.94`，pred/target components=`1863/2`，component error=`1861`，false merge=`0`，false break=`98`，inference≈`87.58 s`。
+
+两例平均：
+
+- Dice≈`0.04762`；
+- Precision≈`0.02780`；
+- Recall≈`0.16592`；
+- HD95≈`213.38 mm`；
+- ASSD≈`55.33 mm`；
+- prediction/GT foreground ratio≈`5.97`；
+- component count error≈`1993`。
+
+与 v3 epoch 1 对比：v3 mean Dice≈`0.05407`、Precision≈`0.03510`、foreground ratio≈`3.42`、component count error≈`1587.5`。因此 v4 并未改善，而是把全卷前景过预测与碎片化再次放大。当前证据更支持“CE=0.25 过低，背景分类约束不足”，而不是“继续降低 CE 可以修复背景塌缩”。
+
+决策：
+
+- 不继续机械运行 v4 epoch 2；
+- 恢复 Region Dice/CE=`1:1`；
+- 保持 v3 的 CT-only、64³ ROI、foreground_probability=0.25、patches_per_case=4、full-volume validation 不变；
+- 下一单变量实验优先把 optimizer peak lr 从 `1e-4` 降到 `5e-5`，验证 v3 在 lr 从 5e-5 升到 1e-4 后恶化、随后塌缩是否主要由学习率导致；
+- baseline 完全锁定前继续禁止访问 `liver_169`。
+
+说明：第一次串行运行两例 detailed evaluation 时单命令超过 300 秒工具上限；`liver_7` 已完整落盘，`liver_8` 输出目录仅被创建但未写结果。为遵守“不删除/覆盖已有实验”规则，没有删除该空目录，而是使用 `experiments/evaluation_20260826_v4_e1_val_liver8_retry1` 完成 `liver_8` 评估。

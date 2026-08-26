@@ -284,7 +284,8 @@
 - [x] 已检查 Region Dice+CE 实现：foreground Dice 与未加权全体素 CrossEntropy 默认 1:1；当前 `train.build_criterion()` 未从 YAML 读取 `dice_weight/ce_weight`，balanced sampling 增加背景后 CE 背景主导与 epoch 3 collapse 现象一致
 - [x] 已完成最小 loss-weight 工程修复：`region_dice_ce` 现在从 YAML 读取 `dice_weight/ce_weight`，新增合法性检查与回归测试；v4 配置保持 v3 sampling/ROI/输入/full-volume validation 不变，仅将 CE 权重设为 0.25
 - [x] `configs/orthopedic_ct_cpu_binary_balanced_loss_v4.yaml` 已通过 `formal_readiness --allow-cpu`：ready=true / blocker_count=0
-- [ ] 启动 v4 epoch 1，并仅使用 `liver_7/liver_8` full-volume validation + detailed diagnostics 判断 CE=0.25 是否缓解背景塌缩；在 baseline 完全锁定前继续禁止访问 `liver_169`
+- [x] v4 epoch 1 + `liver_7/liver_8` detailed validation 已完成：两例平均 Dice≈0.04762、Precision≈0.02780、foreground ratio≈5.97、component error≈1993；相比 v3 epoch 1（Dice≈0.05407、Precision≈0.03510、ratio≈3.42、component error≈1587.5）整体更差，说明 CE=0.25 过度削弱背景约束，不继续机械跑 v4 epoch 2
+- [ ] 下一优先单变量实验转向学习率：恢复 Region Dice/CE=1:1，保持 v3 sampling/ROI/full-volume validation 不变，将 optimizer peak lr 从 `1e-4` 降到 `5e-5`，验证 v3“epoch 1 较好、lr 升高后恶化/塌缩”是否由学习率导致；baseline 锁定前继续禁止访问 `liver_169`
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
 - [x] formal-pilot 输出 `metrics_per_case.csv` + prediction NIfTI + entropy NIfTI
 - [x] formal-pilot 记录 Dice / HD95 / ASSD / IoU / Precision / Recall / 结构指标
