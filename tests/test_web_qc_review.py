@@ -146,3 +146,41 @@ def test_qc_review_rejects_pass_when_any_check_failed(tmp_path: Path, monkeypatc
         )
     assert response.status_code == 422
     assert "四项人工检查" in response.json()["detail"]
+
+
+def test_qc_review_frontend_collapses_case_list_and_enters_review_area() -> None:
+    with TestClient(webapp.app) as client:
+        page = client.get("/qc-review")
+        script = client.get("/static/qc_review.js")
+        styles = client.get("/static/qc_review.css")
+
+    assert page.status_code == 200
+    assert script.status_code == 200
+    assert styles.status_code == 200
+    assert page.headers["cache-control"] == "no-store, max-age=0"
+
+    assert "/static/qc_review.css?v=20260825-3" in page.text
+    assert "/static/qc_review.js?v=20260825-3" in page.text
+    assert 'id="qcLayout"' in page.text
+    assert 'id="caseSidebar"' in page.text
+    assert 'id="qcMain"' in page.text
+    assert 'id="caseListToggleBtn"' in page.text
+    assert 'aria-controls="caseSidebar"' in page.text
+
+    assert "function setCaseListCollapsed" in script.text
+    assert "function enterReviewArea" in script.text
+    assert "scrollIntoView" in script.text
+    assert 'button.addEventListener("click", () => selectCase(index));' in script.text
+    assert "sidebar.hidden = collapsed" in script.text
+    assert "setCaseListCollapsed(true);" in script.text
+    assert "enterReviewArea({ smooth });" in script.text
+    assert "selectCase(qcState.index - 1)" in script.text
+    assert "selectCase(qcState.index + 1)" in script.text
+    assert '"显示病例列表"' in script.text
+    assert '"收起病例列表"' in script.text
+
+    assert ".qc-layout > .card { grid-column: auto; }" in styles.text
+    assert ".qc-layout.case-list-collapsed" in styles.text
+    assert ".qc-sidebar[hidden] { display: none !important; }" in styles.text
+    assert ".qc-layout.case-list-collapsed .qc-main { grid-column: 1 / -1; }" in styles.text
+    assert "@media (max-width: 980px)" in styles.text

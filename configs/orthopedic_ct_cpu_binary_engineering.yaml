@@ -1,22 +1,20 @@
 project: orthopedic_ct_segformer3d
-experiment_name: baseline_ct_only_dicece
+experiment_name: cpu_binary_engineering_ct_only
 seed: 42
 
-# 数据参数（具体数据集路径在下载/授权后填写）
 data:
-  dataset_name: TBD
-  processed_root: data/processed
-  split_file: data/splits/TBD.json
+  dataset_name: CTSpine1K_MSD_T10_engineering
+  processed_root: data/processed_ctspine1k_real
+  split_file: data/splits/ctspine1k_msd_t10_cpu_binary_engineering.json
   input_channels:
     - ct_normalized
   label_mode: binary
-  foreground_probability: 0.7
+  foreground_probability: 0.8
   target_spacing_xyz_mm: [1.0, 1.0, 1.0]
   hu_clip: [-1000, 2000]
-  roi_size_dhw: [128, 128, 128]
+  roi_size_dhw: [36, 36, 36]
   num_classes: 2
 
-# 参考 SegFormer3D 官方 B0 风格参数；最终需根据骨科 CT 显存/ROI 调整。
 model:
   name: segformer3d
   in_channels: 1
@@ -47,24 +45,28 @@ optimizer:
 
 scheduler:
   type: cosine_annealing_warm_restarts
-  warmup_epochs: 20
-  t0_epochs: 400
+  warmup_epochs: 2
+  t0_epochs: 10
   min_lr: 0.000006
 
 training:
-  epochs: 800
+  epochs: 20
   batch_size: 1
   gradient_accumulation_steps: 1
-  num_workers: 4
-  amp: true
+  num_workers: 0
+  amp: false
   save_metric: dice
-  early_stopping_patience: 100
+  early_stopping_patience: 5
+
+validation:
+  patch_mode: true
+  foreground_probability: 1.0
 
 inference:
   sliding_window: true
-  roi_size_dhw: [128, 128, 128]
+  roi_size_dhw: [36, 36, 36]
   sw_batch_size: 1
-  overlap: 0.5
+  overlap: 0.0
   calibration:
     enabled: true
     n_bins: 15
@@ -73,5 +75,5 @@ inference:
 logging:
   wandb_mode: offline
   save_per_case_metrics: true
-  save_predictions: true
+  save_predictions: false
   save_uncertainty: false

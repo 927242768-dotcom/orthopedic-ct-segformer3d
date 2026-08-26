@@ -156,9 +156,10 @@ formal_experiment = false
 - uncertainty→error AUPRC；
 - error / correct 体素平均 entropy；
 - Top-percent 高不确定区域对错误的 recall；
-- ROI error rate 与 ROI fraction。
+- ROI error rate 与 ROI fraction；
+- 体素级 calibration：ECE、MCE、multiclass Brier score、NLL、mean confidence、accuracy 与 confidence gap。
 
-这些指标必须先证明 entropy 确实能定位错误，再进入 U2；否则不应仅凭热图宣称 uncertainty 有效。
+其中 calibration 使用固定分箱和固定随机种子的体素采样，避免不同模型因采样策略不同而不可比。错误定位指标必须先证明 entropy 确实能定位错误，再进入 U2；ECE/Brier/NLL 则用于判断模型概率是否可信，二者不能互相替代，也不能仅凭热图宣称 uncertainty 有效。
 
 ### U2：Uncertainty ROI refinement
 
@@ -187,6 +188,7 @@ coarse prediction
 - ROI 占总体素比例；
 - error AUROC / AUPRC；
 - Top-percent error recall / ROI error rate；
+- ECE / MCE / Brier score / NLL 与 confidence gap；
 - refinement 前后 ROI/global error delta。
 
 ## 7. 模型结构消融（可选）

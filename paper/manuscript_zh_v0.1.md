@@ -40,7 +40,7 @@ SegFormer 使用多阶段层次化 Transformer 编码器输出不同尺度特征
 
 ### 2.3 脊柱与骨结构 CT 分割
 
-CTSpine1K 提供大规模椎体 CT 标注，为脊柱自动分割和跨来源评估提供数据基础。VerSe 2019/2020 则建立了多设备、多中心、含解剖变异和病理情况的椎体标注基准，强调了异常解剖和 domain shift 对算法性能的影响。2024 年的 VerFormer 从骨科/脊柱场景出发，在 Transformer 中引入 vertebrae-aware global query，以突出与椎体相关的 token，并在 VerSe 数据上验证。近期研究进一步扩大了竞争范围：2025 年 SpineMamba 将 Residual Visual Mamba 与可学习三维脊柱形状先验结合，表明长程依赖建模和显式结构先验已成为三维脊柱分割的重要方向；同年的椎体 Transformer 工作将 WNet 分割、ViT 类型分析与解剖变异感知结合，并针对切片缺失、噪声和扫描差异开展鲁棒性分析；2026 年 VertebraFormer 则把椎体分割、编号和病灶定位统一到结构感知多任务框架，并采用多域与 leave-one-domain-out 方案研究泛化。由此可见，本文不能把“采用 Transformer”本身作为主要创新，而应重点验证三维多尺度骨科适配、边界/拓扑约束、困难样本、不确定性局部精修以及从体素分割到物理空间表面的误差闭环。
+CTSpine1K 提供大规模椎体 CT 标注，为脊柱自动分割和跨来源评估提供数据基础。VerSe 2019/2020 则建立了多设备、多中心、含解剖变异和病理情况的椎体标注基准，强调了异常解剖和 domain shift 对算法性能的影响。2024 年的 VerFormer 从骨科/脊柱场景出发，在 Transformer 中引入 vertebrae-aware global query，以突出与椎体相关的 token，并在 VerSe 数据上验证。近期研究进一步扩大了竞争范围：2025 年 SpineMamba 将 Residual Visual Mamba 与可学习三维脊柱形状先验结合；同年的椎体 Transformer 工作将 WNet 分割、ViT 类型分析与解剖变异感知结合，并针对切片缺失、噪声和扫描差异开展鲁棒性分析；椎体骨折研究则采用 nnU-Net 分割与骨折分类组成完整 pipeline，说明真实断裂病例需要独立评价；真实腰椎金属植入物的 deep-MAR 研究进一步证明金属伪影应优先用真实病例校验；2024 年 3D 椎体分割研究还直接观察到低骨密度情况下的相邻椎体融合和单椎体分裂失败，支持把 low-density 病例与 false merge/false break 单独分析。2026 年 VertebraFormer 把椎体分割、编号和病灶定位统一到结构感知多任务框架，并采用多域与 leave-one-domain-out 方案研究泛化；同年开放的 1,460 例椎体体部数据与 Residual-Encoder nnU-Net 研究进一步抬高了通用 CNN baseline 的强度。因此本文不能把“采用 Transformer”本身作为主要创新，也不能只与弱 CNN 对照，而应重点验证三维多尺度骨科适配、边界/拓扑约束、困难样本、不确定性局部精修以及从体素分割到物理空间表面的误差闭环。
 
 ### 2.4 边界与拓扑约束
 
@@ -111,7 +111,7 @@ L_{total}=\lambda_r L_{region}+\lambda_b L_{boundary}+\lambda_t L_{topology}.
 U(v)=-\sum_c p_c(v)\log(p_c(v)+\epsilon).
 \]
 
-根据 uncertainty map 选择 Top-k 百分位或高于阈值的体素，并对其连通区域进行适度膨胀得到候选 ROI。首先使用 uncertainty→error AUROC、AUPRC、错误/正确体素平均 entropy、Top-percent error recall、ROI error rate 与 ROI fraction 定量判断预测熵是否真的集中于错误区域，而不是仅依赖热图主观判断。当前工程原型进一步实现了三维局部残差精修网络：将 CT/骨窗等影像通道、coarse probability/logits 与 uncertainty 作为输入预测残差，只在 ROI mask 内更新 coarse logits，ROI 外严格保留原预测。二阶段训练中 coarse 分割默认冻结，精修损失只在 ROI 内归一化，并记录精修前后 ROI/global error delta。实验将比较：无精修、全图二次推理和 uncertainty ROI 精修，以区分“额外计算”与“不确定性定位”本身的贡献。上述实现目前只完成工程测试，尚无真实 checkpoint 性能结论。
+根据 uncertainty map 选择 Top-k 百分位或高于阈值的体素，并对其连通区域进行适度膨胀得到候选 ROI。首先使用 uncertainty→error AUROC、AUPRC、错误/正确体素平均 entropy、Top-percent error recall、ROI error rate 与 ROI fraction 定量判断预测熵是否真的集中于错误区域，而不是仅依赖热图主观判断。与此同时，对模型概率输出增加体素级 calibration 评价：采用固定分箱的 Expected Calibration Error（ECE）与 Maximum Calibration Error（MCE），并报告 multiclass Brier score、negative log-likelihood（NLL）、mean confidence、体素 accuracy 与 confidence gap。对超大三维体积采用固定随机种子的体素下采样，以保证不同实验之间可复现比较。当前工程原型进一步实现了三维局部残差精修网络：将 CT/骨窗等影像通道、coarse probability/logits 与 uncertainty 作为输入预测残差，只在 ROI mask 内更新 coarse logits，ROI 外严格保留原预测。二阶段训练中 coarse 分割默认冻结，精修损失只在 ROI 内归一化，并记录精修前后 ROI/global error delta。实验将比较：无精修、全图二次推理和 uncertainty ROI 精修，以区分“额外计算”与“不确定性定位”本身的贡献。上述实现目前只完成工程测试，尚无真实 checkpoint 性能结论。
 
 ### 3.7 质量控制与可追溯性
 
@@ -121,7 +121,7 @@ U(v)=-\sum_c p_c(v)\log(p_c(v)+\epsilon).
 
 ### 3.8 物理空间表面重建与工程几何控制
 
-分割 mask 首先在 `(Z,Y,X)` 体素数组上使用 Marching Cubes 提取三角面，再依据影像 `spacing`、`origin` 与 `direction` 显式转换至物理 `(X,Y,Z)` 毫米坐标。Web 轻量展示保留全分辨率网格，同时提供可控的 vertex-clustering 简化，并记录顶点/面缩减率、表面积变化以及全分辨率—简化网格的顶点近邻误差。为区分模型误差和预处理误差，项目还单独比较原始标签与 1 mm nearest-neighbor 重采样标签的物理表面差异；该分析只用于量化重采样离散化，不作为模型分割性能或临床测量精度。
+分割 mask 首先在 `(Z,Y,X)` 体素数组上使用 Marching Cubes 提取三角面，再依据影像 `spacing`、`origin` 与 `direction` 显式转换至物理 `(X,Y,Z)` 毫米坐标。Web 轻量展示保留全分辨率网格，同时提供可控的 vertex-clustering 简化，并记录顶点/面缩减率、表面积变化以及全分辨率—简化网格的顶点近邻误差。为降低聚类平均对尖锐骨性结构的平滑，工程候选进一步以相邻顶点法向变化作为轻量曲率/关键边缘代理，在聚类代表点计算时提高高特征顶点权重；该策略默认关闭，必须在 prediction surface 上完成误差与拓扑消融后才可作为正式重建方案。为区分模型误差和预处理误差，项目还单独比较原始标签与 1 mm nearest-neighbor 重采样标签的物理表面差异；该分析只用于量化重采样离散化，不作为模型分割性能或临床测量精度。
 
 ---
 
@@ -177,7 +177,7 @@ U(v)=-\sum_c p_c(v)\log(p_c(v)+\epsilon).
 
 ### 4.5 评价指标
 
-主指标包括 Dice Similarity Coefficient、IoU、HD95、ASSD、Precision 和 Recall。对于结构连通性，候选指标包括 clDice、连通域数量差异、错误粘连与断裂数。若采用 multi-class 椎体任务，逐病例 macro 只对真值或预测实际出现的前景类别求平均，双方都缺失的类别不计入，以避免空类别产生虚高分数，并同时输出逐类别指标。对于 uncertainty，额外报告 error AUROC/AUPRC、错误/正确体素平均 entropy、Top-percent error recall、ROI error rate 与 ROI fraction。工程指标包括参数量、FLOPs、峰值显存、单病例预处理时间、推理时间和三维重建时间。
+主指标包括 Dice Similarity Coefficient、IoU、HD95、ASSD、Precision 和 Recall。对于结构连通性，候选指标包括 clDice、连通域数量差异、错误粘连与断裂数。若采用 multi-class 椎体任务，逐病例 macro 只对真值或预测实际出现的前景类别求平均，双方都缺失的类别不计入，以避免空类别产生虚高分数，并同时输出逐类别指标。对于 uncertainty，额外报告 error AUROC/AUPRC、错误/正确体素平均 entropy、Top-percent error recall、ROI error rate 与 ROI fraction；对于概率校准，报告 ECE、MCE、Brier score、NLL、mean confidence、体素 accuracy 和 confidence gap。工程指标包括参数量、FLOPs、峰值显存、单病例预处理时间、推理时间和三维重建时间。
 
 逐病例结果同时报告 mean±std 和 median[IQR]。方法比较采用配对统计检验，并根据分布选择配对 t 检验或 Wilcoxon signed-rank test；同时报告效应量或置信区间，避免只报告 p 值。
 
@@ -253,11 +253,15 @@ U(v)=-\sum_c p_c(v)\log(p_c(v)+\epsilon).
 9. Zhang Z, Liu T, Fan G, et al. SpineMamba: Enhancing 3D spinal segmentation in clinical imaging through residual visual Mamba layers and shape priors. Computerized Medical Imaging and Graphics, 2025, 123:102531.
 10. Yang C, Huang L, Sucharit W, et al. Transformer-enhanced vertebrae segmentation and anatomical variation recognition from CT images. Scientific Reports, 2025, 15:34329.
 11. Du J, Ge H, Zhang R, et al. Structure-aware multi-task learning with domain generalization for robust vertebrae analysis in spinal CT. npj Digital Medicine, 2026, 9:217.
-12. Kervadec H, et al. Boundary Loss for Highly Unbalanced Segmentation. Medical Image Analysis, 2021.
-13. Shit S, Paetzold J C, Sekuboyina A, et al. clDice—A Novel Topology-Preserving Loss Function for Tubular Structure Segmentation. CVPR, 2021.
-14. Abutalip K, Saeed N, Sobirov I, et al. EDUE: Expert Disagreement-Guided One-Pass Uncertainty Estimation for Medical Image Segmentation. arXiv:2403.16594, 2024.
-15. Guo X, Lin X, Yang X, et al. UCTNet: Uncertainty-guided CNN-Transformer hybrid networks for medical image segmentation. Pattern Recognition, 2024, 152:110491.
-16. Berger A H, Stucki N, Lux L, et al. Topologically Faithful Multi-class Segmentation in Medical Images. arXiv:2403.11001, 2024.
-17. Wyburd M K, Dinsdale N K, Jenkinson M, Namburete A I L. Anatomically plausible segmentations: Explicitly preserving topology through prior deformations. Medical Image Analysis, 2024, 97:103222.
+12. Hofmann F O, Auhage L A, Dexl J, et al. Vertebral body segmentation in CT: An open dataset, deep-learning models and comparison to existing models. European Journal of Radiology, 2026, 204:113118.
+13. Glessgen C, Cyriac J, Yang S, et al. A deep learning pipeline for systematic and accurate vertebral fracture reporting in computed tomography. Clinical Radiology, 2025, 83:106827.
+14. Ye K, Pan B, Li J, et al. Deep learning model trained using multi-energy computed tomography (CT) data shows better metal artifact reduction for lumbar CT imaging. Clinical Radiology, 2025, 90:107076.
+15. Kervadec H, et al. Boundary Loss for Highly Unbalanced Segmentation. Medical Image Analysis, 2021.
+16. Shit S, Paetzold J C, Sekuboyina A, et al. clDice—A Novel Topology-Preserving Loss Function for Tubular Structure Segmentation. CVPR, 2021.
+17. Abutalip K, Saeed N, Sobirov I, et al. EDUE: Expert Disagreement-Guided One-Pass Uncertainty Estimation for Medical Image Segmentation. arXiv:2403.16594, 2024.
+18. Guo X, Lin X, Yang X, et al. UCTNet: Uncertainty-guided CNN-Transformer hybrid networks for medical image segmentation. Pattern Recognition, 2024, 152:110491.
+19. Berger A H, Stucki N, Lux L, et al. Topologically Faithful Multi-class Segmentation in Medical Images. arXiv:2403.11001, 2024.
+20. Wyburd M K, Dinsdale N K, Jenkinson M, Namburete A I L. Anatomically plausible segmentations: Explicitly preserving topology through prior deformations. Medical Image Analysis, 2024, 97:103222.
+21. Xiong X, Graves S A, Gross B A, et al. Lumbar and Thoracic Vertebrae Segmentation in CT Scans Using a 3D Multi-Object Localization and Segmentation CNN. Tomography, 2024, 10(5):738-760.
 
-> 机器可用参考文献库已建立于 `paper/references.bib`（当前 38 条英文核心条目），结构化文献矩阵见 `docs/08_literature_matrix.md`（当前 40 条）。正式投稿前仍需统一期刊格式，并对国内文献与最新正式发表版本再次核验。
+> 机器可用参考文献库已建立于 `paper/references.bib`（当前 42 条英文核心条目），结构化文献矩阵见 `docs/08_literature_matrix.md`（当前 44 条）。正式投稿前仍需统一期刊格式，并对国内文献与最新正式发表版本再次核验。

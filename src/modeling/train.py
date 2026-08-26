@@ -15,6 +15,7 @@ import shutil
 import subprocess
 import sys
 import time
+from contextlib import nullcontext
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -111,6 +112,17 @@ def mean_foreground_dice(
     return 1.0 if not scores else float(np.mean(scores))
 
 
+def _autocast_context(device: torch.device, amp_enabled: bool):
+    """返回与当前 PyTorch 2.1 兼容的 AMP 上下文。
+
+    CPU 非 AMP 路径必须真正使用 nullcontext；否则 PyTorch 2.1 即使 enabled=false
+    也会检查 float16 CPU autocast，并在进入上下文时报错。
+    """
+    if amp_enabled and device.type == "cuda":
+        return torch.autocast(device_type="cuda", dtype=torch.float16)
+    return nullcontext()
+
+
 def _model_predictor(model: torch.nn.Module):
     def predictor(x: torch.Tensor) -> torch.Tensor:
         logits = model(x)
@@ -140,11 +152,7 @@ def validate(
             label = batch["label"].to(device, non_blocking=True)
 
             start = time.perf_counter()
-            with torch.autocast(
-                device_type=device.type,
-                dtype=torch.float16,
-                enabled=amp_enabled and device.type == "cuda",
-            ):
+            with _autocast_context(device, amp_enabled):
                 logits = sliding_window_inference(
                     inputs=image,
                     roi_size=roi_size_dhw,
@@ -265,6 +273,8 @@ def train(config_path: Path, *, max_epochs_override: int | None = None) -> Path:
     train_cfg = config["training"]
     infer_cfg = config["inference"]
     model_cfg = config["model"]
+    validation_cfg = config.get("validation", {})
+    validation_patch_mode = bool(validation_cfg.get("patch_mode", False))
 
     processed_root = _resolve_project_path(data_cfg["processed_root"])
     split_file = _resolve_project_path(data_cfg["split_file"])
@@ -295,6 +305,8 @@ def train(config_path: Path, *, max_epochs_override: int | None = None) -> Path:
         "upstream": upstream_provenance(),
         "source_config": str(config_path),
         "source_split": str(split_file),
+        "validation_mode": "patch" if validation_patch_mode else "full_volume",
+        "validation_patch_is_engineering_proxy": validation_patch_mode,
     }
     (run_dir / "run_metadata.json").write_text(
         json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8"
@@ -319,16 +331,49 @@ def train(config_path: Path, *, max_epochs_override: int | None = None) -> Path:
         bone_window_width=float(bone_window_cfg.get("width", 2000.0)),
         seed=seed,
     )
-    val_ds = ProcessedOrthopedicCTDataset(
-        processed_root,
-        split_file,
-        "validation",
-        input_channels=input_channels,
-        roi_size_dhw=roi,
-        training=False,
-        label_mode=label_mode,
-        seed=seed,
-    )
+    if validation_patch_mode:
+        # 仅用于 CPU/工程训练：验证集也取固定大小前景 patch，避免每个 epoch
+        # 对 300–600 层整卷 CT 做 sliding-window。正式论文结果必须用 full-volume evaluation。
+        val_ds = ProcessedOrthopedicCTDataset(
+            processed_root,
+            split_file,
+            "validation",
+            input_channels=input_channels,
+            roi_size_dhw=roi,
+            training=True,
+            foreground_probability=float(validation_cfg.get("foreground_probability", 1.0)),
+            label_mode=label_mode,
+            augmentation={
+                "enabled": True,
+                "geometric": {
+                    "random_flip": False,
+                    "random_rotate_deg": 0.0,
+                    "random_scale_range": [1.0, 1.0],
+                    "transform_probability": 0.0,
+                },
+                "intensity": {
+                    "probability": 0.0,
+                    "gamma_range": [1.0, 1.0],
+                    "gaussian_noise_std_range": [0.0, 0.0],
+                    "hu_shift_range": [0.0, 0.0],
+                },
+                "hard_sampling": {"enabled": False},
+            },
+            hu_clip=data_cfg.get("hu_clip", [-1000.0, 2000.0]),
+            bone_window_width=float(bone_window_cfg.get("width", 2000.0)),
+            seed=seed,
+        )
+    else:
+        val_ds = ProcessedOrthopedicCTDataset(
+            processed_root,
+            split_file,
+            "validation",
+            input_channels=input_channels,
+            roi_size_dhw=roi,
+            training=False,
+            label_mode=label_mode,
+            seed=seed,
+        )
 
     train_loader = DataLoader(
         train_ds,
@@ -360,7 +405,8 @@ def train(config_path: Path, *, max_epochs_override: int | None = None) -> Path:
 
     max_epochs = int(max_epochs_override or train_cfg.get("epochs", 800))
     amp_enabled = bool(train_cfg.get("amp", True)) and device.type == "cuda"
-    scaler = torch.amp.GradScaler("cuda", enabled=amp_enabled)
+    # PyTorch 2.1 使用 torch.cuda.amp.GradScaler；CPU 路径保持 disabled。
+    scaler = torch.cuda.amp.GradScaler(enabled=amp_enabled)
     accumulate = max(1, int(train_cfg.get("gradient_accumulation_steps", 1)))
     patience = int(train_cfg.get("early_stopping_patience", 100))
 
@@ -394,11 +440,7 @@ def train(config_path: Path, *, max_epochs_override: int | None = None) -> Path:
                 image = batch["image"].to(device, non_blocking=True)
                 label = batch["label"].to(device, non_blocking=True)
 
-                with torch.autocast(
-                    device_type=device.type,
-                    dtype=torch.float16,
-                    enabled=amp_enabled,
-                ):
+                with _autocast_context(device, amp_enabled):
                     logits = model(image)
                     logits = resize_logits_to_target(logits, tuple(label.shape[-3:]))
                     loss = criterion(logits, label) / accumulate
@@ -462,7 +504,12 @@ def train(config_path: Path, *, max_epochs_override: int | None = None) -> Path:
         "finished_at": datetime.now().isoformat(),
         "best_val_dice": best_dice,
         "run_dir": str(run_dir),
-        "note": "Validation metric only; test set evaluation must be run separately.",
+        "validation_mode": "patch" if validation_patch_mode else "full_volume",
+        "note": (
+            "Engineering patch-validation proxy only; full-volume validation/test evaluation is required for formal results."
+            if validation_patch_mode
+            else "Validation metric only; test set evaluation must be run separately."
+        ),
     }
     (run_dir / "summary.json").write_text(
         json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8"
@@ -485,6 +532,11 @@ def main() -> None:
         help="默认 formal：要求正式 split、人工 QC 与 CUDA；仅工程调试时显式选 engineering",
     )
     parser.add_argument(
+        "--allow-cpu",
+        action="store_true",
+        help="显式允许 CPU 正式训练；不会降低数据/QC/split/task 的其它 formal 检查",
+    )
+    parser.add_argument(
         "--skip-preflight",
         action="store_true",
         help="跳过保护性预检，仅用于定位代码问题；不得用于论文正式 run",
@@ -493,7 +545,11 @@ def main() -> None:
 
     config_path = _resolve_project_path(args.config)
     if not args.skip_preflight:
-        report = run_preflight(config_path, mode=args.preflight_mode)
+        report = run_preflight(
+            config_path,
+            mode=args.preflight_mode,
+            require_gpu=False if args.allow_cpu else None,
+        )
         print(json.dumps({"preflight": report.to_dict()}, ensure_ascii=False, indent=2))
         if not report.ready:
             raise SystemExit(2)

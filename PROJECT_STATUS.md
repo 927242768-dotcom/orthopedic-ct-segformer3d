@@ -6,7 +6,7 @@
 >
 > 台账首次建立：2026-08-15
 >
-> 最近更新：2026-08-16
+> 最近更新：2026-08-26
 
 ---
 
@@ -83,25 +83,25 @@
 | SegFormer3D 上游调研 | ✅ 已完成 | 100% | 已读 README、核心架构、loss、依赖与许可证；官方仓库已克隆到 `third_party/SegFormer3D` |
 | 项目目录与交接机制 | ✅ 已完成 | 100% | 已建立工程目录和本主台账；明确“每次实质修改必须更新本文件” |
 | 总体方案设计 | ✅ 已完成 | 100% | 已形成数据层、模型层、三维层、Web 层和实验追踪设计 |
-| 国内外文献调研 | 🟡 进行中 | 94% | 已形成 40 条结构化文献矩阵与 38 条英文核心 BibTeX；新增核验 2025 SpineMamba、2025 椎体分割/解剖变异 Transformer、2026 VertebraFormer，已覆盖现代 3D spine、shape prior、domain generalization。后续重点转向金属伪影/低骨密度困难病例、现代强 baseline 与国内 CNKI/万方正式核验 |
-| 实验环境 | ✅ 已完成（CPU 开发环境） | 92% | 项目内 Python 3.11.7 + `.venv` 已完成；PyTorch 2.1.0 CPU、MONAI、DICOM/Web/Lightning 依赖均可导入；新增 GPU/CUDA 只读检查。当前实测 torch=`2.1.0+cpu`、CUDA=false、0 device、无 `nvidia-smi`，因此正式 GPU 训练仍阻塞 |
-| DICOM/CT 处理流程 | 🟡 进行中 | 93% | NIfTI pipeline 0.3.0 已在 10 例真实 CTSpine1K CT+label 上完成 1 mm 重采样、HU clip→case-wise z-score、骨窗、label nearest-neighbor、自动/交互 QC；10/10 自动审计通过。已统一修复 SimpleITK 在 Windows 中文项目绝对路径下的 I/O 兼容问题；真实多层 DICOM series 与 10 例人工 QC 签字仍待完成 |
-| patient-level 数据划分 | ✅ 已完成（工具） | 90% | 已实现可复现 split 与 patient group 防泄漏检查；等待真实数据生成正式 split |
+| 国内外文献调研 | 🟡 进行中 | 97% | 已形成 44 条结构化文献矩阵与 42 条英文核心 BibTeX；已核验现代强 baseline、骨折、真实金属植入物以及低骨密度椎体 fusion/split 直接分割失败证据。近期直接脊柱链覆盖 Residual-Encoder nnU-Net、SpineMamba、解剖变异 Transformer、VertebraFormer 等；后续重点收敛到国内 CNKI/万方正式题录复核和根据正式任务筛选实际可跑 baseline |
+| 实验环境 | ✅ 已完成（CPU 可训练环境） | 96% | 项目内 Python 3.11.7 + `.venv` 已完成；当前实测 Ryzen 7 8745H（8C/16T）、约 20 GB RAM、PyTorch `2.1.0+cpu`。真实 36³ patch 与 3-epoch binary engineering pilot 均已在本机 CPU 跑通；`train.py`/`formal_readiness.py` 新增显式 `--allow-cpu`，无 NVIDIA 不再是方法学硬 blocker。GPU 仅作为后续提速选项 |
+| DICOM/CT 处理流程 | 🟡 进行中 | 96% | NIfTI pipeline 0.3.0 已在 10 例真实 CTSpine1K CT+label 上完成 1 mm 重采样、HU clip→case-wise z-score、骨窗、label nearest-neighbor、自动/交互 QC；10/10 自动审计通过。2026-08-26 复核 `manual_qc_review.csv`：10/10 四项人工检查均 `yes`、10/10 `pass`、reviewer 已填写，人工 QC P0 已解除；真实多层 DICOM series 仍待后续数据来源验证 |
+| patient-level 数据划分 | ✅ 已完成（10例 formal pilot） | 96% | 已固定 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，patient-level 互斥；官方 `test_private liver_169` 只进入 test、不参与训练/调参；`formal_experiment=true`。最终论文仍需扩大病例规模 |
 | 公开数据集整理 | 🟡 进行中 | 94% | CTSpine1K `MSD-T10` 10 个真实 CT+label 已落盘：`liver_0`—`liver_8` + `liver_169`，官方 split 为 9 `trainset` + 1 `test_private`；真实文件接管执行 SHA-256 校验，10 例全部标准化/QC。该子集仍是工程验证，不替代正式论文主数据集/split |
 | 临床脱敏数据 | 🔴 阻塞 | 0% | 当前项目目录无临床数据；必须等待合法授权、脱敏与伦理/使用范围确认 |
-| SegFormer3D 骨科适配 | 🟡 进行中 | 55% | adapter、配置、dataset、训练骨架已完成；除 64³ CPU forward 外，已在真实 `liver_0` 上完成 CT+bone-window、36³ 前景 patch、joint loss、backward、AdamW.step 工程 smoke。尚无 GPU 正式训练/checkpoint |
+| SegFormer3D 骨科适配 | 🟡 进行中 | 74% | adapter、配置、dataset、训练骨架已完成；首个任务已正式锁定为 `binary_semantic`，task_id=`vertebra_binary_ctspine1k_msd_t10_v1`、num_classes=2、foreground labels=1..25→统一前景。新增 CPU formal-pilot config 与 7/2/1 split；仍未生成可写入论文的 full-volume test 指标 |
 | 区域损失 | ✅ 已完成（代码） | 90% | Dice + CE/BCE 可运行并有 backward 测试 |
 | Boundary Loss | 🟠 待真实验证 | 55% | SDF 边界损失首版已实现；需真实训练、表面指标与效率验证 |
 | Topology Loss | 🟠 待真实验证 | 45% | 3D soft-clDice 候选已实现；骨折/非管状骨结构适用性必须单独验证 |
 | 困难样本增强 | 🟠 待真实验证 | 68% | 已落地可配置 3D flip/小角度旋转/各向同性缩放、gamma、Gaussian noise、HU shift 与 boundary-proxy hard sampling；强度增强已兼容 z-score CT 并使用 metadata 精确回到 HU 域。金属伪影与基于真实模型误差/uncertainty 的 hard mining 仍待实验 |
-| 不确定性机制 | 🟠 待真实验证 | 78% | predictive entropy、Top-percent ROI、膨胀、uncertainty→error AUROC/AUPRC、错误/正确平均熵、Top-percent error recall/ROI error rate 已实现；局部残差 refinement 已补 ROI-only 二阶段训练闭环。尚无真实 baseline checkpoint 条件下的定量收益与消融 |
-| 训练/验证框架 | 🟡 进行中 | 94% | DataLoader/AdamW/AMP/gradient accumulation/sliding-window、scheduler、完整 run 追踪已接入；`train/evaluate` 默认 formal preflight。新增 `task_lock` 与一站式 `formal_readiness`，统一检查任务规格、config 指纹、GPU、split、人工 QC 与数据。当前真实工程 split 检查 `ready=false`/exit 2，正确阻止未锁定任务、engineering split、未签字 QC 和 CPU 环境误启动正式 run |
-| 评价指标 | ✅ 已完成（代码） | 98% | Dice、IoU、Precision、Recall、HD95、ASSD、component count/error、false merge/break 已接入；新增 multiclass per-class/macro 安全策略与 uncertainty→error AUROC/AUPRC、Top-percent error recall 等可信度指标。真实模型指标仍待 checkpoint |
-| Web 科研辅助分析原型 | 🟡 进行中 | 84% | 首页/上传/健康检查、MPR、10 例人工 QC reviewer、C1–L6 可读标签、真值 PLY WebGL2 3D、简化/物理测量均已完成；新增 SDF surface 选择与 evaluation results-review，可读取未来 prediction/entropy MPR。当前 `/api/research/evaluations` 实测 200 且 total=0，真实 checkpoint/prediction 仍不存在，系统没有伪造结果 |
-| 三维重建 | 🟡 进行中 | 82% | 已实现 physical-space Marching Cubes、PLY/JSON、vertex-clustering、SDF surface、WebGL2 与物理测量；真实 `liver_0` 0.3/0.4/0.5/0.8 mm SDF sweep 已完成，0.4 mm 保持 2→2 连通域并作为工程默认候选，0.8 mm 因 2→3 被保护机制拒绝。真实 Web 0.4 summary/PLY=200，0.8 summary=422；仍缺 prediction surface 与曲率/关键边缘保护 |
-| 论文 | 🟡 进行中 | 56% | 中文技术初稿已补 formal preflight、uncertainty/ROI refinement、物理表面重建，并将 SpineMamba、2025 解剖变异 Transformer、2026 VertebraFormer 写入相关工作；38 条英文 BibTeX / 40 条矩阵已同步。Results 继续保持 TBD，禁止提前填结果 |
-| 中期材料 | 🟡 进行中 | 70% | 已同步 10 例真实数据、88 项测试、task lock/formal readiness、交互 QC/3D/SDF、results-review、重采样几何误差与 40/38 文献证据；仍缺 GPU baseline/正式指标与人工 QC 签字 |
-| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 88 passed`；`ruff: All checks passed`；3 个关键 JSON 可解析；38 条 BibTeX 括号平衡、无重复 key；4 个前端 JS `node --check` 通过；7 个 PowerShell 脚本 parser 通过。覆盖 task lock/GPU/formal readiness、results-review、SDF topology guard 及既有真实数据/QC/训练/评价/Web 链 |
+| 不确定性机制 | 🟠 待真实验证 | 82% | predictive entropy、Top-percent ROI、膨胀、uncertainty→error AUROC/AUPRC、错误/正确平均熵、Top-percent error recall/ROI error rate 已实现；新增体素级 calibration：ECE、MCE、multiclass Brier score、NLL、mean confidence、accuracy、confidence gap，并以固定 seed 采样控制大体积内存；局部残差 refinement 已补 ROI-only 二阶段训练闭环。尚无真实 baseline checkpoint 条件下的定量收益、校准结论与消融 |
+| 训练/验证框架 | 🟡 进行中 | 99% | DataLoader/AdamW/AMP/gradient accumulation/sliding-window、scheduler、完整 run 追踪已接入；修复 PyTorch 2.1 CPU `GradScaler/autocast` 兼容问题，新增工程 `patch_mode` validation；`train.py` 与 `formal_readiness.py` 支持显式 `--allow-cpu`。2026-08-26 锁定 binary task + 7/2/1 formal-pilot split 后，`formal_readiness --allow-cpu` 实测 `ready=true`、`blocker_count=0` |
+| 评价指标 | ✅ 已完成（代码） | 100% | Dice、IoU、Precision、Recall、HD95、ASSD、component count/error、false merge/break 已接入；包含 multiclass per-class/macro 安全策略、uncertainty→error AUROC/AUPRC、Top-percent error recall，以及 ECE/MCE/Brier/NLL 等 calibration 指标；`evaluate.py` 可统一写入逐病例 CSV 与 summary。真实模型指标仍待 checkpoint |
+| Web 科研辅助分析原型 | 🟡 进行中 | 85% | 首页/上传/健康检查、MPR、10 例人工 QC reviewer、C1–L6 可读标签、真值 PLY WebGL2 3D、简化/物理测量均已完成；QC reviewer 已修复全站 `.card` grid-column 与 QC 网格冲突，病例选择后使用 `hidden + display:none!important` 彻底关闭病例层并进入主审核区，“上一例 / 下一例”保持审核区，悬浮按钮可随时重新打开病例列表；已在本机 Edge 对真实 `liver_0` 完成点击关闭/重新展开实机验证。另有 SDF surface 选择与 evaluation results-review，可读取未来 prediction/entropy MPR。当前 `/api/research/evaluations` 实测 200 且 total=0，真实 checkpoint/prediction 仍不存在，系统没有伪造结果 |
+| 三维重建 | 🟡 进行中 | 86% | 已实现 physical-space Marching Cubes、PLY/JSON、vertex-clustering、SDF surface、WebGL2 与物理测量；新增相邻法向变化驱动的特征保护 vertex-clustering 候选，真实 `liver_0` 在 2.0 mm/同 30,260 顶点下将高特征区域 mean-NN 约 0.679→0.620 mm、HD95 约 1.068→1.000 mm，作为真值网格工程证据；0.4 mm SDF 保持 2→2 连通域，0.8 mm 因 2→3 被保护机制拒绝。仍缺真实 prediction surface 上的正式验证 |
+| 论文 | 🟡 进行中 | 60% | 中文技术初稿已补 formal preflight、uncertainty/ROI refinement、calibration、物理表面/特征保护重建；Related Work 已加入 SpineMamba、解剖变异 Transformer、VertebraFormer、2026 Residual-Encoder nnU-Net、2025 骨折 pipeline、金属植入物与低骨密度 fusion/split 困难病例证据；42 条英文 BibTeX / 44 条矩阵已同步。Results 继续保持 TBD，禁止提前填结果 |
+| 中期材料 | 🟡 进行中 | 81% | 已同步 10 例真实数据、97 项测试、10/10 人工 QC、CPU binary 3-epoch engineering pilot、正式 binary task lock、7/2/1 formal-pilot split、`formal_readiness ready=true`、uncertainty/calibration、交互 QC/3D/SDF、特征保护网格候选与 44/42 文献证据；仍缺更大正式样本规模与可写入论文的 full-volume 指标 |
+| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 97 passed`；`ruff: All checks passed`；新增 CPU 非 AMP autocast、PyTorch 2.1 disabled GradScaler 与 `allow_cpu` readiness 回归测试；既有 calibration、特征保护网格、QC reviewer 等测试继续通过；42 条 BibTeX 结构正常。覆盖 task lock/formal readiness、CPU training、uncertainty/calibration、mesh feature-preservation、results-review、SDF topology guard 及既有真实数据/QC/评价/Web 链 |
 
 ---
 
@@ -191,20 +191,17 @@ ruff check src web tests
 → All checks passed!
 
 pytest tests -q
-→ 71 passed
+→ 94 passed
 
 JSON / BibTeX / frontend structural checks
 → data/datasets.json OK
 → configs/label_schemas/ctspine1k_verse.json OK
-→ paper/references.bib: 35 entries, brace balanced, duplicate key none
-→ app.js / qc_review.js / research_3d.js: node --check OK
+→ configs/task_specs/vertebra_task_template.json OK
+→ paper/references.bib: 42 entries, brace balanced, duplicate key none
+→ app.js / qc_review.js / research_3d.js / results_review.js: node --check OK
 
 PowerShell parser
-→ env/setup_env.ps1 OK
-→ env/fetch_segformer3d.ps1 OK
-→ env/download_verse.ps1 OK
-→ env/download_ctspine1k_sample.ps1 OK
-→ web/run_web.ps1 OK
+→ 当前 CI/本地纳入检查的 PowerShell 脚本语法均通过
 ```
 
 测试覆盖：
@@ -218,6 +215,7 @@ PowerShell parser
 - SegFormer3D adapter；
 - Dice/IoU/HD95/ASSD；
 - predictive entropy / uncertainty ROI / error AUROC/AUPRC / Top-percent 定量指标；
+- calibration ECE/MCE/Brier/NLL/mean confidence/accuracy/confidence gap 与固定 seed 体素采样；
 - ROI-only refinement training / coarse freeze / error delta；
 - formal/engineering preflight 与 train/evaluate 默认保护；
 - multiclass per-class 输出与空类别宏平均防虚高；
@@ -479,7 +477,7 @@ summary.json
 | `.github/` | Task/Bug Issue 模板与 Pull Request 检查模板 | ✅ 新增 |
 | `docs/01_overall_design.md` | 总体架构、模块、接口与质量保证 | ✅ |
 | `docs/02_literature_survey.md` | 国内外文献、数据集、研究空白 | 🟡 v0.2，已与结构化矩阵/BibTeX 同步 |
-| `docs/08_literature_matrix.md` | 40 条 3D 分割/脊柱/损失/uncertainty/重建结构化文献矩阵 | ✅ 已更新 2025–2026 直接脊柱工作 |
+| `docs/08_literature_matrix.md` | 44 条 3D 分割/脊柱/困难病例/损失/uncertainty/重建结构化文献矩阵 | ✅ 已更新强 baseline/骨折/金属植入物/低骨密度工作 |
 | `docs/03_data_pipeline_spec.md` | DICOM/HU/spacing/bone-window/QC SOP | ✅ 首版 |
 | `docs/04_experiment_plan.md` | baseline、联合损失、困难样本、uncertainty 消融矩阵 | ✅ 首版 |
 | `docs/05_midterm_materials.md` | 中期研究材料、已有证据、缺项、展示建议 | ✅ 首版 |
@@ -488,7 +486,7 @@ summary.json
 | `docs/09_public_repository_manifest.md` | 公开 GitHub 仓库纳入/排除文件、医学数据隐私与提交前检查清单 | ✅ 新增 |
 | `paper/outline.md` | 论文持续写作框架 | ✅ |
 | `paper/manuscript_zh_v0.1.md` | 中文论文技术初稿，Methods/Experiment Design 持续补强，Results 保持 TBD | 🟡 |
-| `paper/references.bib` | 38 条英文核心机器可用 BibTeX，已做 key/括号结构检查 | ✅ |
+| `paper/references.bib` | 42 条英文核心机器可用 BibTeX，已做 key/括号结构检查 | ✅ |
 | `env/requirements.txt` | 固定项目依赖 | ✅ |
 | `env/setup_env.ps1` | 项目内 Python 3.11/.venv 环境搭建；优先 uv | ✅ |
 | `env/fetch_segformer3d.ps1` | 获取官方 SegFormer3D | ✅ |
@@ -525,15 +523,15 @@ summary.json
 | `src/modeling/train.py` | 训练、验证、scheduler、checkpoint、固定 split/config/环境/train.log | 🟠 待 GPU 正式训练 |
 | `src/modeling/evaluate.py` | checkpoint sliding-window 独立评估、per-case/per-class、uncertainty 定量指标/prediction/entropy 输出 | ✅ 工程实现，🟠 待真实 checkpoint |
 | `src/modeling/real_patch_smoke.py` | 真实标准化病例双通道 joint-loss 单 patch forward/backward 工程验收 | ✅ real pass |
-| `src/reconstruction/mesh.py` | mask→物理空间 Marching Cubes + vertex-clustering 简化与误差摘要 | ✅ real-label pass |
+| `src/reconstruction/mesh.py` | mask→物理空间 Marching Cubes + vertex-clustering + 法向变化加权特征保护候选 | ✅ real-label engineering pass |
 | `src/reconstruction/export_mesh.py` | NIfTI label/prediction→全分辨率/简化 PLY+JSON 可追溯导出 | ✅ real-label pass |
 | `src/reconstruction/resampling_error.py` | 原始 label vs 1 mm label physical-surface 重采样几何误差 | ✅ 10/10 real pass |
 | `src/reconstruction/sdf_surface.py` | physical-mm signed-distance smoothing + zero-level MC + 连通域保护 | ✅ real `liver_0` sweep/Web pass |
 | `src/reconstruction/measurement.py` | 物理坐标距离/三点夹角与 voxel→physical 工具 | ✅ |
 | `web/backend/app.py` | FastAPI 本地科研服务：上传/MPR/QC reviewer/真值3D+SDF/results-review/测量/推理占位 | 🟡 |
-| `web/frontend/` | 上传/QC、交互 MPR+overlay、WebGL2 真值 3D/SDF、results-review、测量前端 | 🟡 |
+| `web/frontend/` | 上传/QC、交互 MPR+overlay、QC 病例栏折叠/审核区聚焦、WebGL2 真值 3D/SDF、results-review、测量前端 | 🟡 |
 | `web/run_web.ps1` | localhost Web 启动脚本 | ✅ |
-| `tests/` | 自动化测试 | ✅ 88 passed |
+| `tests/` | 自动化测试 | ✅ 94 passed |
 | `data/README.md` | 数据治理与隐私规则、当前真实 CTSpine1K 子集说明 | ✅ |
 | `data/datasets.json` | 公开数据集来源/版本/许可/本地状态；已登记 10 例 CTSpine1K 工程子集 | ✅ |
 | `data/splits/ctspine1k_msd_t10_engineering_smoke.json` | 1/1/1 真实数据工程 smoke split，明确 `formal_experiment=false` | ✅ 非正式实验 |
@@ -678,20 +676,20 @@ CTSpine1K Hugging Face 在早期也出现超时和并行下载失败；但改为
 - [x] Marching Cubes baseline + PLY/JSON 导出；真实 `liver_0` label 已验证；
 - [x] SDF physical-surface engineering baseline：真实 `liver_0` 0.3/0.4/0.5/0.8 mm sweep；0.4 mm 当前默认候选，0.8 mm 因改变连通域被拒绝；
 - [x] 已完成 10 例原始 label→1 mm label 的重采样/各向异性 physical-surface 工程误差评估；
-- [ ] 曲率/关键边缘保护；
+- [x] 曲率/关键边缘保护候选：相邻顶点法向变化加权 vertex-clustering；真实 `liver_0` 真值网格工程验证显示高特征区域误差下降，仍待 prediction 验证；
 - [x] vertex-clustering mesh 简化；真实 `liver_0` 1.5 mm 档约减 60% 顶点/面，保留全分辨率基准；
 - [x] MPR 三视图（axial/coronal/sagittal + 切片位置/窗宽窗位）；
 - [x] WebGL2 真值 label 3D 渲染与全分辨率/1.5/2.0 mm 选择；
 - [x] 椎体类别显示：`1–25 → C1–L6` 工程 schema，不改原标签值；
 - [x] 物理 XYZ 距离/三点夹角计算 API；
-- [x] 10 例人工 QC reviewer + 交互 MPR/真值 overlay 接口；
+- [x] 10 例人工 QC reviewer + 交互 MPR/真值 overlay 接口；病例列表支持选择后自动收起、随时展开、自动进入主审核区，上一例/下一例保持审核区，宽屏/窄窗口均有对应布局；
 - [x] evaluation results-review 页面与 prediction/entropy MPR 接口已准备；当前真实 evaluation=0；
 - [ ] 取得真实 checkpoint 后生成 prediction / uncertainty / prediction mesh 并在 Web 展示正式结果。
 
 ### P4｜论文/中期/软著
 
-- [x] 已建立 40 条结构化文献矩阵；已补 SpineMamba、2025 解剖变异 Transformer、2026 VertebraFormer，后续继续补困难病例/强 baseline；
-- [x] 已建立 38 条英文核心 `paper/references.bib`，并纠正多条易错题录；
+- [x] 已建立 44 条结构化文献矩阵；已补 SpineMamba、2025 解剖变异 Transformer、2026 VertebraFormer、2026 Residual-Encoder nnU-Net、2025 骨折 pipeline、真实金属植入物 deep-MAR 与 2024 低骨密度 fusion/split 直接分割证据；
+- [x] 已建立 42 条英文核心 `paper/references.bib`，并纠正多条易错题录；
 - [ ] 用真实实验更新论文 Results；
 - [ ] 生成主结果表和消融表；
 - [ ] 做失败案例图；
@@ -727,11 +725,11 @@ python -m ruff check src web tests
 当前基准应为：
 
 ```text
-71 passed
+94 passed
 All checks passed!
 ```
 
-附加结构检查：`data/datasets.json`、`configs/label_schemas/ctspine1k_verse.json` 可解析；`paper/references.bib` 当前 35 entries、括号平衡且无重复 key；前端 `app.js / qc_review.js / research_3d.js` 均通过 `node --check`。
+附加结构检查：`data/datasets.json`、`configs/label_schemas/ctspine1k_verse.json`、`configs/task_specs/vertebra_task_template.json` 可解析；`paper/references.bib` 当前 42 entries、括号平衡且无重复 key；前端 `app.js / qc_review.js / research_3d.js / results_review.js` 均通过 `node --check`；当前纳入检查的 PowerShell 脚本语法 parser 通过。
 
 ### 10.3 获取上游（仅当目录不存在）
 
@@ -1090,3 +1088,319 @@ python -m src.modeling.train --config configs\orthopedic_ct_baseline.yaml
 8. 不覆盖第三方仓库本地补丁；
 9. 不把临床数据提交到 Git；
 10. **完成任何实质修改后，最后一个项目文档动作必须是更新本 `PROJECT_STATUS.md`。**
+
+
+### 2026-08-25｜阶段 J：GitHub CI 与协作质量门禁补强
+
+本阶段目标是补齐公开协作仓库缺失的自动化质量门禁，让后续多人提交 Pull Request 时能自动发现基础工程回归，同时不把 CI 误当作正式医学实验验收。
+
+完成：
+
+- 新增 `.github/workflows/ci.yml`，对 `main` 的 push 与 Pull Request 自动触发；
+- Python CI 固定 Python 3.11，并显式安装 PyTorch 2.1.0 CPU 栈与 `env/requirements.txt`，自动执行 `ruff check src web tests` 与 `pytest tests -q`；
+- 新增前端 JavaScript 语法检查，覆盖 `app.js / qc_review.js / research_3d.js / results_review.js`；
+- 新增关键 JSON 可解析性检查，覆盖数据集登记、标签 schema 与 task spec 模板；
+- 新增 PowerShell 语法 parser 检查，覆盖 `env/`、`web/` 与仓库根目录中已跟踪的 `.ps1`；
+- 为 CI 增加最小 `contents: read` 权限、并发取消与 job timeout，降低重复运行和权限过宽风险；
+- 更新 `CONTRIBUTING.md`，明确自动 CI 的覆盖范围以及它不能替代人工 QC、task/split 锁定、GPU readiness 和真实模型实验；
+- 更新 `TASKS.md`，把 GitHub Actions CI 纳入“文档与质量”已完成项；
+- 修正本台账旧检查命令区仍写成 `71 passed / 35 BibTeX / 3 JS` 的历史残留，统一为当前 `88 passed / 38 BibTeX / 4 JS / 3 个关键 JSON / 7 个 PowerShell 脚本`；
+- 本地重新验证：`pytest tests -q → 88 passed`、`ruff check src web tests → All checks passed!`；workflow YAML 可由 PyYAML 正常解析；4 个前端 JS `node --check` 通过；当前 PowerShell 脚本语法 parser 通过。
+
+当前边界：
+
+- GitHub Actions 的“云端首次真实运行”只能在 workflow 推送到 GitHub 后由 Actions runner 触发，因此在首次 CI run 成功前，本阶段只能声明“CI 配置与本地等价检查已完成”，不能声明“云端 CI 已通过”；
+- 正式实验 P0 阻塞仍不变：人工 QC、正式任务锁定、正式 patient-level split、NVIDIA GPU/CUDA 环境；
+- 本次没有生成任何模型性能数字，也没有改动真实医学数据、正式 split 或论文 Results。
+
+
+### 2026-08-25｜阶段 K：人工 QC 病例栏遮挡/折叠交互修复
+
+本阶段直接修复 `/qc-review` 在人工逐例审核时病例侧栏持续占据页面、窄窗口下遮挡/挤压主审核区的问题，不改变人工审核判定规则、CSV 保存逻辑、医学数据或模型结果。
+
+完成：
+
+- `web/frontend/qc_review.html`：为 QC 主布局、病例侧栏和主审核区补充稳定 DOM id；新增“显示病例列表 / 收起病例列表”切换按钮及 ARIA 关联；
+- `web/frontend/qc_review.js`：新增病例栏折叠状态、`setCaseListCollapsed()`、`showCaseList()`、`enterReviewArea()` 与统一 `selectCase()`；点击任意病例后自动收起列表并滚动进入主审核区；“上一例 / 下一例”复用同一选择逻辑，继续保持审核区；重新展开列表时自动回到病例列表位置；
+- `web/frontend/qc_review.css`：折叠后主审核区自动占满可用宽度；为 sticky 顶栏设置审核区滚动留白；窄窗口下病例栏切换按钮固定在右下角，确保长页面审核过程中仍能随时重新展开；保留 980 px / 900 px / 650 px 响应式适配；
+- `tests/test_web_qc_review.py`：新增前端回归测试，验证折叠相关 DOM、切换按钮、`scrollIntoView` 进入审核区逻辑、病例点击统一选择逻辑以及上一例/下一例保持审核区逻辑存在；
+- 未修改人工审核四项规则、`pass` 校验条件、`manual_qc_review.csv` 写入流程、QC 医学数据、标签、模型输出或推理结果。
+
+本地验证：
+
+```text
+node --check web/frontend/qc_review.js
+→ 通过（无语法错误）
+
+.\.venv\Scripts\python.exe -m pytest tests/test_web_qc_review.py -q
+→ 3 passed
+
+.\.venv\Scripts\python.exe -m ruff check web tests/test_web_qc_review.py
+→ All checks passed!
+
+.\.venv\Scripts\python.exe -m pytest tests -q
+→ 89 passed, 153 warnings
+```
+
+其中 153 条 warning 来自现有 MONAI / pkg_resources / Matplotlib / SciPy 等第三方依赖弃用提示，本次没有新增测试失败或功能回归。
+
+当前状态：QC 前端病例栏遮挡问题已完成代码修复并通过定向与全量自动化回归；人工审核数据和正式实验阻塞状态不变。
+
+
+### 2026-08-25｜阶段 L：人工 QC 病例层第二次修复与 Edge 实机验收
+
+阶段 K 的 DOM/折叠逻辑虽然通过自动化测试，但用户实机截图仍显示病例任务层铺满并盖住审核 CT，说明仅验证“折叠代码存在”不足以证明浏览器实际交互可用。本阶段根据实机现象继续定位并完成结构级修复。
+
+根因与修复：
+
+- 根因 1：全站 `styles.css` 中 `.card { grid-column: span 6; }`（窄屏还会变为 span 12）继续作用于 `qc-layout` 内的 `.qc-sidebar/.qc-main`，与 QC 自己的 1～2 列 Grid 冲突，导致特定窗口宽度/缩放比例下病例区域异常跨列铺满并覆盖/挤压审核区域；
+- `web/frontend/qc_review.css` 新增 `.qc-layout > .card { grid-column: auto; }`，并明确病例栏位于第 1 列、审核区位于第 2 列；折叠后审核区 `grid-column: 1 / -1` 独占可用宽度；窄窗口统一回到单列；
+- 病例选择不再只依赖 CSS class：`setCaseListCollapsed()` 同时设置 `caseSidebar.hidden = true`，并配套 `.qc-sidebar[hidden] { display: none !important; }`，确保病例任务层真正退出布局和点击层，不再透明覆盖审核内容；
+- `selectCase()` 调整为先关闭病例层，再加载当前病例并 `scrollIntoView()` 进入审核区；上一例/下一例继续复用 `selectCase()`；
+- “显示病例列表 / 收起病例列表”按钮改为固定悬浮按钮，避免顶部操作区在高缩放/特殊窗口宽度下被挤出可视区；
+- `web/backend/app.py` 的 `/qc-review` 增加 `Cache-Control: no-store, max-age=0`；QC 页面 CSS/JS 使用 `?v=20260825-3` 版本参数，避免 Edge 继续加载旧前端资源；
+- `tests/test_web_qc_review.py` 回归测试同步验证 no-store、版本化静态资源、`hidden` 强制折叠、QC Grid 覆盖规则、病例点击与上一例/下一例统一选择逻辑。
+
+最终自动化验证：
+
+```text
+node --check web/frontend/qc_review.js
+→ 通过
+
+.\.venv\Scripts\python.exe -m pytest tests/test_web_qc_review.py -q
+→ 3 passed
+
+.\.venv\Scripts\python.exe -m ruff check web tests/test_web_qc_review.py
+→ All checks passed!
+
+.\.venv\Scripts\python.exe -m pytest tests -q
+→ 89 passed, 153 warnings
+```
+
+实机 Edge 验收：
+
+- 对 `http://127.0.0.1:8000/qc-review` 执行 `Ctrl+F5` 后确认新版布局生效；
+- 实际聚焦并选择 `ctspine1k-msd-t10-liver_0`，病例列表区域完全消失，只保留可操作的审核 CT 区域；
+- UI Automation 可找到状态已切换为“显示病例列表”的 `caseListToggleBtn`；实际触发该按钮后病例列表成功重新展开；
+- 因此本次已不仅通过结构测试，还完成了当前机器/当前 Edge 的真实点击交互验收。
+
+边界保持不变：未修改人工审核四项规则、`pass` 校验、`manual_qc_review.csv` 保存字段/写入逻辑、任何医学数据、标签值、模型输出或论文结果。
+
+
+### 2026-08-26｜阶段 M：概率校准指标工程链补全
+
+本阶段在不依赖 NVIDIA GPU、正式 checkpoint 或人工 QC 签字的前提下，补齐此前任务表中尚未实现的 segmentation calibration 工程链，使后续真实 baseline/消融能够直接输出概率可信度指标；本阶段只完成代码与合成/工程测试，不产生任何论文模型成绩。
+
+完成：
+
+- `src/modeling/uncertainty.py` 新增 `SegmentationCalibrationMetrics` 与 `segmentation_calibration_metrics()`；
+- 支持 binary/multiclass logits，统一报告 Expected Calibration Error（ECE）、Maximum Calibration Error（MCE）、multiclass Brier score、negative log-likelihood（NLL）、mean confidence、体素 accuracy 与 confidence gap；
+- 对大体积采用固定随机种子的体素下采样，记录 total/sample voxel 与 sampling fraction，避免全量概率复制造成额外内存压力，并保证不同实验在固定参数下可复现比较；
+- 增加类别范围、shape、空输入、采样参数等保护，避免无效标签静默进入校准结果；
+- `src/modeling/evaluate.py` 接入 calibration 配置，可将逐病例 calibration 指标写入 `metrics_per_case.csv`，并在 `summary.json` 中聚合；
+- `configs/orthopedic_ct_baseline.yaml` 与 `configs/orthopedic_ct_joint.yaml` 默认启用 calibration，固定 `n_bins=15`、`metric_max_samples=500000`；
+- `tests/test_metrics_uncertainty.py` 新增高置信正确、过度自信错误、固定 seed 采样确定性 3 类校准测试；
+- `tests/test_evaluate_smoke.py` 验证 evaluation CSV/summary 实际包含 calibration 字段；
+- `docs/04_experiment_plan.md`、`docs/05_midterm_materials.md`、`paper/manuscript_zh_v0.1.md` 与 `TASKS.md` 同步加入 calibration 评价设计，并明确真实 calibration 结论仍必须等待 validation/test checkpoint；
+- 保留 2026-08-25 QC reviewer 的所有未提交修改，不覆盖其前端、后端、测试或 CI 工作树内容。
+
+验证：
+
+```text
+./.venv/Scripts/python.exe -m ruff check src/modeling/uncertainty.py src/modeling/evaluate.py tests/test_metrics_uncertainty.py tests/test_evaluate_smoke.py
+→ All checks passed!
+
+./.venv/Scripts/python.exe -m pytest tests/test_metrics_uncertainty.py tests/test_evaluate_smoke.py -q
+→ 13 passed
+
+./.venv/Scripts/python.exe -m ruff check src web tests
+→ All checks passed!
+
+./.venv/Scripts/python.exe -m pytest tests -q
+→ 92 passed, 153 warnings
+
+git diff --check
+→ 通过
+
+baseline/joint YAML
+→ PyYAML 解析通过
+```
+
+153 条 warning 仍来自现有 MONAI / pkg_resources / Matplotlib / SciPy 等第三方依赖弃用提示，本阶段没有新增测试失败。
+
+当前边界与下一步：
+
+- calibration **代码与评估输出链已完成**，但没有真实模型 checkpoint，因此不能报告真实 ECE/Brier/NLL 或作“模型已校准”结论；
+- P0 阻塞保持不变：10 例人工 QC 签字、正式 binary/multiclass semantic 任务锁定、正式 patient-level split、NVIDIA GPU/CUDA 环境；
+- 一旦 baseline checkpoint 产生，`evaluate.py` 将直接输出区域/表面/结构、uncertainty 与 calibration 指标，可用于正式主结果、可信度分析和后续 uncertainty ROI refinement 消融。
+
+
+### 2026-08-26｜阶段 N：曲率/关键边缘保护网格简化候选
+
+本阶段继续处理 P3 中不依赖正式模型 checkpoint 的“三维曲率/关键边缘保护候选”。目标不是宣称已经得到高保真临床重建，而是在现有 vertex-clustering 基线上增加一个默认关闭、可量化、可回退的特征保护工程候选。
+
+完成：
+
+- `src/reconstruction/mesh.py` 新增 `vertex_normal_variation_scores()`：根据三角网格相邻顶点法向夹角差异构造轻量曲率/尖锐特征代理；
+- `simplify_mesh_vertex_clustering()` 新增 `feature_preservation_strength`，默认 `0.0`，因此原有 Web/导出行为保持不变；大于 0 时，在每个空间聚类代表点计算中提高高法向变化顶点的权重，减少聚类平均对尖锐结构的过度平滑；
+- `src/reconstruction/export_mesh.py` 增加 `--feature-preservation-strength`，JSON summary 会记录简化方法和强度，便于实验追踪；
+- `tests/test_reconstruction_mesh.py` 增加特征分数有限性及“高特征顶点近邻误差不劣于普通聚类”的回归测试；
+- `tests/test_export_mesh.py` 验证特征保护候选的 CLI/summary 追踪字段；
+- `TASKS.md` 将“曲率/关键边缘保护候选”标记为工程代码已完成、待 prediction surface 验证；
+- `docs/05_midterm_materials.md` 与论文 Methods 同步记录该候选，但明确不得把真值网格工程对照写成模型性能。
+
+真实 `liver_0` 真值 label 工程对照（2.0 mm vertex clustering）：
+
+```text
+full vertices                         131,983
+baseline simplified vertices          30,260
+feature-weighted simplified vertices  30,260
+高法向变化区域顶点数                  13,311
+
+高特征区域 mean nearest-neighbor
+baseline                             ≈ 0.679 mm
+feature-weighted                     ≈ 0.620 mm
+
+高特征区域 HD95
+baseline                             ≈ 1.068 mm
+feature-weighted                     = 1.000 mm
+
+surface area relative change
+baseline                             ≈ -6.47%
+feature-weighted                     ≈ -5.95%
+```
+
+该对照说明：在顶点数/面拓扑映射规模相同的情况下，法向变化加权候选对当前真值网格的尖锐区域具有正向工程信号；但它仍然只是单个真实 GT 病例上的参数筛选，不能推断到模型 prediction、临床测量或总体数据集。
+
+验证：
+
+```text
+./.venv/Scripts/python.exe -m ruff check src/reconstruction/mesh.py src/reconstruction/export_mesh.py tests/test_reconstruction_mesh.py tests/test_export_mesh.py
+→ All checks passed!
+
+./.venv/Scripts/python.exe -m pytest tests/test_reconstruction_mesh.py tests/test_export_mesh.py -q
+→ 7 passed
+
+./.venv/Scripts/python.exe -m ruff check src web tests
+→ All checks passed!
+
+./.venv/Scripts/python.exe -m pytest tests -q
+→ 94 passed, 153 warnings
+```
+
+当前边界：
+
+- 特征保护默认关闭，不改变既有 1.5/2.0 mm Web 简化结果；
+- 尚无真实 prediction surface，因此不能完成 prediction mesh vs GT、prediction SDF surface 或正式高保真重建消融；
+- 下一阶段 P3 仍需等待正式 checkpoint，再比较普通 vertex-clustering、feature-weighted clustering、SDF surface 与全分辨率 prediction mesh 的 HD95/ASSD、拓扑和计算成本。
+
+
+### 2026-08-26｜阶段 O：现代强 baseline 与困难病例文献证据补强
+
+本阶段补齐此前文献任务中最影响正式实验设计的三个缺口：现代椎体 CT 强 CNN baseline、真实骨折/断裂困难病例、真实腰椎金属植入物/金属伪影。所有新增题录均优先依据正式出版页面、PubMed/机构出版记录与 DOI 核验，不以二手博客作为题录来源。
+
+新增核验：
+
+1. **Hofmann et al., 2026, European Journal of Radiology 204:113118**，DOI `10.1016/j.ejrad.2026.113118`：公开 1,460 例 CT 的胸/腰椎体部标签；两套 residual-encoder nnU-Net 在 1,216 例上训练、244 例测试，并另用 300 例肿瘤 CT 做 L3 外部定位验证。该工作将 Residual-Encoder nnU-Net 明确提升为本项目正式论文必须认真考虑的强 CNN baseline，而不能只和传统 3D U-Net 比较。
+2. **Glessgen et al., 2025, Clinical Radiology 83:106827**，DOI `10.1016/j.crad.2025.106827`：452 例胸腰椎 CT 的骨折报告 pipeline，最终椎体 segmentation 使用 nnU-Net，独立测试中正确分割 330/339 个椎体。该工作直接支撑“骨折/真实断裂病例必须单独评价”，尤其提醒 topology loss 不能把真实骨折断端机械地当作 false break 修复。
+3. **Ye et al., 2025, Clinical Radiology 90:107076**，DOI `10.1016/j.crad.2025.107076`：93 例真实腰椎植入物患者的多能 CT deep-MAR 研究。该工作补足真实金属植入物困难成像证据，支持本项目继续坚持“先有真实 metal-artifact 病例校验，再决定是否启用人工伪影模拟/MAR 前处理”。
+
+同步修改：
+
+- `docs/08_literature_matrix.md`：40→43 条，新增 S12–S14，并更新强 baseline/困难病例结论；
+- `paper/references.bib`：38→41 条英文核心 BibTeX，新增 `hofmann2026_vertebral_bodies`、`glessgen2025_vertebral_fracture`、`ye2025_lumbar_metal_artifact`；
+- `docs/02_literature_survey.md`：新增 3.8–3.10 三个专题小节，数据集建议顺延至 3.11；金属伪影文献任务从待补改为已补，低骨密度/骨质疏松直接文献仍保留待办；
+- `paper/manuscript_zh_v0.1.md`：Related Work 增加 Residual-Encoder nnU-Net、骨折 pipeline 和真实金属植入物证据，并将首版参考文献列表同步；
+- `README.md`、`TASKS.md`、`docs/05_midterm_materials.md`：统一更新为 43 条矩阵 / 41 条英文 BibTeX。
+
+结构验证：
+
+```text
+paper/references.bib
+entries        = 41
+unique_keys    = 41
+duplicate_keys = []
+brace_balance  = 0
+
+git diff --check
+→ 通过
+```
+
+边界与下一步：
+
+- 新增论文中的性能数字只用于理解文献和选择 baseline，不是本项目自身实验结果；
+- 当前文献缺口进一步收敛到：低骨密度/骨质疏松 CT 分割直接研究、国内 CNKI/万方题录正式复核，以及最终根据 GPU/任务定义筛选实际可跑的 baseline；
+- 正式模型 Results 仍必须等待人工 QC、task lock、formal split 与 NVIDIA GPU baseline，不能把文献结果或真值网格工程数字替代为本项目模型指标。
+
+
+### 2026-08-26｜阶段 P：低骨密度椎体分割困难病例直接证据补齐
+
+在阶段 O 已补现代强 baseline、骨折和真实金属植入物后，本阶段继续检索“低骨密度/骨质疏松是否会直接造成椎体 segmentation 失败”的证据，避免只凭经验把 low-density 写入困难病例设计。
+
+新增核验：
+
+- **Xiong et al., 2024, Tomography 10(5):738–760**，DOI `10.3390/tomography10050057`，题目 *Lumbar and Thoracic Vertebrae Segmentation in CT Scans Using a 3D Multi-Object Localization and Segmentation CNN*；
+- 该研究采用 3D multi-object localization + segmentation，对放疗 CT 与 VerSe2020 进行腰/胸椎分割，并在失败案例分析中明确指出：当骨密度较低时，相邻椎体可能发生错误融合，一个椎体也可能被错误分裂为多个部分；
+- 该现象与本项目已经实现的 `false_merge_count`、`false_break_count`、component count/error 直接对应，因此 low-density subset 不再只是经验性假设，而有直接 CT segmentation 文献支持；
+- 该文献只证明“低骨密度是值得单独分析的失败条件”，不代表本项目当前模型已经在低骨密度病例上验证，也不应把其论文性能数字当成本项目结果。
+
+同步修改：
+
+- `docs/08_literature_matrix.md`：43→44 条，新增 S15；
+- `paper/references.bib`：41→42 条，新增 `xiong2024_low_density_vertebrae`；
+- `docs/02_literature_survey.md`：新增 3.11 低骨密度专题，原数据集建议顺延到 3.12，并把“补低骨密度直接分割文献”改为已完成；
+- `paper/manuscript_zh_v0.1.md`：Related Work 明确 low-density fusion/split 失败与结构指标的关系；
+- `README.md`、`TASKS.md`、`docs/05_midterm_materials.md`：统一更新为 **44 条结构化矩阵 / 42 条英文核心 BibTeX**。
+
+当前文献侧剩余工作主要是国内 CNKI/万方题录的最终数据库级复核、正式投稿格式统一，以及在首个任务/split/GPU 资源确定后从已有强 baseline 中选择真正可运行的对照，不再以机械增加文献数量为目标。
+
+
+### 2026-08-26｜阶段 Q：人工 QC 解锁 + 笔记本 CPU binary 真实训练跑通
+
+本阶段根据项目成员最新确认，重新核对真实人工 QC 状态，并将“必须 NVIDIA GPU”从方法学硬限制调整为可选效率升级项；随后直接在当前笔记本 CPU 上完成真实 CTSpine1K binary semantic 工程训练 pilot。
+
+完成：
+
+- 复核 `data/processed_ctspine1k_real/manual_qc_review.csv`：10/10 病例 `orientation_ok / spacing_ok / label_alignment_ok / bone_window_ok = yes`，10/10 `review_status=pass`，reviewer 均已填写，因此人工 QC P0 正式解除；
+- 实测当前电脑：AMD Ryzen 7 8745H，8 核 16 线程，约 19.8 GB RAM；PyTorch 仍为 `2.1.0+cpu`；
+- 真实 `36³` CT-only patch 在完整 SegFormer3D baseline 上执行 forward + backward + optimizer step 成功，整次进程约 12.43 s；
+- 新建 `data/splits/ctspine1k_msd_t10_cpu_binary_engineering.json`：仅使用 9 个官方 `trainset`，固定 7 train / 2 validation；`liver_169 test_private` 完全不进入训练或调参；
+- 新建 `configs/orthopedic_ct_cpu_binary_engineering.yaml`：CT-only、binary semantic、36³ ROI、batch size 1、CPU、工程 patch-validation；该配置明确 `formal_experiment=false`，不得把 pilot 指标写入论文 Results；
+- 工程 preflight 实测 `ready=true`：checked=9、train=7、validation=2、test=0、pipeline 0.3.0=9、0 error / 0 warning；
+- 第一次真正进入 `train.py` 时发现 PyTorch 2.1 兼容问题并修复：`torch.amp.GradScaler` 不存在，改为兼容的 `torch.cuda.amp.GradScaler(enabled=...)`；CPU 非 AMP 路径改用 `nullcontext()`，避免 CPU float16 autocast 报错；
+- `train.py` 新增工程 `validation.patch_mode`：笔记本训练时验证集取固定大小前景 patch，避免每个 epoch 对 300–600 层整卷 CT 运行高成本 sliding-window；正式论文验证/测试仍必须使用 full-volume evaluation；
+- `train.py` 新增 `--allow-cpu`，`formal_readiness.py` 同步新增 `--allow-cpu`；无 CUDA 不再是方法学绝对 blocker，但 CPU 模式不会放宽 task/split/QC/config binding 等其它 formal 保护；
+- 1-epoch CPU 真实 run：约 53.2 s，`train_loss=5.5221`，engineering patch `val_dice=0.1847`；
+- 3-epoch CPU pilot：总耗时约 139.9 s，train loss `5.5221 → 4.7494 → 3.6347`，engineering patch val Dice `0.1847 → 0.1518 → 0.2480`；checkpoint/run 已落在 `experiments/20260826_115411_cpu_binary_engineering_ct_only`。这些数字只证明 CPU 工程训练能够学习并收敛起步，不属于论文正式性能；
+- 新增 CPU 非 AMP autocast、disabled GradScaler 与 `allow_cpu` readiness 回归测试；
+- 最终验证：`ruff check src tests → All checks passed!`；定向 6 passed；全项目 `pytest tests -q → 97 passed, 153 warnings`。
+
+当前任务类型解释与建议：
+
+- `binary_semantic`：只区分“椎骨前景 vs 背景”，所有 C/T/L 椎体标签合并为一个前景类别；适合当前样本量较小、首篇先验证骨结构分割/边界/三维重建的路线；
+- `multiclass_semantic`：同时区分每节椎体类别，例如 T12、L1、L2 等；信息更丰富，但类别数多、不同 CT 覆盖范围不同、训练难度和数据需求明显更高；
+- 当前工程 pilot 选择 binary semantic 仅作为低风险 CPU baseline，不等于替项目组锁定正式 task spec。正式任务仍需最终确认后再把 `task_locked=true` 并生成 formal split/config。
+
+当前真正剩余的 P0 已从“人工 QC + GPU + task + split”收敛为：**正式 task 类型锁定 + 正式 patient-level split**。GPU 仅在后续希望大幅缩短 full-volume 训练/评估耗时时再考虑。
+
+
+### 2026-08-26｜阶段 Q：锁定 binary semantic 任务与 CPU formal-pilot split
+
+本阶段根据项目负责人明确选择，将首个椎体分割任务正式锁定为 `binary_semantic`，并把已完成的 10/10 人工 QC、当前笔记本 CPU 训练能力和 10 例 CTSpine1K 数据整合成一条可通过正式保护检查的流程 pilot。当前 10 例样本量仍不足以代表最终论文主实验规模，因此本阶段只声明“正式流程已锁定并可运行”，不把后续 pilot 指标直接等同于最终论文结论。
+
+完成：
+
+- 新建锁定任务规格 `configs/task_specs/vertebra_binary_ctspine1k_msd_t10_v1.json`：`task_id=vertebra_binary_ctspine1k_msd_t10_v1`、`task_type=binary_semantic`、`task_locked=true`、`num_classes=2`，CTSpine1K/VerSe 原始 `1..25` 椎体标签在训练时统一视为前景；
+- 保留 `configs/task_specs/vertebra_task_template.json` 作为未锁定模板，不覆盖模板语义；
+- 新建固定 patient-level split `data/splits/ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，`formal_experiment=true`；
+- 官方 `test_private` 病例 `ctspine1k-msd-t10-liver_169` 只进入 test，严格不参与训练与调参；
+- 新建 `configs/orthopedic_ct_cpu_binary_formal_pilot_v1.yaml`，绑定 locked task spec 的 SHA-256 指纹，并保留当前 Ryzen 7 8745H CPU 可运行的 36³ patch 配置；
+- `src.modeling.task_lock` 实测：`ready=true`、0 error / 0 warning；
+- `src.modeling.formal_readiness --allow-cpu` 实测：task ready、formal preflight ready、7/2/1 split、10 例 pipeline 0.3.0、10/10 人工 QC 均通过，最终 `ready=true`、`blocker_count=0`；GPU report 仍如实显示 CPU-only，但在负责人明确允许 CPU 时不再构成 blocker；
+- 全项目回归：`pytest tests -q → 97 passed, 153 warnings`；`ruff check src web tests → All checks passed!`；`git diff --check` 通过。
+
+当前边界：
+
+- 当前 10 例是正式流程 pilot，不足以支撑最终论文主实验统计强度；后续仍应扩大 CTSpine1K/同任务数据规模；
+- 训练期间可使用 patch validation 进行 CPU 低成本模型选择，但最终可写入论文的 test 结果必须通过独立 full-volume evaluation 生成 Dice/HD95/ASSD/结构/uncertainty/calibration 等指标；
+- 下一步进入 CT-only binary baseline 的更长训练，并在每个实质任务完成后立即同步 GitHub。

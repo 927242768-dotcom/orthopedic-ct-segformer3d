@@ -5,6 +5,7 @@ from src.modeling.metrics import compute_binary_metrics, compute_structural_metr
 from src.modeling.uncertainty import (
     UncertaintyROIConfig,
     predictive_entropy,
+    segmentation_calibration_metrics,
     select_uncertain_voxels,
     uncertainty_error_metrics,
     uncertainty_error_overlap,
@@ -117,6 +118,75 @@ def test_uncertainty_error_metrics_sampling_is_deterministic() -> None:
     assert first.to_dict() == second.to_dict()
     assert first.sampled_voxels == 1000
     assert first.total_voxels == target.size
+
+
+def test_calibration_metrics_reward_confident_correct_predictions() -> None:
+    target = torch.tensor([[[[0, 1, 0, 1]]]], dtype=torch.long)
+    logits = torch.tensor(
+        [
+            [
+                [[[10.0, -10.0, 10.0, -10.0]]],
+                [[[-10.0, 10.0, -10.0, 10.0]]],
+            ]
+        ],
+        dtype=torch.float32,
+    )
+
+    metrics = segmentation_calibration_metrics(logits, target, n_bins=10)
+
+    assert metrics.accuracy == 1.0
+    assert metrics.mean_confidence > 0.999
+    assert metrics.expected_calibration_error < 0.001
+    assert metrics.maximum_calibration_error < 0.001
+    assert metrics.brier_score < 1e-6
+    assert metrics.negative_log_likelihood < 0.001
+    assert abs(metrics.confidence_gap) < 0.001
+
+
+def test_calibration_metrics_penalize_overconfident_errors() -> None:
+    target = torch.zeros((1, 1, 1, 4), dtype=torch.long)
+    logits = torch.tensor(
+        [
+            [
+                [[[-10.0, -10.0, -10.0, -10.0]]],
+                [[[10.0, 10.0, 10.0, 10.0]]],
+            ]
+        ],
+        dtype=torch.float32,
+    )
+
+    metrics = segmentation_calibration_metrics(logits, target, n_bins=10)
+
+    assert metrics.accuracy == 0.0
+    assert metrics.mean_confidence > 0.999
+    assert metrics.expected_calibration_error > 0.999
+    assert metrics.maximum_calibration_error > 0.999
+    assert metrics.brier_score > 1.99
+    assert metrics.negative_log_likelihood > 10.0
+    assert metrics.confidence_gap > 0.999
+
+
+def test_calibration_metrics_sampling_is_deterministic() -> None:
+    generator = torch.Generator().manual_seed(7)
+    logits = torch.randn((1, 3, 12, 12, 12), generator=generator)
+    target = torch.randint(0, 3, (1, 12, 12, 12), generator=generator)
+
+    first = segmentation_calibration_metrics(
+        logits,
+        target,
+        max_samples=400,
+        seed=123,
+    )
+    second = segmentation_calibration_metrics(
+        logits,
+        target,
+        max_samples=400,
+        seed=123,
+    )
+
+    assert first.to_dict() == second.to_dict()
+    assert first.sampled_voxels == 400
+    assert first.total_voxels == 12**3
 
 
 def test_uncertainty_roi_and_error_overlap_are_well_formed() -> None:

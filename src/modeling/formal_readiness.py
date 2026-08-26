@@ -115,6 +115,7 @@ def combine_readiness_reports(
     preflight_report: PreflightReport,
     *,
     config_binding_blockers: list[FormalReadinessBlocker] | None = None,
+    require_gpu: bool = True,
 ) -> list[FormalReadinessBlocker]:
     """把三份报告中的正式 blocker 归一化，方便 CI/脚本统一消费。"""
     blockers: list[FormalReadinessBlocker] = []
@@ -128,7 +129,7 @@ def combine_readiness_reports(
                 )
             )
 
-    if not gpu_report.ready:
+    if require_gpu and not gpu_report.ready:
         blockers.append(
             FormalReadinessBlocker(
                 category="gpu",
@@ -159,6 +160,7 @@ def run_formal_readiness(
     minimum_memory_gb: float = 8.0,
     processed_root_override: str | Path | None = None,
     split_file_override: str | Path | None = None,
+    allow_cpu: bool = False,
 ) -> FormalReadinessReport:
     if minimum_memory_gb <= 0:
         raise ValueError("minimum_memory_gb 必须 > 0")
@@ -180,6 +182,7 @@ def run_formal_readiness(
         gpu_report,
         preflight_report,
         config_binding_blockers=binding_blockers,
+        require_gpu=not allow_cpu,
     )
 
     return FormalReadinessReport(
@@ -215,6 +218,11 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--minimum-memory-gb", type=float, default=8.0)
     parser.add_argument("--processed-root", type=Path, default=None)
     parser.add_argument("--split-file", type=Path, default=None)
+    parser.add_argument(
+        "--allow-cpu",
+        action="store_true",
+        help="允许正式 readiness 不把无 CUDA 作为 blocker；CPU 训练仍需自行承担更长耗时",
+    )
     parser.add_argument("--output", type=Path, default=None)
     return parser
 
@@ -232,6 +240,7 @@ def main() -> None:
         minimum_memory_gb=args.minimum_memory_gb,
         processed_root_override=args.processed_root,
         split_file_override=args.split_file,
+        allow_cpu=args.allow_cpu,
     )
     text = json.dumps(report.to_dict(), ensure_ascii=False, indent=2)
     print(text)

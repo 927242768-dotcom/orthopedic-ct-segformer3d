@@ -52,7 +52,7 @@ D:\国创项目
 │  ├─ 05_midterm_materials.md   # 中期研究材料持续汇总
 │  ├─ 06_public_dataset_onboarding.md # 公开数据接入与 baseline 手册
 │  ├─ 07_real_data_validation_20260816.md # CTSpine1K 10 例真实工程验证记录
-│  ├─ 08_literature_matrix.md   # 40 条结构化文献矩阵
+│  ├─ 08_literature_matrix.md   # 44 条结构化文献矩阵
 │  └─ 09_public_repository_manifest.md # GitHub 公开内容/排除清单
 ├─ configs/                     # baseline / joint-loss 实验配置与标签 schema
 ├─ env/
@@ -73,7 +73,7 @@ D:\国创项目
 │  └─ frontend/
 ├─ paper/
 │  ├─ outline.md
-│  ├─ references.bib            # 38 条已核验英文核心 BibTeX
+│  ├─ references.bib            # 42 条已核验英文核心 BibTeX
 │  └─ manuscript_zh_v0.1.md     # 中文论文技术初稿，结果区保持 TBD
 ├─ third_party/
 │  └─ SegFormer3D/              # 官方上游仓库，保留 Git/许可证/本地兼容补丁
@@ -100,7 +100,7 @@ powershell -ExecutionPolicy Bypass -File .\env\setup_env.ps1
 
 当前处于：
 
-**40 条结构化文献矩阵 + 38 条英文核心 BibTeX 已建立 → 项目内 CPU 开发环境可运行 → DICOM + NIfTI 数据入口/联合损失/训练评估/formal preflight 已实现 → task lock + GPU checker + formal readiness 可阻止未锁定任务或不合格环境误启动正式实验 → CTSpine1K 10 例真实 CT+label 已按 pipeline 0.3.0 完成 1 mm 标准化 → 10/10 自动数据审计通过 → 真实双通道联合损失单 patch forward/backward 已通过 → Web 已支持人工 QC、交互式 MPR+label overlay、真值 3D/SDF 表面、物理距离/角度以及未来正式 evaluate 输出的 results-review 页面 → 真实各向异性重采样与 SDF/mesh 几何误差已有工程证据 → 当前仍等待人工 QC 签字、正式任务/split 确认与 NVIDIA GPU baseline 训练**
+**44 条结构化文献矩阵 + 42 条英文核心 BibTeX 已建立（已覆盖 2026 Residual-Encoder nnU-Net 强基线、2025 骨折 pipeline、真实腰椎金属植入物以及低骨密度椎体融合/分裂困难病例）→ 项目内 CPU 开发环境可运行 → DICOM + NIfTI 数据入口/联合损失/训练评估/formal preflight 已实现 → task lock + GPU checker + formal readiness 可阻止未锁定任务或不合格环境误启动正式实验 → CTSpine1K 10 例真实 CT+label 已按 pipeline 0.3.0 完成 1 mm 标准化 → 10/10 自动数据审计通过 → 真实双通道联合损失单 patch forward/backward 已通过 → evaluation 已支持区域/表面/结构、uncertainty 与 calibration 指标 → Web 已支持人工 QC、交互式 MPR+label overlay、真值 3D/SDF 表面、物理距离/角度以及未来正式 evaluate 输出的 results-review 页面 → 真实各向异性重采样、SDF/mesh 与法向变化特征保护简化已有工程证据 → 当前仍等待人工 QC 签字、正式任务/split 确认与 NVIDIA GPU baseline 训练**
 
 模型训练指标尚未产生。任何 DSC、HD95、ASSD 等结果都必须由真实实验生成并进入实验记录后才能写入论文。
 

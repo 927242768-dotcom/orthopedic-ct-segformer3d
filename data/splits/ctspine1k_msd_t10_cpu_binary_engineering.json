@@ -1,0 +1,23 @@
+{
+  "_meta": {
+    "purpose": "cpu_binary_engineering_training",
+    "formal_experiment": false,
+    "dataset": "CTSpine1K/MSD-T10",
+    "created": "2026-08-26",
+    "note": "仅用于当前笔记本 CPU 上的 binary semantic 工程训练。9 个官方 trainset 病例按固定 patient-level 7/2 划分；官方 test_private liver_169 完全不进入训练/验证。任何指标不得作为论文正式 Results。"
+  },
+  "train": [
+    "ctspine1k-msd-t10-liver_0",
+    "ctspine1k-msd-t10-liver_1",
+    "ctspine1k-msd-t10-liver_2",
+    "ctspine1k-msd-t10-liver_3",
+    "ctspine1k-msd-t10-liver_4",
+    "ctspine1k-msd-t10-liver_5",
+    "ctspine1k-msd-t10-liver_6"
+  ],
+  "validation": [
+    "ctspine1k-msd-t10-liver_7",
+    "ctspine1k-msd-t10-liver_8"
+  ],
+  "test": []
+}

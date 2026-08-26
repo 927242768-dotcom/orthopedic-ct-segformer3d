@@ -15,7 +15,7 @@
 5. 拓扑保持；
 6. 困难样本、不确定性与三维重建。
 
-当前已从“首批必读集合”扩展到 **40 条结构化文献矩阵**，详见 `docs/08_literature_matrix.md`；其中 **38 条英文核心题录**已同步为机器可用 `paper/references.bib`。2025–2026 年脊柱直接工作已补入 SpineMamba、解剖变异感知 Transformer 与 VertebraFormer；后续重点转向金属伪影/低骨密度困难病例、外部泛化和国内 CNKI/万方正式题录。
+当前已从“首批必读集合”扩展到 **44 条结构化文献矩阵**，详见 `docs/08_literature_matrix.md`；其中 **42 条英文核心题录**已同步为机器可用 `paper/references.bib`。2024–2026 年脊柱直接工作已补入 SpineMamba、解剖变异感知 Transformer、VertebraFormer、Residual-Encoder nnU-Net 强基线、椎体骨折 nnU-Net pipeline、真实腰椎金属植入物 deep-MAR，以及直接记录低骨密度椎体融合/分裂失败模式的 3D segmentation 工作；后续重点转向外部泛化和国内 CNKI/万方正式题录。
 
 ---
 
@@ -222,7 +222,59 @@ DOI：`10.1038/s41598-025-16689-9`
 
 DOI：`10.1038/s41746-025-02288-5`
 
-### 3.8 数据集选择建议
+### 3.8 开放椎体体部数据与 Residual-Encoder nnU-Net 强基线（2026）
+
+**Hofmann F O, Auhage L A, Dexl J, et al. Vertebral body segmentation in CT: An open dataset, deep-learning models and comparison to existing models. European Journal of Radiology, 2026, 204:113118.**
+
+与本项目的直接关系：
+
+- 公开 1,460 例 CT 的椎体体部标签，并使用 Residual-Encoder nnU-Net 建立强分割基线；
+- 训练集 1,216 例、测试集 244 例，并进一步在 300 例肿瘤 CT 上验证 L3 定位，说明强 baseline 与外部场景验证已经成为近期椎体研究的重要标准；
+- 对本项目最直接的约束是：正式论文不能只与传统 3D U-Net 比较，应优先加入 nnU-Net/Residual-Encoder nnU-Net 级别强 CNN baseline；
+- 其开放标签与权重可作为后续扩大数据、复核任务定义和外部对照的候选资源，但必须先核对标签语义是否与本项目最终任务一致。
+
+DOI：`10.1016/j.ejrad.2026.113118`
+
+### 3.9 椎体骨折报告 pipeline：nnU-Net 分割 + 分类（2025）
+
+**Glessgen C, Cyriac J, Yang S, et al. A deep learning pipeline for systematic and accurate vertebral fracture reporting in computed tomography. Clinical Radiology, 2025, 83:106827.**
+
+与本项目的直接关系：
+
+- 使用 452 例胸腰椎 CT，最终分割阶段采用 nnU-Net，并在独立测试中正确分割 330/339 个椎体；
+- 该工作把“椎体分割是否成功”与后续骨折分类串成完整 pipeline，说明骨折病例既是下游任务，也是检验分割鲁棒性的高价值困难子集；
+- 对本项目 topology loss 尤其重要：骨折断裂可能是真实解剖状态，不能把所有断裂都当作 false break 强行修复；
+- 正式消融应在有真实骨折标签/病例属性时，单独报告骨折子集的 Dice/HD95/ASSD、false merge/false break，而不是只看总体平均值。
+
+DOI：`10.1016/j.crad.2025.106827`
+
+### 3.10 真实腰椎金属植入物与 deep-MAR（2025）
+
+**Ye K, Pan B, Li J, et al. Deep learning model trained using multi-energy computed tomography (CT) data shows better metal artifact reduction for lumbar CT imaging. Clinical Radiology, 2025, 90:107076.**
+
+与本项目的直接关系：
+
+- 基于 93 例真实腰椎植入物患者的多能 CT 研究金属伪影削减，而不是只依赖人工合成伪影；
+- 直接证明金属内固定是腰椎 CT 中真实存在、可单独建模和评价的困难成像条件；
+- 因此本项目当前“金属伪影模拟只在有真实金属病例可校验时启用”的策略是合理的；
+- 后续若能取得带金属植入物的公开/授权病例，应优先建立真实 metal-artifact subset，再决定是否需要额外的伪影增强或 MAR 前处理。
+
+DOI：`10.1016/j.crad.2025.107076`
+
+### 3.11 低骨密度下的椎体融合/分裂失败模式（2024）
+
+**Xiong X, Graves S A, Gross B A, et al. Lumbar and Thoracic Vertebrae Segmentation in CT Scans Using a 3D Multi-Object Localization and Segmentation CNN. Tomography, 2024, 10(5):738–760.**
+
+与本项目的直接关系：
+
+- 采用三维 multi-object localization + segmentation CNN，在放疗 CT 与 VerSe2020 上评价腰椎/胸椎分割；
+- 作者在失败案例中明确指出：**骨密度较低时，相邻椎体可能被错误融合，一个椎体也可能被错误分裂成多个部分**；
+- 这为本项目此前仅凭工程经验设置的 low-density difficult subset、`false_merge_count`、`false_break_count` 与 component error 提供了直接文献依据；
+- 因此正式实验若病例 metadata/影像条件允许，应按低骨密度/骨质疏松相关病例分层，而不能只报告总体 Dice；同时需要结合 HD95/ASSD 和结构错误，判断低对比边界对几何质量的影响。
+
+DOI：`10.3390/tomography10050057`
+
+### 3.12 数据集选择建议
 
 首篇论文建议优先选择一个“问题定义清楚”的主任务，不要一开始做全身几十类骨骼：
 
@@ -429,7 +481,11 @@ clDice 最初重点面向管状/网络结构。骨骼并非所有部位都满足
 | 12 | SpineMamba | 2025 | 3D Mamba + 脊柱 shape prior，现代结构感知强相关工作 |
 | 13 | Yang et al. vertebrae Transformer | 2025 | VerSe 椎体分割 + 解剖变异识别 + 鲁棒性设计 |
 | 14 | VertebraFormer | 2026 | 结构感知多任务 + patient-level / leave-one-domain-out 泛化设计 |
-| 15 | EDUE | 2024 | 不确定性评估/QC 方法学参考 |
+| 15 | Hofmann et al. vertebral body ResEnc nnU-Net | 2026 | 1,460 CT 开放椎体体部标签 + Residual-Encoder nnU-Net 强 baseline |
+| 16 | Glessgen et al. vertebral fracture pipeline | 2025 | nnU-Net 椎体分割 + 骨折分类；困难/真实断裂病例依据 |
+| 17 | Ye et al. lumbar deep-MAR | 2025 | 真实腰椎金属植入物多能 CT；metal-artifact subset 依据 |
+| 18 | Xiong et al. 3D vertebra segmentation | 2024 | 直接记录低骨密度下 vertebra fusion/split 失败；结构错误指标依据 |
+| 19 | EDUE | 2024 | 不确定性评估/QC 方法学参考 |
 
 ---
 
@@ -442,10 +498,11 @@ clDice 最初重点面向管状/网络结构。骨骼并非所有部位都满足
 - [x] topology-preserving 主线纳入 clDice、persistent-homology、Betti matching 与 TEDS-Net；
 - [x] uncertainty 主线纳入 MC Dropout、Deep Ensemble、Calibration、医学分割 calibration、EDUE、UCTNet；
 - [x] 三维重建主线纳入 Marching Cubes、QEM、DeepSDF、Occupancy Networks；
-- [x] 已形成 40 条结构化文献矩阵，其中 38 条英文核心题录进入 `paper/references.bib`；
-- [x] 已补 2025–2026 骨/椎体 CT 直接工作：SpineMamba、解剖变异感知 Transformer、VertebraFormer；
+- [x] 已形成 44 条结构化文献矩阵，其中 42 条英文核心题录进入 `paper/references.bib`；
+- [x] 已补 2025–2026 骨/椎体 CT 直接工作：SpineMamba、解剖变异感知 Transformer、VertebraFormer、Residual-Encoder nnU-Net 强 baseline、椎体骨折 nnU-Net pipeline；
+- [x] 已补真实腰椎金属植入物 deep-MAR 文献，作为 metal-artifact 困难病例与真实伪影校验依据；
 - [ ] 继续补与 VerSe/CTSpine1K 同任务的现代 ConvNet/状态空间强基线，但不再机械凑数量；
-- [ ] 补金属伪影条件下骨分割、低骨密度/骨质疏松 CT 分割的直接文献；
+- [x] 已补低骨密度 CT 椎体分割直接文献：低骨密度可出现 vertebra fusion/split，支撑 low-density subset 与 false merge/false break 分析；
 - [ ] 补各向异性 CT 超分辨率/形状插值与连续表面重建医学应用；
 - [ ] 国内条目回 CNKI/万方逐条核验作者、卷期、页码和 DOI/基金信息；
 - [ ] 正式投稿前统一 BibTeX 作者名、页码、期刊缩写与引用格式。

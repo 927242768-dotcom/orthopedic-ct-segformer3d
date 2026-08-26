@@ -119,19 +119,56 @@ def _vertex_normals_from_faces(vertices: np.ndarray, faces: np.ndarray) -> np.nd
     return normals.astype(np.float32)
 
 
+def vertex_normal_variation_scores(mesh: SurfaceMesh) -> np.ndarray:
+    """用相邻顶点法向差异构造轻量曲率/尖锐特征代理分数。"""
+    if mesh.vertex_count < 1:
+        return np.empty(0, dtype=np.float32)
+    faces = mesh.faces.astype(np.int64, copy=False)
+    if faces.ndim != 2 or faces.shape[1] != 3 or faces.size == 0:
+        return np.zeros(mesh.vertex_count, dtype=np.float32)
+
+    normals = np.asarray(mesh.normals_xyz, dtype=np.float64)
+    if normals.shape != (mesh.vertex_count, 3) or not np.isfinite(normals).all():
+        normals = _vertex_normals_from_faces(
+            mesh.vertices_xyz_mm.astype(np.float64, copy=False),
+            faces,
+        ).astype(np.float64, copy=False)
+    normal_lengths = np.linalg.norm(normals, axis=1, keepdims=True)
+    normals = normals / np.maximum(normal_lengths, 1e-12)
+
+    edges = np.concatenate(
+        [faces[:, [0, 1]], faces[:, [1, 2]], faces[:, [2, 0]]],
+        axis=0,
+    )
+    edges = np.sort(edges, axis=1)
+    edges = np.unique(edges, axis=0)
+    dots = np.sum(normals[edges[:, 0]] * normals[edges[:, 1]], axis=1)
+    variation = 1.0 - np.clip(dots, -1.0, 1.0)
+
+    scores = np.zeros(mesh.vertex_count, dtype=np.float64)
+    np.maximum.at(scores, edges[:, 0], variation)
+    np.maximum.at(scores, edges[:, 1], variation)
+    return scores.astype(np.float32)
+
+
 def simplify_mesh_vertex_clustering(
     mesh: SurfaceMesh,
     *,
     cluster_size_mm: float,
+    feature_preservation_strength: float = 0.0,
 ) -> SurfaceMesh:
     """按物理空间规则网格做确定性的 vertex-clustering 简化。
 
-    该方法不强制拓扑修复，也不保证保持所有细小骨性突起；它的定位是 Web 轻量预览 baseline。
-    正式高保真重建仍需用原网格/真实 prediction 做误差消融后确定参数。
+    ``feature_preservation_strength>0`` 时，以相邻顶点法向变化作为轻量曲率/关键边缘代理，
+    在每个聚类中提高高特征顶点对代表点位置的权重。该策略只是高保真重建候选，
+    不强制拓扑修复，也不保证保持所有细小骨性突起；正式参数仍需真实 prediction 消融。
     """
     cluster_size = float(cluster_size_mm)
     if not np.isfinite(cluster_size) or cluster_size <= 0:
         raise ValueError("cluster_size_mm 必须为有限正数")
+    feature_strength = float(feature_preservation_strength)
+    if not np.isfinite(feature_strength) or feature_strength < 0:
+        raise ValueError("feature_preservation_strength 必须为有限非负数")
     if mesh.vertex_count < 4 or mesh.face_count < 1:
         raise ValueError("mesh 过小，无法简化")
 
@@ -142,13 +179,25 @@ def simplify_mesh_vertex_clustering(
     cluster_count = int(inverse.max()) + 1
 
     counts = np.bincount(inverse, minlength=cluster_count).astype(np.float64)
+    vertex_weights = np.ones(mesh.vertex_count, dtype=np.float64)
+    if feature_strength > 0:
+        feature_scores = vertex_normal_variation_scores(mesh).astype(np.float64, copy=False)
+        max_score = float(feature_scores.max()) if feature_scores.size else 0.0
+        if max_score > 1e-12:
+            vertex_weights += feature_strength * (feature_scores / max_score)
+    weighted_counts = np.bincount(
+        inverse,
+        weights=vertex_weights,
+        minlength=cluster_count,
+    ).astype(np.float64)
+
     new_vertices = np.zeros((cluster_count, 3), dtype=np.float64)
     for axis in range(3):
         new_vertices[:, axis] = np.bincount(
             inverse,
-            weights=vertices[:, axis],
+            weights=vertices[:, axis] * vertex_weights,
             minlength=cluster_count,
-        ) / np.maximum(counts, 1.0)
+        ) / np.maximum(weighted_counts, 1e-12)
 
     source_values = mesh.values.astype(np.float64, copy=False)
     if source_values.shape[0] == mesh.vertex_count:

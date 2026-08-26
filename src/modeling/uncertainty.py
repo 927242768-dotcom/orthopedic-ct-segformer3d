@@ -40,6 +40,24 @@ class UncertaintyErrorMetrics:
         return asdict(self)
 
 
+@dataclass(frozen=True)
+class SegmentationCalibrationMetrics:
+    total_voxels: int
+    sampled_voxels: int
+    sampling_fraction: float
+    n_bins: int
+    expected_calibration_error: float
+    maximum_calibration_error: float
+    brier_score: float
+    negative_log_likelihood: float
+    mean_confidence: float
+    accuracy: float
+    confidence_gap: float
+
+    def to_dict(self) -> dict[str, float | int]:
+        return asdict(self)
+
+
 def probability_from_logits(logits: torch.Tensor) -> torch.Tensor:
     if logits.ndim != 5:
         raise ValueError("logits 必须为 (B,C,D,H,W)")
@@ -55,6 +73,119 @@ def predictive_entropy(logits: torch.Tensor, eps: float = 1e-8) -> torch.Tensor:
     entropy = -(probs * torch.log(probs.clamp_min(eps))).sum(dim=1, keepdim=True)
     max_entropy = torch.log(torch.tensor(float(probs.shape[1]), device=logits.device, dtype=logits.dtype))
     return entropy / max_entropy.clamp_min(eps)
+
+
+def segmentation_calibration_metrics(
+    logits: torch.Tensor,
+    target: np.ndarray | torch.Tensor,
+    *,
+    n_bins: int = 15,
+    max_samples: int = 500_000,
+    seed: int = 42,
+    eps: float = 1e-8,
+) -> SegmentationCalibrationMetrics:
+    """计算体素级置信度校准指标。
+
+    采用 top-1 confidence 的 ECE/MCE，并同时报告 multiclass Brier score、NLL、
+    平均置信度与体素准确率。对大体积使用固定随机种子的体素采样，避免评估阶段
+    因完整概率张量占用额外大量内存。该函数用于模型校准分析，不等同于分割重叠指标。
+    """
+    if logits.ndim != 5:
+        raise ValueError("logits 必须为 (B,C,D,H,W)")
+    if n_bins <= 0:
+        raise ValueError("n_bins 必须 > 0")
+    if max_samples <= 0:
+        raise ValueError("max_samples 必须 > 0")
+
+    if isinstance(target, torch.Tensor):
+        target_tensor = target.detach()
+    else:
+        target_tensor = torch.as_tensor(np.asarray(target))
+    if target_tensor.ndim == 5 and target_tensor.shape[1] == 1:
+        target_tensor = target_tensor[:, 0]
+    if target_tensor.ndim == 3 and logits.shape[0] == 1:
+        target_tensor = target_tensor.unsqueeze(0)
+    if target_tensor.ndim != 4:
+        raise ValueError("target 必须为 (B,D,H,W) 或可压缩到该形状")
+    if tuple(target_tensor.shape) != (logits.shape[0], *logits.shape[2:]):
+        raise ValueError(
+            "logits/target 空间 shape 必须一致，"
+            f"当前为 {tuple(logits.shape)}/{tuple(target_tensor.shape)}"
+        )
+
+    class_count = 2 if logits.shape[1] == 1 else int(logits.shape[1])
+    target_flat = target_tensor.reshape(-1).long()
+    if target_flat.numel() == 0:
+        raise ValueError("输入为空")
+    target_min = int(target_flat.min().item())
+    target_max = int(target_flat.max().item())
+    if target_min < 0 or target_max >= class_count:
+        raise ValueError(
+            f"target 类别必须位于 [0,{class_count - 1}]，当前范围 {target_min}..{target_max}"
+        )
+
+    total = int(target_flat.numel())
+    sample_count = min(total, int(max_samples))
+    if sample_count < total:
+        rng = np.random.default_rng(int(seed))
+        sample_indices_np = rng.choice(total, size=sample_count, replace=False)
+        sample_indices = torch.as_tensor(sample_indices_np, device=logits.device, dtype=torch.long)
+    else:
+        sample_indices = torch.arange(total, device=logits.device, dtype=torch.long)
+
+    sampled_target = target_flat.to(logits.device)[sample_indices]
+    flat_logits = logits.permute(0, 2, 3, 4, 1).reshape(total, logits.shape[1])
+    sampled_logits = flat_logits[sample_indices]
+    if logits.shape[1] == 1:
+        p1 = torch.sigmoid(sampled_logits[:, 0])
+        probs = torch.stack([1.0 - p1, p1], dim=1)
+    else:
+        probs = torch.softmax(sampled_logits, dim=1)
+
+    confidence, prediction = probs.max(dim=1)
+    correct = prediction.eq(sampled_target)
+    true_probability = probs.gather(1, sampled_target[:, None]).squeeze(1)
+    one_hot = F.one_hot(sampled_target, num_classes=class_count).to(dtype=probs.dtype)
+
+    brier = ((probs - one_hot) ** 2).sum(dim=1).mean()
+    nll = -torch.log(true_probability.clamp_min(eps)).mean()
+    confidence_np = confidence.detach().cpu().numpy().astype(np.float64, copy=False)
+    correct_np = correct.detach().cpu().numpy().astype(np.float64, copy=False)
+
+    edges = np.linspace(0.0, 1.0, n_bins + 1, dtype=np.float64)
+    ece = 0.0
+    mce = 0.0
+    for bin_index in range(n_bins):
+        lower = edges[bin_index]
+        upper = edges[bin_index + 1]
+        if bin_index == 0:
+            in_bin = (confidence_np >= lower) & (confidence_np <= upper)
+        else:
+            in_bin = (confidence_np > lower) & (confidence_np <= upper)
+        bin_count = int(in_bin.sum())
+        if bin_count == 0:
+            continue
+        bin_accuracy = float(correct_np[in_bin].mean())
+        bin_confidence = float(confidence_np[in_bin].mean())
+        gap = abs(bin_accuracy - bin_confidence)
+        ece += gap * (bin_count / sample_count)
+        mce = max(mce, gap)
+
+    mean_confidence = float(confidence_np.mean())
+    accuracy = float(correct_np.mean())
+    return SegmentationCalibrationMetrics(
+        total_voxels=total,
+        sampled_voxels=sample_count,
+        sampling_fraction=float(sample_count / total),
+        n_bins=int(n_bins),
+        expected_calibration_error=float(ece),
+        maximum_calibration_error=float(mce),
+        brier_score=float(brier.item()),
+        negative_log_likelihood=float(nll.item()),
+        mean_confidence=mean_confidence,
+        accuracy=accuracy,
+        confidence_gap=float(mean_confidence - accuracy),
+    )
 
 
 def _binary_dilate(mask: torch.Tensor, iterations: int) -> torch.Tensor:

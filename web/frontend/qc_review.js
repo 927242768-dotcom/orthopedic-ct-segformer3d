@@ -1,6 +1,7 @@
 const qcState = {
   cases: [],
   index: 0,
+  caseListCollapsed: false,
   mprObjectUrl: null,
   mprRequestId: 0,
   mprTimer: null,
@@ -36,6 +37,42 @@ function updateProgress() {
   badge.className = reviewed === qcState.cases.length ? "badge badge-ok" : "badge badge-work";
 }
 
+function enterReviewArea({ smooth = true } = {}) {
+  requestAnimationFrame(() => {
+    q("qcMain").scrollIntoView({
+      behavior: smooth ? "smooth" : "auto",
+      block: "start",
+    });
+  });
+}
+
+function setCaseListCollapsed(collapsed, { enterReview = false, smooth = true } = {}) {
+  const sidebar = q("caseSidebar");
+  qcState.caseListCollapsed = collapsed;
+  q("qcLayout").classList.toggle("case-list-collapsed", collapsed);
+  sidebar.hidden = collapsed;
+  sidebar.classList.toggle("is-collapsed", collapsed);
+  sidebar.setAttribute("aria-hidden", String(collapsed));
+  q("caseListToggleBtn").setAttribute("aria-expanded", String(!collapsed));
+  q("caseListToggleBtn").textContent = collapsed ? "显示病例列表" : "收起病例列表";
+  if (enterReview) enterReviewArea({ smooth });
+}
+
+function showCaseList() {
+  setCaseListCollapsed(false);
+  requestAnimationFrame(() => {
+    q("caseSidebar").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
+function selectCase(index, { smooth = true } = {}) {
+  if (index < 0 || index >= qcState.cases.length) return;
+  qcState.index = index;
+  setCaseListCollapsed(true);
+  loadCurrentCase();
+  enterReviewArea({ smooth });
+}
+
 function renderCaseList() {
   const list = q("caseList");
   list.innerHTML = "";
@@ -48,10 +85,7 @@ function renderCaseList() {
       <span class="case-copy"><strong>${item.case_id}</strong><small>${statusLabel(item.review_status)}</small></span>
       <span class="case-dot"></span>
     `;
-    button.addEventListener("click", () => {
-      qcState.index = index;
-      loadCurrentCase();
-    });
+    button.addEventListener("click", () => selectCase(index));
     list.appendChild(button);
   });
 }
@@ -224,6 +258,13 @@ async function saveReview(event) {
 }
 
 q("reviewForm").addEventListener("submit", saveReview);
+q("caseListToggleBtn").addEventListener("click", () => {
+  if (qcState.caseListCollapsed) {
+    showCaseList();
+  } else {
+    setCaseListCollapsed(true, { enterReview: true });
+  }
+});
 q("mprPlane").addEventListener("change", refreshMpr);
 q("mprOverlay").addEventListener("change", refreshMpr);
 q("mprPosition").addEventListener("input", () => {
@@ -231,16 +272,10 @@ q("mprPosition").addEventListener("input", () => {
   scheduleMprRefresh();
 });
 q("prevBtn").addEventListener("click", () => {
-  if (qcState.index > 0) {
-    qcState.index -= 1;
-    loadCurrentCase();
-  }
+  if (qcState.index > 0) selectCase(qcState.index - 1);
 });
 q("nextBtn").addEventListener("click", () => {
-  if (qcState.index < qcState.cases.length - 1) {
-    qcState.index += 1;
-    loadCurrentCase();
-  }
+  if (qcState.index < qcState.cases.length - 1) selectCase(qcState.index + 1);
 });
 
 document.addEventListener("keydown", (event) => {

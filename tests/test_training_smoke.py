@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 
 from src.modeling.dataset import ProcessedOrthopedicCTDataset
 from src.modeling.segformer3d_adapter import build_orthopedic_segformer3d
-from src.modeling.train import build_criterion, resize_logits_to_target
+from src.modeling.train import _autocast_context, build_criterion, resize_logits_to_target
 
 
 def _tiny_config() -> dict:
@@ -46,6 +46,19 @@ def _write_processed_case(root: Path, case_id: str) -> None:
     affine = np.eye(4, dtype=np.float32)
     nib.save(nib.Nifti1Image(image, affine), str(case_dir / "image_normalized.nii.gz"))
     nib.save(nib.Nifti1Image(label, affine), str(case_dir / "label.nii.gz"))
+
+
+def test_cpu_non_amp_autocast_context_is_noop() -> None:
+    device = torch.device("cpu")
+    x = torch.tensor([1.0, 2.0])
+    with _autocast_context(device, amp_enabled=False):
+        y = x * 2.0
+    assert torch.equal(y, torch.tensor([2.0, 4.0]))
+
+
+def test_disabled_grad_scaler_is_supported_on_torch_21_cpu() -> None:
+    scaler = torch.cuda.amp.GradScaler(enabled=False)
+    assert scaler.is_enabled() is False
 
 
 def test_dataset_model_loss_optimizer_end_to_end_smoke(tmp_path: Path) -> None:

@@ -40,13 +40,15 @@ DICOM/NIfTI
 
 ### 3.2 国内外文献调研与结构化题录
 
-已形成 `docs/08_literature_matrix.md` 的 **40 条结构化文献矩阵**，并建立 `paper/references.bib` 的 **38 条英文核心 BibTeX**。当前覆盖：
+已形成 `docs/08_literature_matrix.md` 的 **44 条结构化文献矩阵**，并建立 `paper/references.bib` 的 **42 条英文核心 BibTeX**。当前覆盖：
 
 - SegFormer / SegFormer3D；
 - UNETR / nnFormer / Swin UNETR；
 - CTSpine1K / VerSe / TotalSegmentator；
 - 2024 年脊柱 Transformer 方法 VerFormer；
 - 2025 SpineMamba、2025 解剖变异感知椎体 Transformer、2026 VertebraFormer 等近期直接脊柱工作；
+- 2026 开放椎体体部数据 + Residual-Encoder nnU-Net 强 baseline；
+- 2025 椎体骨折 nnU-Net pipeline、真实腰椎金属植入物 deep-MAR，以及低骨密度导致椎体 fusion/split 的直接困难病例证据；
 - Boundary Loss；
 - clDice；
 - 2024 年 Betti matching / TEDS-Net 等拓扑方法；
@@ -142,9 +144,10 @@ qc.json
 - uncertainty ROI 与真实错误的 overlap 统计；
 - uncertainty→error AUROC / AUPRC；
 - error/correct 平均 entropy；
-- Top-percent error recall、ROI error rate 与 ROI fraction。
+- Top-percent error recall、ROI error rate 与 ROI fraction；
+- calibration：ECE、MCE、multiclass Brier score、NLL、mean confidence、体素 accuracy 与 confidence gap。
 
-已进一步实现 `UncertaintyRefinementNet3D` 局部残差精修原型和二阶段 ROI-only 训练基线：以影像、coarse 预测和 uncertainty 为输入，只在高不确定 ROI 内修正 logits，coarse 默认冻结，loss 在 ROI 内归一化，ROI 外保持 coarse 结果不变，并记录 refinement 前后 ROI/global error delta。当前尚未在真实 checkpoint 上完成消融，因此不能声称精修已经带来性能提升。
+校准指标已接入独立 checkpoint evaluation，并使用固定分箱/固定随机种子体素采样保证不同实验可复现比较。已进一步实现 `UncertaintyRefinementNet3D` 局部残差精修原型和二阶段 ROI-only 训练基线：以影像、coarse 预测和 uncertainty 为输入，只在高不确定 ROI 内修正 logits，coarse 默认冻结，loss 在 ROI 内归一化，ROI 外保持 coarse 结果不变，并记录 refinement 前后 ROI/global error delta。当前尚未在真实 checkpoint 上完成消融，因此不能声称精修已经带来性能提升。
 
 ### 3.8 训练与评价框架
 
@@ -160,7 +163,7 @@ qc.json
 - checkpoint、scheduler state、固定 split/config、环境版本、`train.log` 与历史日志；
 - Dice / IoU / Precision / Recall / HD95 / ASSD；
 - connected-component count / false merge / false break；
-- 独立 checkpoint evaluation，可输出逐病例 `metrics_per_case.csv`、prediction 和 entropy NIfTI；
+- 独立 checkpoint evaluation，可输出逐病例 `metrics_per_case.csv`、prediction、entropy NIfTI，以及 uncertainty/calibration 指标；
 - 逐病例评价设计；
 - 正式/工程 `preflight`：阻止 engineering split、test_private 泄漏、人工 QC 未通过、标签范围/类别数不匹配或正式训练无 CUDA 时误启动论文实验；
 - `task_lock`：只有组内明确 `task_locked=true` 且 binary/multiclass semantic 定义、类别数、数据与 split 均完整时才允许编译正式 config；当前 instance 任务因训练/评价链尚未实现而明确拒绝；
@@ -198,7 +201,7 @@ GET /           → 200 text/html
 
 ### 3.10 三维重建与重采样几何工程验证
 
-已在真实 `liver_0` 标签上完成 physical-space Marching Cubes：131,983 顶点 / 264,362 面。为适配 Web，又实现 vertex-clustering 简化：1.5 mm 档约减少 60% 顶点/面，顶点近邻 HD95 约 0.707 mm；全分辨率网格仍保留，不被简化版覆盖。
+已在真实 `liver_0` 标签上完成 physical-space Marching Cubes：131,983 顶点 / 264,362 面。为适配 Web，又实现 vertex-clustering 简化：1.5 mm 档约减少 60% 顶点/面，顶点近邻 HD95 约 0.707 mm；全分辨率网格仍保留，不被简化版覆盖。2026-08-26 进一步加入“法向变化加权”的曲率/关键边缘保护候选：在 2.0 mm clustering、保持相同 30,260 个简化顶点的条件下，真实 `liver_0` 高法向变化区域平均最近邻误差由约 0.679 mm 降至 0.620 mm，HD95 由约 1.068 mm 降至 1.000 mm，表面积相对变化由约 -6.47% 改善至 -5.95%。这些结果只用于真值网格工程参数筛选，尚未在 prediction surface 上验证。
 
 进一步实现 physical-mm SDF 平滑表面基线：0.3/0.4/0.5/0.8 mm 参数已在真实 `liver_0` 上做工程 sweep。0.4 mm 保持 2→2 连通域且 Web summary/PLY 均返回 200，作为当前工程默认候选；0.8 mm 导致 2→3 连通域变化，Web 按拓扑保护返回 422 拒绝加载。该 sweep 的表面差异只用于重建参数选择，不属于分割模型性能。
 
@@ -209,7 +212,7 @@ GET /           → 200 text/html
 当前测试：
 
 ```text
-88 passed
+94 passed
 Ruff: All checks passed!
 ```
 
@@ -222,8 +225,8 @@ Ruff: All checks passed!
 - uncertainty entropy/ROI 与局部 refinement；
 - CTSpine1K 真实/合成接入、QC 与处理后数据审计；
 - 数据增强、scheduler、独立 evaluation；
-- physical-space Marching Cubes / PLY、网格简化、重采样几何误差与物理测量；
-- formal/engineering preflight、task lock、GPU/formal readiness、multiclass per-class 评价、uncertainty 定量评价、ROI-only refinement training；
+- physical-space Marching Cubes / PLY、网格简化、法向变化加权特征保护候选、重采样几何误差与物理测量；
+- formal/engineering preflight、task lock、GPU/formal readiness、multiclass per-class 评价、uncertainty 定量评价、calibration 评价、ROI-only refinement training；
 - SimpleITK 中文项目路径兼容层；
 - 椎体标签 schema；
 - Web health/index/MPR/QC reviewer/真实 label 3D/SDF 表面/测量/results-review。
@@ -248,7 +251,7 @@ Ruff: All checks passed!
 
 ## 5. 中期报告“研究进展”可直接使用的表达
 
-截至当前阶段，项目已完成总体技术路线设计、40 条结构化文献矩阵与 38 条英文核心 BibTeX，并搭建隔离实验环境。围绕骨科 CT 已建立 DICOM 序列识别、空间几何检查、HU 裁剪与 case-wise z-score、体素重采样、骨窗增强及质量控制流程。2026-08-16 已实际取得 CTSpine1K `MSD-T10` 10 例真实 CT+label（9 例官方 trainset、1 例 test_private），全部按 pipeline 0.3.0 重采样到 1 mm，自动几何/标签/normalization 审计 10/10 通过；人工审核系统已能逐例查看 contact sheet 与交互式 MPR+真值 overlay，但人工签字仍待项目成员完成。针对 SegFormer3D 与骨科 CT 的差异，项目已完成模型适配、三维 patch 数据加载、区域—边界—拓扑联合损失、困难增强、predictive entropy 定量评价、ROI-only 局部残差精修训练基线、区域/表面/连通结构评价、formal preflight、task lock、GPU/formal readiness、可复现训练日志及独立 checkpoint 评估。真实病例上的 CT+bone-window + joint-loss 单 patch forward/backward/optimizer step 已通过。Web 原型现支持上传、QC/MPR、真值 3D PLY/SDF 表面、1.5/2.0 mm 网格简化、物理距离/角度和未来 evaluation 结果复核；真实 `liver_0` 全前景网格为 131,983 顶点 / 264,362 面，0.4 mm SDF 表面通过连通域保护，0.8 mm 参数被拒绝，并已完成 10 例原始→1 mm 标签的重采样几何误差评估。当前正式任务仍未锁定，本机为 CPU PyTorch 且人工 QC 未签字，formal readiness 正确阻止正式 run，因此尚未产生可用于论文结论的 baseline DSC/HD95/ASSD 或消融数字。下一阶段重点仍是人工 QC 签字、正式任务/split/GPU baseline、真实逐病例评估与联合损失/困难增强/不确定性精修消融。
+截至当前阶段，项目已完成总体技术路线设计、44 条结构化文献矩阵与 42 条英文核心 BibTeX，并搭建隔离实验环境。围绕骨科 CT 已建立 DICOM 序列识别、空间几何检查、HU 裁剪与 case-wise z-score、体素重采样、骨窗增强及质量控制流程。2026-08-16 已实际取得 CTSpine1K `MSD-T10` 10 例真实 CT+label（9 例官方 trainset、1 例 test_private），全部按 pipeline 0.3.0 重采样到 1 mm，自动几何/标签/normalization 审计 10/10 通过；人工审核系统已能逐例查看 contact sheet 与交互式 MPR+真值 overlay，但人工签字仍待项目成员完成。针对 SegFormer3D 与骨科 CT 的差异，项目已完成模型适配、三维 patch 数据加载、区域—边界—拓扑联合损失、困难增强、predictive entropy 定量评价、ECE/MCE/Brier/NLL 等概率校准评价、ROI-only 局部残差精修训练基线、区域/表面/连通结构评价、formal preflight、task lock、GPU/formal readiness、可复现训练日志及独立 checkpoint 评估。真实病例上的 CT+bone-window + joint-loss 单 patch forward/backward/optimizer step 已通过。Web 原型现支持上传、QC/MPR、真值 3D PLY/SDF 表面、1.5/2.0 mm 网格简化、物理距离/角度和未来 evaluation 结果复核；真实 `liver_0` 全前景网格为 131,983 顶点 / 264,362 面，0.4 mm SDF 表面通过连通域保护，0.8 mm 参数被拒绝，并已完成 10 例原始→1 mm 标签的重采样几何误差评估。当前正式任务仍未锁定，本机为 CPU PyTorch 且人工 QC 未签字，formal readiness 正确阻止正式 run，因此尚未产生可用于论文结论的 baseline DSC/HD95/ASSD 或消融数字。下一阶段重点仍是人工 QC 签字、正式任务/split/GPU baseline、真实逐病例评估与联合损失/困难增强/不确定性精修消融。
 
 ---
 
@@ -261,7 +264,7 @@ Ruff: All checks passed!
 3. SegFormer3D backbone 与本项目新增模块边界；
 4. 联合损失公式与为什么需要 HD95/ASSD；
 5. Web 首页/上传/QC 真实截图；
-6. 测试结果 `88 passed`、10 例真实数据自动审计、真实 patch smoke、formal readiness 与真实重采样/SDF/网格工程证据；
+6. 测试结果 `94 passed`、10 例真实数据自动审计、真实 patch smoke、formal readiness 与真实重采样/SDF/网格工程证据；
 7. 数据集对比表；
 8. baseline/消融实验表格模板（数值留空直到真实实验）；
 9. 风险：GPU、临床数据、许可证、拓扑对骨折病例的适用性；

@@ -59,6 +59,14 @@ def test_combine_readiness_reports_collects_all_error_categories() -> None:
     assert "case=case_001" in blockers[2].message
 
 
+def test_combine_readiness_reports_can_explicitly_allow_cpu() -> None:
+    task = _report(ready=True, issues=[])
+    gpu = _report(ready=False, issues=["cuda unavailable"])
+    preflight = _report(ready=True, issues=[])
+
+    assert combine_readiness_reports(task, gpu, preflight, require_gpu=False) == []
+
+
 def test_combine_readiness_reports_returns_empty_when_all_ready() -> None:
     task = _report(ready=True, issues=[])
     gpu = _report(ready=True, issues=[])

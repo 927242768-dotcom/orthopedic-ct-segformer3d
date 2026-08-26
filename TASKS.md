@@ -13,7 +13,7 @@
 | 模块 | 状态 | 说明 |
 |---|---|---|
 | 总体方案 | ✅ 已完成 | 数据→分割→不确定性→三维→Web 技术路线已建立 |
-| 文献调研 | ✅ 主体完成 | 40 条结构化矩阵，38 条英文核心 BibTeX |
+| 文献调研 | ✅ 主体完成 | 44 条结构化矩阵，42 条英文核心 BibTeX |
 | CPU 开发环境 | ✅ 已完成 | Python 3.11.7 + `.venv`，PyTorch 2.1.0 CPU |
 | GPU 正式环境 | 🔴 待完成 | 当前无 CUDA / 无可见 NVIDIA GPU |
 | 公开数据接入 | ✅ 已完成工程子集 | CTSpine1K MSD-T10 真实 10 例 CT+label 已处理 |
@@ -32,7 +32,7 @@
 | Web 科研原型 | ✅ 主体完成 | MPR/QC/3D/results-review 已具备 |
 | 临床脱敏数据 | 🔴 外部阻塞 | 等授权/脱敏/伦理 |
 | 论文 Methods | ✅ 主体完成 | Results 仍保持 TBD |
-| 自动化测试 | ✅ 当前通过 | 88 passed + Ruff clean |
+| 自动化测试 | ✅ 当前通过 | 97 passed + Ruff clean |
 
 ---
 
@@ -59,11 +59,15 @@
 - [x] SpineMamba 2025
 - [x] 2025 椎体 Transformer + 解剖变异工作
 - [x] VertebraFormer 2026
+- [x] Hofmann et al. 2026 开放椎体体部数据 + Residual-Encoder nnU-Net 强 baseline
+- [x] Glessgen et al. 2025 椎体骨折 nnU-Net pipeline
+- [x] Ye et al. 2025 真实腰椎金属植入物 deep-MAR
+- [x] Xiong et al. 2024 低骨密度椎体 fusion/split 直接分割失败证据
 - [x] Boundary / Hausdorff / topology 相关文献
 - [x] uncertainty / calibration 相关文献
 - [x] Marching Cubes / mesh / SDF 相关文献
-- [x] 40 条结构化文献矩阵
-- [x] 38 条英文核心 BibTeX
+- [x] 44 条结构化文献矩阵
+- [x] 42 条英文核心 BibTeX
 
 ### C. 数据接入与预处理
 
@@ -132,6 +136,8 @@
 - [x] 防空类别虚高 macro 策略
 - [x] `metrics_per_case.csv` 输出框架
 - [x] `metrics_per_class.csv` 输出框架
+- [x] calibration 指标：ECE / MCE / Brier score / NLL / mean confidence / confidence gap
+- [x] calibration 指标接入 `metrics_per_case.csv` 与 `summary.json`
 - [x] formal / engineering preflight
 - [x] test_private 泄漏阻止
 - [x] task lock 编译器
@@ -177,11 +183,12 @@
 - [x] 实验设计
 - [x] 中期材料
 - [x] 组会汇报源材料
-- [x] 88 个 pytest 全部通过
+- [x] 97 个 pytest 全部通过
 - [x] Ruff clean
 - [x] 4 个前端 JS 语法检查通过
-- [x] 38 条 BibTeX 结构检查通过
+- [x] 42 条 BibTeX 结构检查通过
 - [x] PowerShell 脚本语法检查通过
+- [x] GitHub Actions CI：PR/push 自动执行 pytest、Ruff、JS、JSON 与 PowerShell 静态检查
 
 ---
 
@@ -191,55 +198,58 @@
 
 建议负责人：数据/QC 负责人
 
-- [ ] 打开 `/qc-review`
-- [ ] 逐例检查 10 个病例的 orientation
-- [ ] 检查 spacing
-- [ ] 检查 label alignment
-- [ ] 检查 bone-window
-- [ ] 填 reviewer
-- [ ] 填 notes（如有）
-- [ ] 将合格病例设为 pass
-- [ ] 完成 `manual_qc_review.csv`
+- [x] 打开 `/qc-review`
+- [x] 逐例检查 10 个病例的 orientation
+- [x] 检查 spacing
+- [x] 检查 label alignment
+- [x] 检查 bone-window
+- [x] 填 reviewer
+- [x] 填 notes（如有）
+- [x] 将合格病例设为 pass
+- [x] 完成 `manual_qc_review.csv`
 
-> 这一步必须由真人完成，不允许 AI 或脚本自动代签。
+> 2026-08-26 已复核 CSV：10/10 orientation/spacing/label alignment/bone-window 均为 `yes`，10/10 `review_status=pass`，reviewer 已填写。人工 QC P0 已解除。
 
 ### P0-2 正式任务锁定
 
 建议负责人：模型负责人 + 项目负责人共同确认
 
-- [ ] 最终选择 `binary_semantic` 或 `multiclass_semantic`
-- [ ] 明确 task_id
-- [ ] 明确 foreground labels
-- [ ] 明确 num_classes
-- [ ] 明确主数据集
-- [ ] 更新 `configs/task_specs/vertebra_task_template.json`
-- [ ] 将 `task_locked=true`
-- [ ] 通过 `src.modeling.task_lock` 编译正式 config
+- [x] 首个任务确定为 `binary_semantic`
+- [x] task_id=`vertebra_binary_ctspine1k_msd_t10_v1`
+- [x] foreground labels=`1..25`，训练时统一映射为前景 1
+- [x] num_classes=2
+- [x] 当前流程 pilot 主数据集=`CTSpine1K/MSD-T10`
+- [x] 新建已锁定规格 `configs/task_specs/vertebra_binary_ctspine1k_msd_t10_v1.json`
+- [x] `task_locked=true`
+- [x] `src.modeling.task_lock` 实测 `ready=true`、0 error/0 warning
+- [x] 固定 CPU formal-pilot config：`configs/orthopedic_ct_cpu_binary_formal_pilot_v1.yaml`
 
-> 当前训练链不支持真正的 instance segmentation，不能用 semantic segmentation 冒充。
+> 模板 `vertebra_task_template.json` 继续保留为未锁定模板；真正实验引用新的 locked spec。当前训练链不支持真正的 instance segmentation，不能用 semantic segmentation 冒充。
 
-### P0-3 正式 patient-level split
+### P0-3 当前 10 例 formal-pilot patient-level split
 
 建议负责人：数据负责人
 
-- [ ] 确定正式主数据集和病例数量
-- [ ] 确定 train / validation / test
-- [ ] patient-level 防泄漏
-- [ ] 保持官方 test_private 不参与训练/调参
-- [ ] 将正式 split 标记 `formal_experiment=true`
-- [ ] 固定唯一 split JSON
+- [x] 当前 pilot 固定 10 例：9 个官方 trainset + 1 个官方 test_private
+- [x] 固定 train / validation / test = 7 / 2 / 1
+- [x] patient-level 防泄漏
+- [x] 官方 test_private `liver_169` 只进入 test，不参与训练/调参
+- [x] split 标记 `formal_experiment=true`
+- [x] 固定 split：`data/splits/ctspine1k_msd_t10_binary_formal_pilot_v1.json`
+- [x] `formal_readiness --allow-cpu` 实测 `ready=true`、`blocker_count=0`
+- [ ] 最终论文主实验仍需扩大病例规模；当前 10 例只能作为正式流程 pilot，不能代表最终论文样本量
 
-### P0-4 GPU 正式环境
+### P0-4 训练算力环境
 
 建议负责人：训练/算力负责人
 
-- [ ] 找到 NVIDIA GPU 机器/服务器
-- [ ] 确认驱动
-- [ ] 安装匹配的 CUDA PyTorch
-- [ ] 确认显存
-- [ ] 运行 `env/check_gpu.ps1`
-- [ ] 运行 `env/check_formal_readiness.ps1`
-- [ ] 最终达到 `ready=true`
+- [x] 当前笔记本 CPU 工程训练已跑通：Ryzen 7 8745H，8C/16T，约 20 GB RAM
+- [x] 真实 36³ patch forward/backward/optimizer step 已验证，约 12.4 s（含进程启动）
+- [x] CPU binary engineering 3-epoch pilot 已跑通
+- [x] `train.py` 与 `formal_readiness.py` 增加显式 `--allow-cpu`，CPU 不再是绝对 blocker
+- [ ] 若后续希望显著缩短完整 3D full-volume 训练/评估时间，再迁移 NVIDIA GPU/服务器
+
+> GPU 现在是效率升级项，不再是方法学硬要求；CPU 正式训练仍必须通过 task/split/QC 等其它 formal 检查。
 
 ---
 
@@ -296,7 +306,8 @@
 - [ ] uncertainty→error AUROC/AUPRC
 - [ ] Top-X% error recall
 - [ ] ROI threshold / percentile validation
-- [ ] calibration 分析
+- [x] calibration 指标工程实现与评估输出接入
+- [ ] 用真实 validation/test checkpoint 完成 calibration 分析与 reliability 解释
 - [ ] coarse baseline
 - [ ] full-volume second pass 对照
 - [ ] uncertainty ROI refinement
@@ -315,7 +326,7 @@
 - [ ] prediction surface HD95 / ASSD
 - [ ] SDF prediction surface 验证
 - [ ] 简化误差评估
-- [ ] 曲率/关键边缘保护候选
+- [x] 曲率/关键边缘保护候选：法向变化加权 vertex-clustering（真值网格工程验证，待 prediction 验证）
 - [ ] Web 接正式 inference
 - [ ] prediction overlay
 - [ ] entropy overlay

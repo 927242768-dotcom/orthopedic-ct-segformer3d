@@ -93,6 +93,16 @@ node --check web/frontend/research_3d.js
 node --check web/frontend/results_review.js
 ```
 
+仓库同时配置 `.github/workflows/ci.yml`。对 `main` 的 Pull Request 和 push 会自动执行：
+
+- Python 3.11 + PyTorch 2.1.0 CPU 环境下的 Ruff；
+- 全量 `pytest tests -q`；
+- 4 个前端 JavaScript 文件的 `node --check`；
+- 关键 JSON 可解析性检查；
+- 已跟踪 PowerShell 脚本的语法解析检查。
+
+CI 用于阻止明显工程回归，但不能替代人工 QC、正式 task/split 锁定、GPU readiness 或真实模型实验验收。
+
 ## 5. 正式实验规则
 
 正式论文实验禁止绕过以下条件：

@@ -4,8 +4,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>真实 CT 人工 QC 审核</title>
-  <link rel="stylesheet" href="/static/styles.css" />
-  <link rel="stylesheet" href="/static/qc_review.css" />
+  <link rel="stylesheet" href="/static/styles.css?v=20260825-3" />
+  <link rel="stylesheet" href="/static/qc_review.css?v=20260825-3" />
 </head>
 <body>
   <header class="topbar qc-topbar">
@@ -15,13 +15,20 @@
       <p>CTSpine1K / MSD-T10 工程子集 · 逐例检查三视图、骨窗与标签对齐</p>
     </div>
     <div class="qc-header-actions">
+      <button
+        id="caseListToggleBtn"
+        type="button"
+        class="btn btn-secondary qc-list-toggle"
+        aria-controls="caseSidebar"
+        aria-expanded="true"
+      >收起病例列表</button>
       <span id="progressBadge" class="badge badge-work">正在加载…</span>
       <a class="btn btn-secondary" href="/">返回分析平台</a>
     </div>
   </header>
 
-  <main class="qc-layout">
-    <aside class="card qc-sidebar">
+  <main id="qcLayout" class="qc-layout">
+    <aside id="caseSidebar" class="card qc-sidebar" aria-hidden="false">
       <div class="card-head">
         <div><span class="step">CASES</span><h2>病例</h2></div>
       </div>
@@ -31,7 +38,7 @@
       <div id="caseList" class="case-list"></div>
     </aside>
 
-    <section class="card qc-main">
+    <section id="qcMain" class="card qc-main" tabindex="-1">
       <div class="card-head qc-case-head">
         <div>
           <span class="step">REVIEW</span>
@@ -115,6 +122,6 @@
     <span>人工记录将写回本地项目 CSV</span>
   </footer>
 
-  <script src="/static/qc_review.js"></script>
+  <script src="/static/qc_review.js?v=20260825-3"></script>
 </body>
 </html>

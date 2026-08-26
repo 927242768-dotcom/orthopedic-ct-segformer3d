@@ -1,0 +1,13 @@
+{
+  "task_spec_version": 1,
+  "task_id": "vertebra_binary_ctspine1k_msd_t10_v1",
+  "task_locked": true,
+  "dataset_name": "CTSpine1K/MSD-T10",
+  "task_type": "binary_semantic",
+  "label_schema_path": "configs/label_schemas/ctspine1k_verse.json",
+  "foreground_labels": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25],
+  "num_classes": 2,
+  "processed_root": "data/processed_ctspine1k_real",
+  "split_file": "data/splits/ctspine1k_msd_t10_binary_formal_pilot_v1.json",
+  "notes": "2026-08-26 项目首个锁定任务：binary semantic vertebra foreground vs background。用于当前 10 例 CTSpine1K MSD-T10 的正式流程 pilot；样本量不足以作为最终论文主实验规模，后续扩大数据集时保持任务语义不变并升级 split。"
+}

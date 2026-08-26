@@ -5,6 +5,7 @@ import numpy as np
 from src.reconstruction.mesh import (
     mask_to_surface_mesh,
     simplify_mesh_vertex_clustering,
+    vertex_normal_variation_scores,
     write_ascii_ply,
 )
 
@@ -54,6 +55,43 @@ def test_vertex_clustering_reduces_mesh_and_preserves_valid_faces() -> None:
         simplified.surface_area_mm2 - full.surface_area_mm2
     ) / full.surface_area_mm2
     assert relative_area_change < 0.15
+
+
+def test_feature_weighted_clustering_preserves_high_normal_variation_vertices() -> None:
+    mask = np.zeros((30, 32, 34), dtype=np.uint8)
+    mask[5:25, 6:26, 7:27] = 1
+    full = mask_to_surface_mesh(mask)
+    scores = vertex_normal_variation_scores(full)
+
+    assert scores.shape == (full.vertex_count,)
+    assert np.isfinite(scores).all()
+    assert float(scores.max()) > 0.0
+
+    baseline = simplify_mesh_vertex_clustering(full, cluster_size_mm=2.0)
+    protected = simplify_mesh_vertex_clustering(
+        full,
+        cluster_size_mm=2.0,
+        feature_preservation_strength=8.0,
+    )
+    threshold = float(np.percentile(scores, 90))
+    feature_vertices = full.vertices_xyz_mm[scores >= threshold]
+
+    def mean_nearest_distance(source: np.ndarray, target: np.ndarray) -> float:
+        deltas = source[:, None, :] - target[None, :, :]
+        distances = np.linalg.norm(deltas, axis=2)
+        return float(distances.min(axis=1).mean())
+
+    baseline_distance = mean_nearest_distance(
+        feature_vertices,
+        baseline.vertices_xyz_mm,
+    )
+    protected_distance = mean_nearest_distance(
+        feature_vertices,
+        protected.vertices_xyz_mm,
+    )
+    assert protected_distance <= baseline_distance
+    assert protected.vertex_count == baseline.vertex_count
+    assert protected.face_count == baseline.face_count
 
 
 def test_mask_to_surface_mesh_rejects_empty_mask() -> None:

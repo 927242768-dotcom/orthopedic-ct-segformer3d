@@ -1,0 +1,27 @@
+{
+  "_meta": {
+    "purpose": "formal_pipeline_pilot",
+    "formal_experiment": true,
+    "dataset": "CTSpine1K/MSD-T10",
+    "task_id": "vertebra_binary_ctspine1k_msd_t10_v1",
+    "created": "2026-08-26",
+    "patient_level": true,
+    "note": "固定 10 例流程 pilot：9 个官方 trainset 中 7 例 train、2 例 validation；官方 test_private liver_169 仅进入 test，禁止训练/调参。样本量不足以代表最终论文主实验规模。"
+  },
+  "train": [
+    "ctspine1k-msd-t10-liver_0",
+    "ctspine1k-msd-t10-liver_1",
+    "ctspine1k-msd-t10-liver_2",
+    "ctspine1k-msd-t10-liver_3",
+    "ctspine1k-msd-t10-liver_4",
+    "ctspine1k-msd-t10-liver_5",
+    "ctspine1k-msd-t10-liver_6"
+  ],
+  "validation": [
+    "ctspine1k-msd-t10-liver_7",
+    "ctspine1k-msd-t10-liver_8"
+  ],
+  "test": [
+    "ctspine1k-msd-t10-liver_169"
+  ]
+}

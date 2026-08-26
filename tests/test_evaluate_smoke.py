@@ -39,6 +39,11 @@ def _config(processed_root: Path, split_file: Path) -> dict:
             "roi_size_dhw": [36, 36, 36],
             "sw_batch_size": 1,
             "overlap": 0.0,
+            "calibration": {
+                "enabled": True,
+                "n_bins": 10,
+                "metric_max_samples": 10_000,
+            },
         },
         "logging": {
             "save_predictions": True,
@@ -104,11 +109,18 @@ def test_evaluate_checkpoint_writes_traceable_outputs(tmp_path: Path) -> None:
         assert 0.0 <= float(rows[0]["uncertainty_error_auroc"]) <= 1.0
     if rows[0]["uncertainty_error_auprc"]:
         assert 0.0 <= float(rows[0]["uncertainty_error_auprc"]) <= 1.0
+    assert 0.0 <= float(rows[0]["calibration_expected_calibration_error"]) <= 1.0
+    assert 0.0 <= float(rows[0]["calibration_maximum_calibration_error"]) <= 1.0
+    assert float(rows[0]["calibration_brier_score"]) >= 0.0
+    assert float(rows[0]["calibration_negative_log_likelihood"]) >= 0.0
+    assert int(rows[0]["calibration_sampled_voxels"]) > 0
 
     summary = json.loads(summary_json.read_text(encoding="utf-8"))
     assert summary["split"] == "test"
     assert summary["metrics"]["case_count"] == 1
     assert "uncertainty_error_rate" in summary["metrics"]
+    assert "calibration_expected_calibration_error" in summary["metrics"]
+    assert "calibration_brier_score" in summary["metrics"]
 
 
 def test_multiclass_macro_excludes_classes_absent_from_both_prediction_and_target() -> None:

@@ -93,6 +93,10 @@ inference:
     roi_selection: top_percent
     top_percent: 10
     refinement: false
+  calibration:
+    enabled: true
+    n_bins: 15
+    metric_max_samples: 500000
 
 logging:
   wandb_mode: offline

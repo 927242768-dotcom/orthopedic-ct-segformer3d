@@ -34,6 +34,7 @@ def export_nifti_mask_mesh(
     class_id: int | None = None,
     summary_path: str | Path | None = None,
     simplify_cluster_mm: float | None = None,
+    feature_preservation_strength: float = 0.0,
 ) -> dict[str, object]:
     input_path = Path(input_path)
     output_ply = Path(output_ply)
@@ -75,6 +76,7 @@ def export_nifti_mask_mesh(
         mesh = simplify_mesh_vertex_clustering(
             full_mesh,
             cluster_size_mm=float(simplify_cluster_mm),
+            feature_preservation_strength=float(feature_preservation_strength),
         )
         full_vertices = full_mesh.vertices_xyz_mm.astype(np.float64, copy=False)
         simplified_vertices = mesh.vertices_xyz_mm.astype(np.float64, copy=False)
@@ -84,8 +86,13 @@ def export_nifti_mask_mesh(
         simplified_to_full = full_tree.query(simplified_vertices, k=1, workers=-1)[0]
         all_distances = np.concatenate([full_to_simplified, simplified_to_full])
         simplification = {
-            "method": "vertex_clustering",
+            "method": (
+                "vertex_clustering_feature_weighted"
+                if float(feature_preservation_strength) > 0
+                else "vertex_clustering"
+            ),
             "cluster_size_mm": float(simplify_cluster_mm),
+            "feature_preservation_strength": float(feature_preservation_strength),
             "original_vertex_count": full_mesh.vertex_count,
             "original_face_count": full_mesh.face_count,
             "original_surface_area_mm2": float(full_mesh.surface_area_mm2),
@@ -150,6 +157,12 @@ def build_arg_parser() -> argparse.ArgumentParser:
         default=None,
         help="可选物理空间 vertex-clustering 网格大小（mm）；不提供则保留全分辨率网格",
     )
+    parser.add_argument(
+        "--feature-preservation-strength",
+        type=float,
+        default=0.0,
+        help="可选曲率/关键边缘代理权重；0 保持原 vertex-clustering 行为",
+    )
     return parser
 
 
@@ -165,6 +178,7 @@ def main() -> None:
         class_id=args.class_id,
         summary_path=args.summary,
         simplify_cluster_mm=args.simplify_cluster_mm,
+        feature_preservation_strength=args.feature_preservation_strength,
     )
     print(json.dumps(summary, ensure_ascii=False, indent=2))
 

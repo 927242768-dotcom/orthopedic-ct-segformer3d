@@ -734,7 +734,10 @@ def qc_review_page() -> FileResponse:
     page = FRONTEND_DIR / "qc_review.html"
     if not page.exists():
         raise HTTPException(status_code=500, detail="QC review 页面不存在")
-    return FileResponse(page)
+    return FileResponse(
+        page,
+        headers={"Cache-Control": "no-store, max-age=0"},
+    )
 
 
 @app.get("/api/research/qc")

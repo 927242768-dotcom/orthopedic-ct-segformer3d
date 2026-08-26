@@ -53,3 +53,26 @@ def test_export_mesh_can_write_traceable_simplified_mesh(tmp_path: Path) -> None
     assert simplification["vertex_hd95_mm"] >= 0.0
     assert summary["vertex_count"] < simplification["original_vertex_count"]
     assert summary["face_count"] < simplification["original_face_count"]
+
+
+def test_export_mesh_records_feature_preservation_candidate(tmp_path: Path) -> None:
+    label = np.zeros((24, 26, 28), dtype=np.int16)
+    label[4:20, 5:21, 6:22] = 1
+    image = sitk.GetImageFromArray(label)
+    source = tmp_path / "label.nii.gz"
+    output = tmp_path / "feature_weighted.ply"
+    sitk.WriteImage(image, str(source))
+
+    summary = export_nifti_mask_mesh(
+        source,
+        output,
+        simplify_cluster_mm=2.0,
+        feature_preservation_strength=8.0,
+    )
+
+    simplification = summary["simplification"]
+    assert simplification is not None
+    assert simplification["method"] == "vertex_clustering_feature_weighted"
+    assert simplification["feature_preservation_strength"] == 8.0
+    assert simplification["vertex_reduction_fraction"] > 0.0
+    assert simplification["vertex_hd95_mm"] >= 0.0

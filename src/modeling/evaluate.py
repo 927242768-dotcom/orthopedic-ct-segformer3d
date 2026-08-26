@@ -38,7 +38,11 @@ from src.modeling.metrics import (
 from src.modeling.preflight import run_preflight
 from src.modeling.segformer3d_adapter import build_orthopedic_segformer3d, upstream_provenance
 from src.modeling.train import PROJECT_ROOT, _model_predictor, _resolve_project_path, logits_to_prediction
-from src.modeling.uncertainty import predictive_entropy, uncertainty_error_metrics
+from src.modeling.uncertainty import (
+    predictive_entropy,
+    segmentation_calibration_metrics,
+    uncertainty_error_metrics,
+)
 
 
 def _save_dhw_nifti(array_dhw: np.ndarray, reference_path: Path, output_path: Path) -> None:
@@ -87,7 +91,7 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
     for key in metrics:
         summary[key] = _finite_stats([float(row[key]) for row in rows])
 
-    uncertainty_keys = [
+    optional_metric_keys = [
         "uncertainty_error_rate",
         "uncertainty_mean_uncertainty_error",
         "uncertainty_mean_uncertainty_correct",
@@ -96,8 +100,15 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "uncertainty_top_uncertainty_error_recall",
         "uncertainty_top_uncertainty_error_rate",
         "uncertainty_top_uncertainty_fraction",
+        "calibration_expected_calibration_error",
+        "calibration_maximum_calibration_error",
+        "calibration_brier_score",
+        "calibration_negative_log_likelihood",
+        "calibration_mean_confidence",
+        "calibration_accuracy",
+        "calibration_confidence_gap",
     ]
-    for key in uncertainty_keys:
+    for key in optional_metric_keys:
         values = [
             float(row[key])
             for row in rows
@@ -258,6 +269,10 @@ def evaluate_checkpoint(
     evaluate_uncertainty = bool(uncertainty_cfg.get("enabled", False) or save_uncertainty)
     uncertainty_top_percent = float(uncertainty_cfg.get("top_percent", 10.0))
     uncertainty_max_samples = int(uncertainty_cfg.get("metric_max_samples", 500_000))
+    calibration_cfg = infer_cfg.get("calibration", {})
+    evaluate_calibration = bool(calibration_cfg.get("enabled", False))
+    calibration_bins = int(calibration_cfg.get("n_bins", 15))
+    calibration_max_samples = int(calibration_cfg.get("metric_max_samples", 500_000))
 
     rows: list[dict[str, Any]] = []
     per_class_rows: list[dict[str, Any]] = []
@@ -321,6 +336,16 @@ def evaluate_checkpoint(
                 )
                 for key, value in uncertainty_metrics.to_dict().items():
                     row[f"uncertainty_{key}"] = value
+            if evaluate_calibration:
+                calibration_metrics = segmentation_calibration_metrics(
+                    logits,
+                    label,
+                    n_bins=calibration_bins,
+                    max_samples=calibration_max_samples,
+                    seed=int(config.get("seed", 42)),
+                )
+                for key, value in calibration_metrics.to_dict().items():
+                    row[f"calibration_{key}"] = value
             rows.append(row)
 
             if save_predictions:
@@ -365,6 +390,17 @@ def evaluate_checkpoint(
         "uncertainty_top_uncertainty_error_recall",
         "uncertainty_top_uncertainty_error_rate",
         "uncertainty_top_uncertainty_fraction",
+        "calibration_total_voxels",
+        "calibration_sampled_voxels",
+        "calibration_sampling_fraction",
+        "calibration_n_bins",
+        "calibration_expected_calibration_error",
+        "calibration_maximum_calibration_error",
+        "calibration_brier_score",
+        "calibration_negative_log_likelihood",
+        "calibration_mean_confidence",
+        "calibration_accuracy",
+        "calibration_confidence_gap",
     ]
     with csv_path.open("w", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=fieldnames)
