@@ -257,11 +257,13 @@
 
 ### P1-1 CT-only baseline
 
-- [ ] 正式 SegFormer3D CT-only 训练
-- [ ] 保存最佳 checkpoint
-- [ ] 记录 config / split / seed / environment
-- [ ] validation 选择模型
-- [ ] 独立 test
+- [x] 10 例 formal-pilot：CPU CT-only 5-epoch 训练完成（7 train / 2 validation）
+- [x] formal-pilot 最佳 checkpoint 已保存：epoch 4，patch-val Dice≈0.2719
+- [x] formal-pilot 已固定 config / split / seed / environment / run_metadata
+- [x] formal-pilot patch validation 已完成；train loss 约 5.5221→2.6524
+- [ ] 扩大数据规模后的正式 SegFormer3D CT-only 主实验训练
+- [ ] 使用 full-volume validation 复核候选 checkpoint
+- [ ] 独立 full-volume test（当前 pilot test=`liver_169`）
 - [ ] 输出 `metrics_per_case.csv`
 - [ ] multiclass 时输出 `metrics_per_class.csv`
 - [ ] 报告 Dice / HD95 / ASSD / IoU / Precision / Recall

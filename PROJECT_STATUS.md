@@ -89,18 +89,18 @@
 | patient-level 数据划分 | ✅ 已完成（10例 formal pilot） | 96% | 已固定 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，patient-level 互斥；官方 `test_private liver_169` 只进入 test、不参与训练/调参；`formal_experiment=true`。最终论文仍需扩大病例规模 |
 | 公开数据集整理 | 🟡 进行中 | 94% | CTSpine1K `MSD-T10` 10 个真实 CT+label 已落盘：`liver_0`—`liver_8` + `liver_169`，官方 split 为 9 `trainset` + 1 `test_private`；真实文件接管执行 SHA-256 校验，10 例全部标准化/QC。该子集仍是工程验证，不替代正式论文主数据集/split |
 | 临床脱敏数据 | 🔴 阻塞 | 0% | 当前项目目录无临床数据；必须等待合法授权、脱敏与伦理/使用范围确认 |
-| SegFormer3D 骨科适配 | 🟡 进行中 | 74% | adapter、配置、dataset、训练骨架已完成；首个任务已正式锁定为 `binary_semantic`，task_id=`vertebra_binary_ctspine1k_msd_t10_v1`、num_classes=2、foreground labels=1..25→统一前景。新增 CPU formal-pilot config 与 7/2/1 split；仍未生成可写入论文的 full-volume test 指标 |
+| SegFormer3D 骨科适配 | 🟡 进行中 | 79% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。CPU formal-pilot CT-only 已完成 5 epochs：train loss 约 5.5221→2.6524，最佳 patch-val Dice≈0.2719（epoch 4），最佳 checkpoint 已保存；该数值只是 patch-validation pilot，不是论文 full-volume test 结果 |
 | 区域损失 | ✅ 已完成（代码） | 90% | Dice + CE/BCE 可运行并有 backward 测试 |
 | Boundary Loss | 🟠 待真实验证 | 55% | SDF 边界损失首版已实现；需真实训练、表面指标与效率验证 |
 | Topology Loss | 🟠 待真实验证 | 45% | 3D soft-clDice 候选已实现；骨折/非管状骨结构适用性必须单独验证 |
 | 困难样本增强 | 🟠 待真实验证 | 68% | 已落地可配置 3D flip/小角度旋转/各向同性缩放、gamma、Gaussian noise、HU shift 与 boundary-proxy hard sampling；强度增强已兼容 z-score CT 并使用 metadata 精确回到 HU 域。金属伪影与基于真实模型误差/uncertainty 的 hard mining 仍待实验 |
 | 不确定性机制 | 🟠 待真实验证 | 82% | predictive entropy、Top-percent ROI、膨胀、uncertainty→error AUROC/AUPRC、错误/正确平均熵、Top-percent error recall/ROI error rate 已实现；新增体素级 calibration：ECE、MCE、multiclass Brier score、NLL、mean confidence、accuracy、confidence gap，并以固定 seed 采样控制大体积内存；局部残差 refinement 已补 ROI-only 二阶段训练闭环。尚无真实 baseline checkpoint 条件下的定量收益、校准结论与消融 |
 | 训练/验证框架 | 🟡 进行中 | 99% | DataLoader/AdamW/AMP/gradient accumulation/sliding-window、scheduler、完整 run 追踪已接入；修复 PyTorch 2.1 CPU `GradScaler/autocast` 兼容问题，新增工程 `patch_mode` validation；`train.py` 与 `formal_readiness.py` 支持显式 `--allow-cpu`。2026-08-26 锁定 binary task + 7/2/1 formal-pilot split 后，`formal_readiness --allow-cpu` 实测 `ready=true`、`blocker_count=0` |
-| 评价指标 | ✅ 已完成（代码） | 100% | Dice、IoU、Precision、Recall、HD95、ASSD、component count/error、false merge/break 已接入；包含 multiclass per-class/macro 安全策略、uncertainty→error AUROC/AUPRC、Top-percent error recall，以及 ECE/MCE/Brier/NLL 等 calibration 指标；`evaluate.py` 可统一写入逐病例 CSV 与 summary。真实模型指标仍待 checkpoint |
+| 评价指标 | ✅ 已完成（代码） | 100% | Dice、IoU、Precision、Recall、HD95、ASSD、component count/error、false merge/break 已接入；包含 uncertainty→error 与 ECE/MCE/Brier/NLL 等指标；`evaluate.py` 可统一写入逐病例 CSV 与 summary。当前已产生 5-epoch formal-pilot checkpoint，下一步待独立 full-volume test 生成首批真实 pilot 指标 |
 | Web 科研辅助分析原型 | 🟡 进行中 | 85% | 首页/上传/健康检查、MPR、10 例人工 QC reviewer、C1–L6 可读标签、真值 PLY WebGL2 3D、简化/物理测量均已完成；QC reviewer 已修复全站 `.card` grid-column 与 QC 网格冲突，病例选择后使用 `hidden + display:none!important` 彻底关闭病例层并进入主审核区，“上一例 / 下一例”保持审核区，悬浮按钮可随时重新打开病例列表；已在本机 Edge 对真实 `liver_0` 完成点击关闭/重新展开实机验证。另有 SDF surface 选择与 evaluation results-review，可读取未来 prediction/entropy MPR。当前 `/api/research/evaluations` 实测 200 且 total=0，真实 checkpoint/prediction 仍不存在，系统没有伪造结果 |
 | 三维重建 | 🟡 进行中 | 86% | 已实现 physical-space Marching Cubes、PLY/JSON、vertex-clustering、SDF surface、WebGL2 与物理测量；新增相邻法向变化驱动的特征保护 vertex-clustering 候选，真实 `liver_0` 在 2.0 mm/同 30,260 顶点下将高特征区域 mean-NN 约 0.679→0.620 mm、HD95 约 1.068→1.000 mm，作为真值网格工程证据；0.4 mm SDF 保持 2→2 连通域，0.8 mm 因 2→3 被保护机制拒绝。仍缺真实 prediction surface 上的正式验证 |
 | 论文 | 🟡 进行中 | 60% | 中文技术初稿已补 formal preflight、uncertainty/ROI refinement、calibration、物理表面/特征保护重建；Related Work 已加入 SpineMamba、解剖变异 Transformer、VertebraFormer、2026 Residual-Encoder nnU-Net、2025 骨折 pipeline、金属植入物与低骨密度 fusion/split 困难病例证据；42 条英文 BibTeX / 44 条矩阵已同步。Results 继续保持 TBD，禁止提前填结果 |
-| 中期材料 | 🟡 进行中 | 81% | 已同步 10 例真实数据、97 项测试、10/10 人工 QC、CPU binary 3-epoch engineering pilot、正式 binary task lock、7/2/1 formal-pilot split、`formal_readiness ready=true`、uncertainty/calibration、交互 QC/3D/SDF、特征保护网格候选与 44/42 文献证据；仍缺更大正式样本规模与可写入论文的 full-volume 指标 |
+| 中期材料 | 🟡 进行中 | 83% | 已同步 10 例真实数据、97 项测试、10/10 人工 QC、正式 binary task lock、7/2/1 formal-pilot split、`formal_readiness ready=true`，并新增 CPU CT-only 5-epoch formal-pilot checkpoint；仍缺独立 full-volume test、扩大样本规模后的正式主实验与可写入论文的稳定指标 |
 | 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 97 passed`；`ruff: All checks passed`；新增 CPU 非 AMP autocast、PyTorch 2.1 disabled GradScaler 与 `allow_cpu` readiness 回归测试；既有 calibration、特征保护网格、QC reviewer 等测试继续通过；42 条 BibTeX 结构正常。覆盖 task lock/formal readiness、CPU training、uncertainty/calibration、mesh feature-preservation、results-review、SDF topology guard 及既有真实数据/QC/评价/Web 链 |
 
 ---
@@ -1404,3 +1404,27 @@ git diff --check
 - 当前 10 例是正式流程 pilot，不足以支撑最终论文主实验统计强度；后续仍应扩大 CTSpine1K/同任务数据规模；
 - 训练期间可使用 patch validation 进行 CPU 低成本模型选择，但最终可写入论文的 test 结果必须通过独立 full-volume evaluation 生成 Dice/HD95/ASSD/结构/uncertainty/calibration 等指标；
 - 下一步进入 CT-only binary baseline 的更长训练，并在每个实质任务完成后立即同步 GitHub。
+
+
+### 2026-08-26｜阶段 R：CPU binary CT-only 5-epoch formal-pilot baseline
+
+在阶段 Q 已通过 `formal_readiness --allow-cpu` 的前提下，本阶段直接使用锁定的 `binary_semantic` task 与 7/2/1 formal-pilot split，在当前 Ryzen 7 8745H CPU 笔记本上运行 CT-only SegFormer3D baseline 5 epochs。训练只使用 7 个 train 病例，2 个 validation 病例用于 patch validation，官方 `test_private liver_169` 未参与训练或调参。
+
+真实运行目录：`experiments/20260826_151810_cpu_binary_formal_pilot_ct_only`。
+
+运行结果：
+
+- epoch 1：train loss≈5.5221，patch-val Dice≈0.1847；
+- epoch 2：train loss≈4.7494，patch-val Dice≈0.1518；
+- epoch 3：train loss≈3.6347，patch-val Dice≈0.2480；
+- epoch 4：train loss≈2.8162，patch-val Dice≈0.2719，为当前最佳；
+- epoch 5：train loss≈2.6524，patch-val Dice≈0.2456；
+- 最佳 checkpoint：`experiments/20260826_151810_cpu_binary_formal_pilot_ct_only/checkpoint/best.pt`；
+- `config.yaml / split.json / run_metadata.json / history.csv / train.log / summary.json` 均已保存。
+
+重要边界：
+
+- 上述 Dice 是 36³ patch-validation proxy，只用于证明当前 CPU baseline 学习趋势和 checkpoint 选择链可运行，**不得作为论文正式 Dice**；
+- train loss 总体持续下降，说明当前 CPU 环境和训练链确实在学习；validation 在极小样本下存在明显波动，符合 2 例 validation + 5 epoch 的 pilot 性质；
+- 下一步必须使用当前最佳 checkpoint 对独立 test `liver_169` 做 full-volume evaluation，生成 Dice/HD95/ASSD/结构、uncertainty 与 calibration 等首批真实 pilot 指标；
+- 完成本阶段后按项目负责人要求立即同步 GitHub，再进入下一项任务。
