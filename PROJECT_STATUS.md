@@ -89,19 +89,19 @@
 | patient-level 数据划分 | ✅ 已完成（10例 formal pilot） | 96% | 已固定 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，patient-level 互斥；官方 `test_private liver_169` 只进入 test、不参与训练/调参；`formal_experiment=true`。最终论文仍需扩大病例规模 |
 | 公开数据集整理 | 🟡 进行中 | 94% | CTSpine1K `MSD-T10` 10 个真实 CT+label 已落盘：`liver_0`—`liver_8` + `liver_169`，官方 split 为 9 `trainset` + 1 `test_private`；真实文件接管执行 SHA-256 校验，10 例全部标准化/QC。该子集仍是工程验证，不替代正式论文主数据集/split |
 | 临床脱敏数据 | 🔴 阻塞 | 0% | 当前项目目录无临床数据；必须等待合法授权、脱敏与伦理/使用范围确认 |
-| SegFormer3D 骨科适配 | 🟡 进行中 | 84% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。已修复 `num_workers=0` 跨 epoch 重复 patch 采样，并完成 36³/48³/64³ ROI benchmark；long-v2 采用 64³、CT-only、Region Dice+CE，在预设 patience=8 下于 epoch 9 正常 early stop，最佳固定 patch-val Dice≈0.3613（epoch 1）。当前必须用 `liver_7/liver_8` full-volume validation 复核 checkpoint；patch-val 仅为 proxy，不是论文正式结果 |
+| SegFormer3D 骨科适配 | 🟡 进行中 | 85% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。long-v2 采用 64³、CT-only、Region Dice+CE，在预设 patience=8 下于 epoch 9 正常 early stop。`liver_7/liver_8` full-volume validation 已真实完成：`best.pt`（epoch 1）平均 Dice≈0.03698，`last.pt`（epoch 9）≈0.04953，且 `last.pt` 平均 ASSD/component error 更好；固定 patch-val Dice≈0.3613 与 full-volume 严重不一致，因此当前 checkpoint selector 必须改为 full-volume-aware，long-v2 仍不能视为满意 baseline |
 | 区域损失 | ✅ 已完成（代码） | 90% | Dice + CE/BCE 可运行并有 backward 测试 |
 | Boundary Loss | 🟠 待真实验证 | 55% | SDF 边界损失首版已实现；需真实训练、表面指标与效率验证 |
 | Topology Loss | 🟠 待真实验证 | 45% | 3D soft-clDice 候选已实现；骨折/非管状骨结构适用性必须单独验证 |
 | 困难样本增强 | 🟠 待真实验证 | 68% | 已落地可配置 3D flip/小角度旋转/各向同性缩放、gamma、Gaussian noise、HU shift 与 boundary-proxy hard sampling；强度增强已兼容 z-score CT 并使用 metadata 精确回到 HU 域。金属伪影与基于真实模型误差/uncertainty 的 hard mining 仍待实验 |
 | 不确定性机制 | 🟠 待真实验证 | 82% | predictive entropy、Top-percent ROI、膨胀、uncertainty→error AUROC/AUPRC、错误/正确平均熵、Top-percent error recall/ROI error rate 已实现；新增体素级 calibration：ECE、MCE、multiclass Brier score、NLL、mean confidence、accuracy、confidence gap，并以固定 seed 采样控制大体积内存；局部残差 refinement 已补 ROI-only 二阶段训练闭环。尚无真实 baseline checkpoint 条件下的定量收益、校准结论与消融 |
-| 训练/验证框架 | 🟡 进行中 | 99% | DataLoader/AdamW/AMP/gradient accumulation/sliding-window、scheduler、完整 run 追踪已接入；修复 PyTorch 2.1 CPU `GradScaler/autocast` 兼容问题，新增工程 `patch_mode` validation；`train.py` 支持 `--allow-cpu` 与可靠 `--resume`，每 epoch 写 `last.pt` 并恢复 model/optimizer/scheduler/epoch/best metric/early-stopping/RNG，在原 run 追加 history。binary task + 7/2/1 formal-pilot split 下 readiness 实测通过 |
+| 训练/验证框架 | 🟡 进行中 | 99% | DataLoader/AdamW/AMP/gradient accumulation/sliding-window、scheduler、完整 run 追踪已接入；`train.py` 支持 `--allow-cpu` 与可靠 `--resume`，每 epoch 写 `last.pt` 并恢复 model/optimizer/scheduler/epoch/best metric/early-stopping/RNG。当前已确认固定单 patch validation 会严重误判 full-volume 泛化：epoch 1 patch-val≈0.3613，但对应两例 full-volume 平均 Dice≈0.037；下一步优先实现/验证 full-volume-aware checkpoint selection，并排查 sampling/loss/preprocessing/stitching 是否造成全卷大量 false positive |
 | 评价指标 | ✅ 已完成（代码+首个真实 pilot test） | 100% | Dice、IoU、Precision、Recall、HD95、ASSD、component count/error、false merge/break 已接入；包含 uncertainty→error 与 ECE/MCE/Brier/NLL 等指标；`evaluate.py` 可统一写入逐病例 CSV 与 summary，并新增安全 `--case-id` 以支持 CPU 分病例 full-volume 执行，且强制病例必须属于当前 validation/test split。5-epoch formal-pilot 已对独立 `liver_169` 完成 full-volume CPU evaluation；该旧结果仅为 10 例流程 pilot，禁止作为论文正式结果 |
 | Web 科研辅助分析原型 | 🟡 进行中 | 85% | 首页/上传/健康检查、MPR、10 例人工 QC reviewer、C1–L6 可读标签、真值 PLY WebGL2 3D、简化/物理测量均已完成；QC reviewer 已修复全站 `.card` grid-column 与 QC 网格冲突，病例选择后使用 `hidden + display:none!important` 彻底关闭病例层并进入主审核区，“上一例 / 下一例”保持审核区，悬浮按钮可随时重新打开病例列表；已在本机 Edge 对真实 `liver_0` 完成点击关闭/重新展开实机验证。另有 SDF surface 选择与 evaluation results-review，可读取未来 prediction/entropy MPR。当前 `/api/research/evaluations` 实测 200 且 total=0，真实 checkpoint/prediction 仍不存在，系统没有伪造结果 |
 | 三维重建 | 🟡 进行中 | 86% | 已实现 physical-space Marching Cubes、PLY/JSON、vertex-clustering、SDF surface、WebGL2 与物理测量；新增相邻法向变化驱动的特征保护 vertex-clustering 候选，真实 `liver_0` 在 2.0 mm/同 30,260 顶点下将高特征区域 mean-NN 约 0.679→0.620 mm、HD95 约 1.068→1.000 mm，作为真值网格工程证据；0.4 mm SDF 保持 2→2 连通域，0.8 mm 因 2→3 被保护机制拒绝。仍缺真实 prediction surface 上的正式验证 |
 | 论文 | 🟡 进行中 | 60% | 中文技术初稿已补 formal preflight、uncertainty/ROI refinement、calibration、物理表面/特征保护重建；Related Work 已加入 SpineMamba、解剖变异 Transformer、VertebraFormer、2026 Residual-Encoder nnU-Net、2025 骨折 pipeline、金属植入物与低骨密度 fusion/split 困难病例证据；42 条英文 BibTeX / 44 条矩阵已同步。Results 继续保持 TBD，禁止提前填结果 |
 | 中期材料 | 🟡 进行中 | 83% | 已同步 10 例真实数据、97 项测试、10/10 人工 QC、正式 binary task lock、7/2/1 formal-pilot split、`formal_readiness ready=true`，并新增 CPU CT-only 5-epoch formal-pilot checkpoint；仍缺独立 full-volume test、扩大样本规模后的正式主实验与可写入论文的稳定指标 |
-| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 100 passed`；`ruff: All checks passed`；新增 checkpoint resume 状态恢复回归测试，并保留 CPU 非 AMP autocast、PyTorch 2.1 disabled GradScaler、epoch-aware sampling 与 `allow_cpu` readiness 测试；42 条 BibTeX 结构正常。覆盖 task lock/formal readiness、CPU training、uncertainty/calibration、mesh feature-preservation、results-review、SDF topology guard 及既有真实数据/QC/评价/Web 链 |
+| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 101 passed`；`ruff: All checks passed`；保留 checkpoint resume、分病例 full-volume evaluation、CPU 非 AMP autocast、PyTorch 2.1 disabled GradScaler、epoch-aware sampling 与 `allow_cpu` readiness 回归测试；42 条 BibTeX 结构正常。覆盖 task lock/formal readiness、CPU training、uncertainty/calibration、mesh feature-preservation、results-review、SDF topology guard 及既有真实数据/QC/评价/Web 链 |
 
 ---
 
@@ -629,24 +629,20 @@ CTSpine1K Hugging Face 在早期也出现超时和并行下载失败；但改为
 
 ## 9. 下一步任务——必须按优先级执行
 
-### P0｜下一轮必须先完成：真实数据与 baseline
+### P0｜当前第一优先：修复 full-volume checkpoint selection 与 baseline
 
-- [ ] 组内确认首个主任务/标签集，工程默认先按“脊柱/椎体 CT”推进；确认后填写 task spec、设 `task_locked=true`，用 `task_lock` 编译正式 config；
-- [x] 工程 baseline 已暂定并登记 VerSe complete；`data/datasets.json` 已记录来源、规模、标签、许可核验备注（最终论文主数据集仍需组内确认）；
-- [x] 已解决首批真实数据落盘：CTSpine1K `MSD-T10` 10 例通过浏览器顺序下载成功；VerSe S3 仍待后续网络条件解决；
-- [x] 已完成 CTSpine1K 小样本下载计划、批量配对/标准化、官方 split 标记解析与统一 QC 工具；
-- [x] 已实际落盘 `liver_0`—`liver_8` + `liver_169` CT+label，并在 `data/datasets.json` 登记本地状态、日期、路径、pipeline 与 split 统计；
-- [x] CTSpine1K 10 例已通过 `prepare_ctspine1k` 批量配对/标准化，manifest 和 batch QC 可追踪；VerSe 路径待数据可达后再执行；
-- [x] 已对 10 例真实 CT 跑 pipeline 0.3.0 标准化、三视图/bone-window/label-overlay contact sheet 与自动审计；
-- [x] 自动检查 orientation/spacing/label geometry/label values/normalization metadata：10/10 pass；
-- [ ] 项目成员逐例填写 `manual_qc_review.csv` 并完成人工审核签字；
-- [ ] 固定 patient-level train/validation/test split；
-- [x] 已在真实 `liver_0` 上跑通 CT+bone-window + SegFormer3D + joint loss + backward + AdamW.step 单 patch 工程 smoke；
-- [ ] 确认可用 NVIDIA GPU/服务器；在目标机器运行 `env/check_formal_readiness.ps1`，必须 `ready=true` 后才启动正式训练；
-- [ ] 跑通正式 SegFormer3D baseline；
-- [ ] 生成第一份真实 `metrics_per_case.csv`；
-- [ ] 记录 DSC、HD95、ASSD 和单病例推理时间；
-- [ ] 将真实 baseline mask 接入 Web overlay。
+- [x] 首个正式任务已锁定：`vertebra_binary_ctspine1k_msd_t10_v1`，binary semantic，2 类；
+- [x] 10/10 人工 QC 已完成，7 train / 2 validation / 1 test patient-level split 已固定；`liver_169` 仅允许最终独立 test；
+- [x] 64³ CT-only long-v2 已完成并 early-stop：`best.pt=epoch 1`、`last.pt=epoch 9`；
+- [x] 已对 `liver_7/liver_8` 完成 `best.pt` 与 `last.pt` 四次 full-volume validation，输出 `metrics_per_case.csv` / `summary.json` 均已核对；
+- [x] `best.pt` 两例平均 Dice≈0.03698；`last.pt`≈0.04953。`last.pt` 平均 ASSD≈50.78 mm、component count error≈1084，优于 `best.pt` 的≈56.77 mm / 1617；
+- [x] 已确认固定单 patch validation 严重高估/误判 full-volume 泛化：epoch 1 patch-val≈0.3613，但 full-volume 平均仅≈0.037；
+- [ ] 优先修改 checkpoint selection：训练期每 2–3 epoch 做 full-volume validation，或保留多个候选 checkpoint 后对两例 validation 统一全卷比较；不得继续仅按固定 patch Dice 选 best；
+- [ ] 直接排查 full-volume 极低 Dice 根因：foreground/background sampling、Region Dice+CE 背景抑制、label mapping、train/validation normalization、sliding-window stitching/logits resize/threshold、class imbalance；
+- [ ] 对 validation prediction 记录 prediction foreground fraction、GT foreground fraction、概率/置信度分布、connected components 与 false-positive 空间分布；
+- [ ] 只有 CT-only baseline 的 full-volume validation 明显改善后，才继续 CT+bone-window、Region+Boundary、augmentation/hard sampling 消融；
+- [ ] 在 ROI/epoch/lr/scheduler/sampling/augmentation/input/loss/checkpoint 全部只依据 train+validation 锁定前，禁止重新运行 test `liver_169`；
+- [ ] 更可靠 baseline 锁定后再生成 prediction mesh / SDF / Web overlay / entropy overlay，并继续论文工程验证材料。
 
 ### P1｜联合损失与困难样本消融
 
@@ -725,7 +721,7 @@ python -m ruff check src web tests
 当前基准应为：
 
 ```text
-94 passed
+101 passed
 All checks passed!
 ```
 
@@ -1596,6 +1592,35 @@ ROI 决策：
 - `tests/test_evaluate_smoke.py` 增加合法 case filter 与 split 越界拒绝回归测试；定向测试 `4 passed`、Ruff clean、`git diff --check` 通过。
 
 下一步分别运行 `liver_7`、`liver_8` 的 long-v2 `best.pt` validation，再以同样方式评估必要候选 checkpoint，并只依据两例 validation 汇总锁定 baseline。
+
+
+### 2026-08-26｜阶段 Y：完成 long-v2 full-volume validation 闭环并确认 patch selector 失真（GitHub 同步点 #10）
+
+已核对以下四个已有 evaluation 的 `metrics_per_case.csv` 与 `summary.json`，没有重复运行：
+
+- `evaluation_20260826_long_v2_best_val_liver7`：Dice≈0.02765，ASSD≈58.50 mm，component error=1843；
+- `evaluation_20260826_long_v2_best_val_liver8`：Dice≈0.04632，ASSD≈55.04 mm，component error=1391；
+- `evaluation_20260826_long_v2_last_val_liver7`：Dice≈0.05431，ASSD≈51.83 mm，component error=1211；
+- `evaluation_20260826_long_v2_last_val_liver8`：Dice≈0.04475，ASSD≈49.74 mm，component error=957。
+
+两例汇总：`best.pt`（epoch 1）平均 Dice≈0.03698、平均 ASSD≈56.77 mm、平均 component error≈1617；`last.pt`（epoch 9）平均 Dice≈0.04953、平均 ASSD≈50.78 mm、平均 component error≈1084。虽然 `last.pt` 仍然非常差，但在 full-volume validation 上总体优于由固定 patch validation 选出的 `best.pt`。
+
+关键结论：epoch 1 固定 64³ patch-val Dice≈0.3613，而同 checkpoint 两例 full-volume 平均 Dice仅≈0.037，差异近一个数量级；因此当前固定 foreground patch validation 严重高估/误判全卷泛化，不能继续作为可靠 checkpoint selector。long-v2 当前也不能称为满意 baseline，更不能据此重新访问独立 test `liver_169`。
+
+下一步已经提升为 P0：实现 full-volume-aware checkpoint selection，并优先排查 foreground/background sampling、Region Dice+CE 背景抑制、label mapping、train/inference preprocessing、sliding-window stitching/logits resize/threshold 与 class imbalance；validation 诊断需增加 prediction/GT foreground fraction、概率分布、connected components 与 false-positive 空间分布。
+
+本同步点回归：
+
+```text
+pytest tests -q
+→ 101 passed, 153 warnings
+
+ruff check src web tests
+→ All checks passed!
+
+git diff --check
+→ 通过
+```
 
 
 ### 2026-08-26｜阶段 W：实现并实测可靠 checkpoint resume（GitHub 同步点 #7）

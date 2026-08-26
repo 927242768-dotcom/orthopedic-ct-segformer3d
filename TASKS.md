@@ -271,7 +271,10 @@
 - [x] 基于修复后的 epoch-aware sampling 与 64³ ROI 启动 long-v2 CT-only CPU baseline；按预设 early stopping patience=8 于 epoch 9 正常停止，最佳固定 patch-val Dice≈0.3613（epoch 1），run=`experiments/20260826_162919_cpu_binary_long_v2_ct_only_roi64`
 - [ ] 扩大数据规模后的正式 SegFormer3D CT-only 主实验训练
 - [x] `evaluate.py` 新增安全 `--case-id`：只能评估当前 validation/test split 内指定病例，用于 CPU 分病例 full-volume 执行；越界病例直接拒绝
-- [ ] 使用 `liver_7 / liver_8` 分病例 full-volume validation 复核 long-v2 `best.pt` / 候选 checkpoint；只用 validation 锁定最终 baseline，禁止使用 `liver_169` 调参
+- [x] 使用 `liver_7 / liver_8` 分病例 full-volume validation 复核 long-v2 `best.pt` 与 `last.pt`：`best.pt` 平均 Dice≈0.03698，`last.pt` 平均 Dice≈0.04953；`last.pt` 平均 ASSD≈50.78 mm、component count error≈1084，也优于 `best.pt` 的≈56.77 mm / 1617
+- [x] 明确发现固定 64³ foreground patch validation 与 full-volume validation 严重不一致：epoch 1 patch-val Dice≈0.3613，但其 full-volume 平均 Dice≈0.037；当前 patch proxy 不能继续作为可靠 checkpoint selector
+- [ ] P1 优先修复 checkpoint selection：训练期按可控频率执行 full-volume validation，或保留多个候选 checkpoint 后在 `liver_7/liver_8` 上统一 full-volume 比较；在此之前禁止重新 test `liver_169`
+- [ ] 排查 full-volume 极低 Dice 的训练/推理链根因：foreground/background sampling、loss 背景抑制、label mapping、train/inference preprocessing、sliding-window stitching/logits resize/threshold、class imbalance，并记录 prediction/GT foreground fraction 与概率分布
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
 - [x] formal-pilot 输出 `metrics_per_case.csv` + prediction NIfTI + entropy NIfTI
 - [x] formal-pilot 记录 Dice / HD95 / ASSD / IoU / Precision / Recall / 结构指标
