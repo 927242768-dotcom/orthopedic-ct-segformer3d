@@ -648,7 +648,9 @@ CTSpine1K Hugging Face 在早期也出现超时和并行下载失败；但改为
 - [x] v5 将 peak lr 降至 5e-5 但保留 2-epoch warmup，epoch 1/2 分别 Dice≈0.03185/0.03269，detailed validation 约 55× foreground explosion，已停止；
 - [x] v6 仅将 warmup 2→1：epoch 1 train loss=`2.5537127597`、val Dice=`0.0540700072`、lr=`5e-5`，几乎精确复现 v3 epoch 1；epoch 2 train loss=`1.9332212380`、val Dice=`0.0323937293`、lr≈`4.8923e-5`，即使未升到 1e-4 仍明显恶化；
 - [x] v6 epoch 2 两例 detailed validation：`liver_7/liver_8` Dice≈0.03210/0.03268、Precision≈0.01632/0.01661、Recall≈0.98562/0.99919、prediction/GT foreground ratio≈60.40/60.14、component error=87/65；这是大范围背景被预测成前景造成的严重 foreground explosion，不是 component 数下降带来的正确改善；
-- [ ] 立即使用 Dataset 真实 sampling 逻辑和固定 seed，复现 v3/v6 epoch 1/2 与 v3 epoch 3 每个 epoch 的 28 个 training patch，统计 foreground fraction 的 mean/median/std/min/max/quantile、纯背景 patch 数、高前景 patch 数与逐病例分布，判断 sampling prior 是否剧烈漂移；
+- [x] 已使用 Dataset 真实 sampling 逻辑与固定 seed=42 复现 v3/v6 epoch 1/2、v3 epoch 3 的 28 个 training patch：epoch 1/2/3 mean foreground fraction≈7.91%/8.84%/5.68%，median 均为 0，纯背景 patch=18/18/20；病例级暴露明显不稳定，例如 epoch 1 `liver_2/liver_6` 均 4/4 patch 纯背景，epoch 2 各病例又重新分配。说明当前独立 Bernoulli sampling 存在真实 epoch/case 波动，但 v6 epoch 1→2 的总体差异并不足以单独解释约 3.4×→60× foreground explosion，因此 sampling 只能视为已证实的稳定性问题/候选诱因，不是已证实唯一根因；
+- [x] `train.py` 已新增 `sampling_stats.csv`，直接从模型实际收到的 training label 每 epoch 记录 patch_count、foreground fraction mean/median/std/min/max、q10/q25/q75/q90、foreground/background patch count，并新增回归测试；
+- [ ] 下一实验 v7 仅改变 sampling 稳定性：将每病例每 epoch 的 foreground-aware/random patch 数固定，保持 v6 的 ROI、loss、lr、scheduler、input、validation 全部不变；先 readiness，再 epoch 1/full-volume/detailed validation；
 - [ ] 继续核对 Region Dice+CE 背景抑制、label mapping、normalization、sliding-window stitching/logits resize/threshold；当前没有发现 label mapping 或 resize 的直接错误证据；
 - [ ] 对 v3 validation 继续记录概率/置信度分布、connected components 与 false-positive 空间分布；
 - [ ] 只有 CT-only baseline 的 full-volume validation 明显改善后，才继续 CT+bone-window、Region+Boundary、augmentation/hard sampling 消融；
@@ -1958,3 +1960,25 @@ v6 epoch 1 几乎精确复现 v3 epoch 1，说明第一轮直接使用 `5e-5` �
 component 数量相对早期碎片化结果虽下降，但这是因为模型把大范围背景连成巨大前景区域，不是正确结构改善。v6 epoch 2 明确属于严重 foreground explosion，因此不继续机械 epoch 3。
 
 下一步优先级转为真实 sampling 复现：使用 `ProcessedOrthopedicCTDataset` 当前实际 epoch-aware sampling 和固定 seed，复现 v3/v6 epoch 1/2、v3 epoch 3 的 28 个 training patch foreground fraction 分布，先证实或否定 epoch-to-epoch sampling prior 漂移，再决定 v7 的唯一变量。独立 test `liver_169` 继续禁止访问。
+
+
+### 2026-08-26｜阶段 AJ：复现真实 epoch patch prior，并把 sampling statistics 接入训练
+
+使用 `configs/orthopedic_ct_cpu_binary_balanced_fullval_v3.yaml` 的真实 `ProcessedOrthopedicCTDataset`、`seed=42`、`foreground_probability=0.25`、`patches_per_case=4`，按训练代码相同的 `set_epoch(epoch)` 与随机种子组合复现 7 个 train 病例 × 4 patch 的实际 label foreground fraction。为避免重复解压大体积 NIfTI，同一病例只加载一次，但每个 patch 仍由 Dataset 自己的 `__getitem__`、真实 crop/flip/random stream 生成。
+
+结果：
+
+```text
+epoch 1: mean=0.079073, median=0, std=0.121046, min=0, max=0.329468,
+         q25=0, q75=0.162591, q90=0.283113, background=18/28, foreground=10/28
+epoch 2: mean=0.088408, median=0, std=0.129709, min=0, max=0.388599,
+         q25=0, q75=0.190886, q90=0.283283, background=18/28, foreground=10/28
+epoch 3: mean=0.056800, median=0, std=0.105252, min=0, max=0.356922,
+         q25=0, q75=0.068274, q90=0.239979, background=20/28, foreground=8/28
+```
+
+病例级波动更明显：epoch 1 的 `liver_2` 与 `liver_6` 4/4 patch 均为纯背景；epoch 2 则重新分配 foreground exposure。说明当前独立 Bernoulli foreground-aware sampling 会造成真实的 case/epoch prior 波动。不过 v6 epoch 1→2 的 overall mean 仅约 7.91%→8.84%、纯背景 patch 同为 18/28，因此该波动不能单独解释 validation 从约 3.4× foreground ratio 突然恶化到约 60×；当前结论是 sampling 稳定性确有问题，但不是已证实唯一根因。
+
+为让后续每个 run 都能直接验证“模型变化是否对应 sampling prior 漂移”，`src/modeling/train.py` 新增 `sampling_stats.csv`，从模型实际收到的 training label 逐 epoch 记录：patch_count、foreground fraction mean/median/std/min/max、q10/q25/q75/q90、foreground/background patch count；metadata 同时标记 `training_sampling_stats_logged=true`。新增 `tests/test_training_sampling_stats.py`， focused dataset/sampling tests 共 6 passed，Ruff clean。
+
+下一步只改一个变量做 v7：把每病例每 epoch 的 foreground-aware/random patch 配额从独立 Bernoulli 改为固定配额，保持 v6 的 CT-only、64³、Dice/CE=1:1、peak lr=5e-5、warmup=1、cosine、full-volume validation 等全部不变。独立 test `liver_169` 继续禁止访问。

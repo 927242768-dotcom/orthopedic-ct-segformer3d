@@ -291,7 +291,9 @@
 - [x] 已新建 `configs/orthopedic_ct_cpu_binary_balanced_lr_v6.yaml`：相对 v5 仅将 `warmup_epochs=2→1`，因此 epoch 1 直接达到 `5e-5`，后续 cosine 学习率始终不超过 `5e-5`；其它 v3 sampling/ROI/loss/full-volume validation 保持不变，`formal_readiness --allow-cpu` 已通过 ready=true / blocker_count=0
 - [x] v6 已真实完成 epoch 1/2：run=`experiments/20260826_224150_cpu_binary_balanced_lr_v6_roi64`；epoch 1 train loss=`2.5537127597` / val Dice=`0.0540700072` / lr=`5e-5`，几乎精确复现 v3 epoch 1；epoch 2 train loss=`1.9332212380` / val Dice=`0.0323937293` / lr≈`4.8923e-5`，即使学习率未升到 `1e-4` 仍明显恶化，`best.pt` 保持 epoch 1
 - [x] v6 epoch 2 `liver_7/liver_8` detailed validation 已完成：Dice≈`0.03210/0.03268`、Precision≈`0.01632/0.01661`、Recall≈`0.98562/0.99919`、prediction/GT foreground ratio≈`60.40/60.14`，component error=`87/65`；这属于严重全卷前景泛滥，不是正常结构改善，因此停止机械继续 v6 epoch 3
-- [ ] 下一步优先用 Dataset 真实采样逻辑复现 v3/v6 epoch 1/2 与 v3 epoch 3 的 28 个 training patch 前景比例分布，判断 epoch-to-epoch sampling prior 是否剧烈漂移；继续禁止访问 `liver_169`
+- [x] 已用 Dataset 真实采样逻辑 + 固定 seed=42 复现 v3/v6 epoch 1/2 与 v3 epoch 3 的 28 个 training patch：epoch 1/2/3 mean foreground fraction≈`7.91%/8.84%/5.68%`，纯背景 patch=`18/18/20`；病例级暴露明显不稳定，例如 epoch 1 的 `liver_2/liver_6` 均 4/4 patch 为纯背景。sampling prior 存在真实波动，但 v6 epoch 1→2 总体统计差异不足以单独解释约 3.4×→60× foreground explosion，因此不能把 sampling 写成唯一根因
+- [x] `train.py` 已新增真实 `sampling_stats.csv`：每 epoch 记录 patch_count、foreground fraction mean/median/std/min/max、q10/q25/q75/q90、foreground/background patch count；统计来自模型实际收到的训练 label，并新增回归测试
+- [ ] 下一实验 v7 只改变 sampling 稳定性：每病例每 epoch 固定 foreground-aware/random patch 配额，保持 v6 的 ROI/loss/lr/scheduler/input/full-volume validation 不变；先 readiness，再 epoch 1 + full-volume/detailed validation；继续禁止访问 `liver_169`
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
 - [x] formal-pilot 输出 `metrics_per_case.csv` + prediction NIfTI + entropy NIfTI
 - [x] formal-pilot 记录 Dice / HD95 / ASSD / IoU / Precision / Recall / 结构指标

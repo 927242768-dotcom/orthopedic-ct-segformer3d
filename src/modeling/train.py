@@ -91,6 +91,27 @@ def logits_to_prediction(logits: torch.Tensor) -> torch.Tensor:
     return torch.argmax(logits, dim=1)
 
 
+def summarize_foreground_fractions(fractions: list[float]) -> dict[str, float | int]:
+    """汇总一个 epoch 内模型实际看到的 training patch 前景比例。"""
+    if not fractions:
+        raise ValueError("fractions 不能为空")
+    values = np.asarray(fractions, dtype=np.float64)
+    return {
+        "patch_count": int(values.size),
+        "foreground_fraction_mean": float(values.mean()),
+        "foreground_fraction_median": float(np.median(values)),
+        "foreground_fraction_std": float(values.std()),
+        "foreground_fraction_min": float(values.min()),
+        "foreground_fraction_max": float(values.max()),
+        "foreground_fraction_q10": float(np.quantile(values, 0.10)),
+        "foreground_fraction_q25": float(np.quantile(values, 0.25)),
+        "foreground_fraction_q75": float(np.quantile(values, 0.75)),
+        "foreground_fraction_q90": float(np.quantile(values, 0.90)),
+        "foreground_patch_count": int(np.count_nonzero(values > 0.0)),
+        "background_patch_count": int(np.count_nonzero(values == 0.0)),
+    }
+
+
 def mean_foreground_dice(
     pred: torch.Tensor,
     target: torch.Tensor,
@@ -381,6 +402,7 @@ def train(
             "validation_patch_is_engineering_proxy": validation_patch_mode,
             "training_patch_sampling_epoch_aware": True,
             "training_patches_per_case": int(train_cfg.get("patches_per_case", 1)),
+            "training_sampling_stats_logged": True,
             "validation_patch_sampling_fixed_across_epochs": validation_patch_mode,
             "resume_events": [],
         }
@@ -517,11 +539,17 @@ def train(
         )
 
     history_csv = run_dir / "history.csv"
+    sampling_stats_csv = run_dir / "sampling_stats.csv"
     train_log = run_dir / "train.log"
     append_history = resume_path is not None and history_csv.exists()
+    append_sampling_stats = resume_path is not None and sampling_stats_csv.exists()
     history_mode = "a" if append_history else "w"
+    sampling_mode = "a" if append_sampling_stats else "w"
     last_epoch = start_epoch - 1
-    with history_csv.open(history_mode, encoding="utf-8", newline="") as f:
+    with (
+        history_csv.open(history_mode, encoding="utf-8", newline="") as f,
+        sampling_stats_csv.open(sampling_mode, encoding="utf-8", newline="") as sampling_f,
+    ):
         writer = csv.DictWriter(
             f,
             fieldnames=[
@@ -535,6 +563,26 @@ def train(
         )
         if not append_history:
             writer.writeheader()
+        sampling_writer = csv.DictWriter(
+            sampling_f,
+            fieldnames=[
+                "epoch",
+                "patch_count",
+                "foreground_fraction_mean",
+                "foreground_fraction_median",
+                "foreground_fraction_std",
+                "foreground_fraction_min",
+                "foreground_fraction_max",
+                "foreground_fraction_q10",
+                "foreground_fraction_q25",
+                "foreground_fraction_q75",
+                "foreground_fraction_q90",
+                "foreground_patch_count",
+                "background_patch_count",
+            ],
+        )
+        if not append_sampling_stats:
+            sampling_writer.writeheader()
 
         for epoch in range(start_epoch, max_epochs + 1):
             if scheduler is not None:
@@ -544,10 +592,15 @@ def train(
             optimizer.zero_grad(set_to_none=True)
             running_loss = 0.0
             batch_count = 0
+            epoch_foreground_fractions: list[float] = []
 
             for step, batch in enumerate(train_loader, start=1):
                 image = batch["image"].to(device, non_blocking=True)
                 label = batch["label"].to(device, non_blocking=True)
+                batch_foreground_fractions = (
+                    (label > 0).flatten(start_dim=1).float().mean(dim=1).detach().cpu().tolist()
+                )
+                epoch_foreground_fractions.extend(float(v) for v in batch_foreground_fractions)
 
                 with _autocast_context(device, amp_enabled):
                     logits = model(image)
@@ -564,6 +617,12 @@ def train(
                 batch_count += 1
 
             train_loss = running_loss / max(batch_count, 1)
+            sampling_row = {
+                "epoch": epoch,
+                **summarize_foreground_fractions(epoch_foreground_fractions),
+            }
+            sampling_writer.writerow(sampling_row)
+            sampling_f.flush()
             val_result = validate(
                 model,
                 val_loader,
