@@ -1538,3 +1538,27 @@ ROI 决策：
 - benchmark 复用了现有真实单 patch smoke 训练链，没有新增模型性能声明；
 - ROI 选择只依据 train-side 工程资源可运行性，不使用 `liver_169`；
 - 下一步立即新建不覆盖历史配置的 20-epoch CT-only baseline 配置，继续采用 epoch-aware training patch、固定 patch-validation、AdamW 与合理 scheduler/early stopping，然后启动真实训练。
+
+
+### 2026-08-26｜阶段 V：锁定 64³ CPU CT-only long-v2 配置（GitHub 同步点 #6）
+
+完成新的长训练 baseline 配置：`configs/orthopedic_ct_cpu_binary_long_v2.yaml`，不覆盖旧 36³ formal-pilot 配置和历史实验。
+
+配置关键点：
+
+- task 继续绑定已锁定 `vertebra_binary_ctspine1k_msd_t10_v1`，binary semantic，2 类；
+- 数据 split 继续使用固定 7 train / 2 validation / 1 test 的 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`；
+- 输入保持 CT-only，不提前加入 bone-window；loss 保持 Region Dice + CE，不提前加入 Boundary/Topology；
+- train ROI 从旧 `36³` 提升为 `64³`；foreground sampling=`0.8`；
+- epochs=`20`，batch size=`1`，`num_workers=0`，继续使用已修复的 epoch-aware training patch；
+- validation 继续固定 `64³` foreground patch，不随 epoch 漂移，只作为小样本 checkpoint proxy；
+- optimizer=`AdamW(lr=1e-4, weight_decay=0.01)`；scheduler 保持 `2 epoch warmup + cosine annealing warm restarts (T0=10, min_lr=6e-6)`；
+- early stopping patience 从旧 5 提高为 `8`，避免 2 个 validation 病例的短期波动过早终止训练；
+- full-volume inference/evaluation ROI 仍保持 `128³`，最终 checkpoint 仍必须由 validation full-volume 复核后再允许 test。
+
+验收：
+
+- `formal_readiness` 显式传入已锁定 task spec 并使用 `--allow-cpu`：`ready=true`、`blocker_count=0`；
+- formal preflight：10 例检查通过，split=7/2/1，pipeline 0.3.0=10，0 error / 0 warning；
+- 当前 CPU-only GPU report 仍如实显示无 CUDA，但在显式 `--allow-cpu` 下不构成 blocker；
+- 下一步直接启动该配置的真实 20-epoch 训练；训练期间不得读取 `liver_169` 做任何调参。

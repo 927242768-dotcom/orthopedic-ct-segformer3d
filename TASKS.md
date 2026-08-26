@@ -265,6 +265,7 @@
 - [x] validation patch 保持固定采样随机流，不随 epoch 漂移，确保 checkpoint 选择可比较
 - [x] CPU ROI 单步 benchmark：36³ / 48³ / 64³ 均完成真实 forward + loss + backward + AdamW.step；3 次单步进程 wall-time 中位数约 1.84 / 1.97 / 2.04 s
 - [x] 64³ 在当前 Ryzen 7 + 20 GB RAM 上可承受：单次结束 RSS≈565 MB、进程 peak working set≈1.53 GB；相对 48³ 的额外 wall-time 很小，因此下一版 CT-only baseline 选 64³
+- [x] 新建不覆盖历史实验的 `configs/orthopedic_ct_cpu_binary_long_v2.yaml`：CT-only、64³、20 epochs、AdamW、warmup+cosine restart、early stopping patience=8
 - [ ] 基于修复后的 epoch-aware sampling 与 64³ ROI 运行新的 20 epoch CT-only CPU baseline
 - [ ] 扩大数据规模后的正式 SegFormer3D CT-only 主实验训练
 - [ ] 使用 full-volume validation 复核候选 checkpoint
