@@ -1891,4 +1891,4 @@ git diff --check
 → 通过
 ```
 
-当前边界：本地等价检查已经通过；本阶段提交推送后还必须查看 GitHub Actions 新产生的 `main` CI run，只有 `Python tests and lint` 与 `Frontend and repository static checks` 都为 success，才能把“云端 CI 已恢复”记为最终完成。
+云端最终验收：修复提交 `6c5eac1` 推送到 `origin/main` 后触发 GitHub Actions CI run `32978966080`（run #18）。`Fetch pinned SegFormer3D upstream`、`Run Ruff`、`Run pytest` 全部 success；`Python tests and lint` 与 `Frontend and repository static checks` 两个 job 均最终为 `success`。因此可以正式确认：此前邮件中的 GitHub Actions Python CI 失败已修复，新鲜 Ubuntu runner 能按公开仓库内容自动获取固定上游、应用兼容补丁并完成全套 CI。
