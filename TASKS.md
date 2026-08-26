@@ -277,7 +277,8 @@
 - [x] 已定位首要根因：long-v2 每 epoch 仅 7 个训练 patch，9 epoch 共 63 个；复现实采样后训练 patch 平均前景≈21.2%，而 7 个 train 全卷平均前景仅≈0.68%。两例 validation 预测前景≈14.5%–17.1%，是真值≈0.57%–0.70% 的约 24–27 倍，属于严重 foreground/background sampling prior 失配
 - [x] `ProcessedOrthopedicCTDataset` 新增 `patches_per_case`，同病例同 epoch 可产生多个独立可复现 patch；`train.py` 支持 `training.patches_per_case` 并写入 metadata/summary，解决 7 例数据每 epoch 只有 7 次训练 step 的欠采样问题
 - [x] `evaluate.py` 新增 `prediction_foreground_fraction`、`target_foreground_fraction`、`prediction_to_target_foreground_ratio`，以后 full-volume evaluation 可直接量化全卷假阳性膨胀
-- [ ] 在新的 CT-only v3 baseline 中降低 foreground_probability、增加 patches_per_case，并改用 full-volume validation 作为 checkpoint selector；继续核对 loss/preprocessing/stitching，但当前未发现 label mapping 或 inference resize 的直接错误证据
+- [x] 新建 `configs/orthopedic_ct_cpu_binary_balanced_fullval_v3.yaml`：foreground_probability=0.25、patches_per_case=4、64³ CT-only、Region Dice+CE 不变，`validation.patch_mode=false`，checkpoint/early stopping 直接依据两例 full-volume validation；`formal_readiness --allow-cpu` 实测 ready=true / blocker_count=0
+- [ ] 启动 v3 真实训练并逐 epoch full-volume validation；若 prediction foreground ratio 快速下降且 Dice 改善则继续，否则立刻停止并调整，不为凑 epoch 浪费 CPU
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
 - [x] formal-pilot 输出 `metrics_per_case.csv` + prediction NIfTI + entropy NIfTI
 - [x] formal-pilot 记录 Dice / HD95 / ASSD / IoU / Precision / Recall / 结构指标

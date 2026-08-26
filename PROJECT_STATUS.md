@@ -639,7 +639,8 @@ CTSpine1K Hugging Face 在早期也出现超时和并行下载失败；但改为
 - [x] 已确认固定单 patch validation 严重高估/误判 full-volume 泛化：epoch 1 patch-val≈0.3613，但 full-volume 平均仅≈0.037；
 - [x] 已确认首要根因是 foreground/background sampling prior 严重失配：long-v2 真实训练 patch 平均前景≈21.2%，7 个 train 全卷平均≈0.68%；两例 validation prediction 前景≈14.5%–17.1%，是真值≈0.57%–0.70% 的约 24–27 倍；
 - [x] 已实现 `training.patches_per_case`：单病例每 epoch 可抽多个独立可复现 patch；并在 evaluation CSV/summary 增加 prediction/target foreground fraction 与 ratio；
-- [ ] 新建 CT-only v3：显著降低 foreground_probability、增加 patches_per_case，`validation.patch_mode=false`，直接用两例 full-volume validation 选择 checkpoint；
+- [x] 已新建 `configs/orthopedic_ct_cpu_binary_balanced_fullval_v3.yaml`：foreground_probability=0.25、patches_per_case=4、64³ CT-only、Region Dice+CE 保持不变，`validation.patch_mode=false`；`formal_readiness --allow-cpu` 实测 ready=true / blocker_count=0；
+- [ ] 立即启动 v3 真实训练，逐 epoch 以两例 full-volume Dice 选 checkpoint；若假阳性比例/Dice 不改善则尽早停止，不为凑 epoch 浪费算力；
 - [ ] 继续核对 Region Dice+CE 背景抑制、label mapping、normalization、sliding-window stitching/logits resize/threshold；当前没有发现 label mapping 或 resize 的直接错误证据；
 - [ ] 对 v3 validation 继续记录概率/置信度分布、connected components 与 false-positive 空间分布；
 - [ ] 只有 CT-only baseline 的 full-volume validation 明显改善后，才继续 CT+bone-window、Region+Boundary、augmentation/hard sampling 消融；
@@ -1653,6 +1654,28 @@ git diff --check
 ```
 
 下一步直接新建 CT-only v3，不覆盖 long-v2：降低 foreground sampling、提高 patches_per_case，并把 `validation.patch_mode=false`，让 checkpoint/early stopping 直接依据 `liver_7/liver_8` full-volume Dice；仍禁止访问 `liver_169`。
+
+
+### 2026-08-26｜阶段 AA：锁定 balanced + full-volume validation v3 配置（GitHub 同步点 #12）
+
+新建 `configs/orthopedic_ct_cpu_binary_balanced_fullval_v3.yaml`，只针对已定位的 sampling/checkpoint 问题做最小可归因修改：
+
+- CT-only、64³ ROI、SegFormer3D 结构、Region Dice+CE、AdamW lr=1e-4、weight_decay=0.01 保持不变；
+- `foreground_probability: 0.8 → 0.25`，显著增加纯背景/低前景 patch；
+- `training.patches_per_case: 4`，7 个 train 病例每 epoch 从 7 个 patch 提升到 28 个 patch；
+- `validation.patch_mode=false`，不再用固定 foreground patch proxy，checkpoint 与 early stopping 直接依据两例 validation full-volume Dice；
+- 上限 12 epoch、patience=4；如果 full-volume Dice/假阳性比例明显不改善，允许提前停止，不为凑轮数继续浪费 CPU。
+
+readiness：
+
+```text
+formal_readiness --allow-cpu
+→ ready=true
+→ blocker_count=0
+→ preflight 10 cases / split 7-2-1 / 0 error / 0 warning
+```
+
+该配置仍严格不访问 `liver_169`；下一步直接启动 v3 真实训练并逐 epoch full-volume validation。
 
 
 ### 2026-08-26｜阶段 W：实现并实测可靠 checkpoint resume（GitHub 同步点 #7）
