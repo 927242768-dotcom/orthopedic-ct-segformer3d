@@ -32,7 +32,7 @@
 | Web 科研原型 | ✅ 主体完成 | MPR/QC/3D/results-review 已具备 |
 | 临床脱敏数据 | 🔴 外部阻塞 | 等授权/脱敏/伦理 |
 | 论文 Methods | ✅ 主体完成 | Results 仍保持 TBD |
-| 自动化测试 | ✅ 当前通过 | 103 passed + Ruff clean |
+| 自动化测试 | ✅ 当前通过 | 104 passed + Ruff clean |
 
 ---
 
@@ -282,7 +282,9 @@
 - [x] 已对 v3 `best.pt` 分别完成 `liver_7/liver_8` detailed full-volume validation：Dice≈0.04323/0.06491，Precision≈0.02753/0.04267，prediction/target foreground ratio≈3.65/3.18；相比 long-v2 的约 24–27 倍前景膨胀已大幅压低，证明 balanced sampling 方向有效
 - [x] v3 epoch 3 已按同一 run 续训并触发明确失败：train loss≈1.6316，但两例 full-volume val Dice≈1.3e-11；detailed validation 两例 Dice/Precision/Recall 均为 0，prediction/GT foreground ratio≈0.47/0.26，说明模型已从过预测转为背景塌缩/真实前景无重叠，因此停止机械继续 epoch 4
 - [x] 已检查 Region Dice+CE 实现：foreground Dice 与未加权全体素 CrossEntropy 默认 1:1；当前 `train.build_criterion()` 未从 YAML 读取 `dice_weight/ce_weight`，balanced sampling 增加背景后 CE 背景主导与 epoch 3 collapse 现象一致
-- [ ] 下一版只做最小 loss-weight 修复：让 YAML 可配置 Dice/CE 内部权重，并在保持 v3 sampling 不变的情况下先降低 CE 权重做 validation，避免同时修改多个变量
+- [x] 已完成最小 loss-weight 工程修复：`region_dice_ce` 现在从 YAML 读取 `dice_weight/ce_weight`，新增合法性检查与回归测试；v4 配置保持 v3 sampling/ROI/输入/full-volume validation 不变，仅将 CE 权重设为 0.25
+- [x] `configs/orthopedic_ct_cpu_binary_balanced_loss_v4.yaml` 已通过 `formal_readiness --allow-cpu`：ready=true / blocker_count=0
+- [ ] 启动 v4 epoch 1，并仅使用 `liver_7/liver_8` full-volume validation + detailed diagnostics 判断 CE=0.25 是否缓解背景塌缩；在 baseline 完全锁定前继续禁止访问 `liver_169`
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
 - [x] formal-pilot 输出 `metrics_per_case.csv` + prediction NIfTI + entropy NIfTI
 - [x] formal-pilot 记录 Dice / HD95 / ASSD / IoU / Precision / Recall / 结构指标

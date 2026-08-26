@@ -72,7 +72,9 @@ def build_criterion(config: dict[str, Any]) -> torch.nn.Module:
         return build_joint_loss(config)
     if loss_type in {"region_dice_ce", "dicece", "dice_ce"}:
         return RegionDiceCELoss3D(
-            include_background=bool(loss_cfg.get("include_background", False))
+            dice_weight=float(loss_cfg.get("dice_weight", 1.0)),
+            ce_weight=float(loss_cfg.get("ce_weight", 1.0)),
+            include_background=bool(loss_cfg.get("include_background", False)),
         )
     raise ValueError(f"未知 loss.type: {loss_type}")
 

@@ -78,6 +78,10 @@ class RegionDiceCELoss3D(nn.Module):
         smooth: float = 1e-5,
     ) -> None:
         super().__init__()
+        if dice_weight < 0 or ce_weight < 0:
+            raise ValueError("Dice/CE 权重不能为负数")
+        if dice_weight == 0 and ce_weight == 0:
+            raise ValueError("Dice/CE 权重不能同时为 0")
         self.dice_weight = float(dice_weight)
         self.ce_weight = float(ce_weight)
         self.include_background = include_background

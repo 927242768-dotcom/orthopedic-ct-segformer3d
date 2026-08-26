@@ -89,7 +89,7 @@
 | patient-level 数据划分 | ✅ 已完成（10例 formal pilot） | 96% | 已固定 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，patient-level 互斥；官方 `test_private liver_169` 只进入 test、不参与训练/调参；`formal_experiment=true`。最终论文仍需扩大病例规模 |
 | 公开数据集整理 | 🟡 进行中 | 94% | CTSpine1K `MSD-T10` 10 个真实 CT+label 已落盘：`liver_0`—`liver_8` + `liver_169`，官方 split 为 9 `trainset` + 1 `test_private`；真实文件接管执行 SHA-256 校验，10 例全部标准化/QC。该子集仍是工程验证，不替代正式论文主数据集/split |
 | 临床脱敏数据 | 🔴 阻塞 | 0% | 当前项目目录无临床数据；必须等待合法授权、脱敏与伦理/使用范围确认 |
-| SegFormer3D 骨科适配 | 🟡 进行中 | 89% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。balanced fullval v3 已真实完成 epoch 1/2，当前 `best.pt=epoch 1`、两例 full-volume val Dice≈0.05407，略高于 long-v2 `last.pt`≈0.04953。v3 detailed validation 显示 `liver_7/liver_8` prediction/target foreground ratio≈3.65/3.18，较 long-v2 的约 24–27 倍显著下降，证明降低 foreground sampling + 增加 `patches_per_case` 的方向有效；但两例 component count error 仍为 1578/1597，碎片化依旧严重，baseline 尚未锁定 |
+| SegFormer3D 骨科适配 | 🟡 进行中 | 90% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。balanced fullval v3 的 epoch 1 为当前最佳 validation checkpoint（两例 Dice≈0.05407），但 epoch 3 已出现背景塌缩。现已完成 v4 最小 loss-weight 工程修复：`region_dice_ce` 可从 YAML 读取 `dice_weight/ce_weight`，新增权重合法性检查与回归测试；v4 保持 v3 sampling/ROI/输入/full-volume validation 不变，仅将 CE 权重设为 0.25，readiness 已通过，待真实 epoch 1 validation 判断是否缓解塌缩 |
 | 区域损失 | ✅ 已完成（代码） | 90% | Dice + CE/BCE 可运行并有 backward 测试 |
 | Boundary Loss | 🟠 待真实验证 | 55% | SDF 边界损失首版已实现；需真实训练、表面指标与效率验证 |
 | Topology Loss | 🟠 待真实验证 | 45% | 3D soft-clDice 候选已实现；骨折/非管状骨结构适用性必须单独验证 |
@@ -101,7 +101,7 @@
 | 三维重建 | 🟡 进行中 | 86% | 已实现 physical-space Marching Cubes、PLY/JSON、vertex-clustering、SDF surface、WebGL2 与物理测量；新增相邻法向变化驱动的特征保护 vertex-clustering 候选，真实 `liver_0` 在 2.0 mm/同 30,260 顶点下将高特征区域 mean-NN 约 0.679→0.620 mm、HD95 约 1.068→1.000 mm，作为真值网格工程证据；0.4 mm SDF 保持 2→2 连通域，0.8 mm 因 2→3 被保护机制拒绝。仍缺真实 prediction surface 上的正式验证 |
 | 论文 | 🟡 进行中 | 60% | 中文技术初稿已补 formal preflight、uncertainty/ROI refinement、calibration、物理表面/特征保护重建；Related Work 已加入 SpineMamba、解剖变异 Transformer、VertebraFormer、2026 Residual-Encoder nnU-Net、2025 骨折 pipeline、金属植入物与低骨密度 fusion/split 困难病例证据；42 条英文 BibTeX / 44 条矩阵已同步。Results 继续保持 TBD，禁止提前填结果 |
 | 中期材料 | 🟡 进行中 | 83% | 已同步 10 例真实数据、97 项测试、10/10 人工 QC、正式 binary task lock、7/2/1 formal-pilot split、`formal_readiness ready=true`，并新增 CPU CT-only 5-epoch formal-pilot checkpoint；仍缺独立 full-volume test、扩大样本规模后的正式主实验与可写入论文的稳定指标 |
-| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 103 passed`；`ruff: All checks passed`；新增 `patches_per_case` 多 patch 随机流与 foreground-fraction evaluation 回归测试，并保留 checkpoint resume、分病例 full-volume evaluation、CPU 非 AMP autocast、epoch-aware sampling 与 `allow_cpu` readiness 测试；42 条 BibTeX 结构正常 |
+| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 104 passed`；`ruff: All checks passed`；新增 `region_dice_ce` 内部 Dice/CE 权重配置回归测试，并保留 `patches_per_case` 多 patch 随机流、foreground-fraction evaluation、checkpoint resume、分病例 full-volume evaluation、CPU 非 AMP autocast、epoch-aware sampling 与 `allow_cpu` readiness 测试；42 条 BibTeX 结构正常 |
 
 ---
 
@@ -1754,3 +1754,37 @@ git diff --check
 - 先提交并同步本 resume 机制；
 - 再从干净 Git 状态新建真正的 20-epoch long-v2 run，并利用 `last.pt` 分段续训到总目标 20 epoch；
 - 20 epoch 完成后只根据 train + validation 判断是否继续 50 epoch；在 full-volume validation 完成、最终 checkpoint 固定之前，不再次访问 test。
+
+
+### 2026-08-26｜阶段 AD：v4 Region Dice+CE 权重工程闭环（GitHub 同步点 #15）
+
+在 v3 epoch 3 已确认背景塌缩后，本阶段严格按“一次只改一个主要变量”的原则，仅修复 Region Dice+CE 内部权重的配置链，不改变 v3 的数据 split、CT-only 输入、64³ ROI、`foreground_probability=0.25`、`patches_per_case=4`、full-volume validation 或 optimizer/scheduler。
+
+完成内容：
+
+- `src/modeling/train.py`：`region_dice_ce` 现在真实从 YAML 读取 `loss.dice_weight` 与 `loss.ce_weight`；
+- `src/modeling/joint_loss.py`：新增 Dice/CE 权重非负且不能同时为 0 的合法性检查；
+- `tests/test_training_smoke.py`：新增回归测试，确认 `build_criterion()` 能正确读取 `dice_weight=1.0 / ce_weight=0.25`；
+- 新建 `configs/orthopedic_ct_cpu_binary_balanced_loss_v4.yaml`：保持 v3 其它条件不变，仅把 Region CE 相对权重从 1.0 降到 0.25；
+- 未访问独立 test `liver_169`，本次所有检查只使用锁定 task、formal-pilot split 与 train/validation 规则。
+
+真实验收：
+
+```text
+formal_readiness --task-spec configs/task_specs/vertebra_binary_ctspine1k_msd_t10_v1.json \
+  --config configs/orthopedic_ct_cpu_binary_balanced_loss_v4.yaml --allow-cpu
+→ ready=true
+→ blocker_count=0
+→ preflight 10 cases / split 7-2-1 / 0 error / 0 warning
+
+pytest tests -q
+→ 104 passed, 153 warnings
+
+ruff check src web tests
+→ All checks passed!
+
+git diff --check
+→ 通过
+```
+
+下一步直接启动新的 v4 run，先只跑 epoch 1；随后仅对 `liver_7/liver_8` 做 full-volume validation 与 detailed evaluation，联合检查 Dice、Precision、Recall、HD95、ASSD、prediction/target foreground ratio、component fragmentation、uncertainty/calibration 与 inference time。若 epoch 1 明显改善再续训 epoch 2/3；若仍出现“epoch 1 尚可、后续塌缩”，下一优先变量是把学习率从 `1e-4` 降到 `5e-5`，而不是继续机械增加 epoch。

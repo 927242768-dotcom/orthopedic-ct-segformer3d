@@ -61,6 +61,15 @@ def test_disabled_grad_scaler_is_supported_on_torch_21_cpu() -> None:
     assert scaler.is_enabled() is False
 
 
+def test_region_loss_reads_internal_dice_ce_weights_from_config() -> None:
+    config = _tiny_config()
+    config["loss"]["dice_weight"] = 1.0
+    config["loss"]["ce_weight"] = 0.25
+    criterion = build_criterion(config)
+    assert criterion.dice_weight == 1.0
+    assert criterion.ce_weight == 0.25
+
+
 def test_dataset_model_loss_optimizer_end_to_end_smoke(tmp_path: Path) -> None:
     processed_root = tmp_path / "processed"
     _write_processed_case(processed_root, "case_train")
