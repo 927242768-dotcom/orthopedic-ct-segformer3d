@@ -1477,3 +1477,40 @@ git diff --check
 - uncertainty/calibration 链已证明可以对真实 checkpoint 输出，但 segmentation 本身很差，因此这些数字也只作为 pipeline 证据，不做“模型已可靠/已校准”结论；
 - test `liver_169` 不再用于下一阶段训练方案调参；后续所有训练改动只依据 train + validation 决策，待新方案完全固定后才允许再次独立 test；
 - 下一阶段优先进入更长的 CPU binary CT-only baseline：先验证更合理的 patch ROI / foreground sampling / augmentation / scheduler 与 early stopping，再运行 10–20 epoch 阶段训练并继续逐任务同步 GitHub。
+
+
+### 2026-08-26｜阶段 T：修复 CPU 跨 epoch 重复训练同一 patch 的采样缺陷
+
+在同步点 #3 完成后，没有直接把 epochs 从 5 粗暴增加到 20/50，而是先检查 `ProcessedOrthopedicCTDataset` 与训练循环。确认当前 CPU 配置 `num_workers=0` 时，`__getitem__()` 的随机流只混入固定 `seed / torch.initial_seed() / index`，训练循环又没有向 Dataset 传入 epoch，因此同一病例在不同 epoch 会重复使用同一随机裁剪/增强随机流。这会显著降低 7 个 train 病例在长训练中的有效 patch 多样性，是 5-epoch pilot 之后必须先修复的训练机制问题。
+
+完成：
+
+- `src/modeling/dataset.py` 新增 `epoch` 状态与 `set_epoch()`；
+- 训练 patch 的随机种子显式混入 epoch，使同一病例在不同 epoch 采样不同、同一 epoch 仍可复现；
+- `src/modeling/train.py` 在每个训练 epoch 开始时调用 `train_ds.set_epoch(epoch)`；
+- patch-validation Dataset 不调用 `set_epoch()`，继续固定在同一验证随机流，避免每个 epoch 因验证 patch 漂移而污染 checkpoint 比较；
+- `run_metadata.json` 新增 `training_patch_sampling_epoch_aware=true` 与 `validation_patch_sampling_fixed_across_epochs` 追踪字段；
+- 新增 `tests/test_dataset_epoch_sampling.py`，验证同一 epoch 重复读取完全一致、不同 epoch patch 改变、负 epoch 被拒绝；
+- 本修复只改变 train/validation patch 采样机制，没有读取或利用独立 test `liver_169` 的结果做参数选择。
+
+验证：
+
+```text
+pytest tests/test_dataset_epoch_sampling.py tests/test_training_smoke.py -q --disable-warnings
+→ 5 passed
+
+pytest tests -q --disable-warnings
+→ 99 passed, 153 warnings
+
+ruff check src web tests
+→ All checks passed!
+
+git diff --check
+→ 通过
+```
+
+结论与下一步：
+
+- 之前 5-epoch run 的工程链仍然有效，但其 CPU `num_workers=0` 训练 patch 多样性受该缺陷限制，因此不能仅通过“继续原配置多跑 epoch”来判断模型上限；
+- 下一步只使用 train/validation 做 CPU 资源与 ROI 选择：先对 `36³ / 48³ / 64³` 训练 patch 做单步耗时与可运行性检查，再固定新的 10–20 epoch CT-only baseline 配置；
+- 新方案完全固定前不再次运行 test，避免把 `liver_169` 用作调参集。

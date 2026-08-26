@@ -32,7 +32,7 @@
 | Web 科研原型 | ✅ 主体完成 | MPR/QC/3D/results-review 已具备 |
 | 临床脱敏数据 | 🔴 外部阻塞 | 等授权/脱敏/伦理 |
 | 论文 Methods | ✅ 主体完成 | Results 仍保持 TBD |
-| 自动化测试 | ✅ 当前通过 | 97 passed + Ruff clean |
+| 自动化测试 | ✅ 当前通过 | 99 passed + Ruff clean |
 
 ---
 
@@ -261,6 +261,9 @@
 - [x] formal-pilot 最佳 checkpoint 已保存：epoch 4，patch-val Dice≈0.2719
 - [x] formal-pilot 已固定 config / split / seed / environment / run_metadata
 - [x] formal-pilot patch validation 已完成；train loss 约 5.5221→2.6524
+- [x] 修复 CPU `num_workers=0` 时跨 epoch 反复抽取同一训练 patch：Dataset 新增 `set_epoch()`，训练循环每 epoch 显式更新采样随机流
+- [x] validation patch 保持固定采样随机流，不随 epoch 漂移，确保 checkpoint 选择可比较
+- [ ] 基于修复后的 epoch-aware sampling 运行新的 10–20 epoch CT-only CPU baseline
 - [ ] 扩大数据规模后的正式 SegFormer3D CT-only 主实验训练
 - [ ] 使用 full-volume validation 复核候选 checkpoint
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参

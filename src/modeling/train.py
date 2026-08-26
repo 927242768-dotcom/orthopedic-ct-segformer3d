@@ -307,6 +307,8 @@ def train(config_path: Path, *, max_epochs_override: int | None = None) -> Path:
         "source_split": str(split_file),
         "validation_mode": "patch" if validation_patch_mode else "full_volume",
         "validation_patch_is_engineering_proxy": validation_patch_mode,
+        "training_patch_sampling_epoch_aware": True,
+        "validation_patch_sampling_fixed_across_epochs": validation_patch_mode,
     }
     (run_dir / "run_metadata.json").write_text(
         json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8"
@@ -431,6 +433,7 @@ def train(config_path: Path, *, max_epochs_override: int | None = None) -> Path:
         for epoch in range(1, max_epochs + 1):
             if scheduler is not None:
                 scheduler.step(epoch)
+            train_ds.set_epoch(epoch)
             model.train()
             optimizer.zero_grad(set_to_none=True)
             running_loss = 0.0

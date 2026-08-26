@@ -361,6 +361,7 @@ class ProcessedOrthopedicCTDataset(Dataset):
         self.hu_clip = tuple(float(v) for v in hu_clip)
         self.bone_window_width = float(bone_window_width)
         self.seed = int(seed)
+        self.epoch = 0
 
         if not (0.0 <= self.foreground_probability <= 1.0):
             raise ValueError("foreground_probability 必须位于 [0,1]")
@@ -377,6 +378,12 @@ class ProcessedOrthopedicCTDataset(Dataset):
         self.case_ids = [str(x) for x in payload[split]]
         if not self.case_ids:
             raise ValueError(f"split {split!r} 为空")
+
+    def set_epoch(self, epoch: int) -> None:
+        """设置训练 patch 的 epoch 随机流；同一 epoch 保持可复现。"""
+        if epoch < 0:
+            raise ValueError("epoch 不能为负数")
+        self.epoch = int(epoch)
 
     def __len__(self) -> int:
         return len(self.case_ids)
@@ -421,10 +428,13 @@ class ProcessedOrthopedicCTDataset(Dataset):
         case_id = self.case_ids[index]
         image, label, metadata = self._load_case(case_id)
 
-        # 对每个样本/epoch worker 使用可复现但不完全相同的随机流。
+        # 对每个样本/worker/epoch 使用可复现但跨 epoch 不同的随机流。
+        # num_workers=0 时 torch.initial_seed() 本身不会随 epoch 改变，因此必须显式混入 epoch；
+        # 否则会在每个 epoch 反复抽到完全相同的训练 patch。
         worker_info = torch.utils.data.get_worker_info()
         worker_seed = worker_info.seed if worker_info is not None else torch.initial_seed()
-        rng = random.Random(self.seed ^ int(worker_seed) ^ index)
+        rng_seed = self.seed ^ int(worker_seed) ^ (index << 16) ^ (self.epoch << 32)
+        rng = random.Random(rng_seed)
 
         if self.training:
             aug_cfg = self.augmentation
