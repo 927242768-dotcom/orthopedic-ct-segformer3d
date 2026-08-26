@@ -89,7 +89,7 @@
 | patient-level 数据划分 | ✅ 已完成（10例 formal pilot） | 96% | 已固定 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，patient-level 互斥；官方 `test_private liver_169` 只进入 test、不参与训练/调参；`formal_experiment=true`。最终论文仍需扩大病例规模 |
 | 公开数据集整理 | 🟡 进行中 | 94% | CTSpine1K `MSD-T10` 10 个真实 CT+label 已落盘：`liver_0`—`liver_8` + `liver_169`，官方 split 为 9 `trainset` + 1 `test_private`；真实文件接管执行 SHA-256 校验，10 例全部标准化/QC。该子集仍是工程验证，不替代正式论文主数据集/split |
 | 临床脱敏数据 | 🔴 阻塞 | 0% | 当前项目目录无临床数据；必须等待合法授权、脱敏与伦理/使用范围确认 |
-| SegFormer3D 骨科适配 | 🟡 进行中 | 79% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。CPU formal-pilot CT-only 已完成 5 epochs：train loss 约 5.5221→2.6524，最佳 patch-val Dice≈0.2719（epoch 4），最佳 checkpoint 已保存；该数值只是 patch-validation pilot，不是论文 full-volume test 结果 |
+| SegFormer3D 骨科适配 | 🟡 进行中 | 81% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。CPU formal-pilot CT-only 已完成 5 epochs，并已修复 `num_workers=0` 跨 epoch 重复 patch 采样；36³/48³/64³ 真实单步 ROI benchmark 均通过，下一版长 baseline 选 64³。旧 5-epoch 最佳 patch-val Dice≈0.2719（epoch 4）仅为 pilot proxy，不是论文 full-volume test 结果 |
 | 区域损失 | ✅ 已完成（代码） | 90% | Dice + CE/BCE 可运行并有 backward 测试 |
 | Boundary Loss | 🟠 待真实验证 | 55% | SDF 边界损失首版已实现；需真实训练、表面指标与效率验证 |
 | Topology Loss | 🟠 待真实验证 | 45% | 3D soft-clDice 候选已实现；骨折/非管状骨结构适用性必须单独验证 |
@@ -1514,3 +1514,27 @@ git diff --check
 - 之前 5-epoch run 的工程链仍然有效，但其 CPU `num_workers=0` 训练 patch 多样性受该缺陷限制，因此不能仅通过“继续原配置多跑 epoch”来判断模型上限；
 - 下一步只使用 train/validation 做 CPU 资源与 ROI 选择：先对 `36³ / 48³ / 64³` 训练 patch 做单步耗时与可运行性检查，再固定新的 10–20 epoch CT-only baseline 配置；
 - 新方案完全固定前不再次运行 test，避免把 `liver_169` 用作调参集。
+
+
+### 2026-08-26｜阶段 U：CPU ROI 单步 benchmark（GitHub 同步点 #5）
+
+本阶段严格只使用 formal-pilot 的 `train` split，复用 `src.modeling.real_patch_smoke.run_real_patch_smoke()` 对 `36³ / 48³ / 64³` 做真实单 patch 训练链检查；每次均实际执行 Dataset 取样、SegFormer3D forward、Region Dice+CE loss、backward 与 AdamW optimizer step。没有读取 validation 指标做 ROI 选择，更没有访问独立 test `liver_169`。
+
+真实结果：
+
+- `36³`：3 次单步进程 wall-time 约 `1.929 / 1.840 / 1.821 s`，中位数约 `1.840 s`；单次结束 RSS≈`505 MB`，进程 peak working set≈`1529.8 MB`；
+- `48³`：3 次约 `1.972 / 1.894 / 1.970 s`，中位数约 `1.970 s`；单次结束 RSS≈`523 MB`，peak working set≈`1530.2 MB`；
+- `64³`：3 次约 `2.083 / 1.939 / 2.038 s`，中位数约 `2.038 s`；单次结束 RSS≈`565 MB`，peak working set≈`1530.7 MB`；
+- 三档均产生有限 loss、有限梯度并成功完成 optimizer step；本阶段的 loss 为随机初始化下工程 smoke 输出，不属于模型性能。
+
+ROI 决策：
+
+- `48³` 明确可运行；
+- `64³` 相对 `48³` 的进程 wall-time 中位数仅增加约 3.5%，结束 RSS 约增加 42 MB，当前约 20 GB RAM 机器可轻松承受；同时 64³ 提供明显更大的 3D 解剖上下文；
+- 因此下一版 CT-only 长 baseline 固定使用 `64³`，不再沿用旧 `36³`；若后续完整 epoch 训练出现明显吞吐/内存异常，再回退到 `48³`，但不能使用 test 指标决定是否回退。
+
+验证与边界：
+
+- benchmark 复用了现有真实单 patch smoke 训练链，没有新增模型性能声明；
+- ROI 选择只依据 train-side 工程资源可运行性，不使用 `liver_169`；
+- 下一步立即新建不覆盖历史配置的 20-epoch CT-only baseline 配置，继续采用 epoch-aware training patch、固定 patch-validation、AdamW 与合理 scheduler/early stopping，然后启动真实训练。

@@ -263,7 +263,9 @@
 - [x] formal-pilot patch validation 已完成；train loss 约 5.5221→2.6524
 - [x] 修复 CPU `num_workers=0` 时跨 epoch 反复抽取同一训练 patch：Dataset 新增 `set_epoch()`，训练循环每 epoch 显式更新采样随机流
 - [x] validation patch 保持固定采样随机流，不随 epoch 漂移，确保 checkpoint 选择可比较
-- [ ] 基于修复后的 epoch-aware sampling 运行新的 10–20 epoch CT-only CPU baseline
+- [x] CPU ROI 单步 benchmark：36³ / 48³ / 64³ 均完成真实 forward + loss + backward + AdamW.step；3 次单步进程 wall-time 中位数约 1.84 / 1.97 / 2.04 s
+- [x] 64³ 在当前 Ryzen 7 + 20 GB RAM 上可承受：单次结束 RSS≈565 MB、进程 peak working set≈1.53 GB；相对 48³ 的额外 wall-time 很小，因此下一版 CT-only baseline 选 64³
+- [ ] 基于修复后的 epoch-aware sampling 与 64³ ROI 运行新的 20 epoch CT-only CPU baseline
 - [ ] 扩大数据规模后的正式 SegFormer3D CT-only 主实验训练
 - [ ] 使用 full-volume validation 复核候选 checkpoint
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
