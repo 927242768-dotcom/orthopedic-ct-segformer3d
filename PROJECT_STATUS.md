@@ -95,13 +95,13 @@
 | Topology Loss | 🟠 待真实验证 | 45% | 3D soft-clDice 候选已实现；骨折/非管状骨结构适用性必须单独验证 |
 | 困难样本增强 | 🟠 待真实验证 | 68% | 已落地可配置 3D flip/小角度旋转/各向同性缩放、gamma、Gaussian noise、HU shift 与 boundary-proxy hard sampling；强度增强已兼容 z-score CT 并使用 metadata 精确回到 HU 域。金属伪影与基于真实模型误差/uncertainty 的 hard mining 仍待实验 |
 | 不确定性机制 | 🟠 待真实验证 | 82% | predictive entropy、Top-percent ROI、膨胀、uncertainty→error AUROC/AUPRC、错误/正确平均熵、Top-percent error recall/ROI error rate 已实现；新增体素级 calibration：ECE、MCE、multiclass Brier score、NLL、mean confidence、accuracy、confidence gap，并以固定 seed 采样控制大体积内存；局部残差 refinement 已补 ROI-only 二阶段训练闭环。尚无真实 baseline checkpoint 条件下的定量收益、校准结论与消融 |
-| 训练/验证框架 | 🟡 进行中 | 99% | DataLoader/AdamW/AMP/gradient accumulation/sliding-window、scheduler、完整 run 追踪已接入；修复 PyTorch 2.1 CPU `GradScaler/autocast` 兼容问题，新增工程 `patch_mode` validation；`train.py` 与 `formal_readiness.py` 支持显式 `--allow-cpu`。2026-08-26 锁定 binary task + 7/2/1 formal-pilot split 后，`formal_readiness --allow-cpu` 实测 `ready=true`、`blocker_count=0` |
+| 训练/验证框架 | 🟡 进行中 | 99% | DataLoader/AdamW/AMP/gradient accumulation/sliding-window、scheduler、完整 run 追踪已接入；修复 PyTorch 2.1 CPU `GradScaler/autocast` 兼容问题，新增工程 `patch_mode` validation；`train.py` 支持 `--allow-cpu` 与可靠 `--resume`，每 epoch 写 `last.pt` 并恢复 model/optimizer/scheduler/epoch/best metric/early-stopping/RNG，在原 run 追加 history。binary task + 7/2/1 formal-pilot split 下 readiness 实测通过 |
 | 评价指标 | ✅ 已完成（代码+首个真实 pilot test） | 100% | Dice、IoU、Precision、Recall、HD95、ASSD、component count/error、false merge/break 已接入；包含 uncertainty→error 与 ECE/MCE/Brier/NLL 等指标；`evaluate.py` 可统一写入逐病例 CSV 与 summary。5-epoch formal-pilot 已对独立 `liver_169` 完成 full-volume CPU evaluation：Dice≈0.0221、HD95≈190.93 mm、ASSD≈53.42 mm、inference≈9.29 s，prediction/entropy/metrics 均真实生成；该结果显示模型严重欠训练，只能作为 10 例流程 pilot，禁止作为论文正式结果 |
 | Web 科研辅助分析原型 | 🟡 进行中 | 85% | 首页/上传/健康检查、MPR、10 例人工 QC reviewer、C1–L6 可读标签、真值 PLY WebGL2 3D、简化/物理测量均已完成；QC reviewer 已修复全站 `.card` grid-column 与 QC 网格冲突，病例选择后使用 `hidden + display:none!important` 彻底关闭病例层并进入主审核区，“上一例 / 下一例”保持审核区，悬浮按钮可随时重新打开病例列表；已在本机 Edge 对真实 `liver_0` 完成点击关闭/重新展开实机验证。另有 SDF surface 选择与 evaluation results-review，可读取未来 prediction/entropy MPR。当前 `/api/research/evaluations` 实测 200 且 total=0，真实 checkpoint/prediction 仍不存在，系统没有伪造结果 |
 | 三维重建 | 🟡 进行中 | 86% | 已实现 physical-space Marching Cubes、PLY/JSON、vertex-clustering、SDF surface、WebGL2 与物理测量；新增相邻法向变化驱动的特征保护 vertex-clustering 候选，真实 `liver_0` 在 2.0 mm/同 30,260 顶点下将高特征区域 mean-NN 约 0.679→0.620 mm、HD95 约 1.068→1.000 mm，作为真值网格工程证据；0.4 mm SDF 保持 2→2 连通域，0.8 mm 因 2→3 被保护机制拒绝。仍缺真实 prediction surface 上的正式验证 |
 | 论文 | 🟡 进行中 | 60% | 中文技术初稿已补 formal preflight、uncertainty/ROI refinement、calibration、物理表面/特征保护重建；Related Work 已加入 SpineMamba、解剖变异 Transformer、VertebraFormer、2026 Residual-Encoder nnU-Net、2025 骨折 pipeline、金属植入物与低骨密度 fusion/split 困难病例证据；42 条英文 BibTeX / 44 条矩阵已同步。Results 继续保持 TBD，禁止提前填结果 |
 | 中期材料 | 🟡 进行中 | 83% | 已同步 10 例真实数据、97 项测试、10/10 人工 QC、正式 binary task lock、7/2/1 formal-pilot split、`formal_readiness ready=true`，并新增 CPU CT-only 5-epoch formal-pilot checkpoint；仍缺独立 full-volume test、扩大样本规模后的正式主实验与可写入论文的稳定指标 |
-| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 97 passed`；`ruff: All checks passed`；新增 CPU 非 AMP autocast、PyTorch 2.1 disabled GradScaler 与 `allow_cpu` readiness 回归测试；既有 calibration、特征保护网格、QC reviewer 等测试继续通过；42 条 BibTeX 结构正常。覆盖 task lock/formal readiness、CPU training、uncertainty/calibration、mesh feature-preservation、results-review、SDF topology guard 及既有真实数据/QC/评价/Web 链 |
+| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 100 passed`；`ruff: All checks passed`；新增 checkpoint resume 状态恢复回归测试，并保留 CPU 非 AMP autocast、PyTorch 2.1 disabled GradScaler、epoch-aware sampling 与 `allow_cpu` readiness 测试；42 条 BibTeX 结构正常。覆盖 task lock/formal readiness、CPU training、uncertainty/calibration、mesh feature-preservation、results-review、SDF topology guard 及既有真实数据/QC/评价/Web 链 |
 
 ---
 
@@ -1562,3 +1562,47 @@ ROI 决策：
 - formal preflight：10 例检查通过，split=7/2/1，pipeline 0.3.0=10，0 error / 0 warning；
 - 当前 CPU-only GPU report 仍如实显示无 CUDA，但在显式 `--allow-cpu` 下不构成 blocker；
 - 下一步直接启动该配置的真实 20-epoch 训练；训练期间不得读取 `liver_169` 做任何调参。
+
+
+### 2026-08-26｜阶段 W：实现并实测可靠 checkpoint resume（GitHub 同步点 #7）
+
+为了避免 CPU 20/50 epoch 长训练因单次命令执行上限中断后只能重头开始，本阶段把 checkpoint resume 提前实现并完成真实端到端验证。
+
+代码完成：
+
+- `train.py` 新增 `--resume <checkpoint>`；`--max-epochs` 在 resume 模式下表示该 run 的总目标 epoch，而不是“再训练多少轮”；
+- 每个完成的 epoch 除最佳 `best.pt` 外，固定写入 `checkpoint/last.pt`；
+- checkpoint 现在同时保存/恢复：model state、optimizer state、scheduler state、当前 epoch、best validation Dice、early-stopping 连续未改善计数；
+- 额外保存/恢复 Python / NumPy / Torch / CUDA RNG 状态，避免续训时 DataLoader shuffle 和其它随机流无条件重置；
+- `WarmupCosineRestarts` 新增 `load_state_dict()`；
+- resume 时复用原 run 目录，不覆盖 `config.yaml / split.json`，`history.csv` 改为追加；`run_metadata.json` 记录 resume event；
+- checkpoint 中 config 与当前 config 不一致时拒绝 resume，防止把不同实验错误拼接在一起；
+- `summary.json` 新增 `last_epoch / target_max_epochs / epochs_without_improvement / resumed`。
+
+真实 64³ resume smoke：
+
+- run：`experiments/20260826_162450_cpu_binary_long_v2_ct_only_roi64`；
+- 第一次运行 `--max-epochs 1`：epoch 1 train loss≈`4.22295`，固定 patch-val Dice≈`0.36133`；
+- 随后从同一 run 的 `checkpoint/last.pt` 执行 `--max-epochs 2 --resume ...`：成功直接进入 epoch 2，train loss≈`3.99598`，patch-val Dice≈`0.28158`；
+- `history.csv` 保持 epoch `1 → 2` 连续，没有新建第二个 run；
+- `best.pt` 与 `last.pt` 均存在，resume metadata 记录 checkpoint epoch=1、target=2；
+- 这些 1–2 epoch 数值只是 resume 工程验证，不作为 20-epoch baseline 结果，也不访问 test `liver_169`。
+
+回归：
+
+```text
+pytest tests -q --disable-warnings
+→ 100 passed, 153 warnings
+
+ruff check src web tests
+→ All checks passed!
+
+git diff --check
+→ 通过
+```
+
+下一步：
+
+- 先提交并同步本 resume 机制；
+- 再从干净 Git 状态新建真正的 20-epoch long-v2 run，并利用 `last.pt` 分段续训到总目标 20 epoch；
+- 20 epoch 完成后只根据 train + validation 判断是否继续 50 epoch；在 full-volume validation 完成、最终 checkpoint 固定之前，不再次访问 test。

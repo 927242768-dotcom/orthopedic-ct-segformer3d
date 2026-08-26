@@ -220,6 +220,11 @@ class WarmupCosineRestarts:
             "cosine": self.cosine.state_dict(),
         }
 
+    def load_state_dict(self, state_dict: dict[str, Any]) -> None:
+        self.warmup_epochs = int(state_dict["warmup_epochs"])
+        self.base_lrs = [float(value) for value in state_dict["base_lrs"]]
+        self.cosine.load_state_dict(state_dict["cosine"])
+
 
 def build_scheduler(
     config: dict[str, Any], optimizer: torch.optim.Optimizer
@@ -247,15 +252,23 @@ def save_checkpoint(
     val_dice: float,
     config: dict[str, Any],
     scheduler: WarmupCosineRestarts | None = None,
+    best_val_dice: float | None = None,
+    epochs_without_improvement: int = 0,
 ) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     torch.save(
         {
             "epoch": int(epoch),
             "val_dice": float(val_dice),
+            "best_val_dice": float(val_dice if best_val_dice is None else best_val_dice),
+            "epochs_without_improvement": int(epochs_without_improvement),
             "model_state_dict": model.state_dict(),
             "optimizer_state_dict": optimizer.state_dict(),
             "scheduler_state_dict": None if scheduler is None else scheduler.state_dict(),
+            "python_random_state": random.getstate(),
+            "numpy_random_state": np.random.get_state(),
+            "torch_rng_state": torch.get_rng_state(),
+            "cuda_rng_state_all": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None,
             "config": config,
             "upstream": upstream_provenance(),
             "git_commit": current_git_commit(),
@@ -264,7 +277,52 @@ def save_checkpoint(
     )
 
 
-def train(config_path: Path, *, max_epochs_override: int | None = None) -> Path:
+def load_training_checkpoint(
+    checkpoint_path: Path,
+    *,
+    model: torch.nn.Module,
+    optimizer: torch.optim.Optimizer,
+    scheduler: WarmupCosineRestarts | None,
+    expected_config: dict[str, Any],
+    device: torch.device,
+) -> dict[str, int | float]:
+    checkpoint = torch.load(checkpoint_path, map_location=device)
+    checkpoint_config = checkpoint.get("config")
+    if checkpoint_config is not None and checkpoint_config != expected_config:
+        raise ValueError("resume checkpoint 中的 config 与当前训练 config 不一致")
+
+    model.load_state_dict(checkpoint["model_state_dict"])
+    optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+    scheduler_state = checkpoint.get("scheduler_state_dict")
+    if scheduler_state is not None:
+        if scheduler is None:
+            raise ValueError("checkpoint 含 scheduler_state_dict，但当前 config 未启用 scheduler")
+        scheduler.load_state_dict(scheduler_state)
+
+    if checkpoint.get("python_random_state") is not None:
+        random.setstate(checkpoint["python_random_state"])
+    if checkpoint.get("numpy_random_state") is not None:
+        np.random.set_state(checkpoint["numpy_random_state"])
+    if checkpoint.get("torch_rng_state") is not None:
+        torch.set_rng_state(checkpoint["torch_rng_state"])
+    if torch.cuda.is_available() and checkpoint.get("cuda_rng_state_all") is not None:
+        torch.cuda.set_rng_state_all(checkpoint["cuda_rng_state_all"])
+
+    epoch = int(checkpoint["epoch"])
+    return {
+        "epoch": epoch,
+        "start_epoch": epoch + 1,
+        "best_val_dice": float(checkpoint.get("best_val_dice", checkpoint.get("val_dice", -1.0))),
+        "epochs_without_improvement": int(checkpoint.get("epochs_without_improvement", 0)),
+    }
+
+
+def train(
+    config_path: Path,
+    *,
+    max_epochs_override: int | None = None,
+    resume_checkpoint: Path | None = None,
+) -> Path:
     config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
     seed = int(config.get("seed", 42))
     seed_everything(seed)
@@ -283,34 +341,48 @@ def train(config_path: Path, *, max_epochs_override: int | None = None) -> Path:
     if not split_file.exists():
         raise FileNotFoundError(f"split_file 不存在: {split_file}")
 
-    experiment_name = str(config.get("experiment_name", "experiment"))
-    stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    run_dir = PROJECT_ROOT / "experiments" / f"{stamp}_{experiment_name}"
-    run_dir.mkdir(parents=True, exist_ok=False)
-    shutil.copy2(config_path, run_dir / "config.yaml")
-    shutil.copy2(split_file, run_dir / "split.json")
+    resume_path = _resolve_project_path(resume_checkpoint) if resume_checkpoint else None
+    if resume_path is not None:
+        if not resume_path.exists():
+            raise FileNotFoundError(f"resume checkpoint 不存在: {resume_path}")
+        run_dir = resume_path.parent.parent
+        if not (run_dir / "config.yaml").exists() or not (run_dir / "split.json").exists():
+            raise FileNotFoundError(f"resume run 缺少 config.yaml 或 split.json: {run_dir}")
+    else:
+        experiment_name = str(config.get("experiment_name", "experiment"))
+        stamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        run_dir = PROJECT_ROOT / "experiments" / f"{stamp}_{experiment_name}"
+        run_dir.mkdir(parents=True, exist_ok=False)
+        shutil.copy2(config_path, run_dir / "config.yaml")
+        shutil.copy2(split_file, run_dir / "split.json")
 
-    metadata = {
-        "started_at": datetime.now().isoformat(),
-        "git_commit": current_git_commit(),
-        "device_requested": "cuda" if torch.cuda.is_available() else "cpu",
-        "python_version": platform.python_version(),
-        "torch_version": torch.__version__,
-        "numpy_version": np.__version__,
-        "cuda_available": torch.cuda.is_available(),
-        "cuda_version": torch.version.cuda,
-        "cuda_device": (
-            torch.cuda.get_device_name(0) if torch.cuda.is_available() else None
-        ),
-        "upstream": upstream_provenance(),
-        "source_config": str(config_path),
-        "source_split": str(split_file),
-        "validation_mode": "patch" if validation_patch_mode else "full_volume",
-        "validation_patch_is_engineering_proxy": validation_patch_mode,
-        "training_patch_sampling_epoch_aware": True,
-        "validation_patch_sampling_fixed_across_epochs": validation_patch_mode,
-    }
-    (run_dir / "run_metadata.json").write_text(
+    metadata_path = run_dir / "run_metadata.json"
+    if resume_path is not None and metadata_path.exists():
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+    else:
+        metadata = {
+            "started_at": datetime.now().isoformat(),
+            "git_commit": current_git_commit(),
+            "device_requested": "cuda" if torch.cuda.is_available() else "cpu",
+            "python_version": platform.python_version(),
+            "torch_version": torch.__version__,
+            "numpy_version": np.__version__,
+            "cuda_available": torch.cuda.is_available(),
+            "cuda_version": torch.version.cuda,
+            "cuda_device": (
+                torch.cuda.get_device_name(0) if torch.cuda.is_available() else None
+            ),
+            "upstream": upstream_provenance(),
+            "source_config": str(config_path),
+            "source_split": str(split_file),
+            "validation_mode": "patch" if validation_patch_mode else "full_volume",
+            "validation_patch_is_engineering_proxy": validation_patch_mode,
+            "training_patch_sampling_epoch_aware": True,
+            "validation_patch_sampling_fixed_across_epochs": validation_patch_mode,
+            "resume_events": [],
+        }
+    metadata.setdefault("resume_events", [])
+    metadata_path.write_text(
         json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
@@ -414,9 +486,38 @@ def train(config_path: Path, *, max_epochs_override: int | None = None) -> Path:
 
     best_dice = -1.0
     epochs_without_improvement = 0
+    start_epoch = 1
+    if resume_path is not None:
+        resume_state = load_training_checkpoint(
+            resume_path,
+            model=model,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            expected_config=config,
+            device=device,
+        )
+        start_epoch = int(resume_state["start_epoch"])
+        best_dice = float(resume_state["best_val_dice"])
+        epochs_without_improvement = int(resume_state["epochs_without_improvement"])
+        metadata["resume_events"].append(
+            {
+                "resumed_at": datetime.now().isoformat(),
+                "checkpoint": str(resume_path),
+                "checkpoint_epoch": int(resume_state["epoch"]),
+                "target_max_epochs": max_epochs,
+                "git_commit": current_git_commit(),
+            }
+        )
+        metadata_path.write_text(
+            json.dumps(metadata, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+
     history_csv = run_dir / "history.csv"
     train_log = run_dir / "train.log"
-    with history_csv.open("w", encoding="utf-8", newline="") as f:
+    append_history = resume_path is not None and history_csv.exists()
+    history_mode = "a" if append_history else "w"
+    last_epoch = start_epoch - 1
+    with history_csv.open(history_mode, encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(
             f,
             fieldnames=[
@@ -428,9 +529,10 @@ def train(config_path: Path, *, max_epochs_override: int | None = None) -> Path:
                 "lr",
             ],
         )
-        writer.writeheader()
+        if not append_history:
+            writer.writeheader()
 
-        for epoch in range(1, max_epochs + 1):
+        for epoch in range(start_epoch, max_epochs + 1):
             if scheduler is not None:
                 scheduler.step(epoch)
             train_ds.set_epoch(epoch)
@@ -495,9 +597,24 @@ def train(config_path: Path, *, max_epochs_override: int | None = None) -> Path:
                     val_dice=best_dice,
                     config=config,
                     scheduler=scheduler,
+                    best_val_dice=best_dice,
+                    epochs_without_improvement=epochs_without_improvement,
                 )
             else:
                 epochs_without_improvement += 1
+
+            save_checkpoint(
+                run_dir / "checkpoint" / "last.pt",
+                model=model,
+                optimizer=optimizer,
+                epoch=epoch,
+                val_dice=float(val_result["val_dice"]),
+                config=config,
+                scheduler=scheduler,
+                best_val_dice=best_dice,
+                epochs_without_improvement=epochs_without_improvement,
+            )
+            last_epoch = epoch
 
             if epochs_without_improvement >= patience:
                 print(f"Early stopping: {patience} epochs without validation Dice improvement.")
@@ -506,6 +623,10 @@ def train(config_path: Path, *, max_epochs_override: int | None = None) -> Path:
     summary = {
         "finished_at": datetime.now().isoformat(),
         "best_val_dice": best_dice,
+        "last_epoch": last_epoch,
+        "target_max_epochs": max_epochs,
+        "epochs_without_improvement": epochs_without_improvement,
+        "resumed": resume_path is not None,
         "run_dir": str(run_dir),
         "validation_mode": "patch" if validation_patch_mode else "full_volume",
         "note": (
@@ -528,6 +649,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Train orthopedic CT SegFormer3D")
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--max-epochs", type=int, default=None)
+    parser.add_argument(
+        "--resume",
+        type=Path,
+        default=None,
+        help="从同一 run 的 checkpoint/last.pt 继续训练；--max-epochs 表示续训后的总目标 epoch",
+    )
     parser.add_argument(
         "--preflight-mode",
         choices=("formal", "engineering"),
@@ -556,7 +683,11 @@ def main() -> None:
         print(json.dumps({"preflight": report.to_dict()}, ensure_ascii=False, indent=2))
         if not report.ready:
             raise SystemExit(2)
-    run_dir = train(config_path, max_epochs_override=args.max_epochs)
+    run_dir = train(
+        config_path,
+        max_epochs_override=args.max_epochs,
+        resume_checkpoint=args.resume,
+    )
     print(f"Run completed: {run_dir}")
 
 

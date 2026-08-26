@@ -32,7 +32,7 @@
 | Web 科研原型 | ✅ 主体完成 | MPR/QC/3D/results-review 已具备 |
 | 临床脱敏数据 | 🔴 外部阻塞 | 等授权/脱敏/伦理 |
 | 论文 Methods | ✅ 主体完成 | Results 仍保持 TBD |
-| 自动化测试 | ✅ 当前通过 | 99 passed + Ruff clean |
+| 自动化测试 | ✅ 当前通过 | 100 passed + Ruff clean |
 
 ---
 
@@ -266,6 +266,8 @@
 - [x] CPU ROI 单步 benchmark：36³ / 48³ / 64³ 均完成真实 forward + loss + backward + AdamW.step；3 次单步进程 wall-time 中位数约 1.84 / 1.97 / 2.04 s
 - [x] 64³ 在当前 Ryzen 7 + 20 GB RAM 上可承受：单次结束 RSS≈565 MB、进程 peak working set≈1.53 GB；相对 48³ 的额外 wall-time 很小，因此下一版 CT-only baseline 选 64³
 - [x] 新建不覆盖历史实验的 `configs/orthopedic_ct_cpu_binary_long_v2.yaml`：CT-only、64³、20 epochs、AdamW、warmup+cosine restart、early stopping patience=8
+- [x] `train.py` 新增可靠 `--resume`：每 epoch 保存 `last.pt`，恢复 model/optimizer/scheduler/epoch/best metric/early-stopping/RNG，并在原 run 追加 history
+- [x] 真实 64³ resume smoke：同一 run 完成 epoch 1 后从 `last.pt` 续训到 epoch 2，history 保持 1→2 连续
 - [ ] 基于修复后的 epoch-aware sampling 与 64³ ROI 运行新的 20 epoch CT-only CPU baseline
 - [ ] 扩大数据规模后的正式 SegFormer3D CT-only 主实验训练
 - [ ] 使用 full-volume validation 复核候选 checkpoint
