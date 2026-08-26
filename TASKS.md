@@ -274,7 +274,10 @@
 - [x] 使用 `liver_7 / liver_8` 分病例 full-volume validation 复核 long-v2 `best.pt` 与 `last.pt`：`best.pt` 平均 Dice≈0.03698，`last.pt` 平均 Dice≈0.04953；`last.pt` 平均 ASSD≈50.78 mm、component count error≈1084，也优于 `best.pt` 的≈56.77 mm / 1617
 - [x] 明确发现固定 64³ foreground patch validation 与 full-volume validation 严重不一致：epoch 1 patch-val Dice≈0.3613，但其 full-volume 平均 Dice≈0.037；当前 patch proxy 不能继续作为可靠 checkpoint selector
 - [ ] P1 优先修复 checkpoint selection：训练期按可控频率执行 full-volume validation，或保留多个候选 checkpoint 后在 `liver_7/liver_8` 上统一 full-volume 比较；在此之前禁止重新 test `liver_169`
-- [ ] 排查 full-volume 极低 Dice 的训练/推理链根因：foreground/background sampling、loss 背景抑制、label mapping、train/inference preprocessing、sliding-window stitching/logits resize/threshold、class imbalance，并记录 prediction/GT foreground fraction 与概率分布
+- [x] 已定位首要根因：long-v2 每 epoch 仅 7 个训练 patch，9 epoch 共 63 个；复现实采样后训练 patch 平均前景≈21.2%，而 7 个 train 全卷平均前景仅≈0.68%。两例 validation 预测前景≈14.5%–17.1%，是真值≈0.57%–0.70% 的约 24–27 倍，属于严重 foreground/background sampling prior 失配
+- [x] `ProcessedOrthopedicCTDataset` 新增 `patches_per_case`，同病例同 epoch 可产生多个独立可复现 patch；`train.py` 支持 `training.patches_per_case` 并写入 metadata/summary，解决 7 例数据每 epoch 只有 7 次训练 step 的欠采样问题
+- [x] `evaluate.py` 新增 `prediction_foreground_fraction`、`target_foreground_fraction`、`prediction_to_target_foreground_ratio`，以后 full-volume evaluation 可直接量化全卷假阳性膨胀
+- [ ] 在新的 CT-only v3 baseline 中降低 foreground_probability、增加 patches_per_case，并改用 full-volume validation 作为 checkpoint selector；继续核对 loss/preprocessing/stitching，但当前未发现 label mapping 或 inference resize 的直接错误证据
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
 - [x] formal-pilot 输出 `metrics_per_case.csv` + prediction NIfTI + entropy NIfTI
 - [x] formal-pilot 记录 Dice / HD95 / ASSD / IoU / Precision / Recall / 结构指标

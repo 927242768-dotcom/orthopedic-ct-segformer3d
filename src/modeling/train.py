@@ -378,6 +378,7 @@ def train(
             "validation_mode": "patch" if validation_patch_mode else "full_volume",
             "validation_patch_is_engineering_proxy": validation_patch_mode,
             "training_patch_sampling_epoch_aware": True,
+            "training_patches_per_case": int(train_cfg.get("patches_per_case", 1)),
             "validation_patch_sampling_fixed_across_epochs": validation_patch_mode,
             "resume_events": [],
         }
@@ -399,6 +400,7 @@ def train(
         roi_size_dhw=roi,
         training=True,
         foreground_probability=float(data_cfg.get("foreground_probability", 0.7)),
+        patches_per_case=int(train_cfg.get("patches_per_case", 1)),
         label_mode=label_mode,
         augmentation=config.get("augmentation", {}),
         hu_clip=data_cfg.get("hu_clip", [-1000.0, 2000.0]),
@@ -629,6 +631,7 @@ def train(
         "resumed": resume_path is not None,
         "run_dir": str(run_dir),
         "validation_mode": "patch" if validation_patch_mode else "full_volume",
+        "training_patches_per_case": int(train_cfg.get("patches_per_case", 1)),
         "note": (
             "Engineering patch-validation proxy only; full-volume validation/test evaluation is required for formal results."
             if validation_patch_mode

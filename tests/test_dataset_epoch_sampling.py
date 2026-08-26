@@ -84,7 +84,38 @@ def test_epoch_sampling_is_reproducible_within_epoch_and_changes_across_epochs(
     assert not torch.equal(epoch3_first, epoch4)
 
 
+def test_multiple_patches_per_case_expand_epoch_and_use_distinct_random_streams(
+    tmp_path: Path,
+) -> None:
+    dataset = _build_dataset(tmp_path)
+    dataset.patches_per_case = 3
+    dataset.set_epoch(2)
+
+    assert len(dataset) == 3
+    samples = [dataset[index] for index in range(3)]
+    assert [sample["case_id"] for sample in samples] == ["case_train"] * 3
+    images = [sample["image"] for sample in samples]
+    assert any(not torch.equal(images[0], image) for image in images[1:])
+
+
 def test_set_epoch_rejects_negative_values(tmp_path: Path) -> None:
     dataset = _build_dataset(tmp_path)
     with pytest.raises(ValueError, match="epoch 不能为负数"):
         dataset.set_epoch(-1)
+
+
+def test_patches_per_case_rejects_non_positive_values(tmp_path: Path) -> None:
+    dataset = _build_dataset(tmp_path)
+    with pytest.raises(ValueError, match="patches_per_case 必须 >= 1"):
+        ProcessedOrthopedicCTDataset(
+            dataset.processed_root,
+            dataset.split_file,
+            "train",
+            roi_size_dhw=(36, 36, 36),
+            training=True,
+            foreground_probability=0.0,
+            patches_per_case=0,
+            label_mode="binary",
+            augmentation=_fixed_no_aug_config(),
+            seed=123,
+        )

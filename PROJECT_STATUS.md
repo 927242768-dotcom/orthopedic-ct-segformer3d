@@ -89,19 +89,19 @@
 | patient-level 数据划分 | ✅ 已完成（10例 formal pilot） | 96% | 已固定 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，patient-level 互斥；官方 `test_private liver_169` 只进入 test、不参与训练/调参；`formal_experiment=true`。最终论文仍需扩大病例规模 |
 | 公开数据集整理 | 🟡 进行中 | 94% | CTSpine1K `MSD-T10` 10 个真实 CT+label 已落盘：`liver_0`—`liver_8` + `liver_169`，官方 split 为 9 `trainset` + 1 `test_private`；真实文件接管执行 SHA-256 校验，10 例全部标准化/QC。该子集仍是工程验证，不替代正式论文主数据集/split |
 | 临床脱敏数据 | 🔴 阻塞 | 0% | 当前项目目录无临床数据；必须等待合法授权、脱敏与伦理/使用范围确认 |
-| SegFormer3D 骨科适配 | 🟡 进行中 | 85% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。long-v2 采用 64³、CT-only、Region Dice+CE，在预设 patience=8 下于 epoch 9 正常 early stop。`liver_7/liver_8` full-volume validation 已真实完成：`best.pt`（epoch 1）平均 Dice≈0.03698，`last.pt`（epoch 9）≈0.04953，且 `last.pt` 平均 ASSD/component error 更好；固定 patch-val Dice≈0.3613 与 full-volume 严重不一致，因此当前 checkpoint selector 必须改为 full-volume-aware，long-v2 仍不能视为满意 baseline |
+| SegFormer3D 骨科适配 | 🟡 进行中 | 87% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。long-v2 full-volume validation 已确认 `last.pt`（epoch 9）优于 patch selector 选出的 `best.pt`（epoch 1），但平均 Dice 仍仅≈0.04953。进一步复现实采样发现：long-v2 每 epoch 仅 7 个 patch，9 epoch 共 63 个，训练 patch 平均前景≈21.2%，而 7 个 train 全卷平均仅≈0.68%；validation prediction 前景≈14.5%–17.1%，是真值的约 24–27 倍。已新增 `patches_per_case` 多 patch 训练机制和 full-volume foreground-fraction 诊断，下一版 baseline 将降低 foreground sampling 并直接使用 full-volume validation 选 checkpoint |
 | 区域损失 | ✅ 已完成（代码） | 90% | Dice + CE/BCE 可运行并有 backward 测试 |
 | Boundary Loss | 🟠 待真实验证 | 55% | SDF 边界损失首版已实现；需真实训练、表面指标与效率验证 |
 | Topology Loss | 🟠 待真实验证 | 45% | 3D soft-clDice 候选已实现；骨折/非管状骨结构适用性必须单独验证 |
 | 困难样本增强 | 🟠 待真实验证 | 68% | 已落地可配置 3D flip/小角度旋转/各向同性缩放、gamma、Gaussian noise、HU shift 与 boundary-proxy hard sampling；强度增强已兼容 z-score CT 并使用 metadata 精确回到 HU 域。金属伪影与基于真实模型误差/uncertainty 的 hard mining 仍待实验 |
 | 不确定性机制 | 🟠 待真实验证 | 82% | predictive entropy、Top-percent ROI、膨胀、uncertainty→error AUROC/AUPRC、错误/正确平均熵、Top-percent error recall/ROI error rate 已实现；新增体素级 calibration：ECE、MCE、multiclass Brier score、NLL、mean confidence、accuracy、confidence gap，并以固定 seed 采样控制大体积内存；局部残差 refinement 已补 ROI-only 二阶段训练闭环。尚无真实 baseline checkpoint 条件下的定量收益、校准结论与消融 |
-| 训练/验证框架 | 🟡 进行中 | 99% | DataLoader/AdamW/AMP/gradient accumulation/sliding-window、scheduler、完整 run 追踪已接入；`train.py` 支持 `--allow-cpu` 与可靠 `--resume`，每 epoch 写 `last.pt` 并恢复 model/optimizer/scheduler/epoch/best metric/early-stopping/RNG。当前已确认固定单 patch validation 会严重误判 full-volume 泛化：epoch 1 patch-val≈0.3613，但对应两例 full-volume 平均 Dice≈0.037；下一步优先实现/验证 full-volume-aware checkpoint selection，并排查 sampling/loss/preprocessing/stitching 是否造成全卷大量 false positive |
+| 训练/验证框架 | 🟡 进行中 | 99% | DataLoader/AdamW/AMP/gradient accumulation/sliding-window、scheduler、完整 run 追踪已接入；`train.py` 支持 `--allow-cpu`、可靠 `--resume` 以及 `training.patches_per_case`，可让同病例在单 epoch 内产生多个独立可复现 patch，避免 7 例数据每 epoch 只有 7 次训练 step。当前首要失配已定位为训练 patch 前景先验远高于全卷；full-volume validation 现有路径可直接作为 checkpoint selector，下一版配置不再使用固定 foreground patch validation |
 | 评价指标 | ✅ 已完成（代码+首个真实 pilot test） | 100% | Dice、IoU、Precision、Recall、HD95、ASSD、component count/error、false merge/break 已接入；包含 uncertainty→error 与 ECE/MCE/Brier/NLL 等指标；`evaluate.py` 可统一写入逐病例 CSV 与 summary，并新增安全 `--case-id` 以支持 CPU 分病例 full-volume 执行，且强制病例必须属于当前 validation/test split。5-epoch formal-pilot 已对独立 `liver_169` 完成 full-volume CPU evaluation；该旧结果仅为 10 例流程 pilot，禁止作为论文正式结果 |
 | Web 科研辅助分析原型 | 🟡 进行中 | 85% | 首页/上传/健康检查、MPR、10 例人工 QC reviewer、C1–L6 可读标签、真值 PLY WebGL2 3D、简化/物理测量均已完成；QC reviewer 已修复全站 `.card` grid-column 与 QC 网格冲突，病例选择后使用 `hidden + display:none!important` 彻底关闭病例层并进入主审核区，“上一例 / 下一例”保持审核区，悬浮按钮可随时重新打开病例列表；已在本机 Edge 对真实 `liver_0` 完成点击关闭/重新展开实机验证。另有 SDF surface 选择与 evaluation results-review，可读取未来 prediction/entropy MPR。当前 `/api/research/evaluations` 实测 200 且 total=0，真实 checkpoint/prediction 仍不存在，系统没有伪造结果 |
 | 三维重建 | 🟡 进行中 | 86% | 已实现 physical-space Marching Cubes、PLY/JSON、vertex-clustering、SDF surface、WebGL2 与物理测量；新增相邻法向变化驱动的特征保护 vertex-clustering 候选，真实 `liver_0` 在 2.0 mm/同 30,260 顶点下将高特征区域 mean-NN 约 0.679→0.620 mm、HD95 约 1.068→1.000 mm，作为真值网格工程证据；0.4 mm SDF 保持 2→2 连通域，0.8 mm 因 2→3 被保护机制拒绝。仍缺真实 prediction surface 上的正式验证 |
 | 论文 | 🟡 进行中 | 60% | 中文技术初稿已补 formal preflight、uncertainty/ROI refinement、calibration、物理表面/特征保护重建；Related Work 已加入 SpineMamba、解剖变异 Transformer、VertebraFormer、2026 Residual-Encoder nnU-Net、2025 骨折 pipeline、金属植入物与低骨密度 fusion/split 困难病例证据；42 条英文 BibTeX / 44 条矩阵已同步。Results 继续保持 TBD，禁止提前填结果 |
 | 中期材料 | 🟡 进行中 | 83% | 已同步 10 例真实数据、97 项测试、10/10 人工 QC、正式 binary task lock、7/2/1 formal-pilot split、`formal_readiness ready=true`，并新增 CPU CT-only 5-epoch formal-pilot checkpoint；仍缺独立 full-volume test、扩大样本规模后的正式主实验与可写入论文的稳定指标 |
-| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 101 passed`；`ruff: All checks passed`；保留 checkpoint resume、分病例 full-volume evaluation、CPU 非 AMP autocast、PyTorch 2.1 disabled GradScaler、epoch-aware sampling 与 `allow_cpu` readiness 回归测试；42 条 BibTeX 结构正常。覆盖 task lock/formal readiness、CPU training、uncertainty/calibration、mesh feature-preservation、results-review、SDF topology guard 及既有真实数据/QC/评价/Web 链 |
+| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 103 passed`；`ruff: All checks passed`；新增 `patches_per_case` 多 patch 随机流与 foreground-fraction evaluation 回归测试，并保留 checkpoint resume、分病例 full-volume evaluation、CPU 非 AMP autocast、epoch-aware sampling 与 `allow_cpu` readiness 测试；42 条 BibTeX 结构正常 |
 
 ---
 
@@ -637,9 +637,11 @@ CTSpine1K Hugging Face 在早期也出现超时和并行下载失败；但改为
 - [x] 已对 `liver_7/liver_8` 完成 `best.pt` 与 `last.pt` 四次 full-volume validation，输出 `metrics_per_case.csv` / `summary.json` 均已核对；
 - [x] `best.pt` 两例平均 Dice≈0.03698；`last.pt`≈0.04953。`last.pt` 平均 ASSD≈50.78 mm、component count error≈1084，优于 `best.pt` 的≈56.77 mm / 1617；
 - [x] 已确认固定单 patch validation 严重高估/误判 full-volume 泛化：epoch 1 patch-val≈0.3613，但 full-volume 平均仅≈0.037；
-- [ ] 优先修改 checkpoint selection：训练期每 2–3 epoch 做 full-volume validation，或保留多个候选 checkpoint 后对两例 validation 统一全卷比较；不得继续仅按固定 patch Dice 选 best；
-- [ ] 直接排查 full-volume 极低 Dice 根因：foreground/background sampling、Region Dice+CE 背景抑制、label mapping、train/validation normalization、sliding-window stitching/logits resize/threshold、class imbalance；
-- [ ] 对 validation prediction 记录 prediction foreground fraction、GT foreground fraction、概率/置信度分布、connected components 与 false-positive 空间分布；
+- [x] 已确认首要根因是 foreground/background sampling prior 严重失配：long-v2 真实训练 patch 平均前景≈21.2%，7 个 train 全卷平均≈0.68%；两例 validation prediction 前景≈14.5%–17.1%，是真值≈0.57%–0.70% 的约 24–27 倍；
+- [x] 已实现 `training.patches_per_case`：单病例每 epoch 可抽多个独立可复现 patch；并在 evaluation CSV/summary 增加 prediction/target foreground fraction 与 ratio；
+- [ ] 新建 CT-only v3：显著降低 foreground_probability、增加 patches_per_case，`validation.patch_mode=false`，直接用两例 full-volume validation 选择 checkpoint；
+- [ ] 继续核对 Region Dice+CE 背景抑制、label mapping、normalization、sliding-window stitching/logits resize/threshold；当前没有发现 label mapping 或 resize 的直接错误证据；
+- [ ] 对 v3 validation 继续记录概率/置信度分布、connected components 与 false-positive 空间分布；
 - [ ] 只有 CT-only baseline 的 full-volume validation 明显改善后，才继续 CT+bone-window、Region+Boundary、augmentation/hard sampling 消融；
 - [ ] 在 ROI/epoch/lr/scheduler/sampling/augmentation/input/loss/checkpoint 全部只依据 train+validation 锁定前，禁止重新运行 test `liver_169`；
 - [ ] 更可靠 baseline 锁定后再生成 prediction mesh / SDF / Web overlay / entropy overlay，并继续论文工程验证材料。
@@ -721,7 +723,7 @@ python -m ruff check src web tests
 当前基准应为：
 
 ```text
-101 passed
+103 passed
 All checks passed!
 ```
 
@@ -1621,6 +1623,36 @@ ruff check src web tests
 git diff --check
 → 通过
 ```
+
+
+### 2026-08-26｜阶段 Z：定位全卷假阳性主因并扩展多 patch 训练/诊断（GitHub 同步点 #11）
+
+对 long-v2 的实际采样分布与四个已有 validation prediction 做了不访问 test 的诊断。7 个 train 全卷平均前景体素占比仅≈0.68%；但按 long-v2 原配置 `foreground_probability=0.8`、每病例每 epoch 仅 1 patch 复现 epoch 1–9 的 63 个真实随机流后，训练 patch 平均前景≈21.2%，中位数≈24.3%，仅 14/63 为全背景 patch。也就是说训练数据分布中的前景先验约被放大 30 倍。
+
+利用已有 full-volume prediction 直接统计/由 precision-recall 交叉核对：`liver_7/liver_8` GT 前景约 0.70% / 0.57%，而 long-v2 prediction 前景约 14.5%–17.1%，约为 GT 的 24–27 倍。该数量级与训练 patch prior 失配高度一致，因此当前最有证据的首要根因是 foreground-biased sampling 过强 + 每 epoch patch 数过少，而不是简单“再多训几个 epoch”。当前检查未发现 binary label mapping、train/evaluate 轴变换、sliding-window predictor resize 的直接实现错误。
+
+工程修复：
+
+- `ProcessedOrthopedicCTDataset` 新增 `patches_per_case`，训练时数据集长度扩展为 `case_count × patches_per_case`；
+- 同病例不同 patch slot 与不同 epoch 使用独立、可复现随机流，保留原 epoch-aware sampling；
+- `train.py` 接入 `training.patches_per_case`，并写入 `run_metadata.json` / `summary.json`；
+- `evaluate.py` 新增 `prediction_foreground_fraction`、`target_foreground_fraction`、`prediction_to_target_foreground_ratio` 到逐病例 CSV 与 summary，后续无需再手工反推假阳性膨胀；
+- 新增多 patch 随机流/参数校验与 evaluation foreground-fraction 回归测试。
+
+本同步点回归：
+
+```text
+pytest tests -q
+→ 103 passed, 153 warnings
+
+ruff check src web tests
+→ All checks passed!
+
+git diff --check
+→ 通过
+```
+
+下一步直接新建 CT-only v3，不覆盖 long-v2：降低 foreground sampling、提高 patches_per_case，并把 `validation.patch_mode=false`，让 checkpoint/early stopping 直接依据 `liver_7/liver_8` full-volume Dice；仍禁止访问 `liver_169`。
 
 
 ### 2026-08-26｜阶段 W：实现并实测可靠 checkpoint resume（GitHub 同步点 #7）

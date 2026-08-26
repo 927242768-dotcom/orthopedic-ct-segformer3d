@@ -342,6 +342,7 @@ class ProcessedOrthopedicCTDataset(Dataset):
         roi_size_dhw: Sequence[int] = (128, 128, 128),
         training: bool = False,
         foreground_probability: float = 0.7,
+        patches_per_case: int = 1,
         label_mode: str = "binary",
         augmentation: dict | None = None,
         hu_clip: Sequence[float] = (-1000.0, 2000.0),
@@ -356,6 +357,7 @@ class ProcessedOrthopedicCTDataset(Dataset):
         self.roi_size_dhw = tuple(int(v) for v in roi_size_dhw)
         self.training = bool(training)
         self.foreground_probability = float(foreground_probability)
+        self.patches_per_case = int(patches_per_case)
         self.label_mode = label_mode
         self.augmentation = dict(augmentation or {})
         self.hu_clip = tuple(float(v) for v in hu_clip)
@@ -365,6 +367,8 @@ class ProcessedOrthopedicCTDataset(Dataset):
 
         if not (0.0 <= self.foreground_probability <= 1.0):
             raise ValueError("foreground_probability 必须位于 [0,1]")
+        if self.patches_per_case < 1:
+            raise ValueError("patches_per_case 必须 >= 1")
         if self.label_mode not in {"binary", "multiclass"}:
             raise ValueError("label_mode 只能为 binary 或 multiclass")
         if len(self.hu_clip) != 2 or self.hu_clip[1] <= self.hu_clip[0]:
@@ -386,7 +390,8 @@ class ProcessedOrthopedicCTDataset(Dataset):
         self.epoch = int(epoch)
 
     def __len__(self) -> int:
-        return len(self.case_ids)
+        multiplier = self.patches_per_case if self.training else 1
+        return len(self.case_ids) * multiplier
 
     def _load_case(self, case_id: str) -> tuple[np.ndarray, np.ndarray, dict]:
         case_dir = self.processed_root / case_id
@@ -425,15 +430,24 @@ class ProcessedOrthopedicCTDataset(Dataset):
         return image, label, metadata
 
     def __getitem__(self, index: int) -> dict[str, torch.Tensor | str]:
-        case_id = self.case_ids[index]
+        case_count = len(self.case_ids)
+        case_index = index % case_count if self.training else index
+        patch_slot = index // case_count if self.training else 0
+        case_id = self.case_ids[case_index]
         image, label, metadata = self._load_case(case_id)
 
-        # 对每个样本/worker/epoch 使用可复现但跨 epoch 不同的随机流。
-        # num_workers=0 时 torch.initial_seed() 本身不会随 epoch 改变，因此必须显式混入 epoch；
-        # 否则会在每个 epoch 反复抽到完全相同的训练 patch。
+        # 对每个病例/patch slot/worker/epoch 使用可复现但跨 epoch 不同的随机流。
+        # patches_per_case>1 时同一病例可在一个 epoch 暴露多个不同 patch，避免 7 个训练病例
+        # 每 epoch 只有 7 次 optimizer step 的严重欠采样；num_workers=0 时也显式混入 epoch。
         worker_info = torch.utils.data.get_worker_info()
         worker_seed = worker_info.seed if worker_info is not None else torch.initial_seed()
-        rng_seed = self.seed ^ int(worker_seed) ^ (index << 16) ^ (self.epoch << 32)
+        rng_seed = (
+            self.seed
+            ^ int(worker_seed)
+            ^ (case_index << 16)
+            ^ (self.epoch << 32)
+            ^ (patch_slot << 48)
+        )
         rng = random.Random(rng_seed)
 
         if self.training:

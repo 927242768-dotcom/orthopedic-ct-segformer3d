@@ -82,6 +82,8 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "recall",
         "hd95_mm",
         "assd_mm",
+        "prediction_foreground_fraction",
+        "target_foreground_fraction",
         "component_count_error",
         "false_merge_count",
         "false_break_count",
@@ -107,6 +109,7 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
         "calibration_mean_confidence",
         "calibration_accuracy",
         "calibration_confidence_gap",
+        "prediction_to_target_foreground_ratio",
     ]
     for key in optional_metric_keys:
         values = [
@@ -324,9 +327,19 @@ def evaluate_checkpoint(
                 structural = compute_structural_metrics(pred > 0, target > 0).to_dict()
                 metric_payload.update(structural)
 
+            prediction_foreground_fraction = float(np.mean(pred > 0))
+            target_foreground_fraction = float(np.mean(target > 0))
+            foreground_ratio = (
+                prediction_foreground_fraction / target_foreground_fraction
+                if target_foreground_fraction > 0.0
+                else None
+            )
             row: dict[str, Any] = {
                 "case_id": case_id,
                 **metric_payload,
+                "prediction_foreground_fraction": prediction_foreground_fraction,
+                "target_foreground_fraction": target_foreground_fraction,
+                "prediction_to_target_foreground_ratio": foreground_ratio,
                 "inference_seconds": float(inference_seconds),
             }
             entropy: np.ndarray | None = None
@@ -378,6 +391,9 @@ def evaluate_checkpoint(
         "recall",
         "hd95_mm",
         "assd_mm",
+        "prediction_foreground_fraction",
+        "target_foreground_fraction",
+        "prediction_to_target_foreground_ratio",
         "pred_components",
         "target_components",
         "component_count_error",

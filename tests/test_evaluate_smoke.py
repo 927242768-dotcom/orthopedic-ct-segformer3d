@@ -105,6 +105,9 @@ def test_evaluate_checkpoint_writes_traceable_outputs(tmp_path: Path) -> None:
     assert len(rows) == 1
     assert rows[0]["case_id"] == "case_eval"
     assert 0.0 <= float(rows[0]["dice"]) <= 1.0
+    assert 0.0 <= float(rows[0]["prediction_foreground_fraction"]) <= 1.0
+    assert 0.0 <= float(rows[0]["target_foreground_fraction"]) <= 1.0
+    assert float(rows[0]["prediction_to_target_foreground_ratio"]) >= 0.0
     assert 0.0 <= float(rows[0]["uncertainty_error_rate"]) <= 1.0
     assert int(rows[0]["uncertainty_sampled_voxels"]) > 0
     if rows[0]["uncertainty_error_auroc"]:
@@ -121,6 +124,9 @@ def test_evaluate_checkpoint_writes_traceable_outputs(tmp_path: Path) -> None:
     assert summary["split"] == "test"
     assert summary["case_filter"] == "case_eval"
     assert summary["metrics"]["case_count"] == 1
+    assert "prediction_foreground_fraction" in summary["metrics"]
+    assert "target_foreground_fraction" in summary["metrics"]
+    assert "prediction_to_target_foreground_ratio" in summary["metrics"]
     assert "uncertainty_error_rate" in summary["metrics"]
     assert "calibration_expected_calibration_error" in summary["metrics"]
     assert "calibration_brier_score" in summary["metrics"]
