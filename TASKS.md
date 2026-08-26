@@ -288,7 +288,8 @@
 - [x] v4 epoch 1 + `liver_7/liver_8` detailed validation 已完成：两例平均 Dice≈0.04762、Precision≈0.02780、foreground ratio≈5.97、component error≈1993；相比 v3 epoch 1（Dice≈0.05407、Precision≈0.03510、ratio≈3.42、component error≈1587.5）整体更差，说明 CE=0.25 过度削弱背景约束，不继续机械跑 v4 epoch 2
 - [x] 已新建 `configs/orthopedic_ct_cpu_binary_balanced_lr_v5.yaml`：恢复 Region Dice/CE=1:1，保持 v3 sampling/ROI/full-volume validation 不变，仅将 optimizer peak lr 从 `1e-4` 降到 `5e-5`；`formal_readiness --allow-cpu` 已通过 ready=true / blocker_count=0
 - [x] v5 已真实完成 epoch 1/2：run=`experiments/20260826_221337_cpu_binary_balanced_lr_v5_roi64`；epoch 1 train loss≈2.29635 / val Dice≈0.03185 / lr=2.5e-5，epoch 2 train loss≈2.08801 / val Dice≈0.03269 / lr=5e-5；两例 detailed validation 显示 Precision≈0.01621/0.01707、Recall≈0.89485/0.93585、prediction/GT foreground ratio≈55.19/54.82、component error=204/185，属于严重前景泛滥，明显劣于 v3 epoch 1，因此停止继续 v5 epoch 3
-- [ ] 下一实验改为“v3 epoch 1 起点复现 + 不再升到 1e-4”：第一轮直接达到 5e-5，之后学习率始终不超过 5e-5；其它 v3 sampling/ROI/loss/full-volume validation 保持不变，继续禁止访问 `liver_169`
+- [x] 已新建 `configs/orthopedic_ct_cpu_binary_balanced_lr_v6.yaml`：相对 v5 仅将 `warmup_epochs=2→1`，因此 epoch 1 直接达到 `5e-5`，后续 cosine 学习率始终不超过 `5e-5`；其它 v3 sampling/ROI/loss/full-volume validation 保持不变，`formal_readiness --allow-cpu` 已通过 ready=true / blocker_count=0
+- [ ] 启动 v6 epoch 1；若能复现/超过 v3 epoch 1 的 full-volume 指标则继续 epoch 2/3，若仍明显恶化则停止并转向 sampling/损失之外的下一证据变量；继续禁止访问 `liver_169`
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
 - [x] formal-pilot 输出 `metrics_per_case.csv` + prediction NIfTI + entropy NIfTI
 - [x] formal-pilot 记录 Dice / HD95 / ASSD / IoU / Precision / Recall / 结构指标

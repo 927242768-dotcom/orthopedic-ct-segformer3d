@@ -89,7 +89,7 @@
 | patient-level 数据划分 | ✅ 已完成（10例 formal pilot） | 96% | 已固定 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，patient-level 互斥；官方 `test_private liver_169` 只进入 test、不参与训练/调参；`formal_experiment=true`。最终论文仍需扩大病例规模 |
 | 公开数据集整理 | 🟡 进行中 | 94% | CTSpine1K `MSD-T10` 10 个真实 CT+label 已落盘：`liver_0`—`liver_8` + `liver_169`，官方 split 为 9 `trainset` + 1 `test_private`；真实文件接管执行 SHA-256 校验，10 例全部标准化/QC。该子集仍是工程验证，不替代正式论文主数据集/split |
 | 临床脱敏数据 | 🔴 阻塞 | 0% | 当前项目目录无临床数据；必须等待合法授权、脱敏与伦理/使用范围确认 |
-| SegFormer3D 骨科适配 | 🟡 进行中 | 90% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。balanced fullval v3 的 epoch 1 仍是当前最佳 validation checkpoint（两例 Dice≈0.05407），但 epoch 3 已背景塌缩。v4 已证实 CE=0.25 会放大全卷前景假阳性与碎片化；v5 将 peak lr 降到 5e-5 但保留 2-epoch warmup 后，epoch 1/2 val Dice 仅≈0.03185/0.03269，detailed validation 出现 Recall≈0.89–0.94、prediction/GT foreground ratio≈55× 的严重前景泛滥，因此 v4/v5 均停止。下一实验将第一轮直接达到 5e-5，之后始终不超过 5e-5，以复现 v3 epoch 1 的有效起点并避免再升到 1e-4 |
+| SegFormer3D 骨科适配 | 🟡 进行中 | 90% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。balanced fullval v3 的 epoch 1 仍是当前最佳 validation checkpoint（两例 Dice≈0.05407），但 epoch 3 已背景塌缩。v4 已证实 CE=0.25 会放大全卷前景假阳性与碎片化；v5 将 peak lr 降到 5e-5 但保留 2-epoch warmup 后出现约 55× 前景泛滥，因此均停止。现已锁定 v6：相对 v5 仅将 warmup 从 2 epoch 缩短为 1 epoch，使第一轮直接达到 `5e-5`、之后 cosine 学习率始终不超过 `5e-5`，其它 v3 sampling/ROI/loss/full-volume validation 不变；readiness 已通过，待真实训练 |
 | 区域损失 | ✅ 已完成（代码） | 90% | Dice + CE/BCE 可运行并有 backward 测试 |
 | Boundary Loss | 🟠 待真实验证 | 55% | SDF 边界损失首版已实现；需真实训练、表面指标与效率验证 |
 | Topology Loss | 🟠 待真实验证 | 45% | 3D soft-clDice 候选已实现；骨折/非管状骨结构适用性必须单独验证 |
@@ -1912,3 +1912,22 @@ v5 run：`experiments/20260826_221337_cpu_binary_balanced_lr_v5_roi64`。该配�
 结论：v5 不是背景塌缩，而是严重前景泛滥。降低 peak lr 同时保留 2-epoch warmup，使 epoch 1 实际 lr 只有 `2.5e-5`，模型到 epoch 2 仍保持极高 Recall、极低 Precision 和约 55× 的全卷前景膨胀；这明显劣于 v3 epoch 1 的两例平均 Dice≈`0.05407`、Precision≈`0.03510`、foreground ratio≈`3.42`。因此不继续 v5 epoch 3。
 
 下一实验不再把“更低 lr”与“更长 warmup”混在一起：保留 v3 其它条件，第一轮直接达到 `5e-5`，之后学习率始终不超过 `5e-5`。这样更接近 v3 epoch 1 的有效起点，同时避免 v3 epoch 2 升到 `1e-4` 后性能下降。整个 v5 训练和评估只使用 train + `liver_7/liver_8` validation，未访问 `liver_169`。
+
+
+### 2026-08-26｜阶段 AH：锁定 v6 单 warmup 低学习率配置（GitHub 同步点 #19）
+
+新建 `configs/orthopedic_ct_cpu_binary_balanced_lr_v6.yaml`。v6 继承 v5 的 CT-only、64³ ROI、`foreground_probability=0.25`、`patches_per_case=4`、Region Dice/CE=1:1、optimizer peak lr=`5e-5`、full-volume validation、task/split/seed 等全部条件，仅将 `scheduler.warmup_epochs` 从 2 改为 1。
+
+代码核对 `WarmupCosineRestarts.step()`：warmup epoch 内学习率为 `base_lr * epoch / warmup_epochs`，因此 v6 epoch 1 会直接使用 `5e-5`；之后进入 cosine schedule，学习率不会超过 base lr=`5e-5`。这与 v5 epoch 1 只有 `2.5e-5` 的情况不同，更接近 v3 epoch 1 的有效起点，同时避免 v3 epoch 2 升至 `1e-4`。
+
+真实 readiness：
+
+```text
+formal_readiness --task-spec configs/task_specs/vertebra_binary_ctspine1k_msd_t10_v1.json \
+  --config configs/orthopedic_ct_cpu_binary_balanced_lr_v6.yaml --allow-cpu
+→ ready=true
+→ blocker_count=0
+→ preflight 10 cases / split 7-2-1 / 0 error / 0 warning
+```
+
+下一步只跑 v6 epoch 1，并仅使用 `liver_7/liver_8` full-volume validation 判断；若能复现或超过 v3 epoch 1 的 Dice/Precision/foreground ratio 再继续 epoch 2/3，否则立即停止。独立 test `liver_169` 继续禁止访问。
