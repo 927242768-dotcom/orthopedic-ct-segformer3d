@@ -1,0 +1,14 @@
+diff --git a/architectures/segformer3d.py b/architectures/segformer3d.py
+--- a/architectures/segformer3d.py
++++ b/architectures/segformer3d.py
+@@ -507,7 +507,9 @@ class DWConv(nn.Module):
+ @torch.jit.script
+ def cube_root(n: int) -> int:
+     """Compute integer cube root efficiently."""
+-    return round(n ** (1.0 / 3.0))
++    # Local compatibility patch: PyTorch 2.1 TorchScript infers round(float)
++    # as float, while the function is annotated to return int.
++    return int(round(n ** (1.0 / 3.0)))
+     
+ 
+ ###################################################################################

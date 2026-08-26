@@ -20,7 +20,7 @@ https://github.com/OSUPCVLab/SegFormer3D
 
 为使官方代码在本项目固定的 PyTorch 2.1.0 环境中通过 TorchScript 导入，已对 `third_party/SegFormer3D/architectures/segformer3d.py` 的 `cube_root()` 做**一行类型兼容修复**：把 `round(...)` 的返回值显式转换为 `int`。原因是 PyTorch 2.1 TorchScript 将 `round(float)` 推断为 float，而上游函数标注返回 `int`，会在 import 阶段报类型错误。
 
-该补丁不改变模型结构、参数或计算语义；上游原始提交和本地 diff 均通过 Git 可追踪。后续更新上游仓库时必须重新检查该补丁是否仍需要，不能静默覆盖。
+该补丁不改变模型结构、参数或计算语义；补丁现已以 `env/patches/segformer3d_torch21_cube_root.patch` 纳入本项目版本控制。`env/fetch_segformer3d.ps1` 会在全新环境中固定检出 `e314242f14b6731458130809945a0ee27f4298bd` 后自动应用该补丁，从而让本地环境和 GitHub Actions 使用同一上游基线与同一兼容修复。后续更新上游仓库时必须重新检查该补丁是否仍需要，不能静默覆盖。
 
 ## 本项目的原则
 
@@ -38,7 +38,7 @@ https://github.com/OSUPCVLab/SegFormer3D
 powershell -ExecutionPolicy Bypass -File .\env\fetch_segformer3d.ps1
 ```
 
-脚本将克隆到：
+脚本会固定检出上述上游提交并应用受版本控制的 PyTorch 2.1 兼容补丁，然后克隆/准备到：
 
 ```text
 D:\国创项目\third_party\SegFormer3D

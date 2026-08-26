@@ -26,6 +26,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Fetch pinned SegFormer3D upstream
+        shell: pwsh
+        run: ./env/fetch_segformer3d.ps1
+
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:

@@ -1855,3 +1855,40 @@ formal_readiness --task-spec configs/task_specs/vertebra_binary_ctspine1k_msd_t1
 ```
 
 下一步直接启动 v5 epoch 1；若 full-volume 指标方向合理则分段续训 epoch 2/3，并继续只使用 `liver_7/liver_8` 做所有参数决策，禁止提前访问 `liver_169`。
+
+
+### 2026-08-26｜阶段 AG：GitHub Actions Python CI 新鲜 runner 可复现性修复（GitHub 同步点 #18）
+
+收到 GitHub Actions `Python tests and lint` 失败通知后，直接读取失败 job 日志定位到 5 个 pytest 失败：其中 4 个是 GitHub 新鲜 runner 没有被 `.gitignore` 排除的 `third_party/SegFormer3D` checkout，导致 `SegFormer3DUpstreamNotFound`；另 1 个是 `tests/test_gpu_environment.py` 把“当前 Python 必须位于项目 `.venv`”硬编码为 `True`，与 GitHub Actions 的 `setup-python` runner 环境不兼容。Ruff 与前端/仓库静态检查本身均已通过。
+
+本阶段修复：
+
+- `.github/workflows/ci.yml`：Python job 在测试前调用 `env/fetch_segformer3d.ps1`，确保新鲜 runner 自动准备 SegFormer3D 上游；
+- `env/fetch_segformer3d.ps1`：全新获取时固定检出上游 `e314242f14b6731458130809945a0ee27f4298bd`，避免 CI 随上游 `main` 漂移；随后自动应用本项目受版本控制的 PyTorch 2.1 TorchScript 兼容补丁；已有本地 `third_party/SegFormer3D` 目录仍保持“不覆盖”原则，因此不会破坏当前机器已有第三方本地 patch；
+- 新增 `env/patches/segformer3d_torch21_cube_root.patch`：把此前仅存在于本地第三方 working tree 的 `cube_root()` `int(round(...))` 兼容修复变成可复制、可审计的补丁文件；
+- `tests/test_gpu_environment.py`：改为验证 `project_venv` 是 machine-readable bool；若环境确实不在项目 `.venv`，则要求 report 的 `issues` 明确包含对应提示，不再错误假设所有合法测试环境都必须是 Windows 项目 `.venv`；
+- `third_party/README.md` 与 `TASKS.md`：同步记录固定上游提交、受版本控制补丁与 CI 新鲜 runner 获取链。
+
+本地回归：
+
+```text
+.venv/Scripts/python.exe -m pytest tests -q
+→ 104 passed, 153 warnings
+
+.venv/Scripts/python.exe -m ruff check src web tests
+→ All checks passed!
+
+PyYAML parse .github/workflows/ci.yml
+→ OK
+
+PowerShell parser: env/fetch_segformer3d.ps1
+→ OK
+
+git -C third_party/SegFormer3D apply --reverse --check ../../env/patches/segformer3d_torch21_cube_root.patch
+→ 通过（确认受版本控制 patch 与当前本地兼容 diff 一致）
+
+git diff --check
+→ 通过
+```
+
+当前边界：本地等价检查已经通过；本阶段提交推送后还必须查看 GitHub Actions 新产生的 `main` CI run，只有 `Python tests and lint` 与 `Frontend and repository static checks` 都为 success，才能把“云端 CI 已恢复”记为最终完成。

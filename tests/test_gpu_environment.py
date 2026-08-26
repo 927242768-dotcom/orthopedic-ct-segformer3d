@@ -60,4 +60,6 @@ def test_inspect_gpu_environment_returns_machine_readable_report() -> None:
     assert isinstance(payload["cuda_available"], bool)
     assert isinstance(payload["devices"], list)
     assert isinstance(payload["issues"], list)
-    assert payload["project_venv"] is True
+    assert isinstance(payload["project_venv"], bool)
+    if not payload["project_venv"]:
+        assert any("当前 Python 不在项目 .venv" in issue for issue in payload["issues"])

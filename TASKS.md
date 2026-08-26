@@ -183,12 +183,13 @@
 - [x] 实验设计
 - [x] 中期材料
 - [x] 组会汇报源材料
-- [x] 103 个 pytest 全部通过
+- [x] 104 个 pytest 全部通过
 - [x] Ruff clean
 - [x] 4 个前端 JS 语法检查通过
 - [x] 42 条 BibTeX 结构检查通过
 - [x] PowerShell 脚本语法检查通过
 - [x] GitHub Actions CI：PR/push 自动执行 pytest、Ruff、JS、JSON 与 PowerShell 静态检查
+- [x] CI 新鲜 runner 可复现获取固定 SegFormer3D `e314242` 并应用受版本控制的 PyTorch 2.1 兼容补丁
 
 ---
 
