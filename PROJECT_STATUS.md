@@ -89,7 +89,7 @@
 | patient-level 数据划分 | ✅ 已完成（10例 formal pilot） | 96% | 已固定 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，patient-level 互斥；官方 `test_private liver_169` 只进入 test、不参与训练/调参；`formal_experiment=true`。最终论文仍需扩大病例规模 |
 | 公开数据集整理 | 🟡 进行中 | 94% | CTSpine1K `MSD-T10` 10 个真实 CT+label 已落盘：`liver_0`—`liver_8` + `liver_169`，官方 split 为 9 `trainset` + 1 `test_private`；真实文件接管执行 SHA-256 校验，10 例全部标准化/QC。该子集仍是工程验证，不替代正式论文主数据集/split |
 | 临床脱敏数据 | 🔴 阻塞 | 0% | 当前项目目录无临床数据；必须等待合法授权、脱敏与伦理/使用范围确认 |
-| SegFormer3D 骨科适配 | 🟡 进行中 | 90% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。balanced fullval v3 的 epoch 1 仍是当前最佳 validation checkpoint（两例 Dice≈0.05407），但 epoch 3 已背景塌缩。v4 已真实验证 CE=0.25：epoch 1 两例平均 Dice≈0.04762、Precision≈0.02780、foreground ratio≈5.97、component error≈1993，整体劣于 v3 epoch 1，说明 CE 降得过低会重新放大全卷前景假阳性与碎片化；因此停止 v4 机械续训，下一单变量优先转向降低 peak learning rate |
+| SegFormer3D 骨科适配 | 🟡 进行中 | 90% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。balanced fullval v3 的 epoch 1 仍是当前最佳 validation checkpoint（两例 Dice≈0.05407），但 epoch 3 已背景塌缩。v4 已证实 CE=0.25 会放大全卷前景假阳性与碎片化，因此不继续；现已新建 v5，恢复 Region Dice/CE=1:1，保持 v3 sampling/ROI/full-volume validation 不变，仅把 optimizer peak lr 从 `1e-4` 降到 `5e-5`，readiness 已通过，待真实训练验证 |
 | 区域损失 | ✅ 已完成（代码） | 90% | Dice + CE/BCE 可运行并有 backward 测试 |
 | Boundary Loss | 🟠 待真实验证 | 55% | SDF 边界损失首版已实现；需真实训练、表面指标与效率验证 |
 | Topology Loss | 🟠 待真实验证 | 45% | 3D soft-clDice 候选已实现；骨折/非管状骨结构适用性必须单独验证 |
@@ -1828,3 +1828,30 @@ v4 run：`experiments/20260826_213818_cpu_binary_balanced_loss_v4_roi64`。本�
 - baseline 完全锁定前继续禁止访问 `liver_169`。
 
 说明：第一次串行运行两例 detailed evaluation 时单命令超过 300 秒工具上限；`liver_7` 已完整落盘，`liver_8` 输出目录仅被创建但未写结果。为遵守“不删除/覆盖已有实验”规则，没有删除该空目录，而是使用 `experiments/evaluation_20260826_v4_e1_val_liver8_retry1` 完成 `liver_8` 评估。
+
+
+### 2026-08-26｜阶段 AF：锁定 balanced-lr v5 单变量配置（GitHub 同步点 #17）
+
+基于 v4 CE=0.25 的负结果，本阶段不继续降低 CE，也不同时修改 sampling/ROI/augmentation，而是回到 v3 的 Region Dice+CE=`1:1`，只测试学习率因素。
+
+新建：`configs/orthopedic_ct_cpu_binary_balanced_lr_v5.yaml`。
+
+与 v3 的方法学差异：
+
+- optimizer peak lr：`1e-4 → 5e-5`；
+- `dice_weight=1.0 / ce_weight=1.0` 仅把 v3 原本的默认 1:1 显式写入 YAML，不构成方法变化；
+- CT-only、64³ ROI、foreground_probability=0.25、patches_per_case=4、validation.patch_mode=false、split、seed、模型结构、weight decay、scheduler 类型与 sliding-window inference 均保持不变。
+
+动机：v3 epoch 1 的实际 lr=`5e-5` 时两例 full-volume Dice≈0.05407，为当前最佳；epoch 2 lr 升到 `1e-4` 后 Dice 降到≈0.04084，epoch 3 在≈`9.77e-5` 时完全背景塌缩。v4 又显示单纯把 CE 降到 0.25 会导致前景过预测/碎片化加重，因此当前更有证据的下一变量是较低 peak lr。
+
+readiness：
+
+```text
+formal_readiness --task-spec configs/task_specs/vertebra_binary_ctspine1k_msd_t10_v1.json \
+  --config configs/orthopedic_ct_cpu_binary_balanced_lr_v5.yaml --allow-cpu
+→ ready=true
+→ blocker_count=0
+→ preflight 10 cases / split 7-2-1 / 0 error / 0 warning
+```
+
+下一步直接启动 v5 epoch 1；若 full-volume 指标方向合理则分段续训 epoch 2/3，并继续只使用 `liver_7/liver_8` 做所有参数决策，禁止提前访问 `liver_169`。
