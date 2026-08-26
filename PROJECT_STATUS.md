@@ -101,7 +101,7 @@
 | 三维重建 | 🟡 进行中 | 86% | 已实现 physical-space Marching Cubes、PLY/JSON、vertex-clustering、SDF surface、WebGL2 与物理测量；新增相邻法向变化驱动的特征保护 vertex-clustering 候选，真实 `liver_0` 在 2.0 mm/同 30,260 顶点下将高特征区域 mean-NN 约 0.679→0.620 mm、HD95 约 1.068→1.000 mm，作为真值网格工程证据；0.4 mm SDF 保持 2→2 连通域，0.8 mm 因 2→3 被保护机制拒绝。仍缺真实 prediction surface 上的正式验证 |
 | 论文 | 🟡 进行中 | 60% | 中文技术初稿已补 formal preflight、uncertainty/ROI refinement、calibration、物理表面/特征保护重建；Related Work 已加入 SpineMamba、解剖变异 Transformer、VertebraFormer、2026 Residual-Encoder nnU-Net、2025 骨折 pipeline、金属植入物与低骨密度 fusion/split 困难病例证据；42 条英文 BibTeX / 44 条矩阵已同步。Results 继续保持 TBD，禁止提前填结果 |
 | 中期材料 | 🟡 进行中 | 83% | 已同步 10 例真实数据、97 项测试、10/10 人工 QC、正式 binary task lock、7/2/1 formal-pilot split、`formal_readiness ready=true`，并新增 CPU CT-only 5-epoch formal-pilot checkpoint；仍缺独立 full-volume test、扩大样本规模后的正式主实验与可写入论文的稳定指标 |
-| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 104 passed`；`ruff: All checks passed`；新增 `region_dice_ce` 内部 Dice/CE 权重配置回归测试，并保留 `patches_per_case` 多 patch 随机流、foreground-fraction evaluation、checkpoint resume、分病例 full-volume evaluation、CPU 非 AMP autocast、epoch-aware sampling 与 `allow_cpu` readiness 测试；42 条 BibTeX 结构正常 |
+| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 108 passed`；`ruff: All checks passed`；新增 fixed-per-case sampling 回归测试，并保留 `region_dice_ce` 权重、`patches_per_case` 多 patch 随机流、foreground-fraction evaluation、checkpoint resume、分病例 full-volume evaluation、CPU 非 AMP autocast、epoch-aware sampling 与 `allow_cpu` readiness 测试；42 条 BibTeX 结构正常 |
 
 ---
 
@@ -650,7 +650,8 @@ CTSpine1K Hugging Face 在早期也出现超时和并行下载失败；但改为
 - [x] v6 epoch 2 两例 detailed validation：`liver_7/liver_8` Dice≈0.03210/0.03268、Precision≈0.01632/0.01661、Recall≈0.98562/0.99919、prediction/GT foreground ratio≈60.40/60.14、component error=87/65；这是大范围背景被预测成前景造成的严重 foreground explosion，不是 component 数下降带来的正确改善；
 - [x] 已使用 Dataset 真实 sampling 逻辑与固定 seed=42 复现 v3/v6 epoch 1/2、v3 epoch 3 的 28 个 training patch：epoch 1/2/3 mean foreground fraction≈7.91%/8.84%/5.68%，median 均为 0，纯背景 patch=18/18/20；病例级暴露明显不稳定，例如 epoch 1 `liver_2/liver_6` 均 4/4 patch 纯背景，epoch 2 各病例又重新分配。说明当前独立 Bernoulli sampling 存在真实 epoch/case 波动，但 v6 epoch 1→2 的总体差异并不足以单独解释约 3.4×→60× foreground explosion，因此 sampling 只能视为已证实的稳定性问题/候选诱因，不是已证实唯一根因；
 - [x] `train.py` 已新增 `sampling_stats.csv`，直接从模型实际收到的 training label 每 epoch 记录 patch_count、foreground fraction mean/median/std/min/max、q10/q25/q75/q90、foreground/background patch count，并新增回归测试；
-- [ ] 下一实验 v7 仅改变 sampling 稳定性：将每病例每 epoch 的 foreground-aware/random patch 数固定，保持 v6 的 ROI、loss、lr、scheduler、input、validation 全部不变；先 readiness，再 epoch 1/full-volume/detailed validation；
+- [x] v7 stable sampling 工程改动已完成：`ProcessedOrthopedicCTDataset` 新增 `foreground_sampling_mode=fixed_per_case`；当 `patches_per_case=4`、`foreground_probability=0.25` 时，每病例每 epoch 固定 1 个 foreground-aware slot + 3 个 random slot；`train.py` 已接入并写入 metadata；v7 配置相对 v6 除实验名外只新增该 sampling mode，108 tests + Ruff + `git diff --check` 已通过；
+- [ ] 立即对 v7 执行 `formal_readiness --allow-cpu`，随后 epoch 1 → full-volume validation → `liver_7/liver_8` detailed evaluation，并核对 `sampling_stats.csv`；
 - [ ] 继续核对 Region Dice+CE 背景抑制、label mapping、normalization、sliding-window stitching/logits resize/threshold；当前没有发现 label mapping 或 resize 的直接错误证据；
 - [ ] 对 v3 validation 继续记录概率/置信度分布、connected components 与 false-positive 空间分布；
 - [ ] 只有 CT-only baseline 的 full-volume validation 明显改善后，才继续 CT+bone-window、Region+Boundary、augmentation/hard sampling 消融；
@@ -1982,3 +1983,25 @@ epoch 3: mean=0.056800, median=0, std=0.105252, min=0, max=0.356922,
 为让后续每个 run 都能直接验证“模型变化是否对应 sampling prior 漂移”，`src/modeling/train.py` 新增 `sampling_stats.csv`，从模型实际收到的 training label 逐 epoch 记录：patch_count、foreground fraction mean/median/std/min/max、q10/q25/q75/q90、foreground/background patch count；metadata 同时标记 `training_sampling_stats_logged=true`。新增 `tests/test_training_sampling_stats.py`， focused dataset/sampling tests 共 6 passed，Ruff clean。
 
 下一步只改一个变量做 v7：把每病例每 epoch 的 foreground-aware/random patch 配额从独立 Bernoulli 改为固定配额，保持 v6 的 CT-only、64³、Dice/CE=1:1、peak lr=5e-5、warmup=1、cosine、full-volume validation 等全部不变。独立 test `liver_169` 继续禁止访问。
+
+
+### 2026-08-26｜阶段 AK：完成 v7 fixed-per-case sampling 工程闭环准备
+
+核对上一轮未提交修改后确认工作区只包含 `src/modeling/dataset.py`、`src/modeling/train.py`、`tests/test_dataset_epoch_sampling.py` 与新配置 `configs/orthopedic_ct_cpu_binary_stable_sampling_v7.yaml`，远程基线仍为 `0fa2dab2c7eeb9fd0e010d4eabca87ed8856a117`，未执行 reset/restore 覆盖历史修改。
+
+v7 新增 `foreground_sampling_mode=fixed_per_case`：在当前 `patches_per_case=4`、`foreground_probability=0.25` 下，每病例每 epoch 固定 1 个 foreground-aware slot 与 3 个 random slot。`train.py` 已把 sampling mode 传入 Dataset 并写入 run metadata。配置与 v6 逐项对比确认，除 `experiment_name` 外仅新增该 sampling mode；CT-only、64³ ROI、Region Dice+CE=1:1、peak lr=5e-5、warmup=1、cosine scheduler、seed、split 与 full-volume validation 均保持不变，因此 v7 仍是单主要变量实验。
+
+工程验证重新实跑：
+
+```text
+pytest tests -q
+→ 108 passed
+
+ruff check src web tests
+→ All checks passed!
+
+git diff --check
+→ 通过
+```
+
+下一步在完成本次 commit/push 且确认 `HEAD == origin/main` 后，立即执行 v7 `formal_readiness --allow-cpu`；必须 `ready=true / blocker_count=0` 才启动 epoch 1。epoch 1 完成后必须核对 `history.csv`、`sampling_stats.csv`、`best.pt`、`last.pt`、`summary.json`、`train.log`，随后对 `liver_7/liver_8` 做 full-volume/detailed validation。独立 test `liver_169` 继续禁止访问。

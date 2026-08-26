@@ -402,6 +402,9 @@ def train(
             "validation_patch_is_engineering_proxy": validation_patch_mode,
             "training_patch_sampling_epoch_aware": True,
             "training_patches_per_case": int(train_cfg.get("patches_per_case", 1)),
+            "training_foreground_sampling_mode": str(
+                data_cfg.get("foreground_sampling_mode", "bernoulli")
+            ),
             "training_sampling_stats_logged": True,
             "validation_patch_sampling_fixed_across_epochs": validation_patch_mode,
             "resume_events": [],
@@ -425,6 +428,7 @@ def train(
         training=True,
         foreground_probability=float(data_cfg.get("foreground_probability", 0.7)),
         patches_per_case=int(train_cfg.get("patches_per_case", 1)),
+        foreground_sampling_mode=str(data_cfg.get("foreground_sampling_mode", "bernoulli")),
         label_mode=label_mode,
         augmentation=config.get("augmentation", {}),
         hu_clip=data_cfg.get("hu_clip", [-1000.0, 2000.0]),

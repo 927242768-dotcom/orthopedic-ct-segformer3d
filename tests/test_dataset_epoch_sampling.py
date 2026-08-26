@@ -98,10 +98,53 @@ def test_multiple_patches_per_case_expand_epoch_and_use_distinct_random_streams(
     assert any(not torch.equal(images[0], image) for image in images[1:])
 
 
+def test_fixed_per_case_sampling_guarantees_foreground_slot_each_epoch(tmp_path: Path) -> None:
+    dataset = _build_dataset(tmp_path)
+    label_path = dataset.processed_root / "case_train" / "label.nii.gz"
+    label = np.zeros((48, 50, 52), dtype=np.int16)
+    label[20:28, 20:28, 20:28] = 1
+    nib.save(nib.Nifti1Image(label, np.eye(4, dtype=np.float32)), str(label_path))
+
+    fixed_dataset = ProcessedOrthopedicCTDataset(
+        dataset.processed_root,
+        dataset.split_file,
+        "train",
+        roi_size_dhw=(36, 36, 36),
+        training=True,
+        foreground_probability=0.25,
+        patches_per_case=4,
+        foreground_sampling_mode="fixed_per_case",
+        label_mode="binary",
+        augmentation=_fixed_no_aug_config(),
+        seed=123,
+    )
+
+    for epoch in (1, 2, 3, 4):
+        fixed_dataset.set_epoch(epoch)
+        first_slot = fixed_dataset[0]
+        assert torch.any(first_slot["label"] > 0)
+
+
 def test_set_epoch_rejects_negative_values(tmp_path: Path) -> None:
     dataset = _build_dataset(tmp_path)
     with pytest.raises(ValueError, match="epoch 不能为负数"):
         dataset.set_epoch(-1)
+
+
+def test_foreground_sampling_mode_rejects_unknown_value(tmp_path: Path) -> None:
+    dataset = _build_dataset(tmp_path)
+    with pytest.raises(ValueError, match="foreground_sampling_mode"):
+        ProcessedOrthopedicCTDataset(
+            dataset.processed_root,
+            dataset.split_file,
+            "train",
+            roi_size_dhw=(36, 36, 36),
+            training=True,
+            foreground_sampling_mode="unknown",
+            label_mode="binary",
+            augmentation=_fixed_no_aug_config(),
+            seed=123,
+        )
 
 
 def test_patches_per_case_rejects_non_positive_values(tmp_path: Path) -> None:

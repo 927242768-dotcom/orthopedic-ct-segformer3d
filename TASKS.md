@@ -32,7 +32,7 @@
 | Web 科研原型 | ✅ 主体完成 | MPR/QC/3D/results-review 已具备 |
 | 临床脱敏数据 | 🔴 外部阻塞 | 等授权/脱敏/伦理 |
 | 论文 Methods | ✅ 主体完成 | Results 仍保持 TBD |
-| 自动化测试 | ✅ 当前通过 | 104 passed + Ruff clean |
+| 自动化测试 | ✅ 当前通过 | 108 passed + Ruff clean |
 
 ---
 
@@ -183,7 +183,7 @@
 - [x] 实验设计
 - [x] 中期材料
 - [x] 组会汇报源材料
-- [x] 104 个 pytest 全部通过
+- [x] 108 个 pytest 全部通过
 - [x] Ruff clean
 - [x] 4 个前端 JS 语法检查通过
 - [x] 42 条 BibTeX 结构检查通过
@@ -293,7 +293,8 @@
 - [x] v6 epoch 2 `liver_7/liver_8` detailed validation 已完成：Dice≈`0.03210/0.03268`、Precision≈`0.01632/0.01661`、Recall≈`0.98562/0.99919`、prediction/GT foreground ratio≈`60.40/60.14`，component error=`87/65`；这属于严重全卷前景泛滥，不是正常结构改善，因此停止机械继续 v6 epoch 3
 - [x] 已用 Dataset 真实采样逻辑 + 固定 seed=42 复现 v3/v6 epoch 1/2 与 v3 epoch 3 的 28 个 training patch：epoch 1/2/3 mean foreground fraction≈`7.91%/8.84%/5.68%`，纯背景 patch=`18/18/20`；病例级暴露明显不稳定，例如 epoch 1 的 `liver_2/liver_6` 均 4/4 patch 为纯背景。sampling prior 存在真实波动，但 v6 epoch 1→2 总体统计差异不足以单独解释约 3.4×→60× foreground explosion，因此不能把 sampling 写成唯一根因
 - [x] `train.py` 已新增真实 `sampling_stats.csv`：每 epoch 记录 patch_count、foreground fraction mean/median/std/min/max、q10/q25/q75/q90、foreground/background patch count；统计来自模型实际收到的训练 label，并新增回归测试
-- [ ] 下一实验 v7 只改变 sampling 稳定性：每病例每 epoch 固定 foreground-aware/random patch 配额，保持 v6 的 ROI/loss/lr/scheduler/input/full-volume validation 不变；先 readiness，再 epoch 1 + full-volume/detailed validation；继续禁止访问 `liver_169`
+- [x] v7 stable sampling 工程改动已完成：新增 `foreground_sampling_mode=fixed_per_case`，在 4 patches/case、foreground_probability=0.25 下固定每病例每 epoch 1 个 foreground-aware + 3 个 random patch；配置与 v6 对比除实验名外仅新增这一主要实验变量；108 tests + Ruff + `git diff --check` 已通过
+- [ ] v7 下一步立即执行 `formal_readiness --allow-cpu`，随后只跑 epoch 1 + full-volume validation + `liver_7/liver_8` detailed evaluation；sampling_stats 必须一起核对；继续禁止访问 `liver_169`
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
 - [x] formal-pilot 输出 `metrics_per_case.csv` + prediction NIfTI + entropy NIfTI
 - [x] formal-pilot 记录 Dice / HD95 / ASSD / IoU / Precision / Recall / 结构指标

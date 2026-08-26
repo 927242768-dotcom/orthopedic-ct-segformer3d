@@ -80,6 +80,7 @@ def _random_crop_3d(
     *,
     foreground_probability: float,
     rng: random.Random,
+    force_foreground: bool | None = None,
     preferred_mask: np.ndarray | None = None,
     preferred_probability: float = 0.0,
 ) -> tuple[np.ndarray, np.ndarray]:
@@ -93,7 +94,10 @@ def _random_crop_3d(
         and np.any(preferred_mask)
         and rng.random() < preferred_probability
     )
-    use_fg = rng.random() < foreground_probability and np.any(label > 0)
+    if force_foreground is None:
+        use_fg = rng.random() < foreground_probability and np.any(label > 0)
+    else:
+        use_fg = bool(force_foreground) and np.any(label > 0)
     if use_preferred:
         coords = np.argwhere(preferred_mask)
         center = coords[rng.randrange(len(coords))]
@@ -343,6 +347,7 @@ class ProcessedOrthopedicCTDataset(Dataset):
         training: bool = False,
         foreground_probability: float = 0.7,
         patches_per_case: int = 1,
+        foreground_sampling_mode: str = "bernoulli",
         label_mode: str = "binary",
         augmentation: dict | None = None,
         hu_clip: Sequence[float] = (-1000.0, 2000.0),
@@ -358,6 +363,7 @@ class ProcessedOrthopedicCTDataset(Dataset):
         self.training = bool(training)
         self.foreground_probability = float(foreground_probability)
         self.patches_per_case = int(patches_per_case)
+        self.foreground_sampling_mode = str(foreground_sampling_mode).lower()
         self.label_mode = label_mode
         self.augmentation = dict(augmentation or {})
         self.hu_clip = tuple(float(v) for v in hu_clip)
@@ -369,6 +375,8 @@ class ProcessedOrthopedicCTDataset(Dataset):
             raise ValueError("foreground_probability 必须位于 [0,1]")
         if self.patches_per_case < 1:
             raise ValueError("patches_per_case 必须 >= 1")
+        if self.foreground_sampling_mode not in {"bernoulli", "fixed_per_case"}:
+            raise ValueError("foreground_sampling_mode 只能为 bernoulli 或 fixed_per_case")
         if self.label_mode not in {"binary", "multiclass"}:
             raise ValueError("label_mode 只能为 binary 或 multiclass")
         if len(self.hu_clip) != 2 or self.hu_clip[1] <= self.hu_clip[0]:
@@ -451,6 +459,17 @@ class ProcessedOrthopedicCTDataset(Dataset):
         rng = random.Random(rng_seed)
 
         if self.training:
+            force_foreground: bool | None = None
+            if self.foreground_sampling_mode == "fixed_per_case":
+                foreground_slots = min(
+                    self.patches_per_case,
+                    max(
+                        0,
+                        int(self.patches_per_case * self.foreground_probability + 0.5),
+                    ),
+                )
+                force_foreground = patch_slot < foreground_slots
+
             aug_cfg = self.augmentation
             aug_enabled = bool(aug_cfg.get("enabled", False))
             hard_cfg = aug_cfg.get("hard_sampling", {}) if aug_enabled else {}
@@ -472,6 +491,7 @@ class ProcessedOrthopedicCTDataset(Dataset):
                 self.roi_size_dhw,
                 foreground_probability=self.foreground_probability,
                 rng=rng,
+                force_foreground=force_foreground,
                 preferred_mask=preferred_mask,
                 preferred_probability=preferred_probability,
             )
