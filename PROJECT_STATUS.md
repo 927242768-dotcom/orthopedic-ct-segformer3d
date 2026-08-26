@@ -89,7 +89,7 @@
 | patient-level 数据划分 | ✅ 已完成（10例 formal pilot） | 96% | 已固定 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，patient-level 互斥；官方 `test_private liver_169` 只进入 test、不参与训练/调参；`formal_experiment=true`。最终论文仍需扩大病例规模 |
 | 公开数据集整理 | 🟡 进行中 | 94% | CTSpine1K `MSD-T10` 10 个真实 CT+label 已落盘：`liver_0`—`liver_8` + `liver_169`，官方 split 为 9 `trainset` + 1 `test_private`；真实文件接管执行 SHA-256 校验，10 例全部标准化/QC。该子集仍是工程验证，不替代正式论文主数据集/split |
 | 临床脱敏数据 | 🔴 阻塞 | 0% | 当前项目目录无临床数据；必须等待合法授权、脱敏与伦理/使用范围确认 |
-| SegFormer3D 骨科适配 | 🟡 进行中 | 81% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。CPU formal-pilot CT-only 已完成 5 epochs，并已修复 `num_workers=0` 跨 epoch 重复 patch 采样；36³/48³/64³ 真实单步 ROI benchmark 均通过，下一版长 baseline 选 64³。旧 5-epoch 最佳 patch-val Dice≈0.2719（epoch 4）仅为 pilot proxy，不是论文 full-volume test 结果 |
+| SegFormer3D 骨科适配 | 🟡 进行中 | 84% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。已修复 `num_workers=0` 跨 epoch 重复 patch 采样，并完成 36³/48³/64³ ROI benchmark；long-v2 采用 64³、CT-only、Region Dice+CE，在预设 patience=8 下于 epoch 9 正常 early stop，最佳固定 patch-val Dice≈0.3613（epoch 1）。当前必须用 `liver_7/liver_8` full-volume validation 复核 checkpoint；patch-val 仅为 proxy，不是论文正式结果 |
 | 区域损失 | ✅ 已完成（代码） | 90% | Dice + CE/BCE 可运行并有 backward 测试 |
 | Boundary Loss | 🟠 待真实验证 | 55% | SDF 边界损失首版已实现；需真实训练、表面指标与效率验证 |
 | Topology Loss | 🟠 待真实验证 | 45% | 3D soft-clDice 候选已实现；骨折/非管状骨结构适用性必须单独验证 |
@@ -1562,6 +1562,24 @@ ROI 决策：
 - formal preflight：10 例检查通过，split=7/2/1，pipeline 0.3.0=10，0 error / 0 warning；
 - 当前 CPU-only GPU report 仍如实显示无 CUDA，但在显式 `--allow-cpu` 下不构成 blocker；
 - 下一步直接启动该配置的真实 20-epoch 训练；训练期间不得读取 `liver_169` 做任何调参。
+
+
+### 2026-08-26｜阶段 W：64³ CT-only long-v2 真实训练完成 early-stop（GitHub 同步点 #8）
+
+真实 run：`experiments/20260826_162919_cpu_binary_long_v2_ct_only_roi64`。
+
+本阶段使用已经锁定并通过 formal preflight 的 long-v2 配置，训练仅使用 7 个 train 病例，2 个 validation 病例使用固定 64³ foreground patch 做低成本 checkpoint proxy；独立 test `liver_169` 没有参与训练、scheduler、early stopping 或任何参数决策。
+
+真实训练轨迹：epoch 1 `loss≈4.22295 / val≈0.36133`（当前最佳）；epoch 2 `3.99598 / 0.28158`；epoch 3 `3.19031 / 0.27159`；epoch 4 `3.32249 / 0.24556`；epoch 5 `2.68145 / 0.00103`；epoch 6 `2.68893 / 0.20272`；epoch 7 `1.85129 / 0.13539`；epoch 8 `2.11683 / 0.14045`；epoch 9 `2.36157 / 0.20656`。随后达到预先固定的 `early_stopping_patience=8`，正常停止。
+
+产物完整：`config.yaml / split.json / run_metadata.json / history.csv / train.log / checkpoint/best.pt / checkpoint/last.pt / summary.json` 均存在；`best.pt` 对应 epoch 1，`last.pt` 对应 epoch 9。
+
+解释与边界：
+
+- 训练不是命令超时或异常中断，而是既定 early stopping 正常触发；因此不为了凑“20 epochs”绕过 validation 规则强行继续；
+- train loss 明显低于早期 epoch，但固定 patch-val 未再超过 epoch 1，提示小样本下可能存在泛化下降或 validation proxy 偏差，不能仅凭 patch proxy 选择最终 baseline；
+- 下一步只对 `liver_7/liver_8` 做 full-volume validation，比较 long-v2 `best.pt` 与必要候选 checkpoint，使用 Dice/IoU/Precision/Recall/HD95/ASSD/结构/uncertainty/calibration 与 inference time 锁定 baseline；
+- 在 validation 完成并固定 ROI/训练设置/checkpoint 前，禁止再次访问 `liver_169` 做选择。
 
 
 ### 2026-08-26｜阶段 W：实现并实测可靠 checkpoint resume（GitHub 同步点 #7）
