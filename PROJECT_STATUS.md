@@ -89,7 +89,7 @@
 | patient-level 数据划分 | ✅ 已完成（10例 formal pilot） | 96% | 已固定 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，patient-level 互斥；官方 `test_private liver_169` 只进入 test、不参与训练/调参；`formal_experiment=true`。最终论文仍需扩大病例规模 |
 | 公开数据集整理 | 🟡 进行中 | 94% | CTSpine1K `MSD-T10` 10 个真实 CT+label 已落盘：`liver_0`—`liver_8` + `liver_169`，官方 split 为 9 `trainset` + 1 `test_private`；真实文件接管执行 SHA-256 校验，10 例全部标准化/QC。该子集仍是工程验证，不替代正式论文主数据集/split |
 | 临床脱敏数据 | 🔴 阻塞 | 0% | 当前项目目录无临床数据；必须等待合法授权、脱敏与伦理/使用范围确认 |
-| SegFormer3D 骨科适配 | 🟡 进行中 | 90% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。balanced fullval v3 的 epoch 1 仍是当前最佳 validation checkpoint（两例 Dice≈0.05407），但 epoch 3 已背景塌缩。v4 已证实 CE=0.25 会放大全卷前景假阳性与碎片化；v5 将 peak lr 降到 5e-5 但保留 2-epoch warmup 后出现约 55× 前景泛滥，因此均停止。现已锁定 v6：相对 v5 仅将 warmup 从 2 epoch 缩短为 1 epoch，使第一轮直接达到 `5e-5`、之后 cosine 学习率始终不超过 `5e-5`，其它 v3 sampling/ROI/loss/full-volume validation 不变；readiness 已通过，待真实训练 |
+| SegFormer3D 骨科适配 | 🟡 进行中 | 91% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。balanced fullval v3/v6 的 epoch 1 均达到当前最佳 validation Dice≈0.05407。v4 已证实 CE=0.25 会放大全卷前景假阳性与碎片化；v5 的 2-epoch warmup 在第一轮仅给 2.5e-5 并出现约 55× 前景泛滥；v6 改为单 warmup 后 epoch 1 精确复现 v3 最佳点，但 epoch 2 在 lr≈4.89e-5、从未升到 1e-4 的情况下仍降至 Dice≈0.03239，并在两例 detailed validation 出现约 60× 前景泛滥。由此“1e-4 peak lr 是主要根因”已基本否定，当前最高优先级转为复现并量化 28 个 training patch 的 epoch-to-epoch foreground-prior 波动 |
 | 区域损失 | ✅ 已完成（代码） | 90% | Dice + CE/BCE 可运行并有 backward 测试 |
 | Boundary Loss | 🟠 待真实验证 | 55% | SDF 边界损失首版已实现；需真实训练、表面指标与效率验证 |
 | Topology Loss | 🟠 待真实验证 | 45% | 3D soft-clDice 候选已实现；骨折/非管状骨结构适用性必须单独验证 |
@@ -643,8 +643,12 @@ CTSpine1K Hugging Face 在早期也出现超时和并行下载失败；但改为
 - [x] balanced v3 已真实完成 epoch 1/2：epoch 1 full-volume val Dice≈0.05407、epoch 2≈0.04084，当前 `best.pt=epoch 1`；
 - [x] 已对 v3 `best.pt` 分病例 detailed validation：`liver_7/liver_8` Dice≈0.04323/0.06491，Precision≈0.02753/0.04267，prediction/target foreground ratio≈3.65/3.18；相对 long-v2 约 24–27 倍已显著改善；
 - [x] v3 epoch 3 已续训并明确失败：train loss≈1.63162，但两例 full-volume val Dice≈1.3e-11；detailed validation 两例 Dice/Precision/Recall=0，prediction/GT foreground ratio≈0.47/0.26，已停止继续 epoch 4；
-- [x] 根因检查发现 RegionDiceCELoss3D 当前为 foreground Dice + 未加权全体素 CE 默认 1:1，且 `train.build_criterion()` 未读取 YAML 的内部 `dice_weight/ce_weight`；balanced sampling 增加背景后 CE 背景主导与 epoch 3 collapse 现象一致；
-- [ ] 下一版保持 v3 sampling 不变，只增加/调整 Dice:CE 内部权重，先验证是否避免背景塌缩；
+- [x] 根因检查发现 RegionDiceCELoss3D 当前为 foreground Dice + 未加权全体素 CE 默认 1:1，且 `train.build_criterion()` 未读取 YAML 的内部 `dice_weight/ce_weight`；该工程缺口已修复并形成 v4 单变量实验；
+- [x] v4 将 CE 权重降至 0.25 后两例平均 Dice≈0.04762、foreground ratio≈5.97、component error≈1993，整体劣于 v3 epoch 1，已否定“继续降低 CE 权重”方向；
+- [x] v5 将 peak lr 降至 5e-5 但保留 2-epoch warmup，epoch 1/2 分别 Dice≈0.03185/0.03269，detailed validation 约 55× foreground explosion，已停止；
+- [x] v6 仅将 warmup 2→1：epoch 1 train loss=`2.5537127597`、val Dice=`0.0540700072`、lr=`5e-5`，几乎精确复现 v3 epoch 1；epoch 2 train loss=`1.9332212380`、val Dice=`0.0323937293`、lr≈`4.8923e-5`，即使未升到 1e-4 仍明显恶化；
+- [x] v6 epoch 2 两例 detailed validation：`liver_7/liver_8` Dice≈0.03210/0.03268、Precision≈0.01632/0.01661、Recall≈0.98562/0.99919、prediction/GT foreground ratio≈60.40/60.14、component error=87/65；这是大范围背景被预测成前景造成的严重 foreground explosion，不是 component 数下降带来的正确改善；
+- [ ] 立即使用 Dataset 真实 sampling 逻辑和固定 seed，复现 v3/v6 epoch 1/2 与 v3 epoch 3 每个 epoch 的 28 个 training patch，统计 foreground fraction 的 mean/median/std/min/max/quantile、纯背景 patch 数、高前景 patch 数与逐病例分布，判断 sampling prior 是否剧烈漂移；
 - [ ] 继续核对 Region Dice+CE 背景抑制、label mapping、normalization、sliding-window stitching/logits resize/threshold；当前没有发现 label mapping 或 resize 的直接错误证据；
 - [ ] 对 v3 validation 继续记录概率/置信度分布、connected components 与 false-positive 空间分布；
 - [ ] 只有 CT-only baseline 的 full-volume validation 明显改善后，才继续 CT+bone-window、Region+Boundary、augmentation/hard sampling 消融；
@@ -1931,3 +1935,26 @@ formal_readiness --task-spec configs/task_specs/vertebra_binary_ctspine1k_msd_t1
 ```
 
 下一步只跑 v6 epoch 1，并仅使用 `liver_7/liver_8` full-volume validation 判断；若能复现或超过 v3 epoch 1 的 Dice/Precision/foreground ratio 再继续 epoch 2/3，否则立即停止。独立 test `liver_169` 继续禁止访问。
+
+
+### 2026-08-26｜阶段 AI：v6 epoch 1/2 与 epoch 2 detailed validation 结果回填
+
+核对真实 run：`experiments/20260826_224150_cpu_binary_balanced_lr_v6_roi64`。`history.csv`、`best.pt`、`last.pt` 与 `summary.json` 均存在；`summary.json` 记录 `best_val_dice=0.05407000716611769`、`last_epoch=2`，因此 `best.pt` 保持 epoch 1。
+
+真实训练/validation：
+
+```text
+epoch 1: train_loss=2.5537127596991405, val Dice=0.05407000716611769, lr=5e-5
+epoch 2: train_loss=1.9332212380000524, val Dice=0.0323937293334203, lr=4.892324335849338e-5
+```
+
+v6 epoch 1 几乎精确复现 v3 epoch 1，说明第一轮直接使用 `5e-5` 是可行的，也反证 v5 第一轮 `2.5e-5` 的长 warmup 是错误方向。但 v6 epoch 2 在学习率始终未超过 `5e-5` 的情况下仍明显恶化，因此“v3 epoch 2 升至 `1e-4` 是主要根因”的假设基本被否定。
+
+对 v6 epoch 2 `last.pt` 的 validation detailed evaluation：
+
+- `liver_7`：Dice≈`0.0321042`，Precision≈`0.0163178`，Recall≈`0.985616`，HD95≈`222.03 mm`，ASSD≈`76.73 mm`，prediction foreground≈`42.257%`、GT≈`0.6996%`、ratio≈`60.40`，pred/target components=`90/3`，component error=`87`；
+- `liver_8`：Dice≈`0.0326833`，Precision≈`0.0166134`，Recall≈`0.999194`，HD95≈`211.83 mm`，ASSD≈`81.00 mm`，prediction foreground≈`34.039%`、GT≈`0.5660%`、ratio≈`60.14`，pred/target components=`67/2`，component error=`65`。
+
+component 数量相对早期碎片化结果虽下降，但这是因为模型把大范围背景连成巨大前景区域，不是正确结构改善。v6 epoch 2 明确属于严重 foreground explosion，因此不继续机械 epoch 3。
+
+下一步优先级转为真实 sampling 复现：使用 `ProcessedOrthopedicCTDataset` 当前实际 epoch-aware sampling 和固定 seed，复现 v3/v6 epoch 1/2、v3 epoch 3 的 28 个 training patch foreground fraction 分布，先证实或否定 epoch-to-epoch sampling prior 漂移，再决定 v7 的唯一变量。独立 test `liver_169` 继续禁止访问。
