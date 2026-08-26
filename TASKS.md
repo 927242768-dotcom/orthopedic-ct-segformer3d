@@ -15,19 +15,19 @@
 | 总体方案 | ✅ 已完成 | 数据→分割→不确定性→三维→Web 技术路线已建立 |
 | 文献调研 | ✅ 主体完成 | 44 条结构化矩阵，42 条英文核心 BibTeX |
 | CPU 开发环境 | ✅ 已完成 | Python 3.11.7 + `.venv`，PyTorch 2.1.0 CPU |
-| GPU 正式环境 | 🔴 待完成 | 当前无 CUDA / 无可见 NVIDIA GPU |
+| 训练算力环境 | ✅ CPU formal-pilot 可用 | Ryzen 7 8745H / PyTorch 2.1.0+cpu；显式 `--allow-cpu` 后 readiness 可通过，GPU 仅为后续提速选项 |
 | 公开数据接入 | ✅ 已完成工程子集 | CTSpine1K MSD-T10 真实 10 例 CT+label 已处理 |
 | CT 标准化流程 | ✅ 基本完成 | 1 mm 重采样、HU、z-score、骨窗、QC、label NN 重采样 |
 | 自动 QC | ✅ 已完成 | 10/10 自动审计通过 |
-| 人工 QC | 🔴 待完成 | `manual_qc_review.csv` 需真人逐例签字 |
-| SegFormer3D 工程适配 | ✅ 已完成工程链 | 真实 patch forward/backward/optimizer step 已通过 |
+| 人工 QC | ✅ 已完成 | 10/10 orientation/spacing/alignment/bone-window 均通过，reviewer 已填写 |
+| SegFormer3D 工程适配 | ✅ 已完成工程链 | 真实 patch forward/backward/optimizer step 已通过；CPU 训练兼容路径已回归测试 |
 | 联合损失代码 | ✅ 已完成代码 | Region + Boundary + soft-clDice |
 | 困难样本策略代码 | ✅ 已完成首版 | 3D 几何/强度增强 + boundary hard sampling |
-| 不确定性与精修代码 | ✅ 已完成工程链 | entropy、ROI、AUROC/AUPRC、ROI-only refinement |
-| 正式任务定义 | 🔴 待锁定 | binary / multiclass semantic 尚未最终确认 |
-| 正式 patient-level split | 🔴 待完成 | 当前仅 engineering smoke split |
-| 正式 baseline | 🔴 未开始 | 等 GPU + task + QC + formal split |
-| 正式模型指标 | 🔴 未产生 | 当前没有可写入论文 Results 的 Dice/HD95/ASSD |
+| 不确定性与精修代码 | ✅ 已完成工程链 | entropy、ROI、AUROC/AUPRC、calibration、ROI-only refinement |
+| 正式任务定义 | ✅ 已锁定 | `vertebra_binary_ctspine1k_msd_t10_v1`，`binary_semantic`，2 类 |
+| formal-pilot patient-level split | ✅ 已固定 | 7 train / 2 validation / 1 test；`liver_169` 仅 test |
+| CPU CT-only formal-pilot baseline | 🟡 已跑通但严重欠训练 | 5 epoch 完成，最佳 patch-val Dice≈0.2719（epoch 4） |
+| 独立 full-volume pilot test | ✅ 工程链完成 | `liver_169` Dice≈0.0221，inference≈9.29 s；仅 10 例 pilot 证据，禁止作为论文正式结果 |
 | 三维重建工程链 | ✅ 基本完成 | physical MC、SDF、简化、WebGL2、物理测量 |
 | Web 科研原型 | ✅ 主体完成 | MPR/QC/3D/results-review 已具备 |
 | 临床脱敏数据 | 🔴 外部阻塞 | 等授权/脱敏/伦理 |
@@ -263,11 +263,14 @@
 - [x] formal-pilot patch validation 已完成；train loss 约 5.5221→2.6524
 - [ ] 扩大数据规模后的正式 SegFormer3D CT-only 主实验训练
 - [ ] 使用 full-volume validation 复核候选 checkpoint
-- [ ] 独立 full-volume test（当前 pilot test=`liver_169`）
-- [ ] 输出 `metrics_per_case.csv`
-- [ ] multiclass 时输出 `metrics_per_class.csv`
-- [ ] 报告 Dice / HD95 / ASSD / IoU / Precision / Recall
-- [ ] 记录单病例推理时间
+- [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
+- [x] formal-pilot 输出 `metrics_per_case.csv` + prediction NIfTI + entropy NIfTI
+- [x] formal-pilot 记录 Dice / HD95 / ASSD / IoU / Precision / Recall / 结构指标
+- [x] formal-pilot 单病例 CPU full-volume inference≈9.29 s
+- [x] formal-pilot test 真实指标：Dice≈0.0221、IoU≈0.0112、Precision≈0.0116、Recall≈0.2479、HD95≈190.93 mm、ASSD≈53.42 mm、component_count_error=157、false_merge=0、false_break=15
+- [x] formal-pilot test uncertainty/calibration 已生成：AUROC≈0.6137、AUPRC≈0.4395、ECE≈0.2990、MCE≈0.3378、Brier≈0.6347、NLL≈2.1329
+- [ ] **5 epoch 模型严重欠训练；上述单病例 test 只证明完整科研评估链真实跑通，不能作为论文正式结果**
+- [ ] 扩大数据规模后重新报告正式主实验 test 指标
 
 ### P1-2 输入消融
 
@@ -304,12 +307,13 @@
 
 ## 4. 不确定性与精修任务（P2）
 
-- [ ] 用真实 baseline checkpoint 生成 entropy
-- [ ] uncertainty→error AUROC/AUPRC
-- [ ] Top-X% error recall
+- [x] formal-pilot 真实 checkpoint 已生成 entropy NIfTI
+- [x] formal-pilot uncertainty→error AUROC≈0.6137 / AUPRC≈0.4395
+- [x] formal-pilot Top-10% error recall≈0.1385，ROI error rate≈0.4909
 - [ ] ROI threshold / percentile validation
 - [x] calibration 指标工程实现与评估输出接入
-- [ ] 用真实 validation/test checkpoint 完成 calibration 分析与 reliability 解释
+- [x] formal-pilot test 已计算 ECE≈0.2990 / Brier≈0.6347 / NLL≈2.1329 / confidence gap≈0.2990
+- [ ] 扩大样本后完成可靠性统计解释与 calibration 稳定性分析
 - [ ] coarse baseline
 - [ ] full-volume second pass 对照
 - [ ] uncertainty ROI refinement

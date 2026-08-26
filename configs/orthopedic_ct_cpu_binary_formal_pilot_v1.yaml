@@ -64,9 +64,9 @@ validation:
 
 inference:
   sliding_window: true
-  roi_size_dhw: [36, 36, 36]
+  roi_size_dhw: [128, 128, 128]
   sw_batch_size: 1
-  overlap: 0.0
+  overlap: 0.25
   calibration:
     enabled: true
     n_bins: 15

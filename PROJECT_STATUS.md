@@ -75,7 +75,7 @@
 
 ---
 
-## 2. 当前总体状态（2026-08-16）
+## 2. 当前总体状态（2026-08-26）
 
 | 模块 | 状态 | 完成度 | 当前真实状态 |
 |---|---|---:|---|
@@ -96,7 +96,7 @@
 | 困难样本增强 | 🟠 待真实验证 | 68% | 已落地可配置 3D flip/小角度旋转/各向同性缩放、gamma、Gaussian noise、HU shift 与 boundary-proxy hard sampling；强度增强已兼容 z-score CT 并使用 metadata 精确回到 HU 域。金属伪影与基于真实模型误差/uncertainty 的 hard mining 仍待实验 |
 | 不确定性机制 | 🟠 待真实验证 | 82% | predictive entropy、Top-percent ROI、膨胀、uncertainty→error AUROC/AUPRC、错误/正确平均熵、Top-percent error recall/ROI error rate 已实现；新增体素级 calibration：ECE、MCE、multiclass Brier score、NLL、mean confidence、accuracy、confidence gap，并以固定 seed 采样控制大体积内存；局部残差 refinement 已补 ROI-only 二阶段训练闭环。尚无真实 baseline checkpoint 条件下的定量收益、校准结论与消融 |
 | 训练/验证框架 | 🟡 进行中 | 99% | DataLoader/AdamW/AMP/gradient accumulation/sliding-window、scheduler、完整 run 追踪已接入；修复 PyTorch 2.1 CPU `GradScaler/autocast` 兼容问题，新增工程 `patch_mode` validation；`train.py` 与 `formal_readiness.py` 支持显式 `--allow-cpu`。2026-08-26 锁定 binary task + 7/2/1 formal-pilot split 后，`formal_readiness --allow-cpu` 实测 `ready=true`、`blocker_count=0` |
-| 评价指标 | ✅ 已完成（代码） | 100% | Dice、IoU、Precision、Recall、HD95、ASSD、component count/error、false merge/break 已接入；包含 uncertainty→error 与 ECE/MCE/Brier/NLL 等指标；`evaluate.py` 可统一写入逐病例 CSV 与 summary。当前已产生 5-epoch formal-pilot checkpoint，下一步待独立 full-volume test 生成首批真实 pilot 指标 |
+| 评价指标 | ✅ 已完成（代码+首个真实 pilot test） | 100% | Dice、IoU、Precision、Recall、HD95、ASSD、component count/error、false merge/break 已接入；包含 uncertainty→error 与 ECE/MCE/Brier/NLL 等指标；`evaluate.py` 可统一写入逐病例 CSV 与 summary。5-epoch formal-pilot 已对独立 `liver_169` 完成 full-volume CPU evaluation：Dice≈0.0221、HD95≈190.93 mm、ASSD≈53.42 mm、inference≈9.29 s，prediction/entropy/metrics 均真实生成；该结果显示模型严重欠训练，只能作为 10 例流程 pilot，禁止作为论文正式结果 |
 | Web 科研辅助分析原型 | 🟡 进行中 | 85% | 首页/上传/健康检查、MPR、10 例人工 QC reviewer、C1–L6 可读标签、真值 PLY WebGL2 3D、简化/物理测量均已完成；QC reviewer 已修复全站 `.card` grid-column 与 QC 网格冲突，病例选择后使用 `hidden + display:none!important` 彻底关闭病例层并进入主审核区，“上一例 / 下一例”保持审核区，悬浮按钮可随时重新打开病例列表；已在本机 Edge 对真实 `liver_0` 完成点击关闭/重新展开实机验证。另有 SDF surface 选择与 evaluation results-review，可读取未来 prediction/entropy MPR。当前 `/api/research/evaluations` 实测 200 且 total=0，真实 checkpoint/prediction 仍不存在，系统没有伪造结果 |
 | 三维重建 | 🟡 进行中 | 86% | 已实现 physical-space Marching Cubes、PLY/JSON、vertex-clustering、SDF surface、WebGL2 与物理测量；新增相邻法向变化驱动的特征保护 vertex-clustering 候选，真实 `liver_0` 在 2.0 mm/同 30,260 顶点下将高特征区域 mean-NN 约 0.679→0.620 mm、HD95 约 1.068→1.000 mm，作为真值网格工程证据；0.4 mm SDF 保持 2→2 连通域，0.8 mm 因 2→3 被保护机制拒绝。仍缺真实 prediction surface 上的正式验证 |
 | 论文 | 🟡 进行中 | 60% | 中文技术初稿已补 formal preflight、uncertainty/ROI refinement、calibration、物理表面/特征保护重建；Related Work 已加入 SpineMamba、解剖变异 Transformer、VertebraFormer、2026 Residual-Encoder nnU-Net、2025 骨折 pipeline、金属植入物与低骨密度 fusion/split 困难病例证据；42 条英文 BibTeX / 44 条矩阵已同步。Results 继续保持 TBD，禁止提前填结果 |
@@ -1428,3 +1428,52 @@ git diff --check
 - train loss 总体持续下降，说明当前 CPU 环境和训练链确实在学习；validation 在极小样本下存在明显波动，符合 2 例 validation + 5 epoch 的 pilot 性质；
 - 下一步必须使用当前最佳 checkpoint 对独立 test `liver_169` 做 full-volume evaluation，生成 Dice/HD95/ASSD/结构、uncertainty 与 calibration 等首批真实 pilot 指标；
 - 完成本阶段后按项目负责人要求立即同步 GitHub，再进入下一项任务。
+
+
+### 2026-08-26｜阶段 S：5-epoch checkpoint 独立 full-volume pilot test（GitHub 同步点 #3）
+
+本阶段严格使用阶段 R 已固定的最佳 checkpoint（epoch 4）对独立 test `ctspine1k-msd-t10-liver_169` 运行 full-volume evaluation。该病例来自官方 `test_private`，此前从未进入 train 或 validation，因此本次测试仅用于在训练方案已固定后验证完整科研评估链，不用于继续调参。
+
+真实输出目录：`experiments/evaluation_20260826_152657_test`。
+
+真实 full-volume CPU test：
+
+- Dice≈`0.0220767`；
+- IoU≈`0.0111616`；
+- Precision≈`0.0115527`；
+- Recall≈`0.2479101`；
+- HD95≈`190.931 mm`；
+- ASSD≈`53.420 mm`；
+- component_count_error=`157`；
+- false_merge_count=`0`；
+- false_break_count=`15`；
+- 单病例 full-volume inference≈`9.2866 s`。
+
+真实 uncertainty / calibration pilot：
+
+- uncertainty→error AUROC≈`0.6137`；
+- uncertainty→error AUPRC≈`0.4395`；
+- Top-10% error recall≈`0.1385`；
+- Top-10% ROI error rate≈`0.4909`；
+- ECE≈`0.2990`；
+- MCE≈`0.3378`；
+- Brier≈`0.6347`；
+- NLL≈`2.1329`；
+- mean confidence≈`0.9445`；
+- sampled calibration accuracy≈`0.6455`；
+- confidence gap≈`0.2990`。
+
+真实生成文件包括：
+
+- `experiments/evaluation_20260826_152657_test/metrics_per_case.csv`；
+- `experiments/evaluation_20260826_152657_test/summary.json`；
+- `experiments/evaluation_20260826_152657_test/predictions/ctspine1k-msd-t10-liver_169/prediction.nii.gz`；
+- `experiments/evaluation_20260826_152657_test/uncertainty/ctspine1k-msd-t10-liver_169/predictive_entropy.nii.gz`。
+
+本阶段结论与边界：
+
+- **5 epoch 模型严重欠训练。** 极低 Dice、很大的 HD95/ASSD 与大量 component error 说明当前模型尚不可用；
+- 上述数字是 **10 例 formal-pilot 中唯一独立 test 病例**的工程/科研流程验证结果，不能宣传为足够规模的论文主实验，更不能写成最终论文性能；
+- uncertainty/calibration 链已证明可以对真实 checkpoint 输出，但 segmentation 本身很差，因此这些数字也只作为 pipeline 证据，不做“模型已可靠/已校准”结论；
+- test `liver_169` 不再用于下一阶段训练方案调参；后续所有训练改动只依据 train + validation 决策，待新方案完全固定后才允许再次独立 test；
+- 下一阶段优先进入更长的 CPU binary CT-only baseline：先验证更合理的 patch ROI / foreground sampling / augmentation / scheduler 与 early stopping，再运行 10–20 epoch 阶段训练并继续逐任务同步 GitHub。
