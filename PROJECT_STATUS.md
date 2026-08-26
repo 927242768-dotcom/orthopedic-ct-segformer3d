@@ -2005,3 +2005,19 @@ git diff --check
 ```
 
 下一步在完成本次 commit/push 且确认 `HEAD == origin/main` 后，立即执行 v7 `formal_readiness --allow-cpu`；必须 `ready=true / blocker_count=0` 才启动 epoch 1。epoch 1 完成后必须核对 `history.csv`、`sampling_stats.csv`、`best.pt`、`last.pt`、`summary.json`、`train.log`，随后对 `liver_7/liver_8` 做 full-volume/detailed validation。独立 test `liver_169` 继续禁止访问。
+
+
+### 2026-08-27｜阶段 AL：完成 v7 epoch 1 detailed validation 并停止 fixed-per-case sampling 实验
+
+已从真实 run `experiments/20260827_000843_cpu_binary_stable_sampling_v7_roi64` 核验 v7 epoch 1：`train_loss=2.398116941962923`，两例 full-volume validation mean Dice=`0.04561579108399831`，std=`0.03207655051989757`，validation inference total≈`123.24 s`，lr=`5e-5`；`sampling_stats.csv` 显示 28 个 training patch，foreground fraction mean≈`0.06460`、median=`0`、std≈`0.11167`、max≈`0.36113`，label-positive patches=`10/28`、pure-background patches=`18/28`。这与 fixed-per-case 设计不矛盾：固定的是每病例 1 个 foreground-aware slot + 3 个 random slot，random patch 仍可能采到前景。
+
+对 v7 epoch 1 `best.pt` 只在 validation split 做 detailed full-volume evaluation，未访问独立 test `liver_169`：
+
+- `ctspine1k-msd-t10-liver_7`：Dice=`0.01353924`，IoU=`0.00681576`，Precision=`0.00790974`，Recall=`0.04696506`，HD95≈`184.59 mm`，ASSD≈`56.61 mm`；prediction foreground≈`4.154%`，GT≈`0.700%`，ratio≈`5.94`；pred/target components=`1363/3`，component error=`1360`，false merge=`1`，false break=`103`，inference≈`75.89 s`；uncertainty AUROC/AUPRC≈`0.91614/0.33726`，ECE≈`0.03153`，MCE≈`0.19165`，Brier≈`0.07959`，NLL≈`0.19557`。
+- `ctspine1k-msd-t10-liver_8`：Dice=`0.07769234`，IoU=`0.04041618`，Precision=`0.04419672`，Recall=`0.32087773`，HD95≈`178.33 mm`，ASSD≈`52.88 mm`；prediction foreground≈`4.109%`，GT≈`0.566%`，ratio≈`7.26`；pred/target components=`1265/2`，component error=`1263`，false merge=`0`，false break=`53`，inference≈`121.12 s`；uncertainty AUROC/AUPRC≈`0.93387/0.34531`，ECE≈`0.02835`，MCE≈`0.19835`，Brier≈`0.07196`，NLL≈`0.16423`。
+
+两例平均：Dice≈`0.04562`、Precision≈`0.02605`、Recall≈`0.18392`、HD95≈`181.46 mm`、ASSD≈`54.74 mm`、prediction/GT foreground ratio≈`6.60`、component error≈`1311.5`。对比 v3/v6 epoch 1（mean Dice≈`0.05407`；v3 detailed mean Precision≈`0.03510`、foreground ratio≈`3.42`、component error≈`1587.5`），v7 虽未出现 v6 epoch 2 约 `60×` foreground explosion，但 Dice 与 Precision 更差、foreground ratio 更高；结构碎片数量虽略低，但没有形成足以抵消区域指标退化的整体改善。`liver_7` 还明显劣于 v3 epoch 1；`liver_8` 单例较好，但不足以使两例整体接近或超过 v3/v6 epoch 1。
+
+因此按预先锁定的判定规则停止 v7，不机械运行 epoch 2。结论限定为：**在当前 v7 单变量实验条件下，fixed-per-case quota 没有改善 epoch 1 full-volume validation，因此 sampling instability 不是足以解决当前 baseline instability 的主要干预。** 不能据此写成“sampling 完全无影响”或“sampling 与问题无关”。
+
+下一步进入更直接的优化动力学 diagnostics：优先记录 validation logits/probability 分布、Dice/CE 分项与前景/背景 CE contribution、最终 segmentation head 的 bias/weight/gradient norm，并用历史 v3/v6 validation checkpoint 检查 epoch 1→2 是否存在整体 foreground probability/bias 漂移；同时针对 full-volume inference 与 patch training 的 normalization、logits resize、softmax/argmax、padding/cropping 等一致性增加回归测试。独立 test `liver_169` 继续禁止访问。

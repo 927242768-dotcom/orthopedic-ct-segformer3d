@@ -294,7 +294,8 @@
 - [x] 已用 Dataset 真实采样逻辑 + 固定 seed=42 复现 v3/v6 epoch 1/2 与 v3 epoch 3 的 28 个 training patch：epoch 1/2/3 mean foreground fraction≈`7.91%/8.84%/5.68%`，纯背景 patch=`18/18/20`；病例级暴露明显不稳定，例如 epoch 1 的 `liver_2/liver_6` 均 4/4 patch 为纯背景。sampling prior 存在真实波动，但 v6 epoch 1→2 总体统计差异不足以单独解释约 3.4×→60× foreground explosion，因此不能把 sampling 写成唯一根因
 - [x] `train.py` 已新增真实 `sampling_stats.csv`：每 epoch 记录 patch_count、foreground fraction mean/median/std/min/max、q10/q25/q75/q90、foreground/background patch count；统计来自模型实际收到的训练 label，并新增回归测试
 - [x] v7 stable sampling 工程改动已完成：新增 `foreground_sampling_mode=fixed_per_case`，在 4 patches/case、foreground_probability=0.25 下固定每病例每 epoch 1 个 foreground-aware + 3 个 random patch；配置与 v6 对比除实验名外仅新增这一主要实验变量；108 tests + Ruff + `git diff --check` 已通过
-- [ ] v7 下一步立即执行 `formal_readiness --allow-cpu`，随后只跑 epoch 1 + full-volume validation + `liver_7/liver_8` detailed evaluation；sampling_stats 必须一起核对；继续禁止访问 `liver_169`
+- [x] v7 fixed-per-case sampling 已完成 epoch 1 + full-volume validation + `liver_7/liver_8` detailed evaluation；run=`experiments/20260827_000843_cpu_binary_stable_sampling_v7_roi64`，mean val Dice≈`0.04562`，两例平均 Precision≈`0.02605`、foreground ratio≈`6.60`、component error≈`1311.5`，整体劣于 v3/v6 epoch 1，因此按预设规则停止 v7，不机械继续 epoch 2；未访问 `liver_169`
+- [ ] 下一步进入 logits/probability/loss/head-bias/gradient diagnostics，并检查 full-volume inference 与 patch training 的 normalization/logits resize/softmax/argmax 等路径一致性；优先用历史 v3/v6 validation checkpoint 定位 epoch 1→2 前景爆炸原因
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
 - [x] formal-pilot 输出 `metrics_per_case.csv` + prediction NIfTI + entropy NIfTI
 - [x] formal-pilot 记录 Dice / HD95 / ASSD / IoU / Precision / Recall / 结构指标
