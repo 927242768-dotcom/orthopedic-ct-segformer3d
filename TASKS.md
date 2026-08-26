@@ -32,7 +32,7 @@
 | Web 科研原型 | ✅ 主体完成 | MPR/QC/3D/results-review 已具备 |
 | 临床脱敏数据 | 🔴 外部阻塞 | 等授权/脱敏/伦理 |
 | 论文 Methods | ✅ 主体完成 | Results 仍保持 TBD |
-| 自动化测试 | ✅ 当前通过 | 100 passed + Ruff clean |
+| 自动化测试 | ✅ 当前通过 | 103 passed + Ruff clean |
 
 ---
 
@@ -183,7 +183,7 @@
 - [x] 实验设计
 - [x] 中期材料
 - [x] 组会汇报源材料
-- [x] 97 个 pytest 全部通过
+- [x] 103 个 pytest 全部通过
 - [x] Ruff clean
 - [x] 4 个前端 JS 语法检查通过
 - [x] 42 条 BibTeX 结构检查通过
@@ -278,7 +278,9 @@
 - [x] `ProcessedOrthopedicCTDataset` 新增 `patches_per_case`，同病例同 epoch 可产生多个独立可复现 patch；`train.py` 支持 `training.patches_per_case` 并写入 metadata/summary，解决 7 例数据每 epoch 只有 7 次训练 step 的欠采样问题
 - [x] `evaluate.py` 新增 `prediction_foreground_fraction`、`target_foreground_fraction`、`prediction_to_target_foreground_ratio`，以后 full-volume evaluation 可直接量化全卷假阳性膨胀
 - [x] 新建 `configs/orthopedic_ct_cpu_binary_balanced_fullval_v3.yaml`：foreground_probability=0.25、patches_per_case=4、64³ CT-only、Region Dice+CE 不变，`validation.patch_mode=false`，checkpoint/early stopping 直接依据两例 full-volume validation；`formal_readiness --allow-cpu` 实测 ready=true / blocker_count=0
-- [ ] 启动 v3 真实训练并逐 epoch full-volume validation；若 prediction foreground ratio 快速下降且 Dice 改善则继续，否则立刻停止并调整，不为凑 epoch 浪费 CPU
+- [x] balanced fullval v3 已真实完成 epoch 1/2：run=`experiments/20260826_173511_cpu_binary_balanced_fullval_v3_roi64`；epoch 1 train loss≈2.5537、两例 full-volume val Dice≈0.05407，epoch 2 train loss≈1.9402、val Dice≈0.04084；当前 `best.pt=epoch 1`
+- [x] 已对 v3 `best.pt` 分别完成 `liver_7/liver_8` detailed full-volume validation：Dice≈0.04323/0.06491，Precision≈0.02753/0.04267，prediction/target foreground ratio≈3.65/3.18；相比 long-v2 的约 24–27 倍前景膨胀已大幅压低，证明 balanced sampling 方向有效
+- [ ] v3 仍有严重碎片化：`liver_7/liver_8` component count error=1578/1597，平均≈1587.5；继续 epoch 3 并只依据 full-volume validation 判断是否保留/早停，同时继续检查 Region Dice+CE 背景/结构约束
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
 - [x] formal-pilot 输出 `metrics_per_case.csv` + prediction NIfTI + entropy NIfTI
 - [x] formal-pilot 记录 Dice / HD95 / ASSD / IoU / Precision / Recall / 结构指标

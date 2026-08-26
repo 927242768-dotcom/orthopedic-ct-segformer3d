@@ -89,13 +89,13 @@
 | patient-level 数据划分 | ✅ 已完成（10例 formal pilot） | 96% | 已固定 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，patient-level 互斥；官方 `test_private liver_169` 只进入 test、不参与训练/调参；`formal_experiment=true`。最终论文仍需扩大病例规模 |
 | 公开数据集整理 | 🟡 进行中 | 94% | CTSpine1K `MSD-T10` 10 个真实 CT+label 已落盘：`liver_0`—`liver_8` + `liver_169`，官方 split 为 9 `trainset` + 1 `test_private`；真实文件接管执行 SHA-256 校验，10 例全部标准化/QC。该子集仍是工程验证，不替代正式论文主数据集/split |
 | 临床脱敏数据 | 🔴 阻塞 | 0% | 当前项目目录无临床数据；必须等待合法授权、脱敏与伦理/使用范围确认 |
-| SegFormer3D 骨科适配 | 🟡 进行中 | 87% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。long-v2 full-volume validation 已确认 `last.pt`（epoch 9）优于 patch selector 选出的 `best.pt`（epoch 1），但平均 Dice 仍仅≈0.04953。进一步复现实采样发现：long-v2 每 epoch 仅 7 个 patch，9 epoch 共 63 个，训练 patch 平均前景≈21.2%，而 7 个 train 全卷平均仅≈0.68%；validation prediction 前景≈14.5%–17.1%，是真值的约 24–27 倍。已新增 `patches_per_case` 多 patch 训练机制和 full-volume foreground-fraction 诊断，下一版 baseline 将降低 foreground sampling 并直接使用 full-volume validation 选 checkpoint |
+| SegFormer3D 骨科适配 | 🟡 进行中 | 89% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。balanced fullval v3 已真实完成 epoch 1/2，当前 `best.pt=epoch 1`、两例 full-volume val Dice≈0.05407，略高于 long-v2 `last.pt`≈0.04953。v3 detailed validation 显示 `liver_7/liver_8` prediction/target foreground ratio≈3.65/3.18，较 long-v2 的约 24–27 倍显著下降，证明降低 foreground sampling + 增加 `patches_per_case` 的方向有效；但两例 component count error 仍为 1578/1597，碎片化依旧严重，baseline 尚未锁定 |
 | 区域损失 | ✅ 已完成（代码） | 90% | Dice + CE/BCE 可运行并有 backward 测试 |
 | Boundary Loss | 🟠 待真实验证 | 55% | SDF 边界损失首版已实现；需真实训练、表面指标与效率验证 |
 | Topology Loss | 🟠 待真实验证 | 45% | 3D soft-clDice 候选已实现；骨折/非管状骨结构适用性必须单独验证 |
 | 困难样本增强 | 🟠 待真实验证 | 68% | 已落地可配置 3D flip/小角度旋转/各向同性缩放、gamma、Gaussian noise、HU shift 与 boundary-proxy hard sampling；强度增强已兼容 z-score CT 并使用 metadata 精确回到 HU 域。金属伪影与基于真实模型误差/uncertainty 的 hard mining 仍待实验 |
 | 不确定性机制 | 🟠 待真实验证 | 82% | predictive entropy、Top-percent ROI、膨胀、uncertainty→error AUROC/AUPRC、错误/正确平均熵、Top-percent error recall/ROI error rate 已实现；新增体素级 calibration：ECE、MCE、multiclass Brier score、NLL、mean confidence、accuracy、confidence gap，并以固定 seed 采样控制大体积内存；局部残差 refinement 已补 ROI-only 二阶段训练闭环。尚无真实 baseline checkpoint 条件下的定量收益、校准结论与消融 |
-| 训练/验证框架 | 🟡 进行中 | 99% | DataLoader/AdamW/AMP/gradient accumulation/sliding-window、scheduler、完整 run 追踪已接入；`train.py` 支持 `--allow-cpu`、可靠 `--resume` 以及 `training.patches_per_case`，可让同病例在单 epoch 内产生多个独立可复现 patch，避免 7 例数据每 epoch 只有 7 次训练 step。当前首要失配已定位为训练 patch 前景先验远高于全卷；full-volume validation 现有路径可直接作为 checkpoint selector，下一版配置不再使用固定 foreground patch validation |
+| 训练/验证框架 | 🟡 进行中 | 99% | DataLoader/AdamW/AMP/gradient accumulation/sliding-window、scheduler、完整 run 追踪已接入；`train.py` 支持 `--allow-cpu`、可靠 `--resume` 与 `training.patches_per_case`。balanced v3 已实际使用 `validation.patch_mode=false`，逐 epoch 直接以 `liver_7/liver_8` full-volume Dice 选 checkpoint；epoch 1/2 已完成，说明 full-volume-aware selector 已进入真实训练闭环，不再依赖固定 foreground patch proxy |
 | 评价指标 | ✅ 已完成（代码+首个真实 pilot test） | 100% | Dice、IoU、Precision、Recall、HD95、ASSD、component count/error、false merge/break 已接入；包含 uncertainty→error 与 ECE/MCE/Brier/NLL 等指标；`evaluate.py` 可统一写入逐病例 CSV 与 summary，并新增安全 `--case-id` 以支持 CPU 分病例 full-volume 执行，且强制病例必须属于当前 validation/test split。5-epoch formal-pilot 已对独立 `liver_169` 完成 full-volume CPU evaluation；该旧结果仅为 10 例流程 pilot，禁止作为论文正式结果 |
 | Web 科研辅助分析原型 | 🟡 进行中 | 85% | 首页/上传/健康检查、MPR、10 例人工 QC reviewer、C1–L6 可读标签、真值 PLY WebGL2 3D、简化/物理测量均已完成；QC reviewer 已修复全站 `.card` grid-column 与 QC 网格冲突，病例选择后使用 `hidden + display:none!important` 彻底关闭病例层并进入主审核区，“上一例 / 下一例”保持审核区，悬浮按钮可随时重新打开病例列表；已在本机 Edge 对真实 `liver_0` 完成点击关闭/重新展开实机验证。另有 SDF surface 选择与 evaluation results-review，可读取未来 prediction/entropy MPR。当前 `/api/research/evaluations` 实测 200 且 total=0，真实 checkpoint/prediction 仍不存在，系统没有伪造结果 |
 | 三维重建 | 🟡 进行中 | 86% | 已实现 physical-space Marching Cubes、PLY/JSON、vertex-clustering、SDF surface、WebGL2 与物理测量；新增相邻法向变化驱动的特征保护 vertex-clustering 候选，真实 `liver_0` 在 2.0 mm/同 30,260 顶点下将高特征区域 mean-NN 约 0.679→0.620 mm、HD95 约 1.068→1.000 mm，作为真值网格工程证据；0.4 mm SDF 保持 2→2 连通域，0.8 mm 因 2→3 被保护机制拒绝。仍缺真实 prediction surface 上的正式验证 |
@@ -640,7 +640,9 @@ CTSpine1K Hugging Face 在早期也出现超时和并行下载失败；但改为
 - [x] 已确认首要根因是 foreground/background sampling prior 严重失配：long-v2 真实训练 patch 平均前景≈21.2%，7 个 train 全卷平均≈0.68%；两例 validation prediction 前景≈14.5%–17.1%，是真值≈0.57%–0.70% 的约 24–27 倍；
 - [x] 已实现 `training.patches_per_case`：单病例每 epoch 可抽多个独立可复现 patch；并在 evaluation CSV/summary 增加 prediction/target foreground fraction 与 ratio；
 - [x] 已新建 `configs/orthopedic_ct_cpu_binary_balanced_fullval_v3.yaml`：foreground_probability=0.25、patches_per_case=4、64³ CT-only、Region Dice+CE 保持不变，`validation.patch_mode=false`；`formal_readiness --allow-cpu` 实测 ready=true / blocker_count=0；
-- [ ] 立即启动 v3 真实训练，逐 epoch 以两例 full-volume Dice 选 checkpoint；若假阳性比例/Dice 不改善则尽早停止，不为凑 epoch 浪费算力；
+- [x] balanced v3 已真实完成 epoch 1/2：epoch 1 full-volume val Dice≈0.05407、epoch 2≈0.04084，当前 `best.pt=epoch 1`；
+- [x] 已对 v3 `best.pt` 分病例 detailed validation：`liver_7/liver_8` Dice≈0.04323/0.06491，Precision≈0.02753/0.04267，prediction/target foreground ratio≈3.65/3.18；相对 long-v2 约 24–27 倍已显著改善；
+- [ ] 继续 v3 epoch 3，并以 full-volume Dice、foreground ratio、Precision 和 component fragmentation 联合判断是否继续；当前两例 component count error=1578/1597，不能仅因前景比例改善就认为 baseline 已完成；
 - [ ] 继续核对 Region Dice+CE 背景抑制、label mapping、normalization、sliding-window stitching/logits resize/threshold；当前没有发现 label mapping 或 resize 的直接错误证据；
 - [ ] 对 v3 validation 继续记录概率/置信度分布、connected components 与 false-positive 空间分布；
 - [ ] 只有 CT-only baseline 的 full-volume validation 明显改善后，才继续 CT+bone-window、Region+Boundary、augmentation/hard sampling 消融；
@@ -1676,6 +1678,28 @@ formal_readiness --allow-cpu
 ```
 
 该配置仍严格不访问 `liver_169`；下一步直接启动 v3 真实训练并逐 epoch full-volume validation。
+
+
+### 2026-08-26｜阶段 AB：balanced v3 epoch 1/2 + detailed full-volume validation（GitHub 同步点 #13）
+
+v3 run：`experiments/20260826_173511_cpu_binary_balanced_fullval_v3_roi64`。当前真实训练历史：
+
+- epoch 1：train loss≈`2.55371`，两例 full-volume val Dice≈`0.054070`，std≈`0.010840`，validation inference total≈`127.26 s`，lr=`5e-5`；
+- epoch 2：train loss≈`1.94022`，两例 full-volume val Dice≈`0.040839`，std≈`0.001075`，validation inference total≈`130.42 s`，lr=`1e-4`；
+- 当前最佳 checkpoint：`checkpoint/best.pt`，对应 epoch 1。
+
+对 epoch 1 `best.pt` 只在 validation split 分病例做 detailed full-volume evaluation，未访问 `liver_169`：
+
+- `liver_7`：Dice≈`0.04323`，IoU≈`0.02209`，Precision≈`0.02753`，Recall≈`0.10055`，HD95≈`199.91 mm`，ASSD≈`56.25 mm`；prediction foreground≈`2.555%`，GT≈`0.700%`，ratio≈`3.65`；pred/target components=`1581/3`，component error=`1578`，false merge=`1`，false break=`63`，inference≈`52.74 s`；
+- `liver_8`：Dice≈`0.06491`，IoU≈`0.03354`，Precision≈`0.04267`，Recall≈`0.13561`，HD95≈`175.46 mm`，ASSD≈`48.26 mm`；prediction foreground≈`1.799%`，GT≈`0.566%`，ratio≈`3.18`；pred/target components=`1599/2`，component error=`1597`，false merge=`0`，false break=`68`，inference≈`83.14 s`。
+
+两例平均 Dice≈`0.05407`、Precision≈`0.03510`、ASSD≈`52.25 mm`、foreground ratio≈`3.42`。相较 long-v2 `last.pt` 平均 Dice≈`0.04953`、Precision≈`0.02577`，且 prediction/GT foreground ratio 约 `24–27`，balanced sampling 已显著压低整卷前景过预测并带来小幅 Dice/Precision 改善，说明方向有效。
+
+但结构错误没有同步改善：v3 两例 component count error 平均≈`1587.5`，反而高于 long-v2 `last.pt` 的≈`1084`；Recall 也从 long-v2 的高过预测状态明显下降。当前结论是“前景先验失配已大幅缓解，但预测仍高度碎片化，baseline 仍不可靠”，不能把 v3 视为完成，更不能访问独立 test。
+
+本阶段回归：`pytest tests -q → 103 passed`；`ruff check src web tests → All checks passed`；`git diff --check → 通过`。
+
+下一步先继续 epoch 3；若 full-volume Dice 不回升、foreground ratio/Precision 恶化或 fragmentation 继续严重，则停止机械续训并优先检查 Region Dice+CE 权重、背景分类约束与 sampling 参数。
 
 
 ### 2026-08-26｜阶段 W：实现并实测可靠 checkpoint resume（GitHub 同步点 #7）
