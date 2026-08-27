@@ -295,7 +295,9 @@
 - [x] `train.py` 已新增真实 `sampling_stats.csv`：每 epoch 记录 patch_count、foreground fraction mean/median/std/min/max、q10/q25/q75/q90、foreground/background patch count；统计来自模型实际收到的训练 label，并新增回归测试
 - [x] v7 stable sampling 工程改动已完成：新增 `foreground_sampling_mode=fixed_per_case`，在 4 patches/case、foreground_probability=0.25 下固定每病例每 epoch 1 个 foreground-aware + 3 个 random patch；配置与 v6 对比除实验名外仅新增这一主要实验变量；108 tests + Ruff + `git diff --check` 已通过
 - [x] v7 fixed-per-case sampling 已完成 epoch 1 + full-volume validation + `liver_7/liver_8` detailed evaluation；run=`experiments/20260827_000843_cpu_binary_stable_sampling_v7_roi64`，mean val Dice≈`0.04562`，两例平均 Precision≈`0.02605`、foreground ratio≈`6.60`、component error≈`1311.5`，整体劣于 v3/v6 epoch 1，因此按预设规则停止 v7，不机械继续 epoch 2；未访问 `liver_169`
-- [ ] 下一步进入 logits/probability/loss/head-bias/gradient diagnostics，并检查 full-volume inference 与 patch training 的 normalization/logits resize/softmax/argmax 等路径一致性；优先用历史 v3/v6 validation checkpoint 定位 epoch 1→2 前景爆炸原因
+- [x] 已完成 validation-only checkpoint diagnostics 工程：支持 logits/probability 分布、Dice/CE 分项、foreground/background CE contribution、最终 segmentation head 参数/gradient、9 个 BatchNorm3d running statistics、`--bn-mode running|batch` 与固定 foreground-centered 64³ patch backward；full-volume predictor resize 与 training resize 共用同一 helper，diagnostics 不提供 test split 且不执行 optimizer.step；全量 116 tests + Ruff + `git diff --check` 通过
+- [x] v6 epoch 1→2 diagnostics 已确认 final head weight/bias 几乎不变，但上游 feature/logit 状态与 BatchNorm running statistics 明显漂移；v6 epoch2 `liver_7` 标准 running-stat inference prediction foreground≈42.26%，临时 batch-stat≈27.98%，GT≈0.70%，因此 BN train/eval normalization mismatch 是 foreground explosion 的重要机制之一但不是唯一机制
+- [ ] v8：严格基于 v6，只增加“训练阶段冻结 BatchNorm running statistics、保留 BN affine weight/bias 可训练”这一变量；先补回归测试并完成 readiness，再跑 epoch1→full-volume validation/diagnostics，若无灾难则继续 epoch2，稳定则 epoch3；独立 test `liver_169` 继续禁止访问
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
 - [x] formal-pilot 输出 `metrics_per_case.csv` + prediction NIfTI + entropy NIfTI
 - [x] formal-pilot 记录 Dice / HD95 / ASSD / IoU / Precision / Recall / 结构指标

@@ -2021,3 +2021,30 @@ git diff --check
 因此按预先锁定的判定规则停止 v7，不机械运行 epoch 2。结论限定为：**在当前 v7 单变量实验条件下，fixed-per-case quota 没有改善 epoch 1 full-volume validation，因此 sampling instability 不是足以解决当前 baseline instability 的主要干预。** 不能据此写成“sampling 完全无影响”或“sampling 与问题无关”。
 
 下一步进入更直接的优化动力学 diagnostics：优先记录 validation logits/probability 分布、Dice/CE 分项与前景/背景 CE contribution、最终 segmentation head 的 bias/weight/gradient norm，并用历史 v3/v6 validation checkpoint 检查 epoch 1→2 是否存在整体 foreground probability/bias 漂移；同时针对 full-volume inference 与 patch training 的 normalization、logits resize、softmax/argmax、padding/cropping 等一致性增加回归测试。独立 test `liver_169` 继续禁止访问。
+
+
+### 2026-08-27｜阶段 AM：完成 checkpoint diagnostics 工程闭环并锁定 v8 BN-running-stat 单变量方向
+
+从远程同步点 `353197296fb0a55fab706e272801e7de9f929d13` 恢复断点后，确认工作树只有 3 个未跟踪 diagnostics 文件：`src/modeling/diagnostics.py`、`src/modeling/diagnose_checkpoint.py`、`tests/test_checkpoint_diagnostics.py`，未发现其它待保留修改，也未执行 reset/restore。
+
+本轮对 diagnostics 实现逐文件复核并重新实跑验证。该工具严格限定 validation split，不暴露 test split 参数，不执行 `optimizer.step`；支持 binary logits/probability 分布、GT foreground/background 上的 P(fg)、probability histogram、prediction/target foreground fraction、Region Dice+CE 分项及 foreground/background CE contribution、最终 segmentation head 参数范数/偏置/gradient、全部 BatchNorm3d running statistics，以及 `--bn-mode running|batch` 对照。固定 foreground-centered patch gradient diagnostic 只 backward 一次并在结束后清空 gradient；full-volume predictor 与 training 继续复用同一 `resize_logits_to_target(..., trilinear, align_corners=False)` helper。
+
+重新读取真实文件 `experiments/diagnostics_20260827_v6_e2_liver7_bn_batch_v2/diagnostics.json` 后确认：v6 epoch2 / `liver_7` 在临时 batch-stat inference 下 prediction foreground fraction=`0.2798134`，GT foreground fraction=`0.00699608`，CE=`1.2322532`，其中 foreground/background weighted CE contribution≈`0.02247/1.20978`。标准 running-stat inference 同 checkpoint 的 prediction foreground≈`42.26%`；batch-stat 可明显缓解到≈`27.98%`，但仍远高于 GT≈`0.70%`。结合 epoch1→epoch2 final head weight norm/bias 几乎不变，而 9 个 BatchNorm3d 的 running statistics 明显漂移，当前结论限定为：**BatchNorm running-statistics / train-eval normalization mismatch 是 foreground explosion 的重要机制之一，但不是唯一机制；不能写成唯一根因已被完全证明。**
+
+工程验证重新实跑：
+
+```text
+.venv/Scripts/python.exe -m pytest tests/test_checkpoint_diagnostics.py -q
+→ 8 passed
+
+.venv/Scripts/python.exe -m pytest tests -q
+→ 116 passed
+
+.venv/Scripts/python.exe -m ruff check src web tests
+→ All checks passed!
+
+git diff --check
+→ 通过
+```
+
+下一步锁定 v8：严格基于 `configs/orthopedic_ct_cpu_binary_balanced_lr_v6.yaml`，唯一实验变量是训练阶段冻结 `BatchNorm3d` running statistics；优先采用每次进入训练态后将 BN module 设为 eval、但保留 affine weight/bias `requires_grad=True` 的最小实现。必须增加回归测试证明 running_mean/running_var/num_batches_tracked 不更新、BN affine 仍有 gradient、其它模块仍为 training、默认旧配置行为不变、validation/inference 不受意外影响。完成代码/config/测试/readiness 并 GitHub 闭环后直接跑 v8 epoch1；若无明显灾难继续 epoch2，稳定则 epoch3。独立 test `ctspine1k-msd-t10-liver_169` 在 validation 参数与 checkpoint 选择规则完全锁定前继续禁止访问。
