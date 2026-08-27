@@ -2048,3 +2048,37 @@ git diff --check
 ```
 
 下一步锁定 v8：严格基于 `configs/orthopedic_ct_cpu_binary_balanced_lr_v6.yaml`，唯一实验变量是训练阶段冻结 `BatchNorm3d` running statistics；优先采用每次进入训练态后将 BN module 设为 eval、但保留 affine weight/bias `requires_grad=True` 的最小实现。必须增加回归测试证明 running_mean/running_var/num_batches_tracked 不更新、BN affine 仍有 gradient、其它模块仍为 training、默认旧配置行为不变、validation/inference 不受意外影响。完成代码/config/测试/readiness 并 GitHub 闭环后直接跑 v8 epoch1；若无明显灾难继续 epoch2，稳定则 epoch3。独立 test `ctspine1k-msd-t10-liver_169` 在 validation 参数与 checkpoint 选择规则完全锁定前继续禁止访问。
+
+
+### 2026-08-27｜阶段 AN：完成 v8 BN-running-stat 单变量工程与 readiness
+
+v8 严格基于 `configs/orthopedic_ct_cpu_binary_balanced_lr_v6.yaml`，新增 `configs/orthopedic_ct_cpu_binary_bn_frozen_v8.yaml`。实际 config diff 只有两处：`experiment_name` 改为 `cpu_binary_bn_frozen_v8_roi64`，以及 `training.freeze_batchnorm_running_stats: true`；CT-only、split/seed、ROI64、patches_per_case=4、foreground_probability=0.25、Bernoulli sampling、Region Dice+CE=1:1、lr=5e-5、warmup=1、full-volume validation ROI128 / overlap=0.25 等均保持不变。
+
+`src/modeling/train.py` 新增 `configure_batchnorm_training_mode()`：每个 epoch 仍先执行完整 `model.train()`，仅当新配置启用时把所有 `BatchNorm3d` 子模块切到 eval，使 forward 使用固定 running_mean/running_var 且不再增加 `num_batches_tracked`；函数不修改任何参数 `requires_grad`，因此 BN affine weight/bias 仍可参与反向传播。默认未配置时直接 no-op，旧配置训练行为不变；validation/inference 仍由原 `model.eval()` 路径控制。
+
+新增 `tests/test_batchnorm_freeze_training.py`，回归覆盖：running_mean/running_var 不更新、num_batches_tracked 不增加、BN affine weight/bias 均获得非零 gradient、其它模块保持 training、默认关闭时 BN 继续正常更新 running stats、eval/inference 状态不被 helper 意外改变，以及 v8/v6 配置除实验名和 BN 新选项外完全相同。
+
+真实工程验证：
+
+```text
+pytest tests -q
+→ 120 passed
+
+ruff check src web tests
+→ All checks passed!
+
+v8 YAML parse
+→ OK
+
+formal_readiness --task-spec configs/task_specs/vertebra_binary_ctspine1k_msd_t10_v1.json \
+  --config configs/orthopedic_ct_cpu_binary_bn_frozen_v8.yaml --allow-cpu
+→ ready=true
+→ blocker_count=0
+→ preflight checked_case_count=10
+→ split train/validation/test=7/2/1
+→ 0 error / 0 warning
+```
+
+readiness 中 GPU 子检查仍如预期报告本机 PyTorch 为 CPU build、无 CUDA；由于本轮明确使用 `--allow-cpu`，这不构成 blocker。独立 test `ctspine1k-msd-t10-liver_169` 未被访问，继续保持锁定。
+
+下一步在本阶段 commit/push 并确认 `HEAD == origin/main` 后，直接启动 v8 epoch1。epoch1 完成后必须先核对 run artifacts 与 full-volume validation，再对 `liver_7/liver_8` 做 detailed evaluation 和 checkpoint diagnostics；若没有明显 foreground/background 灾难，则续训 epoch2，epoch2 是主要判定点。

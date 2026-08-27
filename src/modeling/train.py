@@ -91,6 +91,30 @@ def logits_to_prediction(logits: torch.Tensor) -> torch.Tensor:
     return torch.argmax(logits, dim=1)
 
 
+def configure_batchnorm_training_mode(
+    model: torch.nn.Module,
+    *,
+    freeze_running_stats: bool,
+) -> int:
+    """按实验配置冻结 BatchNorm3d running stats，但保留 affine 参数训练。
+
+    调用方应先执行 ``model.train()``。启用后仅把 BatchNorm3d 子模块切到 eval，
+    因而 forward 使用已有 running_mean/running_var 且不再更新
+    num_batches_tracked；weight/bias 的 requires_grad 不会被修改。
+    """
+    if not freeze_running_stats:
+        return 0
+
+    batchnorm_count = 0
+    for module in model.modules():
+        if isinstance(module, torch.nn.BatchNorm3d):
+            module.eval()
+            batchnorm_count += 1
+    if batchnorm_count == 0:
+        raise RuntimeError("已启用 freeze_batchnorm_running_stats，但模型中没有 BatchNorm3d")
+    return batchnorm_count
+
+
 def summarize_foreground_fractions(fractions: list[float]) -> dict[str, float | int]:
     """汇总一个 epoch 内模型实际看到的 training patch 前景比例。"""
     if not fractions:
@@ -406,6 +430,9 @@ def train(
                 data_cfg.get("foreground_sampling_mode", "bernoulli")
             ),
             "training_sampling_stats_logged": True,
+            "training_freeze_batchnorm_running_stats": bool(
+                train_cfg.get("freeze_batchnorm_running_stats", False)
+            ),
             "validation_patch_sampling_fixed_across_epochs": validation_patch_mode,
             "resume_events": [],
         }
@@ -593,6 +620,12 @@ def train(
                 scheduler.step(epoch)
             train_ds.set_epoch(epoch)
             model.train()
+            configure_batchnorm_training_mode(
+                model,
+                freeze_running_stats=bool(
+                    train_cfg.get("freeze_batchnorm_running_stats", False)
+                ),
+            )
             optimizer.zero_grad(set_to_none=True)
             running_loss = 0.0
             batch_count = 0
