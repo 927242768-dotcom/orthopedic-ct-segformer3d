@@ -118,6 +118,46 @@ def should_freeze_batchnorm_running_stats(
     return freeze_always or epoch >= freeze_from
 
 
+def should_freeze_encoder_parameters(
+    train_cfg: dict[str, Any],
+    *,
+    epoch: int,
+) -> bool:
+    """解析当前 epoch 是否应冻结 SegFormer3D encoder 的可训练参数。"""
+    if epoch <= 0:
+        raise ValueError("epoch 必须从 1 开始")
+
+    freeze_from_raw = train_cfg.get("freeze_encoder_parameters_from_epoch")
+    if freeze_from_raw is None:
+        return False
+    if isinstance(freeze_from_raw, bool):
+        raise ValueError("freeze_encoder_parameters_from_epoch 必须是正整数 epoch")
+
+    freeze_from = int(freeze_from_raw)
+    if freeze_from <= 0:
+        raise ValueError("freeze_encoder_parameters_from_epoch 必须 >= 1")
+    return epoch >= freeze_from
+
+
+def configure_encoder_parameter_training(
+    model: torch.nn.Module,
+    *,
+    freeze_parameters: bool,
+) -> int:
+    """冻结/恢复 SegFormer3D encoder 参数，不改变 decoder/head 的 trainability。"""
+    encoder = getattr(model, "segformer_encoder", None)
+    if encoder is None:
+        if freeze_parameters:
+            raise RuntimeError("已启用 encoder 参数冻结，但模型没有 segformer_encoder")
+        return 0
+
+    parameter_count = 0
+    for parameter in encoder.parameters():
+        parameter.requires_grad_(not freeze_parameters)
+        parameter_count += parameter.numel()
+    return parameter_count
+
+
 def configure_batchnorm_training_mode(
     model: torch.nn.Module,
     *,
@@ -650,6 +690,14 @@ def train(
                 scheduler.step(epoch)
             train_ds.set_epoch(epoch)
             model.train()
+            if "freeze_encoder_parameters_from_epoch" in train_cfg:
+                configure_encoder_parameter_training(
+                    model,
+                    freeze_parameters=should_freeze_encoder_parameters(
+                        train_cfg,
+                        epoch=epoch,
+                    ),
+                )
             configure_batchnorm_training_mode(
                 model,
                 freeze_running_stats=should_freeze_batchnorm_running_stats(

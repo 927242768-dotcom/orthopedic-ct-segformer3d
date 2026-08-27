@@ -308,7 +308,9 @@
 - [x] v9 epoch2 diagnostics 已完成：两例 GT foreground mean P(fg)≈`0.13278/0.12832`、GT background mean P(fg)≈`0.05583/0.05242`；foreground/background weighted CE contribution≈`0.04732/0.30318` 与 `0.03511/0.36757`；首层 BN 仍为 epoch1 锚点 `num_batches_tracked=28`、running mean std≈`0.0144923`、running var mean≈`0.0622548`
 - [x] 已运行 v6e1/v6e2/v9e1/v9e2 checkpoint dynamics：v9e1 与 v6e1 参数和 BN running buffers 全部精确一致；v9e2 的 BN running buffers 对 v6e1 仍全为 relative delta=`0`，但普通 trainable 参数仍发生小幅更新（最大聚合组 encoder embed4≈`0.658%`，head≈`0.0179%`），固定 patch final logits 从 v6/v9 epoch1 mean≈`-11.31` 漂移到 v9e2≈`-4.56`。因此 BN drift 是 v6 foreground explosion 的重要放大机制，但不是 epoch2 segmentation degradation 的唯一根因
 - [x] 按预设规则停止 v9，不跑 epoch3；stable baseline 仍为 NO，锁参/正式 test 条件仍未满足，独立 test `liver_169` 继续禁止访问
-- [ ] 基于 v9 dynamics 选择并实现唯一 v10 变量；优先隔离“BN running stats 已固定后仍存在的 trainable normalization/feature-parameter drift”，不得同时改 lr/loss/sampling/ROI/augmentation
+- [x] 已基于 v9 dynamics 进一步拆分 parameter delta：v9e1→v9e2 的 BN affine≈`0.0194%`、LayerNorm affine≈`0.0208%`，而 patch embeddings≈`0.7842%`、encoder attention≈`0.7075%`、encoder MLP≈`0.1906%`；final head 仅≈`0.0179%`，但固定 patch final logits mean 仍从≈`-11.31` 漂移到≈`-4.56`。因此 v10 不优先冻结 BN affine，而选择更有证据的单变量“epoch2 起冻结 encoder trainable parameters”
+- [x] v10 工程完成：新增 `configs/orthopedic_ct_cpu_binary_encoder_freeze_after_e1_v10.yaml` 与 epoch-aware encoder freeze；相对 v9 仅实验名 + `freeze_encoder_parameters_from_epoch=2` 不同，保留 v9 的 `freeze_batchnorm_running_stats_from_epoch=2`、lr/loss/sampling/ROI/augmentation/decoder/head 全部不变；新增 policy、encoder-only gradient、恢复 trainability、v10/v9 config diff 回归测试；129 tests + Ruff + `git diff --check` 通过，formal readiness `ready=true / blocker_count=0`
+- [ ] 立即运行 v10 epoch1；必须复现/接近 v9/v6 epoch1 后才 resume epoch2。epoch2 起 encoder 参数冻结、decoder/head 继续训练，随后只在 `liver_7/liver_8` 做 detailed validation / diagnostics / dynamics；独立 test `liver_169` 继续禁止访问
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
 - [x] formal-pilot 输出 `metrics_per_case.csv` + prediction NIfTI + entropy NIfTI
 - [x] formal-pilot 记录 Dice / HD95 / ASSD / IoU / Precision / Recall / 结构指标
