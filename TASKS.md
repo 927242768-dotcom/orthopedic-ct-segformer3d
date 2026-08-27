@@ -328,11 +328,14 @@
 
 ### P1-2 输入消融
 
-- [ ] CT only
-- [ ] CT + bone-window
-- [ ] 比较区域指标
-- [ ] 比较表面指标
-- [ ] 比较速度/显存
+- [x] CT only：v11 stable baseline，3 epoch mean full-volume validation Dice=`0.05407001 → 0.05437617 → 0.05465757`
+- [x] CT + bone-window：v12，唯一主要变量为 `input_channels: [ct_normalized] → [ct_normalized, bone_window]` 且 `model.in_channels: 1 → 2`；bone window=`500/2000`
+- [x] 比较区域指标：v11 两例平均 Dice/IoU/Precision≈`0.05466/0.02812/0.03425`，v12≈`0.02803/0.01421/0.01422`；v12 Recall 虽升至≈`0.96594`，但属于严重前景泛滥
+- [x] 比较表面指标：v11 两例平均 HD95/ASSD≈`186.05/51.52 mm`，v12≈`256.41/83.77 mm`，CT-only 更好
+- [x] 比较结构/前景/校准：v11 prediction/GT foreground ratio≈`4.00×`，v12≈`67.96×`；v11 ECE/Brier/NLL≈`0.01084/0.04693/0.10288`，v12≈`0.39319/0.80051/3.40655`
+- [x] 比较速度：当前 CPU 两例 wall-clock 平均 v11≈`72.88 s`，v12≈`100.22 s`；仅作当前机器参考，不写成跨硬件结论
+- [x] v12 freeze/checkpoint verification：epoch3 checkpoint AdamW step 计数显示 encoder 184 个参数与 decoder feature 19 个参数均停在 `28`，仅 `linear_pred` 2 个参数到 `84`；9 个 BN `num_batches_tracked=28`，与 epoch2 起 encoder/BN/decoder-feature freeze 策略一致
+- [x] 输入消融最终判定：**CT-only（v11）胜出**；CT+bone-window 在当前 normalization/architecture 下导致约 `68×` foreground overprediction，停止该方向，不访问独立 test `liver_169`
 
 ### P1-3 联合损失消融
 

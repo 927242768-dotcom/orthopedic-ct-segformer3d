@@ -2338,3 +2338,27 @@ stable baseline 确认后，本阶段没有立即重复完整 3-epoch CPU 重训
 与原 epoch3 detailed evaluation 逐项比较 summary metrics：`liver_7` Dice 仍为 `0.04514081209537846`，`liver_8` Dice 仍为 `0.06417433592551017`；除墙钟 `inference_seconds` 外，Dice、IoU、Precision、Recall、HD95、ASSD、prediction/GT foreground ratio、component error、false merge/break、uncertainty→error、ECE/MCE、Brier、NLL、confidence gap 等所有 summary metric mean 都 exact equal。仅运行时间因系统调度变化：`liver_7` 约 `59.00→55.68 s`，`liver_8` 约 `86.75→89.49 s`。
 
 因此本阶段可以严谨写：**v11 epoch3 checkpoint 的 full-volume inference/evaluation reproducibility=PASS**。该结论不等同于“从随机初始化重新训练 3 epoch 后得到完全相同 checkpoint/轨迹”；完整 training reproducibility 仍未执行，不能夸大。独立 test `liver_169` 本阶段未访问。下一步按计划进入 CT-only vs CT+bone-window 输入消融，并尽量保持 lr、loss、sampling、ROI、augmentation、scheduler、seed 与 validation 不变。
+
+
+### 2026-08-28｜阶段 BB：v12 CT+bone-window 输入消融完成，CT-only 胜出
+
+从远程闭环点 `96719876ff4b776d4e955afa37a86e2ff131b0c2` 恢复项目后，确认 `HEAD == origin/main`，工作树仅有尚未提交的 `configs/orthopedic_ct_cpu_binary_ct_bone_window_v12.yaml`。有效 v12 run=`experiments/20260827_233142_cpu_binary_ct_bone_window_v12_roi64` 已真实完成 3 epoch，未重跑训练；另一个 `experiments/20260827_232539_cpu_binary_ct_bone_window_v12_roi64` 是工具 timeout 后留下的不完整 run（无有效 history/checkpoint），继续保留且不作为实验结果。
+
+v12 相对 v11 的 config diff 只有实验名、输入表示与与之匹配的输入通道数/说明：`data.input_channels=[ct_normalized] → [ct_normalized,bone_window]`、bone window=`center=500,width=2000`、`model.in_channels=1→2`；loss、optimizer、lr、scheduler、sampling、ROI、augmentation、seed、freeze policy、validation 和 inference 均保持不变。formal preflight 对两次 detailed validation 均再次 `ready=true / 0 error / 0 warning`，7/2/1 split 不变，本阶段未访问独立 test `liver_169`。
+
+v12 三轮真实训练轨迹：epoch1 train loss=`4.263589756829398`、mean val Dice=`0.027270740458087465`；epoch2 train loss=`8.248797429459435`、mean val Dice=`0.027674864114707952`；epoch3 train loss=`6.610349318810871`、mean val Dice=`0.028027748189159436`。sampling 分别为 28 patches，foreground/background=`10/18、10/18、8/20`，foreground fraction mean=`0.07907336098807198 / 0.08840765271868024 / 0.05680016108921596`，与 v11 对应 epoch 采样一致。
+
+本阶段新完成 epoch3 `best.pt` 的 validation-only detailed evaluation：
+
+- `liver_7`：Dice=`0.0284302355`，IoU=`0.0144201012`，Precision=`0.0144321372`，Recall=`0.9453278098`，HD95=`248.8152 mm`，ASSD=`80.5652 mm`；prediction/GT foreground=`45.8254% / 0.69961%`，ratio=`65.5016×`；pred/GT components=`398/3`，component error=`395`，false merge/break=`1/1`；uncertainty AUROC/AUPRC=`0.65563/0.54434`，Top-10% error recall=`0.11556`；ECE/MCE/Brier/NLL=`0.42213/0.44697/0.85822/3.65555`，confidence gap=`0.42213`；CPU inference≈`76.16 s`。
+- `liver_8`：Dice=`0.0276252609`，IoU=`0.0140060914`，Precision=`0.0140087668`，Recall=`0.9865479483`，HD95=`264.0114 mm`，ASSD=`86.9848 mm`；prediction/GT foreground=`39.8568% / 0.56596%`，ratio=`70.4236×`；pred/GT components=`466/2`，component error=`464`，false merge/break=`1/0`；uncertainty AUROC/AUPRC=`0.68646/0.51508`，Top-10% error recall=`0.13092`；ECE/MCE/Brier/NLL=`0.36425/0.42877/0.74279/3.15755`，confidence gap=`0.36425`；CPU inference≈`124.27 s`。
+
+两例平均 v12：Dice=`0.0280277482`、IoU=`0.0142130963`、Precision=`0.0142204520`、Recall=`0.9659378790`、HD95=`256.4133 mm`、ASSD=`83.7750 mm`、prediction/GT foreground ratio=`67.9626×`、component error=`429.5`、uncertainty AUROC/AUPRC=`0.67105/0.52971`、Top-10% error recall=`0.12324`、ECE/MCE/Brier/NLL=`0.39319/0.43787/0.80051/3.40655`、confidence gap=`0.39319`、CPU inference≈`100.22 s`。
+
+与 v11 CT-only epoch3 同两例严格对照：v11 平均 Dice=`0.0546575740`、IoU=`0.0281212393`、Precision=`0.0342507730`、Recall=`0.1355391270`、HD95=`186.0500 mm`、ASSD=`51.5220 mm`、prediction/GT foreground ratio=`3.9976×`、component error=`1548.0`、uncertainty AUROC/AUPRC=`0.93691/0.32938`、Top-10% error recall=`0.76162`、ECE/MCE/Brier/NLL=`0.01084/0.05635/0.04693/0.10288`、confidence gap=`0.01078`、CPU inference≈`72.88 s`。v12 虽然 Recall 大幅升高且 component count error 数值更低，但这是因为模型把约 40%–46% 的全卷都预测成前景，形成约 `68×` 的前景泛滥；区域重叠、Precision、表面距离和 calibration 均显著恶化，因此不能把高 Recall 或较低 component error 单独解释为结构改善。
+
+v12 epoch1 checkpoint 已被后续 `best.pt/last.pt` 覆盖，本阶段没有伪造不存在的 epoch1/epoch2 checkpoint。改用当前 epoch3 checkpoint 内的 AdamW 历史 step 计数 + BN buffer 进行 freeze verification：optimizer 共 205 个 parameter state，step 值只有 `28` 和 `84`；按模型参数顺序对齐后，`segformer_encoder` 184 个参数全部 step=`28`，decoder `linear_c1..c4` 16 个参数与 `linear_fuse` 3 个参数也全部 step=`28`，仅 `linear_pred` weight+bias 两个参数 step=`84`。由于每 epoch 真实为 28 optimizer steps，这与“epoch1 全模型训练，epoch2/3 冻结 encoder + decoder feature，仅 final head 持续训练”完全一致。9 个 BatchNorm3d 的 `num_batches_tracked` 全部为 `28`，而非 84，证明 BN running statistics 也只在 epoch1 更新。`best.pt` 与 `last.pt` 的 model state 在 epoch3 exact equal。该证据足以验证 freeze policy 的历史执行，但不冒充不存在的 epoch2 checkpoint state delta 文件。
+
+输入消融最终判定：**CT-only（v11）better，作为后续 loss ablation baseline。** v12 CT+bone-window 在当前 normalization/architecture 下产生严重 foreground overprediction，STOP，不继续扩展该输入方向。stable baseline=`YES`（仍指 v11 engineering/validation stable baseline）；lock parameters=`NO`；formal independent test ready=`NO`；本轮 `liver_169=未访问`。
+
+下一步立即以 v11 CT-only 为固定 input baseline 进入 loss ablation：Region、Region+Boundary、Region+Topology、Region+Boundary+Topology；每次只改变 loss 这一主要变量，继续保持 ROI/sampling/lr/scheduler/augmentation/seed/freeze policy/validation 不变。若 3-epoch minimal comparison 已明显灾难性失败，则按 STOP 规则记录并进入下一项，避免浪费 CPU。
