@@ -2110,3 +2110,14 @@ epoch 1: train_loss=6.0181837635
 checkpoint diagnostics 进一步确认 BN freeze 按设计真实生效：v8 epoch1 两例都显示 9 个 `BatchNorm3d`，第一层 `num_batches_tracked=0`、running mean channel std=`0`、running var mean=`1`；即 running stats 从初始化开始完全未更新。`liver_7` 的 prediction foreground fraction≈`0.0005788`，GT≈`0.0069961`，GT foreground mean P(fg)≈`0.0001326`，GT background mean P(fg)≈`0.0006001`；`liver_8` 的 GT foreground mean P(fg) 甚至约 `4.1e-12`。这说明“从随机初始化开始把 BN running stats 永久固定为 0/1”会造成严重 train/inference representation mismatch，不能作为稳定 baseline 方案。
 
 当前更精确的机制判断是：**BN running-statistics 确实参与了 v6 epoch1→epoch2 的不稳定，但其处理方式不能简单改为从初始化起完全冻结。** v6 epoch1 的 BN stats（例如首层 running mean std≈`0.01449`、running var mean≈`0.06225`、num_batches=28）反而与当时较好的 validation 表现相伴；v6 epoch2 漂移到 running mean std≈`0.06107`、running var mean≈`0.01357`、num_batches=56 后出现 foreground explosion。下一步必须先量化 encoder/decoder/head-input activation 漂移与 checkpoint 参数 delta，再选择一个可解释的 v9 单变量，而不是直接同时改 normalization/lr/loss/sampling。
+
+
+### 2026-08-27｜阶段 AP：增加多 checkpoint activation / parameter-delta 诊断工具
+
+为避免在 v8 失败后直接猜测 v9，本轮新增 `src/modeling/compare_checkpoint_dynamics.py`，专门对 validation 病例的固定 foreground-centered 64³ patch 比较多个 checkpoint。该入口不提供 test split，不执行 optimizer.step。
+
+默认记录以下关键激活：encoder 四级 patch embedding、每级最后一个 transformer block、decoder `linear_fuse` Conv/BatchNorm、`linear_pred` head input 与最终 logits。每个激活记录 shape、L2 norm、mean/std/min/max 和 q01/q05/q10/q25/q50/q75/q90/q95/q99。另对 checkpoint state_dict 计算按 encoder/decoder 子模块聚合的 parameter relative delta、变化最大的单参数，以及 BatchNorm running_mean/running_var buffer delta。
+
+新增 `tests/test_compare_checkpoint_dynamics.py`，验证 head input/output hook 能正确抓取，以及参数组变化与 BN running buffer 变化能被识别。focused tests=`2 passed`，Ruff clean。
+
+下一步在完成本轮工程 commit/push 后，直接用同一 `liver_7` validation foreground-centered patch 比较 v6 epoch1、v6 epoch2、v8 epoch1，依据真实 activation / parameter delta 选择 v9 的唯一变量。独立 test `ctspine1k-msd-t10-liver_169` 继续禁止访问。
