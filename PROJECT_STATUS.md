@@ -2082,3 +2082,31 @@ formal_readiness --task-spec configs/task_specs/vertebra_binary_ctspine1k_msd_t1
 readiness 中 GPU 子检查仍如预期报告本机 PyTorch 为 CPU build、无 CUDA；由于本轮明确使用 `--allow-cpu`，这不构成 blocker。独立 test `ctspine1k-msd-t10-liver_169` 未被访问，继续保持锁定。
 
 下一步在本阶段 commit/push 并确认 `HEAD == origin/main` 后，直接启动 v8 epoch1。epoch1 完成后必须先核对 run artifacts 与 full-volume validation，再对 `liver_7/liver_8` 做 detailed evaluation 和 checkpoint diagnostics；若没有明显 foreground/background 灾难，则续训 epoch2，epoch2 是主要判定点。
+
+
+### 2026-08-27｜阶段 AO：v8 epoch1 发生严重背景塌缩，按规则停止
+
+v8 run：`experiments/20260827_125357_cpu_binary_bn_frozen_v8_roi64`。本轮只使用 train 7 例与 validation 2 例，未对独立 test `ctspine1k-msd-t10-liver_169` 做 tuning/evaluation。
+
+真实训练 / full-volume validation：
+
+```text
+epoch 1: train_loss=6.0181837635
+         mean val Dice=0.0001247640
+         val Dice std=0.0001247640
+         validation inference total≈138.29 s
+         lr=5e-5
+```
+
+训练 sampling 与 v3/v6 epoch1 完全一致：28 patches，foreground fraction mean≈`7.9073%`、median=`0`、pure-background=`18/28`、foreground-positive=`10/28`。因此本轮灾难不能归因于 sampling 发生了新的变化。
+
+对 `best.pt`（即 epoch1）做两例 validation detailed full-volume evaluation：
+
+- `liver_7`：Dice=`0.00024953`，Precision=`0.00163274`，Recall=`0.00013509`，prediction foreground=`0.05788%`，GT foreground=`0.69961%`，prediction/GT ratio≈`0.08274`，component error=`230`；
+- `liver_8`：Dice=`0`，Precision=`0`，Recall=`0`，prediction foreground=`0.07086%`，GT foreground=`0.56596%`，prediction/GT ratio≈`0.12520`，component error=`218`。
+
+这与 v6 epoch2 的 foreground explosion 相反，属于严重 **background collapse / foreground under-prediction**。因此 v8 明显未达到“epoch1 无灾难”的继续条件，不执行 epoch2。
+
+checkpoint diagnostics 进一步确认 BN freeze 按设计真实生效：v8 epoch1 两例都显示 9 个 `BatchNorm3d`，第一层 `num_batches_tracked=0`、running mean channel std=`0`、running var mean=`1`；即 running stats 从初始化开始完全未更新。`liver_7` 的 prediction foreground fraction≈`0.0005788`，GT≈`0.0069961`，GT foreground mean P(fg)≈`0.0001326`，GT background mean P(fg)≈`0.0006001`；`liver_8` 的 GT foreground mean P(fg) 甚至约 `4.1e-12`。这说明“从随机初始化开始把 BN running stats 永久固定为 0/1”会造成严重 train/inference representation mismatch，不能作为稳定 baseline 方案。
+
+当前更精确的机制判断是：**BN running-statistics 确实参与了 v6 epoch1→epoch2 的不稳定，但其处理方式不能简单改为从初始化起完全冻结。** v6 epoch1 的 BN stats（例如首层 running mean std≈`0.01449`、running var mean≈`0.06225`、num_batches=28）反而与当时较好的 validation 表现相伴；v6 epoch2 漂移到 running mean std≈`0.06107`、running var mean≈`0.01357`、num_batches=56 后出现 foreground explosion。下一步必须先量化 encoder/decoder/head-input activation 漂移与 checkpoint 参数 delta，再选择一个可解释的 v9 单变量，而不是直接同时改 normalization/lr/loss/sampling。
