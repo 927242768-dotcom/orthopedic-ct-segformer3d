@@ -2327,3 +2327,14 @@ epoch3 sampling 共 28 个 training patch，foreground/background=`8/20`，foreg
 科学结论保持谨慎：v10 中 encoder 与 BN 已冻结仍 collapse，而 v11 进一步冻结 decoder feature 后连续 epoch2/3 稳定，且 decoder feature/head-input activation 对 exact anchor 完全不漂移；因此真实证据支持 **decoder feature update 是 v10 catastrophic collapse 的关键机制之一**，但不能据此写成唯一根因。
 
 本阶段质量检查：`pytest tests -q`=`133 passed`；`ruff check src web tests`=`All checks passed!`；`git diff --check` 通过，仅提示 Windows checkout 的 LF→CRLF 行尾转换警告，没有 whitespace error。下一步按任务纪律直接进入最小可信 baseline reproducibility，然后再做 CT-only vs CT+bone-window 输入消融；在所有 validation 决策锁定前继续禁止重新访问 `liver_169`。
+
+
+### 2026-08-27｜阶段 BA：v11 stable baseline 最小可信 reproducibility
+
+stable baseline 确认后，本阶段没有立即重复完整 3-epoch CPU 重训，因为该操作耗时较高且不会优先解决当前最关键的输入/loss 消融问题；按照既定规则，采用“最小但可信”的复现方案验证固定 checkpoint + config 的 full-volume validation 可重复性。先尝试一次性重放整个 validation split，单次工具超时且进程退出、输出目录为空；按 timeout 纪律没有直接启动第二个相同任务，而是改为只补跑缺失的两例 validation case，且全程未访问 test split。
+
+固定 config=`configs/orthopedic_ct_cpu_binary_decoder_feature_freeze_after_e1_v11.yaml`，SHA-256=`6898924e3b1dbf9d60d501b252ebc44fe5411d5ec1f967efda06f11355548ae9`；固定 checkpoint=`experiments/20260827_180730_cpu_binary_decoder_feature_freeze_after_e1_v11_roi64/checkpoint/best.pt`，SHA-256=`9a805bc9c97b96128ba0b63d84dc30e113bade227f0a3a1cbd524231da896d67`。分别重新运行 `liver_7` 与 `liver_8` 的 formal preflight + full-volume evaluation，输出到 `experiments/repro_20260827_v11e3_liver7` 与 `...liver8`；两次 preflight 均 `ready=true`、error/warning=`0/0`。
+
+与原 epoch3 detailed evaluation 逐项比较 summary metrics：`liver_7` Dice 仍为 `0.04514081209537846`，`liver_8` Dice 仍为 `0.06417433592551017`；除墙钟 `inference_seconds` 外，Dice、IoU、Precision、Recall、HD95、ASSD、prediction/GT foreground ratio、component error、false merge/break、uncertainty→error、ECE/MCE、Brier、NLL、confidence gap 等所有 summary metric mean 都 exact equal。仅运行时间因系统调度变化：`liver_7` 约 `59.00→55.68 s`，`liver_8` 约 `86.75→89.49 s`。
+
+因此本阶段可以严谨写：**v11 epoch3 checkpoint 的 full-volume inference/evaluation reproducibility=PASS**。该结论不等同于“从随机初始化重新训练 3 epoch 后得到完全相同 checkpoint/轨迹”；完整 training reproducibility 仍未执行，不能夸大。独立 test `liver_169` 本阶段未访问。下一步按计划进入 CT-only vs CT+bone-window 输入消融，并尽量保持 lr、loss、sampling、ROI、augmentation、scheduler、seed 与 validation 不变。
