@@ -2165,3 +2165,30 @@ formal_readiness --allow-cpu
 GPU 子检查仍如预期报告本机为 CPU build/无 CUDA；本轮显式 `--allow-cpu`，不构成 blocker。独立 test `ctspine1k-msd-t10-liver_169` 未访问。
 
 下一步完成本阶段 commit/push 并再次确认 `HEAD == origin/main` 后，立即运行 v9 epoch1。epoch1 理论行为应与 v6 epoch1 接近；若 mean Dice 与 v6 epoch1≈`0.05407` 差异显著，则先停止检查实现，不进入 epoch2。若复现正常，则直接续训 epoch2，并验证所有 BN running_mean/running_var/num_batches_tracked 与 epoch1 checkpoint 完全保持锚定，再做两例 detailed validation + checkpoint diagnostics。
+
+
+### 2026-08-27｜阶段 AR：v9 epoch1 精确复现 v6 epoch1，进入关键 epoch2
+
+v9 工程提交 `daafe2c1d9debc96831dc141fd5f305d01932900` 已推送并确认 `HEAD == origin/main` 后，使用 `configs/orthopedic_ct_cpu_binary_bn_freeze_after_e1_v9.yaml` 启动 CPU formal validation experiment，只训练到 epoch1。preflight 再次 `ready=true`，split=7/2/1，未访问独立 test。
+
+真实 run：`experiments/20260827_132502_cpu_binary_bn_freeze_after_e1_v9_roi64`。
+
+```text
+epoch 1
+train_loss=2.5537127596991405
+mean validation Dice=0.05407000716611769
+validation Dice std=0.010840379918928316
+validation inference total≈137.32 s
+lr=5e-5
+```
+
+该结果与 v6 epoch1 数值精确一致，证明新增 `freeze_batchnorm_running_stats_from_epoch=2` 没有影响 epoch1 数据流、scheduler、optimizer、normalization 或 full-volume validation 行为，因此满足进入 epoch2 的预设条件。
+
+对 epoch1 `best.pt` 分别做 validation-only detailed full-volume evaluation：
+
+- `liver_7`：Dice≈`0.04322963`，IoU≈`0.02209234`，Precision≈`0.02753337`，Recall≈`0.10055295`，HD95≈`199.91 mm`，ASSD≈`56.25 mm`；prediction foreground≈`2.5550%`，GT≈`0.6996%`，ratio≈`3.6520`，component error=`1578`。
+- `liver_8`：Dice≈`0.06491039`，IoU≈`0.03354387`，Precision≈`0.04266633`，Recall≈`0.13561118`，HD95≈`175.46 mm`，ASSD≈`48.26 mm`；prediction foreground≈`1.7988%`，GT≈`0.5660%`，ratio≈`3.1784`，component error=`1597`。
+
+checkpoint diagnostics 对两例都确认同一 checkpoint 的 9 个 BatchNorm3d 状态一致：`num_batches_tracked=28`；首层 BN running mean std≈`0.0144922826`，running var mean≈`0.0622548461`，即与此前 v6 epoch1 记录的锚点一致。`liver_7` 的 GT foreground/background mean P(fg)≈`0.12394/0.03265`，foreground/background weighted CE contribution≈`0.04322/0.06985`；`liver_8` 对应≈`0.15221/0.02478` 与≈`0.03320/0.04651`。这些只作为 validation mechanism diagnostics，不是最终 test 结果。
+
+结论：**v9 epoch1 已通过“必须接近 v6 epoch1”的门槛，而且是精确复现。** 下一步直接从本 run 的 `checkpoint/last.pt` resume 到总 epoch2；epoch2 训练后首先比较 checkpoint state_dict，要求所有 BN running_mean/running_var/num_batches_tracked 与 epoch1 checkpoint 完全一致，再运行两例 detailed validation 和 diagnostics。若 foreground explosion 显著缓解且 validation 不灾难性下降，继续 epoch3；若仍出现几十倍前景泛滥，则停止并进入 v10 机制诊断。

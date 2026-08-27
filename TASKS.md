@@ -302,7 +302,8 @@
 - [x] 已新增 validation-only `compare_checkpoint_dynamics.py`：固定前景中心 64³ patch，记录 encoder 四级 embedding/block、decoder fuse、head input/output 的 mean/std/min/max/quantiles/L2 norm，并比较 checkpoint parameter-group delta、top parameter delta 与 BN running-buffer delta；不提供 test split，不执行 optimizer.step；focused 2 tests + Ruff 通过
 - [x] 已运行 v6 epoch1 / v6 epoch2 / v8 epoch1 checkpoint dynamics：固定 `liver_7` foreground patch 上，v6 epoch1→epoch2 普通参数组相对变化整体很小（最大聚合组约 `0.66%`），但多处 BN running_mean 相对变化约 `1.0×–3.3×`、running_var 约 `66%–79%`，decoder/head-input activation 同时明显漂移；证据支持把 epoch1 BN stats 作为锚点验证，而不是继续从初始化冻结
 - [x] v9 工程完成：新增 `configs/orthopedic_ct_cpu_binary_bn_freeze_after_e1_v9.yaml` 与 epoch-aware BN freeze；epoch1 保持 v6 原行为，epoch2 起冻结 running_mean/running_var/num_batches_tracked，BN affine 与其它模型参数继续训练；resume 到 epoch2 会按 epoch 自动冻结。v9/v6 config 归一化对比仅实验名 + `freeze_batchnorm_running_stats_from_epoch=2` 不同；125 tests + Ruff + `git diff --check` 通过，formal readiness `ready=true / blocker_count=0`，split=7/2/1
-- [ ] 立即运行 v9 epoch1；若能接近复现 v6 epoch1 mean Dice≈`0.05407`，再继续 epoch2 并核对 BN stats 是否严格保持 epoch1 锚点；独立 test `liver_169` 继续禁止访问
+- [x] v9 epoch1 已精确复现 v6 epoch1：run=`experiments/20260827_132502_cpu_binary_bn_freeze_after_e1_v9_roi64`，train loss=`2.5537127597`、mean val Dice=`0.0540700072`、lr=`5e-5`；detailed validation `liver_7/8` Dice≈`0.04323/0.06491`、foreground ratio≈`3.65/3.18`；diagnostics 显示 9 个 BN 均 `num_batches_tracked=28`，首层 running mean std≈`0.0144923`、running var mean≈`0.0622548`，与 v6 epoch1 锚点一致，说明 v9 实现没有污染 epoch1
+- [ ] 立即 resume v9 到 epoch2，验证 BN running_mean/running_var/num_batches_tracked 与 epoch1 完全相同，并比较 mean Dice、两例 detailed validation、foreground ratio、logits/probabilities 与 CE contribution；独立 test `liver_169` 继续禁止访问
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
 - [x] formal-pilot 输出 `metrics_per_case.csv` + prediction NIfTI + entropy NIfTI
 - [x] formal-pilot 记录 Dice / HD95 / ASSD / IoU / Precision / Recall / 结构指标
