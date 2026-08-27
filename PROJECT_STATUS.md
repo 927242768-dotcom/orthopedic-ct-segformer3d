@@ -89,7 +89,7 @@
 | patient-level 数据划分 | ✅ 已完成（10例 formal pilot） | 96% | 已固定 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，patient-level 互斥；官方 `test_private liver_169` 只进入 test、不参与训练/调参；`formal_experiment=true`。最终论文仍需扩大病例规模 |
 | 公开数据集整理 | 🟡 进行中 | 94% | CTSpine1K `MSD-T10` 10 个真实 CT+label 已落盘：`liver_0`—`liver_8` + `liver_169`，官方 split 为 9 `trainset` + 1 `test_private`；真实文件接管执行 SHA-256 校验，10 例全部标准化/QC。该子集仍是工程验证，不替代正式论文主数据集/split |
 | 临床脱敏数据 | 🔴 阻塞 | 0% | 当前项目目录无临床数据；必须等待合法授权、脱敏与伦理/使用范围确认 |
-| SegFormer3D 骨科适配 | 🟡 进行中 | 91% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。balanced fullval v3/v6 的 epoch 1 均达到当前最佳 validation Dice≈0.05407。v4 已证实 CE=0.25 会放大全卷前景假阳性与碎片化；v5 的 2-epoch warmup 在第一轮仅给 2.5e-5 并出现约 55× 前景泛滥；v6 改为单 warmup 后 epoch 1 精确复现 v3 最佳点，但 epoch 2 在 lr≈4.89e-5、从未升到 1e-4 的情况下仍降至 Dice≈0.03239，并在两例 detailed validation 出现约 60× 前景泛滥。由此“1e-4 peak lr 是主要根因”已基本否定，当前最高优先级转为复现并量化 28 个 training patch 的 epoch-to-epoch foreground-prior 波动 |
+| SegFormer3D 骨科适配 | 🟡 进行中 | 92% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。balanced fullval v3/v6/v9 的 epoch 1 当前最佳 validation Dice=`0.0540700`。v6 epoch2 在 BN running-stat 明显漂移时出现约 `60×` foreground explosion；v8 从初始化冻结 BN 则背景塌缩；v9 在 epoch1 建立 BN stats、epoch2 起冻结后，27/27 个 BN buffer 严格锚定且前景预测从 v6 epoch2 的约 `42.26%/34.04%` 降至约 `5.38%/5.01%`，但 mean Dice 仍降到 `0.0267784`、Precision 仍很低且两例各有 517 个预测连通域。结论更新为：BN running-stat drift 是 foreground explosion 的重要放大机制，但不是 epoch2 segmentation degradation 的唯一根因；v9 已停止，不跑 epoch3，下一步用单变量 v10 隔离剩余 trainable normalization/feature-parameter drift |
 | 区域损失 | ✅ 已完成（代码） | 90% | Dice + CE/BCE 可运行并有 backward 测试 |
 | Boundary Loss | 🟠 待真实验证 | 55% | SDF 边界损失首版已实现；需真实训练、表面指标与效率验证 |
 | Topology Loss | 🟠 待真实验证 | 45% | 3D soft-clDice 候选已实现；骨折/非管状骨结构适用性必须单独验证 |
@@ -2192,3 +2192,42 @@ lr=5e-5
 checkpoint diagnostics 对两例都确认同一 checkpoint 的 9 个 BatchNorm3d 状态一致：`num_batches_tracked=28`；首层 BN running mean std≈`0.0144922826`，running var mean≈`0.0622548461`，即与此前 v6 epoch1 记录的锚点一致。`liver_7` 的 GT foreground/background mean P(fg)≈`0.12394/0.03265`，foreground/background weighted CE contribution≈`0.04322/0.06985`；`liver_8` 对应≈`0.15221/0.02478` 与≈`0.03320/0.04651`。这些只作为 validation mechanism diagnostics，不是最终 test 结果。
 
 结论：**v9 epoch1 已通过“必须接近 v6 epoch1”的门槛，而且是精确复现。** 下一步直接从本 run 的 `checkpoint/last.pt` resume 到总 epoch2；epoch2 训练后首先比较 checkpoint state_dict，要求所有 BN running_mean/running_var/num_batches_tracked 与 epoch1 checkpoint 完全一致，再运行两例 detailed validation 和 diagnostics。若 foreground explosion 显著缓解且 validation 不灾难性下降，继续 epoch3；若仍出现几十倍前景泛滥，则停止并进入 v10 机制诊断。
+
+
+### 2026-08-27｜阶段 AS：完成 v9 epoch2 detailed validation / diagnostics / dynamics，停止 v9
+
+从 Git 闭环点 `981714b17713a9b762cbbacb76817318378aca8c` 恢复真实断点后，重新确认工作树初始干净且 `HEAD == origin/main`。真实 v9 run=`experiments/20260827_132502_cpu_binary_bn_freeze_after_e1_v9_roi64` 已存在 epoch2 训练产物：`history.csv` 显示 epoch2 train loss=`2.6975343355110715`、mean validation Dice=`0.026778433853422875`、std=`0.002211471671448084`、validation inference total≈`131.09 s`、lr=`4.892324335849338e-05`；`summary.json` 明确 `last_epoch=2`、`best_val_dice=0.05407000716611769`，因此 `best.pt` 仍为 epoch1，`last.pt` 为 epoch2。`sampling_stats.csv` 显示 epoch2 仍为 28 patches，mean foreground fraction≈`8.8408%`、median=`0`、foreground-positive/background patches=`10/18`，与历史复现实采样统计一致。
+
+对 v9 epoch2 `last.pt` 仅在 validation split 分病例运行 full-volume detailed evaluation，独立 test `liver_169` 未访问。结果目录：
+
+- `experiments/evaluation_20260827_v9e2_liver7`
+- `experiments/evaluation_20260827_v9e2_liver8`
+
+真实逐例结果：
+
+- `liver_7`：Dice=`0.0289899055`，IoU=`0.0147081467`，Precision=`0.0163801553`，Recall=`0.1259438040`，HD95=`187.3259 mm`，ASSD=`64.2019 mm`；prediction foreground=`5.37915%`，GT=`0.69961%`，ratio=`7.6888`；pred/GT components=`517/3`，component error=`514`，false merge=`1`，false break=`32`；inference≈`44.75 s`；uncertainty AUROC/AUPRC≈`0.86919/0.30592`；ECE/MCE/Brier/NLL≈`0.04598/0.21958/0.10427/0.35269`。
+- `liver_8`：Dice=`0.0245669622`，IoU=`0.0124362414`，Precision=`0.0136715130`，Recall=`0.1209869693`，HD95=`187.8004 mm`，ASSD=`64.0517 mm`；prediction foreground=`5.00849%`，GT=`0.56596%`，ratio=`8.8496`；pred/GT components=`517/2`，component error=`515`，false merge=`0`，false break=`31`；inference≈`73.10 s`；uncertainty AUROC/AUPRC≈`0.85851/0.26238`；ECE/MCE/Brier/NLL≈`0.04316/0.17657/0.09777/0.40703`。
+
+两例平均约：Dice=`0.02677843`、IoU=`0.01357219`、Precision=`0.01502583`、Recall=`0.12346539`、HD95=`187.56 mm`、ASSD=`64.13 mm`、prediction foreground≈`5.19%`、prediction/GT ratio≈`8.27`、component error≈`514.5`。对比 v6 epoch2：`liver_7/liver_8` prediction foreground≈`42.26%/34.04%`、ratio≈`60.40/60.14`、Recall≈`0.9856/0.9992`。因此 v9 明显压低了 v6 的 foreground explosion，但并未恢复 segmentation quality：Dice 继续下降、Precision 极低且预测碎片仍非常多。
+
+随后对同一 v9 epoch2 `last.pt` 运行 validation-only checkpoint diagnostics：
+
+- `experiments/diagnostics_20260827_v9e2_liver7`
+- `experiments/diagnostics_20260827_v9e2_liver8`
+
+两例 `head_parameters` 相同：segmentation head weight norm≈`22.33960`、bias norm≈`0.0008889`。`liver_7` 的 GT foreground/background mean P(fg)≈`0.13278/0.05583`，Dice loss≈`0.97081`、CE≈`0.35051`，foreground/background weighted CE contribution≈`0.04732/0.30318`；`liver_8` 对应 mean P(fg)≈`0.12832/0.05242`、Dice loss≈`0.97521`、CE≈`0.40268`、weighted CE contribution≈`0.03511/0.36757`。这说明在全卷上仍存在明显背景假阳性，同时绝大多数 GT foreground voxel 的 P(fg) 很低；不是简单的“全局前景阈值偏高”单一问题。
+
+BN 锚定再次用真实 checkpoint state_dict 逐项核对：比较 v9 epoch1 `best.pt` 与 epoch2 `last.pt`，所有 key 名包含 `running_mean`、`running_var`、`num_batches_tracked` 的 buffer 共 `27` 个，`changed=0`。diagnostics 同时显示 9 个 BatchNorm3d 的第一层仍为 `num_batches_tracked=28`、running mean std≈`0.0144922826`、running var mean≈`0.0622548461`，即 epoch2 确实继续使用 epoch1 锚点。
+
+由于 v9 满足“foreground explosion 明显缓解但 Dice 仍显著退化”的预设情况 A，本轮没有运行 epoch3，而是立即执行四 checkpoint dynamics：`experiments/checkpoint_dynamics_20260827_v6e1_v6e2_v9e1_v9e2_liver7`，固定 `liver_7` foreground-centered 64³ patch，未访问 test。
+
+关键 dynamics 证据：
+
+1. `v6e1 → v9e1`：所有普通参数组 delta=`0`，所有 BN running buffer delta=`0`，证明 v9 epoch1 checkpoint 与 v6 epoch1 不只是指标相同，而是 checkpoint state 在比较范围内精确一致。
+2. `v6e1 → v6e2`：普通参数聚合最大 relative delta 仍只有 encoder embed4≈`0.663%`、embed3≈`0.472%`、embed2≈`0.311%` 等；同时 BN running_mean relative delta 最高≈`3.31×`，running_var 多处≈`66%–79%`，与此前结论一致。
+3. `v6e1 → v9e2`：所有 BN running buffers relative delta=`0`；但普通 trainable 参数仍发生小幅更新，encoder embed4≈`0.658%`、embed3≈`0.436%`、embed2≈`0.275%`、decoder linear_fuse≈`0.148%`、final head≈`0.0179%`。
+4. 固定 patch 上，epoch1 decoder `linear_fuse` BN output mean/std≈`-0.0715/1.4235`、head input≈`0.5549/0.8030`、final logits mean/std≈`-11.3113/11.8207`；v6e2 变为≈`-0.0500/1.1247`、`0.4399/0.6440`、`-8.7949/9.9843`；v9e2 在 BN running stats 不变时反而为≈`-0.1501/1.4962`、`0.5474/0.8370`、`-4.5614/10.5338`。也就是说 v9 抑制了 running-stat drift 后，head-input 边缘统计接近 epoch1，但 final logits 仍发生大幅位置漂移，且 final head 本身参数聚合变化极小。
+
+当前科学判断必须严格限定为：**BN running-statistics drift / train-eval normalization mismatch 已被证明是 v6 epoch2 foreground explosion 的重要放大机制；它不是必要且充分的唯一根因。** v9 证明把 BN stats 固定在 epoch1 可以把约 `60×` 的前景爆炸显著压低到约 `8×`，但仍不能阻止 epoch2 Dice、Precision 和结构质量退化。剩余证据更指向“BN running stats 之外的 trainable normalization / upstream feature parameter update 造成的 logit dynamics”，而不是继续把问题归因于 BN buffer。
+
+因此本阶段决策：**停止 v9，不跑 epoch3；stable baseline=NO；lock parameters=NO；formal locked test ready=NO。** 当前最佳 checkpoint 仍为 v9/v6 epoch1 的 `experiments/20260827_132502_cpu_binary_bn_freeze_after_e1_v9_roi64/checkpoint/best.pt`，mean validation Dice=`0.05407000716611769`。下一步必须只选一个 v10 主要变量，优先隔离 BN running stats 已固定后仍可训练的 normalization / feature parameters；不得同时改变 lr、loss、sampling、ROI、augmentation，也继续禁止访问独立 test。
