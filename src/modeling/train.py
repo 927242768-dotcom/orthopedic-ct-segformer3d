@@ -158,6 +158,52 @@ def configure_encoder_parameter_training(
     return parameter_count
 
 
+def should_freeze_decoder_feature_parameters(
+    train_cfg: dict[str, Any],
+    *,
+    epoch: int,
+) -> bool:
+    """解析当前 epoch 是否冻结 decoder feature 参数，并保留最终 segmentation head。"""
+    if epoch <= 0:
+        raise ValueError("epoch 必须从 1 开始")
+
+    freeze_from_raw = train_cfg.get("freeze_decoder_feature_parameters_from_epoch")
+    if freeze_from_raw is None:
+        return False
+    if isinstance(freeze_from_raw, bool):
+        raise ValueError("freeze_decoder_feature_parameters_from_epoch 必须是正整数 epoch")
+
+    freeze_from = int(freeze_from_raw)
+    if freeze_from <= 0:
+        raise ValueError("freeze_decoder_feature_parameters_from_epoch 必须 >= 1")
+    return epoch >= freeze_from
+
+
+def configure_decoder_feature_parameter_training(
+    model: torch.nn.Module,
+    *,
+    freeze_parameters: bool,
+) -> int:
+    """冻结/恢复 decoder feature 参数，但始终保留 ``linear_pred`` head 的 trainability。"""
+    decoder = getattr(model, "segformer_decoder", None)
+    if decoder is None:
+        if freeze_parameters:
+            raise RuntimeError("已启用 decoder feature 参数冻结，但模型没有 segformer_decoder")
+        return 0
+
+    if freeze_parameters and getattr(decoder, "linear_pred", None) is None:
+        raise RuntimeError("冻结 decoder feature 参数时必须存在 linear_pred segmentation head")
+
+    parameter_count = 0
+    for name, parameter in decoder.named_parameters():
+        if name.startswith("linear_pred."):
+            parameter.requires_grad_(True)
+            continue
+        parameter.requires_grad_(not freeze_parameters)
+        parameter_count += parameter.numel()
+    return parameter_count
+
+
 def configure_batchnorm_training_mode(
     model: torch.nn.Module,
     *,
@@ -503,6 +549,12 @@ def train(
             "training_freeze_batchnorm_running_stats_from_epoch": train_cfg.get(
                 "freeze_batchnorm_running_stats_from_epoch"
             ),
+            "training_freeze_encoder_parameters_from_epoch": train_cfg.get(
+                "freeze_encoder_parameters_from_epoch"
+            ),
+            "training_freeze_decoder_feature_parameters_from_epoch": train_cfg.get(
+                "freeze_decoder_feature_parameters_from_epoch"
+            ),
             "validation_patch_sampling_fixed_across_epochs": validation_patch_mode,
             "resume_events": [],
         }
@@ -694,6 +746,14 @@ def train(
                 configure_encoder_parameter_training(
                     model,
                     freeze_parameters=should_freeze_encoder_parameters(
+                        train_cfg,
+                        epoch=epoch,
+                    ),
+                )
+            if "freeze_decoder_feature_parameters_from_epoch" in train_cfg:
+                configure_decoder_feature_parameter_training(
+                    model,
+                    freeze_parameters=should_freeze_decoder_feature_parameters(
                         train_cfg,
                         epoch=epoch,
                     ),

@@ -89,7 +89,7 @@
 | patient-level 数据划分 | ✅ 已完成（10例 formal pilot） | 96% | 已固定 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，patient-level 互斥；官方 `test_private liver_169` 只进入 test、不参与训练/调参；`formal_experiment=true`。最终论文仍需扩大病例规模 |
 | 公开数据集整理 | 🟡 进行中 | 94% | CTSpine1K `MSD-T10` 10 个真实 CT+label 已落盘：`liver_0`—`liver_8` + `liver_169`，官方 split 为 9 `trainset` + 1 `test_private`；真实文件接管执行 SHA-256 校验，10 例全部标准化/QC。该子集仍是工程验证，不替代正式论文主数据集/split |
 | 临床脱敏数据 | 🔴 阻塞 | 0% | 当前项目目录无临床数据；必须等待合法授权、脱敏与伦理/使用范围确认 |
-| SegFormer3D 骨科适配 | 🟡 进行中 | 93% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。balanced fullval v3/v6/v9 的 epoch 1 当前最佳 validation Dice=`0.0540700`。v9 已证明冻结 epoch1 BN running stats 可把 v6 epoch2 的约 `60×` foreground explosion 压低到约 `8×`，但 mean Dice 仍降到 `0.0267784`。进一步 parameter-delta 拆分显示 v9e1→v9e2 的 BN affine≈`0.0194%`、LayerNorm affine≈`0.0208%`，而 patch embeddings≈`0.7842%`、encoder attention≈`0.7075%`；final head 仅≈`0.0179%` 但 fixed-patch logits mean 从≈`-11.31` 漂到≈`-4.56`。因此 v10 已选择单变量“epoch2 起冻结 encoder trainable parameters”，保留 v9 BN running-stat 锚定与其余 lr/loss/sampling/ROI/augmentation 不变；工程与 readiness 已完成，待真实 epoch1/2 验证 |
+| SegFormer3D 骨科适配 | 🟡 进行中 | 94% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。balanced fullval v3/v6/v9/v10 的 epoch 1 当前最佳 validation Dice=`0.0540700`。v9 已证明冻结 epoch1 BN running stats 可把 v6 epoch2 的约 `60×` foreground explosion 压低到约 `8×`，但仍退化；v10 进一步在 epoch2 冻结 encoder parameters 后，encoder 208 个 state tensor 与 27 个 BN running buffer 均保持完全不变，模型仍发生 mean Dice≈`1.65e-11` 的 background collapse，因此“encoder 参数更新”已被否定为 degradation 的必要条件。v11 已完成工程：epoch2 起额外冻结 decoder feature parameters（`linear_c1..c4` + `linear_fuse`），仅保留 `linear_pred` head 可训练；其余实验变量不变，readiness=`true`，下一步直接验证 v11 epoch1 exact equality 与 epoch2 dynamics |
 | 区域损失 | ✅ 已完成（代码） | 90% | Dice + CE/BCE 可运行并有 backward 测试 |
 | Boundary Loss | 🟠 待真实验证 | 55% | SDF 边界损失首版已实现；需真实训练、表面指标与效率验证 |
 | Topology Loss | 🟠 待真实验证 | 45% | 3D soft-clDice 候选已实现；骨折/非管状骨结构适用性必须单独验证 |
@@ -101,7 +101,7 @@
 | 三维重建 | 🟡 进行中 | 86% | 已实现 physical-space Marching Cubes、PLY/JSON、vertex-clustering、SDF surface、WebGL2 与物理测量；新增相邻法向变化驱动的特征保护 vertex-clustering 候选，真实 `liver_0` 在 2.0 mm/同 30,260 顶点下将高特征区域 mean-NN 约 0.679→0.620 mm、HD95 约 1.068→1.000 mm，作为真值网格工程证据；0.4 mm SDF 保持 2→2 连通域，0.8 mm 因 2→3 被保护机制拒绝。仍缺真实 prediction surface 上的正式验证 |
 | 论文 | 🟡 进行中 | 60% | 中文技术初稿已补 formal preflight、uncertainty/ROI refinement、calibration、物理表面/特征保护重建；Related Work 已加入 SpineMamba、解剖变异 Transformer、VertebraFormer、2026 Residual-Encoder nnU-Net、2025 骨折 pipeline、金属植入物与低骨密度 fusion/split 困难病例证据；42 条英文 BibTeX / 44 条矩阵已同步。Results 继续保持 TBD，禁止提前填结果 |
 | 中期材料 | 🟡 进行中 | 83% | 已同步 10 例真实数据、97 项测试、10/10 人工 QC、正式 binary task lock、7/2/1 formal-pilot split、`formal_readiness ready=true`，并新增 CPU CT-only 5-epoch formal-pilot checkpoint；仍缺独立 full-volume test、扩大样本规模后的正式主实验与可写入论文的稳定指标 |
-| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 129 passed`；`ruff: All checks passed`；新增 epoch-aware encoder parameter freeze、encoder-only gradient、恢复 trainability 与 v10/v9 单变量 config diff 回归测试，并保留 BatchNorm running-stat freeze、fixed-per-case sampling、`region_dice_ce` 权重、`patches_per_case` 多 patch 随机流、foreground-fraction evaluation、checkpoint resume、分病例 full-volume evaluation、CPU 非 AMP autocast、epoch-aware sampling 与 `allow_cpu` readiness 测试；42 条 BibTeX 结构正常 |
+| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 133 passed`；`ruff: All checks passed`；新增 decoder-feature freeze policy、仅保留 `linear_pred` trainable、恢复 trainability 与 v11/v10 单变量 config diff 回归测试；focused freeze tests=`15 passed`。同时保留 BatchNorm running-stat freeze、encoder freeze、fixed-per-case sampling、`region_dice_ce` 权重、`patches_per_case` 多 patch 随机流、foreground-fraction evaluation、checkpoint resume、分病例 full-volume evaluation、CPU 非 AMP autocast、epoch-aware sampling 与 `allow_cpu` readiness 测试；42 条 BibTeX 结构正常 |
 
 ---
 
@@ -650,10 +650,12 @@ CTSpine1K Hugging Face 在早期也出现超时和并行下载失败；但改为
 - [x] v6 epoch 2 两例 detailed validation：`liver_7/liver_8` Dice≈0.03210/0.03268、Precision≈0.01632/0.01661、Recall≈0.98562/0.99919、prediction/GT foreground ratio≈60.40/60.14、component error=87/65；这是大范围背景被预测成前景造成的严重 foreground explosion，不是 component 数下降带来的正确改善；
 - [x] 已使用 Dataset 真实 sampling 逻辑与固定 seed=42 复现 v3/v6 epoch 1/2、v3 epoch 3 的 28 个 training patch：epoch 1/2/3 mean foreground fraction≈7.91%/8.84%/5.68%，median 均为 0，纯背景 patch=18/18/20；病例级暴露明显不稳定，例如 epoch 1 `liver_2/liver_6` 均 4/4 patch 纯背景，epoch 2 各病例又重新分配。说明当前独立 Bernoulli sampling 存在真实 epoch/case 波动，但 v6 epoch 1→2 的总体差异并不足以单独解释约 3.4×→60× foreground explosion，因此 sampling 只能视为已证实的稳定性问题/候选诱因，不是已证实唯一根因；
 - [x] `train.py` 已新增 `sampling_stats.csv`，直接从模型实际收到的 training label 每 epoch 记录 patch_count、foreground fraction mean/median/std/min/max、q10/q25/q75/q90、foreground/background patch count，并新增回归测试；
-- [x] v7 stable sampling 工程改动已完成：`ProcessedOrthopedicCTDataset` 新增 `foreground_sampling_mode=fixed_per_case`；当 `patches_per_case=4`、`foreground_probability=0.25` 时，每病例每 epoch 固定 1 个 foreground-aware slot + 3 个 random slot；`train.py` 已接入并写入 metadata；v7 配置相对 v6 除实验名外只新增该 sampling mode，108 tests + Ruff + `git diff --check` 已通过；
-- [ ] 立即对 v7 执行 `formal_readiness --allow-cpu`，随后 epoch 1 → full-volume validation → `liver_7/liver_8` detailed evaluation，并核对 `sampling_stats.csv`；
+- [x] v7/v8/v9/v10 已按单变量稳定性路线完成并形成机制证据；其中 v9 证明 BN running-stat drift 是 foreground explosion 的重要放大机制但不是唯一根因，v10 证明 encoder parameter update 不是 epoch2 degradation 的必要条件；
+- [x] v11 工程已完成：新增 `training.freeze_decoder_feature_parameters_from_epoch=2`；epoch2 起冻结 decoder `linear_c1..c4` + `linear_fuse`，仅保留 `linear_pred` head 可训练；相对 v10 除 experiment name 与这一新增 freeze 配置外完全一致；focused freeze tests=`15 passed`、全量 `pytest=133 passed`、Ruff clean、formal readiness=`ready=true / blocker_count=0`；
+- [ ] 立即运行 v11 epoch1，并与 v10 epoch1 `best.pt` 做逐 tensor `torch.equal` exact comparison；若不完全相等，停止并调查工程污染，禁止进入 epoch2；
+- [ ] 若 v11 epoch1 exact equal，则从同一 run 的 `last.pt` resume 到总 epoch2；必须验证 encoder delta=`0`、BN running buffer delta=`0`、decoder feature delta=`0`、`linear_pred` delta!=`0`（若真实收到梯度）；
+- [ ] 仅对 validation `liver_7/liver_8` 完成 epoch2 detailed evaluation、diagnostics 与 v11e1→v11e2 checkpoint dynamics；根据真实结果决定继续 epoch3 或 STOP v11 并设计 v12；
 - [ ] 继续核对 Region Dice+CE 背景抑制、label mapping、normalization、sliding-window stitching/logits resize/threshold；当前没有发现 label mapping 或 resize 的直接错误证据；
-- [ ] 对 v3 validation 继续记录概率/置信度分布、connected components 与 false-positive 空间分布；
 - [ ] 只有 CT-only baseline 的 full-volume validation 明显改善后，才继续 CT+bone-window、Region+Boundary、augmentation/hard sampling 消融；
 - [ ] 在 ROI/epoch/lr/scheduler/sampling/augmentation/input/loss/checkpoint 全部只依据 train+validation 锁定前，禁止重新运行 test `liver_169`；
 - [ ] 更可靠 baseline 锁定后再生成 prediction mesh / SDF / Web overlay / entropy overlay，并继续论文工程验证材料。
@@ -2272,3 +2274,14 @@ validation-only diagnostics 与 detailed validation 一致。`liver_7` full-volu
 科学判断必须更新为：**v10 否定了“encoder parameter update 是 epoch2 degradation 的必要条件”这一更强假设。** encoder 与 BN running stats 都被冻结后仍可出现更严重的 background collapse，说明剩余不稳定性至少可以由 decoder/head training dynamics 产生。由于 decoder feature groups 的聚合变化显著大于 final `linear_pred`，且 encoder activation 完全不变而 decoder fuse/final logits 漂移，下一单变量优先隔离 decoder representation update，而不是再改 lr/loss/sampling/ROI/augmentation。
 
 因此 v10 立即 STOP，不跑 epoch3。stable baseline=NO；lock parameters=NO；formal test ready=NO；独立 test `liver_169` 继续禁止访问。v11 计划严格单变量：继承 v10 的 epoch2 encoder freeze + BN-running-stat freeze，并从 epoch2 起额外冻结 decoder feature parameters（`linear_c1..c4` 与 `linear_fuse`），仅保留最终 `linear_pred` segmentation head 可训练；其它 lr/loss/sampling/ROI/augmentation/input/scheduler/full-volume validation 全部不变。该实验只用于判断 decoder representation update 是否是 v10 剩余 collapse 的主要来源。
+
+
+### 2026-08-27｜阶段 AW：v11 decoder-feature-freeze 工程完成并通过 readiness
+
+基于 v10 的真实证据，本阶段没有重新开发已存在的 v11，而是先接管本地未提交修改并核对单变量设计。v11 配置为 `configs/orthopedic_ct_cpu_binary_decoder_feature_freeze_after_e1_v11.yaml`，完整继承 v10 的 CT-only、64³ training ROI、Region Dice+CE=1:1、foreground sampling、AdamW peak lr=`5e-5`、scheduler、full-volume validation、`freeze_batchnorm_running_stats_from_epoch=2` 与 `freeze_encoder_parameters_from_epoch=2`，唯一新增主要实验变量是 `freeze_decoder_feature_parameters_from_epoch=2`。
+
+工程实现位于 `src/modeling/train.py`：新增 `should_freeze_decoder_feature_parameters()` 与 `configure_decoder_feature_parameter_training()`。epoch1 decoder 全部正常训练；epoch2 起 `segformer_decoder` 中除 `linear_pred.*` 外的参数全部 `requires_grad=False`，即冻结 `linear_c1/linear_c2/linear_c3/linear_c4/linear_fuse` 等 decoder feature parameters，同时始终保留最终 `linear_pred` segmentation head 可训练。缺少 `segformer_decoder` 或在启用冻结时缺少 `linear_pred` 会显式报错。新增 `tests/test_decoder_feature_freeze_training.py` 覆盖 epoch policy/resume、仅 `linear_pred` 保留 gradient、trainability 恢复以及 v11/v10 normalized config diff。
+
+本阶段重新执行真实验证：focused freeze tests=`15 passed`；全量 `pytest tests -q`=`133 passed`；`ruff check src web tests`=`All checks passed!`。使用 locked task spec 执行 `python -m src.modeling.formal_readiness --task-spec configs/task_specs/vertebra_binary_ctspine1k_msd_t10_v1.json --config configs/orthopedic_ct_cpu_binary_decoder_feature_freeze_after_e1_v11.yaml --allow-cpu`，结果 `ready=true`、`blocker_count=0`，10 例 preprocessing/QC、7/2/1 split 与 task lock 均通过。CPU-only / CUDA unavailable 仍如实存在，但在显式 `--allow-cpu` 下不构成当前 engineering validation blocker。
+
+当前科学目标保持严格单变量：验证“当 encoder parameters、BN running stats、decoder feature parameters 均从 epoch2 起固定，只允许 final segmentation head 更新时，epoch2 是否仍发生 collapse”。因此下一步必须先运行 v11 epoch1，并将 v11e1 `best.pt` 与 v10e1 `best.pt` 做逐 tensor `torch.equal`；只有 exact equal 才允许从同一 run resume 到 epoch2。独立 test `liver_169` 继续禁止访问；stable baseline=NO，lock parameters=NO，formal locked test ready=NO。
