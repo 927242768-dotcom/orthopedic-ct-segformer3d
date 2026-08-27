@@ -91,6 +91,33 @@ def logits_to_prediction(logits: torch.Tensor) -> torch.Tensor:
     return torch.argmax(logits, dim=1)
 
 
+def should_freeze_batchnorm_running_stats(
+    train_cfg: dict[str, Any],
+    *,
+    epoch: int,
+) -> bool:
+    """解析当前 epoch 是否应冻结 BatchNorm3d running statistics。"""
+    if epoch <= 0:
+        raise ValueError("epoch 必须从 1 开始")
+
+    freeze_always = bool(train_cfg.get("freeze_batchnorm_running_stats", False))
+    freeze_from_raw = train_cfg.get("freeze_batchnorm_running_stats_from_epoch")
+    if freeze_from_raw is None:
+        return freeze_always
+    if isinstance(freeze_from_raw, bool):
+        raise ValueError("freeze_batchnorm_running_stats_from_epoch 必须是正整数 epoch")
+
+    freeze_from = int(freeze_from_raw)
+    if freeze_from <= 0:
+        raise ValueError("freeze_batchnorm_running_stats_from_epoch 必须 >= 1")
+    if freeze_always and freeze_from != 1:
+        raise ValueError(
+            "不能同时启用 freeze_batchnorm_running_stats=true 和不同起点的 "
+            "freeze_batchnorm_running_stats_from_epoch"
+        )
+    return freeze_always or epoch >= freeze_from
+
+
 def configure_batchnorm_training_mode(
     model: torch.nn.Module,
     *,
@@ -433,6 +460,9 @@ def train(
             "training_freeze_batchnorm_running_stats": bool(
                 train_cfg.get("freeze_batchnorm_running_stats", False)
             ),
+            "training_freeze_batchnorm_running_stats_from_epoch": train_cfg.get(
+                "freeze_batchnorm_running_stats_from_epoch"
+            ),
             "validation_patch_sampling_fixed_across_epochs": validation_patch_mode,
             "resume_events": [],
         }
@@ -622,8 +652,9 @@ def train(
             model.train()
             configure_batchnorm_training_mode(
                 model,
-                freeze_running_stats=bool(
-                    train_cfg.get("freeze_batchnorm_running_stats", False)
+                freeze_running_stats=should_freeze_batchnorm_running_stats(
+                    train_cfg,
+                    epoch=epoch,
                 ),
             )
             optimizer.zero_grad(set_to_none=True)

@@ -101,7 +101,7 @@
 | 三维重建 | 🟡 进行中 | 86% | 已实现 physical-space Marching Cubes、PLY/JSON、vertex-clustering、SDF surface、WebGL2 与物理测量；新增相邻法向变化驱动的特征保护 vertex-clustering 候选，真实 `liver_0` 在 2.0 mm/同 30,260 顶点下将高特征区域 mean-NN 约 0.679→0.620 mm、HD95 约 1.068→1.000 mm，作为真值网格工程证据；0.4 mm SDF 保持 2→2 连通域，0.8 mm 因 2→3 被保护机制拒绝。仍缺真实 prediction surface 上的正式验证 |
 | 论文 | 🟡 进行中 | 60% | 中文技术初稿已补 formal preflight、uncertainty/ROI refinement、calibration、物理表面/特征保护重建；Related Work 已加入 SpineMamba、解剖变异 Transformer、VertebraFormer、2026 Residual-Encoder nnU-Net、2025 骨折 pipeline、金属植入物与低骨密度 fusion/split 困难病例证据；42 条英文 BibTeX / 44 条矩阵已同步。Results 继续保持 TBD，禁止提前填结果 |
 | 中期材料 | 🟡 进行中 | 83% | 已同步 10 例真实数据、97 项测试、10/10 人工 QC、正式 binary task lock、7/2/1 formal-pilot split、`formal_readiness ready=true`，并新增 CPU CT-only 5-epoch formal-pilot checkpoint；仍缺独立 full-volume test、扩大样本规模后的正式主实验与可写入论文的稳定指标 |
-| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 108 passed`；`ruff: All checks passed`；新增 fixed-per-case sampling 回归测试，并保留 `region_dice_ce` 权重、`patches_per_case` 多 patch 随机流、foreground-fraction evaluation、checkpoint resume、分病例 full-volume evaluation、CPU 非 AMP autocast、epoch-aware sampling 与 `allow_cpu` readiness 测试；42 条 BibTeX 结构正常 |
+| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 125 passed`；`ruff: All checks passed`；新增 epoch-aware BatchNorm running-stat freeze、resume-to-epoch2 与 v9/v6 单变量 config diff 回归测试，并保留 fixed-per-case sampling、`region_dice_ce` 权重、`patches_per_case` 多 patch 随机流、foreground-fraction evaluation、checkpoint resume、分病例 full-volume evaluation、CPU 非 AMP autocast、epoch-aware sampling 与 `allow_cpu` readiness 测试；42 条 BibTeX 结构正常 |
 
 ---
 
@@ -2121,3 +2121,47 @@ checkpoint diagnostics 进一步确认 BN freeze 按设计真实生效：v8 epoc
 新增 `tests/test_compare_checkpoint_dynamics.py`，验证 head input/output hook 能正确抓取，以及参数组变化与 BN running buffer 变化能被识别。focused tests=`2 passed`，Ruff clean。
 
 下一步在完成本轮工程 commit/push 后，直接用同一 `liver_7` validation foreground-centered patch 比较 v6 epoch1、v6 epoch2、v8 epoch1，依据真实 activation / parameter delta 选择 v9 的唯一变量。独立 test `ctspine1k-msd-t10-liver_169` 继续禁止访问。
+
+
+### 2026-08-27｜阶段 AQ：核验 checkpoint dynamics 并完成 v9 epoch1→epoch2 BN 锚定工程/readiness
+
+从 GitHub 闭环点 `2f6389db57c0e9531227c2f61503cf9750ac3171` 恢复真实断点，工作树初始干净，`HEAD == origin/main`。重新读取 `experiments/checkpoint_dynamics_20260827_v6e1_v6e2_v8e1_liver7/checkpoint_dynamics.json`，确认该结果已真实比较 v6 epoch1、v6 epoch2、v8 epoch1，固定病例为 validation `liver_7` 的 foreground-centered 64³ patch，未访问 test。
+
+v6 epoch1→epoch2 的 state delta 显示：普通可训练参数按组聚合的最大相对变化约为 encoder `embed_4=0.6635%`、`embed_3=0.4723%`、`embed_2=0.3114%`、`embed_1=0.2362%`，decoder `linear_fuse≈0.1908%`；相比之下 BN running buffer 明显更剧烈，多处 running_mean relative delta≈`98.9%–331.2%`，首层 running_var≈`76.6%–78.6%`，第二层约 `62.4%–66.3%`。固定 patch 上 decoder `linear_fuse` BN output std 从 v6 epoch1≈`1.4235` 降到 epoch2≈`1.1247`，head input mean/std 从≈`0.5549/0.8030` 降到≈`0.4399/0.6440`，final logits L2 norm 从≈`1480.8` 降到≈`1204.3`。这些证据进一步支持“epoch1→epoch2 BN running-stat drift / normalization mismatch 是重要机制之一”，但仍不能声称是唯一根因。
+
+据此锁定 v9 单变量：严格基于 `configs/orthopedic_ct_cpu_binary_balanced_lr_v6.yaml`，新增 `configs/orthopedic_ct_cpu_binary_bn_freeze_after_e1_v9.yaml`；唯一实验性变化是 `training.freeze_batchnorm_running_stats_from_epoch: 2`，即 epoch1 完全保持 v6 原始训练/BN 更新，epoch2 起把所有 `BatchNorm3d` 切到 eval 使用 epoch1 已建立的 running_mean/running_var，并停止增加 num_batches_tracked；BN affine weight/bias 和其它模型参数继续训练。旧 `freeze_batchnorm_running_stats: true` 继续兼容 v8，默认旧配置不冻结。
+
+`src/modeling/train.py` 新增 epoch-aware `should_freeze_batchnorm_running_stats()`，训练循环每个 epoch 在 `model.train()` 后按当前 epoch 决定是否冻结 BN；因此从 `last.pt` resume 到 epoch2 时会直接进入冻结状态，不依赖前一进程内存状态。run metadata 同步记录 freeze-from-epoch 配置。
+
+`tests/test_batchnorm_freeze_training.py` 新增回归覆盖：默认配置不冻结；v8 legacy always-freeze 仍生效；v9 epoch1 running_mean/running_var 会真实变化且 num_batches_tracked 增加；模拟 epoch1 validation 后 epoch2 再次 `model.train()` 时 BN 正确冻结；epoch2 running_mean/running_var/num_batches_tracked 保持 epoch1 锚点；BN affine weight/bias 仍获得非零 gradient；其它模块保持 training；resume/start_epoch=2 判定会冻结；v9/v6 配置归一化比较除 experiment_name 与 freeze-from-epoch 外完全一致。
+
+真实工程验证：
+
+```text
+focused pytest (BN + scheduler)
+→ 9 passed
+
+pytest tests -q
+→ 125 passed
+
+ruff check src web tests
+→ All checks passed!
+
+git diff --check
+→ 通过
+
+v9 vs v6 normalized config comparison
+→ normalized_equal=true
+→ v9 extra training key only: freeze_batchnorm_running_stats_from_epoch
+
+formal_readiness --allow-cpu
+→ ready=true
+→ blocker_count=0
+→ checked_case_count=10
+→ split train/validation/test=7/2/1
+→ task/preflight 0 error / 0 warning
+```
+
+GPU 子检查仍如预期报告本机为 CPU build/无 CUDA；本轮显式 `--allow-cpu`，不构成 blocker。独立 test `ctspine1k-msd-t10-liver_169` 未访问。
+
+下一步完成本阶段 commit/push 并再次确认 `HEAD == origin/main` 后，立即运行 v9 epoch1。epoch1 理论行为应与 v6 epoch1 接近；若 mean Dice 与 v6 epoch1≈`0.05407` 差异显著，则先停止检查实现，不进入 epoch2。若复现正常，则直接续训 epoch2，并验证所有 BN running_mean/running_var/num_batches_tracked 与 epoch1 checkpoint 完全保持锚定，再做两例 detailed validation + checkpoint diagnostics。

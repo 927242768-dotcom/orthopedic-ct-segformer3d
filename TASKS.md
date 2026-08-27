@@ -32,7 +32,7 @@
 | Web 科研原型 | ✅ 主体完成 | MPR/QC/3D/results-review 已具备 |
 | 临床脱敏数据 | 🔴 外部阻塞 | 等授权/脱敏/伦理 |
 | 论文 Methods | ✅ 主体完成 | Results 仍保持 TBD |
-| 自动化测试 | ✅ 当前通过 | 108 passed + Ruff clean |
+| 自动化测试 | ✅ 当前通过 | 125 passed + Ruff clean |
 
 ---
 
@@ -300,7 +300,9 @@
 - [x] v8 BN-running-stat 单变量工程已完成：`train.py` 新增 `freeze_batchnorm_running_stats`，每 epoch 正常 `model.train()` 后仅把 BatchNorm3d 切到 eval；running_mean/running_var/num_batches_tracked 不更新，BN affine weight/bias 仍保留 gradient，其它模块保持 training，默认旧配置行为不变；v8 相对 v6 仅实验名 + 该选项两处差异；120 tests + Ruff 通过，formal readiness `ready=true / blocker_count=0`，split=7/2/1
 - [x] v8 epoch1 + full-volume validation + `liver_7/liver_8` detailed evaluation + running-stat diagnostics 已完成并按规则停止：run=`experiments/20260827_125357_cpu_binary_bn_frozen_v8_roi64`，train loss≈`6.01818`，mean val Dice≈`0.0001248`；`liver_7/8` prediction foreground≈`0.0579%/0.0709%`，GT≈`0.6996%/0.5660%`，Dice≈`0.0002495/0`，属于严重背景塌缩；9 个 BN 的 `num_batches_tracked=0`、首层 running mean std=`0`、running var mean=`1`，证明冻结确实生效，但从初始化就固定 BN stats 不是稳定 baseline 方案，因此不跑 epoch2
 - [x] 已新增 validation-only `compare_checkpoint_dynamics.py`：固定前景中心 64³ patch，记录 encoder 四级 embedding/block、decoder fuse、head input/output 的 mean/std/min/max/quantiles/L2 norm，并比较 checkpoint parameter-group delta、top parameter delta 与 BN running-buffer delta；不提供 test split，不执行 optimizer.step；focused 2 tests + Ruff 通过
-- [ ] 立即运行 v6 epoch1 / v6 epoch2 / v8 epoch1 checkpoint dynamics，对 `liver_7` 固定 patch 定位最显著 activation/parameter 漂移，再据证据只选择一个 v9 变量；禁止同时改 lr/loss/normalization/sampling，独立 test `liver_169` 继续禁止访问
+- [x] 已运行 v6 epoch1 / v6 epoch2 / v8 epoch1 checkpoint dynamics：固定 `liver_7` foreground patch 上，v6 epoch1→epoch2 普通参数组相对变化整体很小（最大聚合组约 `0.66%`），但多处 BN running_mean 相对变化约 `1.0×–3.3×`、running_var 约 `66%–79%`，decoder/head-input activation 同时明显漂移；证据支持把 epoch1 BN stats 作为锚点验证，而不是继续从初始化冻结
+- [x] v9 工程完成：新增 `configs/orthopedic_ct_cpu_binary_bn_freeze_after_e1_v9.yaml` 与 epoch-aware BN freeze；epoch1 保持 v6 原行为，epoch2 起冻结 running_mean/running_var/num_batches_tracked，BN affine 与其它模型参数继续训练；resume 到 epoch2 会按 epoch 自动冻结。v9/v6 config 归一化对比仅实验名 + `freeze_batchnorm_running_stats_from_epoch=2` 不同；125 tests + Ruff + `git diff --check` 通过，formal readiness `ready=true / blocker_count=0`，split=7/2/1
+- [ ] 立即运行 v9 epoch1；若能接近复现 v6 epoch1 mean Dice≈`0.05407`，再继续 epoch2 并核对 BN stats 是否严格保持 epoch1 锚点；独立 test `liver_169` 继续禁止访问
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
 - [x] formal-pilot 输出 `metrics_per_case.csv` + prediction NIfTI + entropy NIfTI
 - [x] formal-pilot 记录 Dice / HD95 / ASSD / IoU / Precision / Recall / 结构指标
