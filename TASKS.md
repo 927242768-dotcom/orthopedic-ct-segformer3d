@@ -310,7 +310,8 @@
 - [x] 按预设规则停止 v9，不跑 epoch3；stable baseline 仍为 NO，锁参/正式 test 条件仍未满足，独立 test `liver_169` 继续禁止访问
 - [x] 已基于 v9 dynamics 进一步拆分 parameter delta：v9e1→v9e2 的 BN affine≈`0.0194%`、LayerNorm affine≈`0.0208%`，而 patch embeddings≈`0.7842%`、encoder attention≈`0.7075%`、encoder MLP≈`0.1906%`；final head 仅≈`0.0179%`，但固定 patch final logits mean 仍从≈`-11.31` 漂移到≈`-4.56`。因此 v10 不优先冻结 BN affine，而选择更有证据的单变量“epoch2 起冻结 encoder trainable parameters”
 - [x] v10 工程完成：新增 `configs/orthopedic_ct_cpu_binary_encoder_freeze_after_e1_v10.yaml` 与 epoch-aware encoder freeze；相对 v9 仅实验名 + `freeze_encoder_parameters_from_epoch=2` 不同，保留 v9 的 `freeze_batchnorm_running_stats_from_epoch=2`、lr/loss/sampling/ROI/augmentation/decoder/head 全部不变；新增 policy、encoder-only gradient、恢复 trainability、v10/v9 config diff 回归测试；129 tests + Ruff + `git diff --check` 通过，formal readiness `ready=true / blocker_count=0`
-- [ ] 立即运行 v10 epoch1；必须复现/接近 v9/v6 epoch1 后才 resume epoch2。epoch2 起 encoder 参数冻结、decoder/head 继续训练，随后只在 `liver_7/liver_8` 做 detailed validation / diagnostics / dynamics；独立 test `liver_169` 继续禁止访问
+- [x] v10 epoch1 已真实完成并精确复现 v6/v9 epoch1：run=`experiments/20260827_170359_cpu_binary_encoder_freeze_after_e1_v10_roi64`，train loss=`2.5537127597`、mean val Dice=`0.0540700072`、std=`0.0108403799`、lr=`5e-5`；`liver_7/liver_8` detailed Dice≈`0.04323/0.06491`、foreground ratio≈`3.65/3.18`。两例 diagnostics 已完成；v6e1/v9e1/v10e1 的 232 个 model state tensor 逐项 `torch.equal`，diff tensor=`0`、BN buffer diff=`0`，因此允许从 v10 `last.pt` resume 到 epoch2
+- [ ] 立即 resume v10 到总 epoch2；epoch2 起必须确认 encoder parameter delta=`0`、BN running buffer delta=`0`，decoder/head 继续训练，并只在 `liver_7/liver_8` 做 detailed validation / diagnostics / dynamics；独立 test `liver_169` 继续禁止访问
 - [x] formal-pilot 独立 full-volume test：`liver_169`，从未参与训练/调参
 - [x] formal-pilot 输出 `metrics_per_case.csv` + prediction NIfTI + entropy NIfTI
 - [x] formal-pilot 记录 Dice / HD95 / ASSD / IoU / Precision / Recall / 结构指标
