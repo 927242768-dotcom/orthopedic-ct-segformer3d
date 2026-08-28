@@ -358,12 +358,13 @@
 - [x] standard augmentation baseline：v18（±10° rotation、scale 0.9–1.1、p=0.5）完成 3 epoch + liver_7/liver_8 detailed validation；mean Dice=`0.05535` 虽略高于 v13，但 foreground ratio=`7.56×`、Precision=`0.03134`、ECE=`0.02716` 明显劣化，综合判定不选，后续保留 v13 原始 flip-only geometric baseline
 - [x] + boundary hard sampling：v17 已作为 sampling 单变量验证并失败，不在 augmentation 阶段重复
 - [x] + intensity/HU augmentation：v19 gamma 失败后 STOP；v20 Gaussian noise 完成 3 epoch 与两例 detailed validation，但综合指标不取代 v13；v21 HU shift 在 epoch2 后明显失败并 STOP；augmentation 最终保留 **v13 flip-only baseline**
-- [ ] high-loss hard mining
-- [ ] high-uncertainty mining
-- [ ] thick-slice subset
-- [ ] metal artifact subset（数据存在时）
-- [ ] fracture subset（数据存在时）
-- [ ] low-density subset（数据存在时）
+- [x] high-loss hard mining：v22 唯一有效 run 完成 epoch1/2，mean val Dice=`0.04728839 → 0.04728457`，持续低于 v13=`0.05470944`；FAIL / STOP，不跑 epoch3
+- [x] high-uncertainty mining：v23 有效 run 完成 epoch1/2，mean val Dice=`0.00963475 → 0.01010232`，远低于 v13；FAIL / STOP，不跑 epoch3
+- [x] thick-slice data-evidence：train `liver_0/liver_1` z-spacing≈`5 mm`，其余 train 多为≈`0.8–1.0 mm`；冻结 v13 guidance 显示两例 thick-slice case 的 candidate loss/uncertainty 分别高约 `12.9%/13.0%`。validation `liver_7/liver_8` 均为 1 mm，因此 validation thick-slice subgroup 数据不足，禁止伪造 subgroup Dice
+- [ ] metal artifact subset：当前 metadata / 病例记录不足以可靠标记具体病例，数据不足
+- [ ] fracture subset：当前 metadata / 病例记录不足以可靠标记具体病例，数据不足
+- [ ] low-density subset：当前 metadata / 病例记录不足以可靠标记具体病例，数据不足
+- [x] difficult-sample 最终决策：boundary-hard、high-loss、high-uncertainty 均不取代 baseline；正式继续保留 **v13 Bernoulli**（foreground_probability=`0.25`、patches_per_case=`4`），下一阶段进入 ROI refinement
 
 ---
 
