@@ -355,9 +355,9 @@
 - [x] fixed-per-case sampling：v16 已完成 3 epoch + liver_7/liver_8 detailed validation；sampling 跨 epoch 更稳定（foreground-fraction mean std≈`0.003642`），但 mean Dice≈`0.04575`、foreground ratio≈`6.51×`、ECE≈`0.02964`，整体劣于 v13，因此不选
 - [x] boundary hard sampling：v17 已完成 3 epoch + liver_7/liver_8 detailed validation；mean Dice≈`0.03731`、foreground ratio≈`36.26×`、HD95≈`206.50 mm`、ECE≈`0.19569`，虽 component error/false break 更低但伴随严重 foreground overprediction 与 calibration 崩坏，STOP，不选
 - [x] sampling ablation 最终决策：保留 **v13 Bernoulli**（foreground_probability=`0.25`、patches_per_case=`4`）作为 augmentation / difficult-sample baseline；不能只按 sampling stability 选型
-- [ ] standard augmentation baseline
-- [ ] + boundary hard sampling
-- [ ] + intensity/HU augmentation
+- [x] standard augmentation baseline：v18（±10° rotation、scale 0.9–1.1、p=0.5）完成 3 epoch + liver_7/liver_8 detailed validation；mean Dice=`0.05535` 虽略高于 v13，但 foreground ratio=`7.56×`、Precision=`0.03134`、ECE=`0.02716` 明显劣化，综合判定不选，后续保留 v13 原始 flip-only geometric baseline
+- [x] + boundary hard sampling：v17 已作为 sampling 单变量验证并失败，不在 augmentation 阶段重复
+- [x] + intensity/HU augmentation：v19 gamma 失败后 STOP；v20 Gaussian noise 完成 3 epoch 与两例 detailed validation，但综合指标不取代 v13；v21 HU shift 在 epoch2 后明显失败并 STOP；augmentation 最终保留 **v13 flip-only baseline**
 - [ ] high-loss hard mining
 - [ ] high-uncertainty mining
 - [ ] thick-slice subset
