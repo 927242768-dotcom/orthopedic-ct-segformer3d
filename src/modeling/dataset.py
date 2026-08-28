@@ -83,23 +83,33 @@ def _random_crop_3d(
     force_foreground: bool | None = None,
     preferred_mask: np.ndarray | None = None,
     preferred_probability: float = 0.0,
+    preferred_respects_foreground_branch: bool = False,
 ) -> tuple[np.ndarray, np.ndarray]:
     image, label = _pad_to_shape(image, label, roi_dhw)
     _, d, h, w = image.shape
     rd, rh, rw = [int(v) for v in roi_dhw]
 
-    use_preferred = (
-        preferred_mask is not None
-        and preferred_mask.shape == label.shape
-        and np.any(preferred_mask)
-        and rng.random() < preferred_probability
-    )
     if force_foreground is None:
         use_fg = rng.random() < foreground_probability and np.any(label > 0)
     else:
         use_fg = bool(force_foreground) and np.any(label > 0)
+
+    preferred_candidates = preferred_mask
+    if (
+        preferred_respects_foreground_branch
+        and preferred_mask is not None
+        and preferred_mask.shape == label.shape
+    ):
+        branch_mask = label > 0 if use_fg else label == 0
+        preferred_candidates = np.logical_and(preferred_mask, branch_mask)
+    use_preferred = (
+        preferred_candidates is not None
+        and preferred_candidates.shape == label.shape
+        and np.any(preferred_candidates)
+        and rng.random() < preferred_probability
+    )
     if use_preferred:
-        coords = np.argwhere(preferred_mask)
+        coords = np.argwhere(preferred_candidates)
         center = coords[rng.randrange(len(coords))]
         starts = []
         for c, current, roi in zip(center, (d, h, w), (rd, rh, rw)):
@@ -477,11 +487,30 @@ class ProcessedOrthopedicCTDataset(Dataset):
             hard_strategy = str(hard_cfg.get("strategy", "")).lower()
             preferred_mask = None
             preferred_probability = 0.0
+            preferred_respects_foreground_branch = False
             if hard_enabled and hard_strategy == "boundary_proxy":
                 preferred_mask = _boundary_mask(label)
                 preferred_probability = float(hard_cfg.get("boundary_probability", 0.35))
                 if not (0.0 <= preferred_probability <= 1.0):
                     raise ValueError("boundary_probability 必须位于 [0,1]")
+            elif hard_enabled and hard_strategy in {"high_loss", "high_uncertainty"}:
+                guidance_root_raw = hard_cfg.get("guidance_root")
+                if not guidance_root_raw:
+                    raise ValueError(f"{hard_strategy} hard mining 必须配置 guidance_root")
+                guidance_path = Path(str(guidance_root_raw)) / case_id / "hard_centers.nii.gz"
+                preferred_mask = _load_nifti(guidance_path, np.float32)
+                preferred_mask = np.transpose(preferred_mask, (2, 1, 0)) > 0.5
+                if preferred_mask.shape != label.shape:
+                    raise ValueError(
+                        f"{case_id}: hard guidance shape 不一致: "
+                        f"{preferred_mask.shape} vs {label.shape}"
+                    )
+                if not np.any(preferred_mask):
+                    raise ValueError(f"{case_id}: hard guidance 为空: {guidance_path}")
+                preferred_probability = float(hard_cfg.get("preferred_probability", 0.5))
+                if not (0.0 <= preferred_probability <= 1.0):
+                    raise ValueError("preferred_probability 必须位于 [0,1]")
+                preferred_respects_foreground_branch = True
             elif hard_enabled and hard_strategy not in {"", "none", "tbd_after_baseline"}:
                 raise ValueError(f"暂不支持 hard_sampling.strategy={hard_strategy!r}")
 
@@ -494,6 +523,7 @@ class ProcessedOrthopedicCTDataset(Dataset):
                 force_foreground=force_foreground,
                 preferred_mask=preferred_mask,
                 preferred_probability=preferred_probability,
+                preferred_respects_foreground_branch=preferred_respects_foreground_branch,
             )
 
             if aug_enabled:
