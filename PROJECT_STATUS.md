@@ -6,7 +6,7 @@
 >
 > 台账首次建立：2026-08-15
 >
-> 最近更新：2026-08-27
+> 最近更新：2026-08-28
 
 ---
 
@@ -91,8 +91,8 @@
 | 临床脱敏数据 | 🔴 阻塞 | 0% | 当前项目目录无临床数据；必须等待合法授权、脱敏与伦理/使用范围确认 |
 | SegFormer3D 骨科适配 | 🟡 进行中 | 96% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。v9 证明冻结 BN running stats 可显著缓解 v6 foreground explosion，但不能消除退化；v10 在 encoder 与 BN 全冻结后仍发生 mean Dice≈`1.65e-11` 的 catastrophic background collapse，否定 encoder parameter update 为必要条件。v11 从 epoch2 起同时冻结 encoder、BN running stats 与 decoder feature（`linear_c1..c4` + `linear_fuse`），仅允许 `linear_pred` 更新，并已完成 3 epoch：mean val Dice=`0.0540700072 → 0.0543761681 → 0.0546575740`，连续三轮无 catastrophic collapse。epoch3 `liver_7/liver_8` detailed Dice≈`0.04514/0.06417`、prediction/GT ratio≈`4.22/3.78`；新的 epoch1 exact-anchor→epoch3 dynamics 证明 encoder/BN/decoder-feature delta=`0`、fixed-patch encoder/fuse/head-input activation exact equal，仅 `linear_pred` 与 final logits 改变。与已保存的 epoch1→epoch2 dynamics 交叉验证后，正式判定 stable baseline=`YES`（engineering/validation）。绝对分割精度仍低，lock parameters=`NO`、formal independent test ready=`NO`；当前证据支持 decoder feature update 是 v10 collapse 的关键机制之一，但不写成唯一根因 |
 | 区域损失 | ✅ 已完成（代码） | 90% | Dice + CE/BCE 可运行并有 backward 测试 |
-| Boundary Loss | 🟠 待真实验证 | 55% | SDF 边界损失首版已实现；需真实训练、表面指标与效率验证 |
-| Topology Loss | 🟠 待真实验证 | 45% | 3D soft-clDice 候选已实现；骨折/非管状骨结构适用性必须单独验证 |
+| Boundary Loss | 🟡 进行中 | 85% | v13 已完成 3-epoch validation 消融；相对 Region 的 HD95/ASSD 仅约改善 0.1002/0.0355 mm，收益极弱，暂保留为 sampling baseline 候选但不宣称明确优势 |
+| Topology Loss | 🟡 进行中 | 80% | v14/v15 已完成 validation 消融；结构/表面指标有改善信号，但 foreground overprediction 与 calibration 代价明显，当前不选作后续 baseline；骨折/非管状骨结构适用性仍待独立检查 |
 | 困难样本增强 | 🟠 待真实验证 | 68% | 已落地可配置 3D flip/小角度旋转/各向同性缩放、gamma、Gaussian noise、HU shift 与 boundary-proxy hard sampling；强度增强已兼容 z-score CT 并使用 metadata 精确回到 HU 域。金属伪影与基于真实模型误差/uncertainty 的 hard mining 仍待实验 |
 | 不确定性机制 | 🟠 待真实验证 | 82% | predictive entropy、Top-percent ROI、膨胀、uncertainty→error AUROC/AUPRC、错误/正确平均熵、Top-percent error recall/ROI error rate 已实现；新增体素级 calibration：ECE、MCE、multiclass Brier score、NLL、mean confidence、accuracy、confidence gap，并以固定 seed 采样控制大体积内存；局部残差 refinement 已补 ROI-only 二阶段训练闭环。尚无真实 baseline checkpoint 条件下的定量收益、校准结论与消融 |
 | 训练/验证框架 | 🟡 进行中 | 99% | DataLoader/AdamW/AMP/gradient accumulation/sliding-window、scheduler、完整 run 追踪已接入；`train.py` 支持 `--allow-cpu`、可靠 `--resume` 与 `training.patches_per_case`。balanced v3 已实际使用 `validation.patch_mode=false`，逐 epoch 直接以 `liver_7/liver_8` full-volume Dice 选 checkpoint；epoch 1/2 已完成，说明 full-volume-aware selector 已进入真实训练闭环，不再依赖固定 foreground patch proxy |
@@ -657,17 +657,17 @@ CTSpine1K Hugging Face 在早期也出现超时和并行下载失败；但改为
 - [x] v11 epoch2 `liver_7/liver_8` detailed validation、diagnostics 与 v11e1→v11e2 dynamics 已完成：两例 Dice≈`0.04421/0.06454`、foreground ratio≈`3.96/3.50`；GT foreground mean P(fg)≈`0.13263/0.16114`，GT background mean P(fg)≈`0.03482/0.02670`；固定 `liver_7` 上 encoder、decoder fuse 与 final-head input activation 统计完全一致，仅 final logits 随 final head 更新而变化。当前允许继续 epoch3；
 - [x] v11 epoch3 已真实完成且不重跑：train loss=`1.8300107228`、mean full-volume val Dice=`0.0546575740`、std=`0.0095167619`，三轮 Dice=`0.05407001 → 0.05437617 → 0.05465757`；`liver_7/liver_8` detailed Dice≈`0.04514/0.06417`、foreground ratio≈`4.22/3.78`。使用 v11e1 exact anchor→v11e3 新 dynamics + 已保存 v11e1→v11e2 dynamics 交叉验证，encoder/BN/decoder-feature 持续冻结，仅 final head 更新；stable baseline=`YES`（engineering/validation），lock parameters=`NO`、formal independent test ready=`NO`；
 - [ ] 继续核对 Region Dice+CE 背景抑制、label mapping、normalization、sliding-window stitching/logits resize/threshold；当前没有发现 label mapping 或 resize 的直接错误证据；
-- [ ] stable CT-only baseline 已锁定为 v11 机制基线；下一步先做最小可信 baseline reproducibility，再进入 CT-only vs CT+bone-window 输入消融、Region+Boundary/Topology loss 消融与 augmentation/hard sampling，所有选择仍只使用 train+validation；
+- [x] stable CT-only baseline 已锁定为 v11 机制基线；最小可信 reproducibility、CT-only vs CT+bone-window 输入消融及 v11/v13/v14/v15 loss ablation 均已完成；loss 阶段选择 v13 Region+Boundary 作为后续 sampling baseline，所有选择仍只使用 train+validation；
 - [ ] 在 ROI/epoch/lr/scheduler/sampling/augmentation/input/loss/checkpoint 全部只依据 train+validation 锁定前，禁止重新运行 test `liver_169`；
 - [ ] 更可靠 baseline 锁定后再生成 prediction mesh / SDF / Web overlay / entropy overlay，并继续论文工程验证材料。
 
 ### P1｜联合损失与困难样本消融
 
-- [ ] Region；
-- [ ] Region + Boundary；
-- [ ] Region + Topology；
-- [ ] Region + Boundary + Topology；
-- [ ] loss 权重 validation grid；
+- [x] Region：v11；
+- [x] Region + Boundary：v13；
+- [x] Region + Topology：v14；
+- [x] Region + Boundary + Topology：v15；
+- [ ] loss 权重 validation grid（当前最小四组消融已完成，后续是否继续 grid 以 validation 证据与 CPU 成本决定）；
 - [ ] normal vs difficult subset；
 - [ ] fracture/metal/low-density/thick-slice 子集（数据存在时）；
 - [ ] 记录 false merge / false break。
@@ -2397,3 +2397,25 @@ v14 epoch3 `best.pt` validation-only detailed evaluation 采用分病例执行�
 freeze/checkpoint verification 继续通过：v14 epoch3 `best.pt` 的 AdamW state 共 205 个参数，其中 step=`28` 有 203 个、step=`84` 有 2 个；9 个 BatchNorm `num_batches_tracked` 均为 `28`。这与 epoch1 全模型训练、epoch2/3 冻结 encoder + decoder feature + BN running stats、仅 final `linear_pred` 两个参数继续更新的策略一致。stable baseline 仍为 engineering/validation 级；lock parameters=`NO`；formal independent test ready=`NO`；`liver_169=未访问`。
 
 下一步直接执行 v15 Region+Boundary+Topology；完成后对 Region / Region+Boundary / Region+Topology / Region+Boundary+Topology 做统一 loss ablation 判断，再进入 sampling ablation。
+
+
+### 2026-08-28｜阶段 BE：v15 联合损失完成，loss ablation 正式闭环
+
+v15=`configs/orthopedic_ct_cpu_binary_loss_region_boundary_topology_v15.yaml`，以 v11 CT-only stable mechanism 为固定基础，仅将 loss composition 设为 `region=1.0 / boundary=0.1 / topology=0.1`（`topology_iterations=10`）；ROI、input、sampling、lr、scheduler、seed、freeze policy、validation 与 inference 保持不变。formal readiness 已真实通过：`ready=true / blocker_count=0`。有效 run=`experiments/20260828_142401_cpu_binary_loss_region_boundary_topology_v15_roi64`，3 epoch 已完成且不重跑：epoch1 train loss=`2.6507615830`、mean val Dice=`0.0545193722`、FG/BG patches=`10/18`；epoch2 train loss=`2.3858454398`、mean val Dice=`0.0545209539`、FG/BG=`10/18`；epoch3 train loss=`1.9158078730`、mean val Dice=`0.0544770773`、FG/BG=`8/20`。best Dice=`0.0545209539`，因此 `best.pt` 对应 epoch2。
+
+v15 `best.pt` validation-only detailed evaluation 已按病例完成，未访问独立 test：`liver_7` Dice=`0.0480255358`、IoU=`0.0246035677`、Precision=`0.0288159219`、Recall=`0.1440615994`、HD95=`195.1489 mm`、ASSD=`54.4414 mm`、prediction/GT foreground ratio=`4.999375×`、pred/GT components=`1539/3`、component error=`1536`、false merge/break=`1/64`、uncertainty AUROC/AUPRC=`0.93160/0.35201`、Top-10% error recall=`0.72230`、ECE/MCE/Brier/NLL=`0.01692/0.09481/0.06154/0.13101`、confidence gap=`0.01692`、CPU inference≈`61.28 s`；`liver_8` Dice=`0.0610163721`、IoU=`0.0314682245`、Precision=`0.0371083808`、Recall=`0.1715266640`、HD95=`174.0029 mm`、ASSD=`47.0610 mm`、prediction/GT foreground ratio=`4.622316×`、pred/GT components=`1546/2`、component error=`1544`、false merge/break=`0/56`、uncertainty AUROC/AUPRC=`0.94663/0.34604`、Top-10% error recall=`0.79573`、ECE/MCE/Brier/NLL=`0.00975/0.05533/0.04562/0.09419`、confidence gap=`0.00975`、CPU inference≈`80.42 s`。两例平均 v15：Dice=`0.0545209539`、IoU=`0.0280358961`、Precision=`0.0329621513`、Recall=`0.1577941317`、HD95=`184.5758955 mm`、ASSD=`50.7511907 mm`、prediction foreground fraction=`0.03056820`、GT foreground fraction=`0.00632783`、foreground ratio=`4.810846×`、pred/GT components=`1542.5/2.5`、component error=`1540.0`、false merge=`0.5`、false break=`60.0`、uncertainty AUROC/AUPRC=`0.93911/0.34902`、Top-10% error recall=`0.75901`、ECE/MCE/Brier/NLL=`0.01334/0.07507/0.05358/0.11260`、confidence gap=`0.01334`、CPU inference≈`70.85 s`。
+
+四组同两例 loss ablation 统一比较（全部为 validation，不是 independent test）：
+
+| Loss | Dice | IoU | Precision | Recall | HD95 mm | ASSD mm | Pred/GT FG | Comp. error | False merge | False break | AUROC | AUPRC | Top-10% err recall | ECE | MCE | Brier | NLL | Conf. gap | Infer s |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| v11 Region | 0.054658 | 0.028121 | 0.034251 | 0.135539 | 186.0500 | 51.5220 | 3.9976× | 1548.0 | 0.5 | 64.0 | 0.93691 | 0.32938 | 0.76162 | 0.01084 | 0.05635 | 0.04693 | 0.10288 | 0.01078 | 72.88 |
+| v13 Region+Boundary | **0.054709** | **0.028148** | 0.034230 | 0.136492 | 185.9498 | 51.4865 | 4.0270× | 1543.5 | 0.5 | 64.5 | 0.93707 | 0.33184 | **0.76170** | 0.01093 | 0.05790 | 0.04717 | 0.10325 | 0.01089 | 75.01 |
+| v14 Region+Topology | 0.054509 | 0.028029 | 0.032696 | **0.163924** | **183.9914** | **50.5799** | 5.0342× | **1540.0** | 0.5 | 62.0 | **0.93948** | 0.34895 | 0.75770 | 0.01413 | 0.08105 | 0.05542 | 0.11522 | 0.01406 | 75.15 |
+| v15 Region+Boundary+Topology | 0.054521 | 0.028036 | 0.032962 | 0.157794 | 184.5759 | 50.7512 | 4.8108× | **1540.0** | 0.5 | **60.0** | 0.93911 | **0.34902** | 0.75901 | 0.01334 | 0.07507 | 0.05358 | 0.11260 | 0.01334 | **70.85** |
+
+科学判断：Boundary 单独加入时仅带来极弱的 HD95/ASSD 与 Dice 改善，不能称为明确收益；Topology（v14/v15）对 HD95/ASSD、component error、false break 和 uncertainty AUPRC 出现更明显的改善信号，但同时提高 prediction/GT foreground ratio、降低 Precision，并使 ECE/MCE/Brier/NLL/confidence gap 相对 v11/v13 变差。v15 相对 v14 能将 false break `62→60`、foreground ratio `5.034→4.811` 并略改善 calibration，但仍未消除 Topology 带来的前景过预测代价，且 Dice 仍低于 v11/v13。综合区域、表面、结构、前景、uncertainty、calibration 与速度，当前证据不足以证明 Topology 组合整体优于无 Topology 方案。
+
+因此 loss ablation 的后续工程决策为：**选择 v13 Region+Boundary 作为 sampling ablation baseline**。理由不是“Boundary 已被证明显著有效”，而是它在四组中取得最高两例平均 Dice/IoU，同时 foreground overprediction 与 calibration 基本维持 v11 水平，表面指标也未恶化；这是当前小样本 validation 下最保守、风险最低的工作基线。Topology 保留为后续可复查候选，但当前不进入 sampling baseline。`lock parameters=NO`、`formal independent test ready=NO`，`ctspine1k-msd-t10-liver_169=未访问`。
+
+下一步固定 v13 的 input/loss/lr/scheduler/ROI/freeze policy，只做 sampling 单变量消融：current Bernoulli baseline → fixed-per-case → boundary hard sampling；每个阶段继续记录 patches/case、FG/BG、foreground fraction mean/std、区域/表面/结构、uncertainty、calibration 与 inference time，再选择 sampling baseline。
