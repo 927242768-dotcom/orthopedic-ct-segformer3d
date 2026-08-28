@@ -352,8 +352,9 @@
 ### P1-4 Sampling / 困难样本实验
 
 - [x] current sampling baseline：v13 Bernoulli，foreground_probability=`0.25`、patches_per_case=`4`
-- [ ] fixed-per-case sampling
-- [ ] boundary hard sampling
+- [x] fixed-per-case sampling：v16 已完成 3 epoch + liver_7/liver_8 detailed validation；sampling 跨 epoch 更稳定（foreground-fraction mean std≈`0.003642`），但 mean Dice≈`0.04575`、foreground ratio≈`6.51×`、ECE≈`0.02964`，整体劣于 v13，因此不选
+- [x] boundary hard sampling：v17 已完成 3 epoch + liver_7/liver_8 detailed validation；mean Dice≈`0.03731`、foreground ratio≈`36.26×`、HD95≈`206.50 mm`、ECE≈`0.19569`，虽 component error/false break 更低但伴随严重 foreground overprediction 与 calibration 崩坏，STOP，不选
+- [x] sampling ablation 最终决策：保留 **v13 Bernoulli**（foreground_probability=`0.25`、patches_per_case=`4`）作为 augmentation / difficult-sample baseline；不能只按 sampling stability 选型
 - [ ] standard augmentation baseline
 - [ ] + boundary hard sampling
 - [ ] + intensity/HU augmentation

@@ -2419,3 +2419,23 @@ v15 `best.pt` validation-only detailed evaluation 已按病例完成，未访问
 因此 loss ablation 的后续工程决策为：**选择 v13 Region+Boundary 作为 sampling ablation baseline**。理由不是“Boundary 已被证明显著有效”，而是它在四组中取得最高两例平均 Dice/IoU，同时 foreground overprediction 与 calibration 基本维持 v11 水平，表面指标也未恶化；这是当前小样本 validation 下最保守、风险最低的工作基线。Topology 保留为后续可复查候选，但当前不进入 sampling baseline。`lock parameters=NO`、`formal independent test ready=NO`，`ctspine1k-msd-t10-liver_169=未访问`。
 
 下一步固定 v13 的 input/loss/lr/scheduler/ROI/freeze policy，只做 sampling 单变量消融：current Bernoulli baseline → fixed-per-case → boundary hard sampling；每个阶段继续记录 patches/case、FG/BG、foreground fraction mean/std、区域/表面/结构、uncertainty、calibration 与 inference time，再选择 sampling baseline。
+
+### 2026-08-28｜阶段 BF：v16/v17 sampling ablation 完成，保留 v13 Bernoulli baseline
+
+本阶段严格固定 v13 的 CT-only、Region+Boundary loss、64³ training ROI、AdamW peak lr=`5e-5`、warmup/cosine scheduler、seed、epoch2 起 encoder+decoder-feature+BN-running-stat freeze、full-volume validation 与 inference，仅改变 sampling 策略。独立 test `ctspine1k-msd-t10-liver_169` 继续未访问；`lock parameters=NO`、`formal independent test ready=NO`。
+
+v16=`configs/orthopedic_ct_cpu_binary_sampling_fixed_per_case_v16.yaml`，有效 run=`experiments/20260828_150343_cpu_binary_sampling_fixed_per_case_v16_roi64`。三轮 mean validation Dice=`0.04557463 → 0.04564599 → 0.04575062`。sampling foreground-fraction mean=`0.0645966/0.0681651/0.0734618`，跨 epoch mean 的 std≈`0.003642`、range≈`0.008865`，明显比 v13 Bernoulli 的 std≈`0.013259`、range≈`0.031607` 更稳定。但 best.pt 两例 detailed validation 平均 Dice=`0.04575062`、IoU=`0.02369179`、Precision=`0.02616929`、Recall=`0.18255175`、HD95=`181.2707 mm`、ASSD=`54.7019 mm`、prediction/GT foreground ratio=`6.51485×`、component error=`1302.0`、false merge=`0.5`、false break=`76.5`、uncertainty AUROC/AUPRC=`0.92582/0.34370`、Top-10% error recall=`0.66407`、ECE/MCE/Brier/NLL=`0.02964/0.19434/0.07493/0.17802`、confidence gap=`0.02964`。因此 fixed-per-case 虽改善 sampling stability，但区域分割、foreground overprediction、ASSD、false break 与 calibration 均整体劣于 v13，**v16 不选**。
+
+v17=`configs/orthopedic_ct_cpu_binary_sampling_boundary_hard_v17.yaml`，有效 run=`experiments/20260828_152712_cpu_binary_sampling_boundary_hard_v17_roi64`。接管时确认训练已真实完成，未重复启动：epoch1/2/3 train loss=`2.52750253/2.27737889/2.45061852`，mean validation Dice=`0.03701411 → 0.03715640 → 0.03730737`，best.pt=epoch3。sampling foreground-fraction mean=`0.1123220/0.1468705/0.1491953`，FG/BG patch=`15/13、18/10、14/14`，跨 epoch mean 的 std≈`0.016861`、range≈`0.036873`，并未比 v13 更稳定。
+
+随后复用同一 v17 best.pt 对 validation `liver_7/liver_8` 完成 detailed evaluation。两例平均：Dice=`0.03730737`、IoU=`0.01900976`、Precision=`0.01917430`、Recall=`0.69148852`、HD95=`206.5001 mm`、ASSD=`58.8920 mm`、prediction/GT foreground ratio=`36.2590×`、component error=`568.0`、false merge=`0.5`、false break=`33.0`、uncertainty AUROC/AUPRC=`0.87484/0.54115`、Top-10% error recall=`0.24014`、ECE/MCE/Brier/NLL=`0.19569/0.46998/0.40404/1.20141`、confidence gap=`0.19569`、CPU inference≈`72.85 s`。虽然 component error/false break 与 uncertainty AUPRC 表面上改善，但这是伴随极端 foreground overprediction、极高 Recall、低 Precision、恶化 surface distance 与严重 calibration 崩坏出现的，不能视为整体结构质量提升。**v17 明显失败，STOP，不继续浪费 CPU。**
+
+三组 sampling 统一 comparison（validation 两例平均；不是 independent test）：
+
+| Sampling | Dice | IoU | Precision | Recall | HD95 mm | ASSD mm | Pred/GT FG | Comp. error | False break | AUROC | AUPRC | Top-10% err recall | ECE | Brier | NLL | Sampling mean std |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| v13 Bernoulli | **0.054709** | **0.028148** | **0.034230** | 0.136492 | 185.9498 | **51.4865** | **4.0270×** | 1543.5 | 64.5 | **0.93707** | 0.33184 | **0.76170** | **0.01093** | **0.04717** | **0.10325** | 0.013259 |
+| v16 fixed-per-case | 0.045751 | 0.023692 | 0.026169 | 0.182552 | **181.2707** | 54.7019 | 6.5148× | 1302.0 | 76.5 | 0.92582 | 0.34370 | 0.66407 | 0.02964 | 0.07493 | 0.17802 | **0.003642** |
+| v17 boundary-hard | 0.037307 | 0.019010 | 0.019174 | **0.691489** | 206.5001 | 58.8920 | 36.2590× | **568.0** | **33.0** | 0.87484 | **0.54115** | 0.24014 | 0.19569 | 0.40404 | 1.20141 | 0.016861 |
+
+最终 sampling 决策：**继续使用 v13 current Bernoulli sampling（foreground_probability=`0.25`、patches_per_case=`4`）作为后续 augmentation / difficult-sample validation baseline。** 选择依据不是 sampling stability 单指标，而是区域、前景比例、表面、结构、uncertainty 与 calibration 的综合 validation 结果。v16 证明“更稳定的 sampling statistics”本身不足以带来更好的 segmentation；v17 证明当前 boundary-hard 方案会严重推高 foreground prior 并破坏 calibration。下一阶段固定 v13 input/loss/sampling/ROI/lr/scheduler/freeze policy，优先做 standard augmentation 与 intensity/HU augmentation 的最小单变量 validation；当前数据不足以真实构造 metal artifact / fracture / low-density / thick-slice difficult subset 时必须明确记为“数据不足 / 未完成”。

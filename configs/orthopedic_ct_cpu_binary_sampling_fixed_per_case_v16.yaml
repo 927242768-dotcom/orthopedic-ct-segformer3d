@@ -1,0 +1,94 @@
+project: orthopedic_ct_segformer3d
+experiment_name: cpu_binary_sampling_fixed_per_case_v16_roi64
+seed: 42
+
+data:
+  dataset_name: CTSpine1K/MSD-T10
+  processed_root: data/processed_ctspine1k_real
+  split_file: data/splits/ctspine1k_msd_t10_binary_formal_pilot_v1.json
+  input_channels:
+    - ct_normalized
+  label_mode: binary
+  foreground_probability: 0.25
+  foreground_sampling_mode: fixed_per_case
+  target_spacing_xyz_mm: [1.0, 1.0, 1.0]
+  hu_clip: [-1000, 2000]
+  roi_size_dhw: [64, 64, 64]
+  num_classes: 2
+
+model:
+  name: segformer3d
+  in_channels: 1
+  sr_ratios: [4, 2, 1, 1]
+  embed_dims: [32, 64, 160, 256]
+  patch_kernel_size: [7, 3, 3, 3]
+  patch_stride: [4, 2, 2, 2]
+  patch_padding: [3, 1, 1, 1]
+  mlp_ratios: [4, 4, 4, 4]
+  num_heads: [1, 2, 5, 8]
+  depths: [2, 2, 2, 2]
+  decoder_head_embedding_dim: 256
+  decoder_dropout: 0.0
+  num_classes: 2
+
+loss:
+  type: joint_orthopedic
+  weights:
+    region: 1.0
+    boundary: 0.1
+    topology: 0.0
+  topology_iterations: 10
+  include_background: false
+
+optimizer:
+  type: adamw
+  lr: 0.00005
+  weight_decay: 0.01
+
+scheduler:
+  type: cosine_annealing_warm_restarts
+  warmup_epochs: 1
+  t0_epochs: 10
+  min_lr: 0.000006
+
+training:
+  epochs: 12
+  batch_size: 1
+  patches_per_case: 4
+  gradient_accumulation_steps: 1
+  num_workers: 0
+  amp: false
+  save_metric: dice
+  early_stopping_patience: 4
+  freeze_batchnorm_running_stats_from_epoch: 2
+  freeze_encoder_parameters_from_epoch: 2
+  freeze_decoder_feature_parameters_from_epoch: 2
+
+validation:
+  patch_mode: false
+
+inference:
+  sliding_window: true
+  roi_size_dhw: [128, 128, 128]
+  sw_batch_size: 1
+  overlap: 0.25
+  calibration:
+    enabled: true
+    n_bins: 15
+    metric_max_samples: 500000
+
+logging:
+  wandb_mode: offline
+  save_per_case_metrics: true
+  save_predictions: true
+  save_uncertainty: true
+
+task:
+  task_id: vertebra_binary_ctspine1k_msd_t10_v1
+  task_type: binary_semantic
+  task_locked: true
+  task_spec: D:\国创项目\configs\task_specs\vertebra_binary_ctspine1k_msd_t10_v1.json
+  task_spec_sha256: 232141ca53df2f875b4ef91d4ac7c3936795b2ee45f3a2b54994134887d748e2
+  label_schema_path: configs/label_schemas/ctspine1k_verse.json
+  foreground_labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+  note: Sampling ablation from v13 Region+Boundary baseline; only foreground sampling mode changes to fixed_per_case.
