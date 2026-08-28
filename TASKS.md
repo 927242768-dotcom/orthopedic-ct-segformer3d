@@ -375,7 +375,8 @@
 - [ ] ROI threshold / percentile validation
 - [x] calibration 指标工程实现与评估输出接入
 - [x] formal-pilot test 已计算 ECE≈0.2990 / Brier≈0.6347 / NLL≈2.1329 / confidence gap≈0.2990
-- [ ] 扩大样本后完成可靠性统计解释与 calibration 稳定性分析
+- [x] v13 validation `liver_7/liver_8` uncertainty/calibration 两例稳定性分析：AUROC=`0.92949/0.94466`、AUPRC=`0.33354/0.33014`、Top-10% error recall=`0.72891/0.79450`；ECE=`0.01418/0.00767`、Brier=`0.05465/0.03969`、NLL=`0.12079/0.08571`；error entropy 约为 correct entropy 的 `10.41×/12.42×`。支持 uncertainty 作为 validation error indicator/QC/refinement trigger，但仅 2 例且 Dice 很低，不能宣称总体稳定或前景校准完成
+- [ ] 扩大 validation 病例后复核 reliability / calibration 稳定性
 - [ ] coarse baseline
 - [ ] full-volume second pass 对照
 - [ ] uncertainty ROI refinement
@@ -383,7 +384,7 @@
 - [ ] 比较 ROI error
 - [ ] 比较推理时间
 - [ ] 比较显存
-- [ ] 评估 uncertainty 是否能作为 QC 信号
+- [x] 评估 uncertainty 是否能作为 QC 信号：当前两例 validation 均支持作为高风险区域提示信号（AUROC>0.92、Top-10% 覆盖约 73%–79% 错误），但仍需更多病例验证
 
 ---
 

@@ -31,7 +31,7 @@
 - `🔴 阻塞`：受数据、GPU、授权、伦理或其他外部条件限制；
 - `⚪ 未开始`：尚未开展。
 
-> **特别强调：任务书中的 Dice ≥ 0.93 是项目目标，不是当前实验结果。当前尚未进行真实数据正式训练，因此没有可写入论文 Results 的 Dice/HD95/ASSD。**
+> **特别强调：任务书中的 Dice ≥ 0.93 是项目目标，不是当前实验结果。当前已产生真实 engineering / validation 实验，但尚未完成最终锁参与正式 independent test；validation 指标不得冒充 independent-test final Results。**
 
 ---
 
@@ -75,7 +75,7 @@
 
 ---
 
-## 2. 当前总体状态（2026-08-26）
+## 2. 当前总体状态（2026-08-29）
 
 | 模块 | 状态 | 完成度 | 当前真实状态 |
 |---|---|---:|---|
@@ -94,7 +94,7 @@
 | Boundary Loss | 🟡 进行中 | 85% | v13 已完成 3-epoch validation 消融；相对 Region 的 HD95/ASSD 仅约改善 0.1002/0.0355 mm，收益极弱，暂保留为 sampling baseline 候选但不宣称明确优势 |
 | Topology Loss | 🟡 进行中 | 80% | v14/v15 已完成 validation 消融；结构/表面指标有改善信号，但 foreground overprediction 与 calibration 代价明显，当前不选作后续 baseline；骨折/非管状骨结构适用性仍待独立检查 |
 | 困难样本增强 | 🟠 待真实验证 | 68% | 已落地可配置 3D flip/小角度旋转/各向同性缩放、gamma、Gaussian noise、HU shift 与 boundary-proxy hard sampling；强度增强已兼容 z-score CT 并使用 metadata 精确回到 HU 域。金属伪影与基于真实模型误差/uncertainty 的 hard mining 仍待实验 |
-| 不确定性机制 | 🟠 待真实验证 | 82% | predictive entropy、Top-percent ROI、膨胀、uncertainty→error AUROC/AUPRC、错误/正确平均熵、Top-percent error recall/ROI error rate 已实现；新增体素级 calibration：ECE、MCE、multiclass Brier score、NLL、mean confidence、accuracy、confidence gap，并以固定 seed 采样控制大体积内存；局部残差 refinement 已补 ROI-only 二阶段训练闭环。尚无真实 baseline checkpoint 条件下的定量收益、校准结论与消融 |
+| 不确定性机制 | 🟡 进行中 | 90% | v13 validation `liver_7/liver_8` 已有真实 prediction + predictive entropy，并完成 uncertainty/calibration 两例稳定性分析：AUROC=`0.92949/0.94466`、AUPRC=`0.33354/0.33014`、Top-10% error recall=`0.72891/0.79450`；ECE=`0.01418/0.00767`、Brier=`0.05465/0.03969`、NLL=`0.12079/0.08571`。error voxel entropy 约为 correct voxel 的 `10.4×/12.4×`，支持 uncertainty 作为 error indicator/QC/refinement trigger 的 validation 信号；但仅 2 例，不能声称总体稳定或已完成 calibration。ROI refinement 仍待真实 validation |
 | 训练/验证框架 | 🟡 进行中 | 99% | DataLoader/AdamW/AMP/gradient accumulation/sliding-window、scheduler、完整 run 追踪已接入；`train.py` 支持 `--allow-cpu`、可靠 `--resume` 与 `training.patches_per_case`。balanced v3 已实际使用 `validation.patch_mode=false`，逐 epoch 直接以 `liver_7/liver_8` full-volume Dice 选 checkpoint；epoch 1/2 已完成，说明 full-volume-aware selector 已进入真实训练闭环，不再依赖固定 foreground patch proxy |
 | 评价指标 | ✅ 已完成（代码+首个真实 pilot test） | 100% | Dice、IoU、Precision、Recall、HD95、ASSD、component count/error、false merge/break 已接入；包含 uncertainty→error 与 ECE/MCE/Brier/NLL 等指标；`evaluate.py` 可统一写入逐病例 CSV 与 summary，并新增安全 `--case-id` 以支持 CPU 分病例 full-volume 执行，且强制病例必须属于当前 validation/test split。5-epoch formal-pilot 已对独立 `liver_169` 完成 full-volume CPU evaluation；该旧结果仅为 10 例流程 pilot，禁止作为论文正式结果 |
 | Web 科研辅助分析原型 | 🟡 进行中 | 85% | 首页/上传/健康检查、MPR、10 例人工 QC reviewer、C1–L6 可读标签、真值 PLY WebGL2 3D、简化/物理测量均已完成；QC reviewer 已修复全站 `.card` grid-column 与 QC 网格冲突，病例选择后使用 `hidden + display:none!important` 彻底关闭病例层并进入主审核区，“上一例 / 下一例”保持审核区，悬浮按钮可随时重新打开病例列表；已在本机 Edge 对真实 `liver_0` 完成点击关闭/重新展开实机验证。另有 SDF surface 选择与 evaluation results-review，可读取未来 prediction/entropy MPR。当前 `/api/research/evaluations` 实测 200 且 total=0，真实 checkpoint/prediction 仍不存在，系统没有伪造结果 |
@@ -2465,3 +2465,30 @@ v17=`configs/orthopedic_ct_cpu_binary_sampling_boundary_hard_v17.yaml`，有效 
 **v21 HU shift（-50～+50 HU）**：已确认 Dataset 的 `ct_normalized` 强度增强使用 preprocessing metadata 的 `clipped_mean_hu/clipped_std_hu`，以 HU-domain 等价方式实施 shift，不把 z-score 错误裁剪到 `[0,1]`。唯一真实 run=`experiments/20260829_025018_cpu_binary_aug_hu_shift_v21_roi64`。epoch1 train loss=`2.55658871`、Dice=`0.03671569`；按规则允许 epoch2 复核，epoch2 train loss=`2.43075695`、Dice=`0.03871272`。虽然略有回升，但仍比 v13 低约 `0.0160`，远未恢复到可竞争区间，因此已主动停止父/子训练进程，不跑 epoch3。该 STOP run 没有伪造 `summary.json`；保留真实 `history.csv`、`sampling_stats.csv`、`best.pt/last.pt`。结论：**v21 FAIL / 不选**。
 
 最终 augmentation 决策：**v18 standard geometric 不选、v19 gamma 不选、v20 Gaussian 不取代 baseline、v21 HU shift 不选；正式保留 v13 原有 flip-only augmentation。** 当前固定 validation baseline 继续为：CT-only + Region+Boundary + Bernoulli sampling（foreground_probability=`0.25`、patches_per_case=`4`）+ flip-only geometric augmentation + ROI=`64³` training + AdamW peak lr=`5e-5` + 既定 scheduler/seed + epoch2 起 encoder/decoder-feature/BN-running-stat freeze + full-volume validation。当前仍为 `lock parameters=NO`、`formal independent test ready=NO`，下一阶段进入 uncertainty/calibration、真实 difficult-sample 分析与 refinement；所有阈值/策略仍只能由 `liver_7/liver_8` validation 决定。
+
+### 2026-08-29｜阶段 BI：v13 uncertainty / calibration 两例稳定性分析完成
+
+重新接管后真实核验：`HEAD=origin/main=c090514c6611c295d5ca5932f937e10713ea5bf7`，工作树 clean；没有项目训练 Python 进程。v13 `best.pt` 存在，且 `experiments/evaluation_20260828_v13e3_liver7` / `...liver8` 中的 `prediction.nii.gz`、`predictive_entropy.nii.gz`、`metrics_per_case.csv`、`summary.json` 均完整，因此本阶段**直接复用已有 validation inference，不重复推理**。独立 test `ctspine1k-msd-t10-liver_169` 未访问。
+
+逐病例真实 uncertainty / calibration：
+
+| 指标 | liver_7 | liver_8 | 两例均值 | 两例绝对差 |
+|---|---:|---:|---:|---:|
+| uncertainty→error AUROC | 0.929493 | 0.944655 | 0.937074 | 0.015163 |
+| uncertainty→error AUPRC | 0.333540 | 0.330136 | 0.331838 | 0.003403 |
+| Top-10% error recall | 0.728909 | 0.794498 | 0.761704 | 0.065589 |
+| mean entropy on error | 0.562366 | 0.593707 | 0.578037 | 0.031341 |
+| mean entropy on correct | 0.054027 | 0.047809 | 0.050918 | 0.006218 |
+| ECE | 0.014179 | 0.007673 | 0.010926 | 0.006506 |
+| MCE | 0.075926 | 0.039879 | 0.057903 | 0.036047 |
+| Brier | 0.054654 | 0.039693 | 0.047174 | 0.014961 |
+| NLL | 0.120785 | 0.085713 | 0.103249 | 0.035072 |
+| confidence gap | 0.014109 | 0.007673 | 0.010891 | 0.006436 |
+
+两例 error voxel 的平均 entropy 分别约为 correct voxel 的 `10.41×` 与 `12.42×`；同时 AUROC 两例均 >`0.92`、Top-10% uncertainty 区域可覆盖约 `72.9%/79.4%` 的真实错误。**因此在当前两例 validation 上，uncertainty 可以作为较强的 error indicator，并具备 QC signal 与 ROI refinement trigger 的直接定量依据。** AUPRC 两例约 `0.33` 且非常接近，说明 ranking 在两例之间有一定一致性；但 error prevalence 仅约 `3.50%/2.55%`，AUPRC 不应与 AUROC脱离基线单独夸大。
+
+calibration 方面 ECE / confidence gap 都较低，`liver_8` 好于 `liver_7`，但 MCE、Brier、NLL 仍存在明显病例差异；更重要的是当前 segmentation Dice 仍仅 `0.04531/0.06411`，低 ECE 主要反映绝大多数背景体素上的整体置信行为，**不能据此宣称模型在骨结构前景上“已校准”或临床可靠**。当前严谨结论为：uncertainty ranking 的两例稳定性较好；calibration 的总体数值较低但病例间仍有差异，且受严重类别不平衡影响，只能作为 validation 工程证据。
+
+科研问题结论：1) error indicator=`YES（validation evidence）`；2) QC signal=`YES（可用于高风险区域提示，但需更多病例验证）`；3) refinement trigger=`YES（优先使用 percentile/top-percent ROI，阈值只能由 liver_7/liver_8 决定）`；4) 两例 stability=`部分支持`，AUROC/AUPRC 和 error-vs-correct entropy 一致性较好，Top-10% recall 与 calibration 指标存在病例差；5) 支持指标为 AUROC、AUPRC、Top-10% error recall、error/correct entropy gap，限制指标/证据为仅 2 个 validation 病例、低 Dice、类别不平衡及 MCE/Brier/NLL 的病例差异。
+
+本阶段不改变 v13 baseline，不锁参：`lock parameters=NO`、`formal independent test ready=NO`。下一步进入 high-loss / high-uncertainty difficult mining 与真实 thick-slice/data-evidence 核验，然后再做 ROI refinement。
