@@ -341,11 +341,11 @@
 
 - [x] Region：复用 v11 CT-only stable baseline，epoch3 两例平均 Dice=`0.05465757`、HD95/ASSD=`186.0500/51.5220 mm`
 - [x] Region + Boundary：v13，boundary weight=`0.1`，3 epoch mean val Dice=`0.05414399 → 0.05443118 → 0.05470944`；epoch3 两例平均 HD95/ASSD=`185.9498/51.4865 mm`
-- [ ] Region + Topology
+- [x] Region + Topology：v14，topology weight=`0.1`、iterations=`10`，3 epoch mean val Dice=`0.05450790 → 0.05450464 → 0.05450933`；epoch3 两例平均 HD95/ASSD=`183.9914/50.5799 mm`
 - [ ] Region + Boundary + Topology
 - [ ] loss 权重 validation grid
 - [x] Boundary 对 HD95/ASSD 的影响：相对 Region，HD95 仅改善约 `0.1002 mm`、ASSD 仅改善约 `0.0355 mm`，Dice 提升约 `5.19e-5`；Precision 略降、false break 略增、calibration 略差，因此判定为**轻微但很弱的改善证据，尚不足以称为明确收益**
-- [ ] Topology 对 false merge / false break 的影响
+- [x] Topology 对 false merge / false break 的影响：相对 Region，平均 component error=`1548→1540`、false break=`64→62`、false merge=`0.5→0.5`，HD95/ASSD 改善约 `2.0586/0.9421 mm`；但 Dice 下降约 `1.48e-4`、Precision 下降、prediction/GT foreground ratio=`3.998×→5.034×`、ECE/Brier/NLL 变差，因此当前判定为**结构/表面有一定改善，但总体证据仍不充分（evidence inconclusive）**
 - [ ] 骨折/真实断裂病例单独检查
 
 ### P1-4 困难样本实验

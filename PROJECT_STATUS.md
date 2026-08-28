@@ -2377,3 +2377,23 @@ v13 epoch3 `best.pt` validation-only detailed evaluation：`liver_7` Dice=`0.045
 freeze verification 继续通过：v13 epoch3 checkpoint optimizer state 中 203 个 frozen-group 参数 step=`28`，仅 final `linear_pred` 2 个参数 step=`84`；9 个 BatchNorm3d `num_batches_tracked=28`。这与 epoch2 起 encoder + decoder feature + BN-running-stat freeze、仅 final head 继续训练的策略一致。独立 test `liver_169` 本阶段未访问。stable baseline 仍为 engineering/validation 级；lock parameters=`NO`、formal independent test ready=`NO`。
 
 下一步直接进入 v14 Region+Topology，重点看 component count / false merge / false break 是否相对 Region 有真实改善；随后 v15 Region+Boundary+Topology。
+
+
+### 2026-08-28｜阶段 BD：v14 Region+Topology loss ablation 完成
+
+v14=`configs/orthopedic_ct_cpu_binary_loss_region_topology_v14.yaml` 继续以 v11 CT-only Region stable baseline 为唯一对照，只改变 loss composition：`region=1.0`、`boundary=0.0`、`topology=0.1`、`topology_iterations=10`；input、ROI、sampling、lr、scheduler、seed、freeze policy、validation 与 inference 均保持不变。正式 preflight 已再次通过：`ready=true / blocker_count=0`。独立 test `ctspine1k-msd-t10-liver_169` 本阶段未访问。
+
+最初 run=`experiments/20260828_121524_cpu_binary_loss_region_topology_v14_roi64` 在 epoch1 训练 28 patches 后因工具 300 秒上限停在 full-volume validation，未产生 history/checkpoint，因此明确不作为结果。有效 run=`experiments/20260828_122048_cpu_binary_loss_region_topology_v14_roi64`：epoch1 train loss=`2.64983754498618`、mean val Dice=`0.0545078970525526`；epoch2 由同一 run `last.pt` resume 后 train loss=`2.388446888753346`、mean val Dice=`0.05450463747160135`；epoch3 再由同一 run resume 后 train loss=`1.9175574907234736`、mean val Dice=`0.05450932691321425`、std=`0.0061590328625196755`。三轮 sampling 仍为 28 patches/epoch，foreground/background=`10/18、10/18、8/20`，foreground fraction mean=`0.07907336/0.08840765/0.05680016`，与 v11 对应 epoch 一致。
+
+v14 epoch3 `best.pt` validation-only detailed evaluation 采用分病例执行，避免 CPU full-volume evaluation 再次触发工具超时：
+
+- `liver_7`：Dice=`0.0483502940`、IoU=`0.0247740637`、Precision=`0.0288167426`、Recall=`0.1500882565`、HD95=`194.2215 mm`、ASSD=`54.2587 mm`；prediction/GT foreground=`3.6438% / 0.69961%`，ratio=`5.20837×`；pred/GT components=`1545/3`，component error=`1542`，false merge/break=`1/65`；uncertainty AUROC/AUPRC=`0.93203/0.35444`，Top-10% error recall=`0.72025`；ECE/MCE/Brier/NLL=`0.01776/0.09953/0.06347/0.13382`，confidence gap=`0.01773`；CPU inference≈`59.68 s`。
+- `liver_8`：Dice=`0.0606683598`、IoU=`0.0312831279`、Precision=`0.0365756981`、Recall=`0.1777602455`、HD95=`173.7613 mm`、ASSD=`46.9011 mm`；prediction/GT foreground=`2.7506% / 0.56596%`，ratio=`4.86006×`；pred/GT components=`1540/2`，component error=`1538`，false merge/break=`0/59`；uncertainty AUROC/AUPRC=`0.94693/0.34346`，Top-10% error recall=`0.79514`；ECE/MCE/Brier/NLL=`0.01051/0.06257/0.04737/0.09661`，confidence gap=`0.01038`；CPU inference≈`90.61 s`。
+
+两例平均 v14：Dice=`0.0545093269`、IoU=`0.0280285958`、Precision=`0.0326962203`、Recall=`0.1639242510`、HD95=`183.9914268 mm`、ASSD=`50.5799253 mm`、prediction/GT foreground ratio=`5.034217×`、component error=`1540.0`、false merge=`0.5`、false break=`62.0`；uncertainty AUROC/AUPRC=`0.93948/0.34895`、Top-10% error recall=`0.75770`；ECE/MCE/Brier/NLL=`0.01413/0.08105/0.05542/0.11522`、confidence gap=`0.01406`；CPU inference≈`75.15 s`。
+
+与 v11 Region 同两例严格对照：v11 平均 Dice=`0.0546575740`、HD95=`186.0500241 mm`、ASSD=`51.5220126 mm`、Precision=`0.0342507730`、Recall=`0.1355391270`、prediction/GT foreground ratio=`3.997598×`、component error=`1548.0`、false merge=`0.5`、false break=`64.0`。因此 Topology 使 component error `1548→1540`、false break `64→62`、HD95 改善约 `2.0586 mm`、ASSD 改善约 `0.9421 mm`，且 uncertainty AUROC/AUPRC 分别约 `+0.00257/+0.01957`；但 Dice 下降约 `1.48e-4`、Precision 下降约 `0.00155`、prediction/GT foreground ratio 增加约 `1.04×`，ECE/Brier/NLL/confidence gap 均变差，Top-10% error recall 也略降。科学判断：**Region+Topology 对结构/表面指标出现一定改善信号，但代价是更强 foreground overprediction、较差 calibration 与轻微 Dice/Precision 下降；当前证据不足以判定 Region+Topology 整体优于 Region，正式结论为 evidence inconclusive。** 因此不锁定 Topology，继续 v15 Region+Boundary+Topology 完成 loss ablation。
+
+freeze/checkpoint verification 继续通过：v14 epoch3 `best.pt` 的 AdamW state 共 205 个参数，其中 step=`28` 有 203 个、step=`84` 有 2 个；9 个 BatchNorm `num_batches_tracked` 均为 `28`。这与 epoch1 全模型训练、epoch2/3 冻结 encoder + decoder feature + BN running stats、仅 final `linear_pred` 两个参数继续更新的策略一致。stable baseline 仍为 engineering/validation 级；lock parameters=`NO`；formal independent test ready=`NO`；`liver_169=未访问`。
+
+下一步直接执行 v15 Region+Boundary+Topology；完成后对 Region / Region+Boundary / Region+Topology / Region+Boundary+Topology 做统一 loss ablation 判断，再进入 sampling ablation。
