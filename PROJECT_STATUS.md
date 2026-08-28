@@ -2362,3 +2362,18 @@ v12 epoch1 checkpoint 已被后续 `best.pt/last.pt` 覆盖，本阶段没有伪
 输入消融最终判定：**CT-only（v11）better，作为后续 loss ablation baseline。** v12 CT+bone-window 在当前 normalization/architecture 下产生严重 foreground overprediction，STOP，不继续扩展该输入方向。stable baseline=`YES`（仍指 v11 engineering/validation stable baseline）；lock parameters=`NO`；formal independent test ready=`NO`；本轮 `liver_169=未访问`。
 
 下一步立即以 v11 CT-only 为固定 input baseline 进入 loss ablation：Region、Region+Boundary、Region+Topology、Region+Boundary+Topology；每次只改变 loss 这一主要变量，继续保持 ROI/sampling/lr/scheduler/augmentation/seed/freeze policy/validation 不变。若 3-epoch minimal comparison 已明显灾难性失败，则按 STOP 规则记录并进入下一项，避免浪费 CPU。
+
+
+### 2026-08-28｜阶段 BC：v13 Region+Boundary loss ablation 完成
+
+以输入消融胜出的 v11 CT-only stable baseline 为唯一基线，v13=`configs/orthopedic_ct_cpu_binary_loss_region_boundary_v13.yaml` 只改变 loss composition：由 Region Dice+CE 改为 `joint_orthopedic`，保持 region=`1.0`、新增 boundary=`0.1`、topology=`0.0`；input、ROI、sampling、lr、scheduler、seed、freeze policy、validation 与 inference 均不变。config diff 未发现其它主要实验变量。
+
+真实 run=`experiments/20260828_002035_cpu_binary_loss_region_boundary_v13_roi64`。最初两次工具 timeout 留下 `20260828_001444...` 与 `20260828_002420...` 空 history run，均未作为结果；有效 run 未重复训练。三轮结果：epoch1 train loss=`2.5547913696084703`、mean val Dice=`0.05414399340794464`；epoch2 train loss=`2.305156431027821`、mean val Dice=`0.05443117660509808`；epoch3 train loss=`1.830046398299081`、mean val Dice=`0.054709440953703406`、std=`0.009402906878641024`。三轮 sampling 与 v11 对应 epoch 完全一致：28 patches/epoch，foreground/background=`10/18、10/18、8/20`，foreground fraction mean=`0.07907336/0.08840765/0.05680016`。
+
+v13 epoch3 `best.pt` validation-only detailed evaluation：`liver_7` Dice=`0.0453065341`、IoU=`0.0231783320`、Precision=`0.0279913112`、Recall=`0.1187878242`、HD95=`197.3914 mm`、ASSD=`55.3591 mm`、prediction/GT foreground ratio=`4.2437×`、pred/GT components=`1564/3`、component error=`1561`、false merge/break=`1/69`；`liver_8` Dice=`0.0641123478`、IoU=`0.0331178040`、Precision=`0.0404694855`、Recall=`0.1541957466`、HD95=`174.5083 mm`、ASSD=`47.6139 mm`、ratio=`3.8102×`、pred/GT components=`1528/2`、component error=`1526`、false merge/break=`0/60`。两例平均 Dice=`0.05470944095`、IoU=`0.0281480680`、Precision=`0.0342303983`、Recall=`0.1364917854`、HD95=`185.9498359 mm`、ASSD=`51.4864689 mm`、foreground ratio=`4.026956×`、component error=`1543.5`。
+
+与 v11 Region 同两例严格对照：v11 平均 Dice=`0.0546575740`、HD95=`186.0500241 mm`、ASSD=`51.5220126 mm`、Precision=`0.0342507730`、Recall=`0.1355391270`、foreground ratio=`3.997598×`、component error=`1548.0`。因此 Boundary 使 Dice 仅提升约 `5.19e-5`，HD95 仅改善约 `0.1002 mm`、ASSD 约 `0.0355 mm`、component error 约 `4.5`；同时 Precision 略降、foreground ratio 略升、false break 平均 `64.0→64.5`，ECE/Brier/NLL 也有极小恶化。科学判断：**Region+Boundary 在当前 0.1 权重下只显示轻微且非常弱的表面改善证据，不能写成明确收益；不因该微小差异锁定 Boundary。**
+
+freeze verification 继续通过：v13 epoch3 checkpoint optimizer state 中 203 个 frozen-group 参数 step=`28`，仅 final `linear_pred` 2 个参数 step=`84`；9 个 BatchNorm3d `num_batches_tracked=28`。这与 epoch2 起 encoder + decoder feature + BN-running-stat freeze、仅 final head 继续训练的策略一致。独立 test `liver_169` 本阶段未访问。stable baseline 仍为 engineering/validation 级；lock parameters=`NO`、formal independent test ready=`NO`。
+
+下一步直接进入 v14 Region+Topology，重点看 component count / false merge / false break 是否相对 Region 有真实改善；随后 v15 Region+Boundary+Topology。

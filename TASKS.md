@@ -339,12 +339,12 @@
 
 ### P1-3 联合损失消融
 
-- [ ] Region
-- [ ] Region + Boundary
+- [x] Region：复用 v11 CT-only stable baseline，epoch3 两例平均 Dice=`0.05465757`、HD95/ASSD=`186.0500/51.5220 mm`
+- [x] Region + Boundary：v13，boundary weight=`0.1`，3 epoch mean val Dice=`0.05414399 → 0.05443118 → 0.05470944`；epoch3 两例平均 HD95/ASSD=`185.9498/51.4865 mm`
 - [ ] Region + Topology
 - [ ] Region + Boundary + Topology
 - [ ] loss 权重 validation grid
-- [ ] Boundary 对 HD95/ASSD 的影响
+- [x] Boundary 对 HD95/ASSD 的影响：相对 Region，HD95 仅改善约 `0.1002 mm`、ASSD 仅改善约 `0.0355 mm`，Dice 提升约 `5.19e-5`；Precision 略降、false break 略增、calibration 略差，因此判定为**轻微但很弱的改善证据，尚不足以称为明确收益**
 - [ ] Topology 对 false merge / false break 的影响
 - [ ] 骨折/真实断裂病例单独检查
 
