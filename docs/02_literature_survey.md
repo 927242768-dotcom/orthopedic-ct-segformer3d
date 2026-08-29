@@ -15,7 +15,7 @@
 5. 拓扑保持；
 6. 困难样本、不确定性与三维重建。
 
-当前已从“首批必读集合”扩展到 **44 条结构化文献矩阵**，详见 `docs/08_literature_matrix.md`；其中 **42 条英文核心题录**已同步为机器可用 `paper/references.bib`。2024–2026 年脊柱直接工作已补入 SpineMamba、解剖变异感知 Transformer、VertebraFormer、Residual-Encoder nnU-Net 强基线、椎体骨折 nnU-Net pipeline、真实腰椎金属植入物 deep-MAR，以及直接记录低骨密度椎体融合/分裂失败模式的 3D segmentation 工作；后续重点转向外部泛化和国内 CNKI/万方正式题录。
+当前已从“首批必读集合”扩展到 **44 条结构化文献矩阵**，详见 `docs/08_literature_matrix.md`；`paper/references.bib` 已同步为 **44 条机器可用题录（42 条英文核心 + 2 条已核验中文文献）**。2024–2026 年脊柱直接工作已补入 SpineMamba、解剖变异感知 Transformer、VertebraFormer、Residual-Encoder nnU-Net 强基线、椎体骨折 nnU-Net pipeline、真实腰椎金属植入物 deep-MAR，以及直接记录低骨密度椎体融合/分裂失败模式的 3D segmentation 工作；两条国内文献已分别通过万方医学网与《中国医学装备》期刊官网/CNKI 期刊页完成题录核验，后续重点转向外部泛化、真实强 baseline 和投稿格式统一。
 
 ---
 
@@ -498,13 +498,13 @@ clDice 最初重点面向管状/网络结构。骨骼并非所有部位都满足
 - [x] topology-preserving 主线纳入 clDice、persistent-homology、Betti matching 与 TEDS-Net；
 - [x] uncertainty 主线纳入 MC Dropout、Deep Ensemble、Calibration、医学分割 calibration、EDUE、UCTNet；
 - [x] 三维重建主线纳入 Marching Cubes、QEM、DeepSDF、Occupancy Networks；
-- [x] 已形成 44 条结构化文献矩阵，其中 42 条英文核心题录进入 `paper/references.bib`；
+- [x] 已形成 44 条结构化文献矩阵；`paper/references.bib` 共 44 条机器可用题录（42 条英文核心 + 2 条已核验中文文献）；
 - [x] 已补 2025–2026 骨/椎体 CT 直接工作：SpineMamba、解剖变异感知 Transformer、VertebraFormer、Residual-Encoder nnU-Net 强 baseline、椎体骨折 nnU-Net pipeline；
 - [x] 已补真实腰椎金属植入物 deep-MAR 文献，作为 metal-artifact 困难病例与真实伪影校验依据；
 - [ ] 继续补与 VerSe/CTSpine1K 同任务的现代 ConvNet/状态空间强基线，但不再机械凑数量；
 - [x] 已补低骨密度 CT 椎体分割直接文献：低骨密度可出现 vertebra fusion/split，支撑 low-density subset 与 false merge/false break 分析；
 - [ ] 补各向异性 CT 超分辨率/形状插值与连续表面重建医学应用；
-- [ ] 国内条目回 CNKI/万方逐条核验作者、卷期、页码和 DOI/基金信息；
+- [x] 国内条目已回万方医学网与《中国医学装备》期刊官网/CNKI 期刊页逐条核验作者、卷期、页码和基金信息；页面未给出可确认 DOI 的条目保持 DOI 空缺，不补造；
 - [ ] 正式投稿前统一 BibTeX 作者名、页码、期刊缩写与引用格式。
 
 
@@ -514,7 +514,7 @@ clDice 最初重点面向管状/网络结构。骨骼并非所有部位都满足
 
 ### 12.1 肋骨 CT 自动分割与三维重组（2022）
 
-**伍志发，刘梦秋，吴娇艳，刘影. 基于深度学习的 CT 图像肋骨自动分割与三维重组研究. 临床放射学杂志, 2022, 41(2):351-356.**
+**伍志发，刘梦秋，吴娇艳，刘影. 基于深度学习的 CT 图像肋骨自动分割与三维重组研究. 临床放射学杂志, 2022, 41(2):351-356.**（2026-08-30 已由万方医学网一手页面复核作者、卷期、页码与基金信息；页面未列 DOI）
 
 万方摘要显示，该研究收集 130 例胸部 CT，比较 UNet 3D、VNet、DenseNet 3D 与 DenseVoxelNet，并把自动分割结果用于肋骨三维重组；还使用来自另外三台 CT 设备的数据进行独立验证。对本项目最有价值的不是直接复用其性能数字，而是其“**3D 分割 → 独立设备验证 → 三维重组**”研究闭环，可作为骨科 CT 系统设计和国产临床研究写作的直接参考。
 
@@ -522,7 +522,7 @@ clDice 最初重点面向管状/网络结构。骨骼并非所有部位都满足
 
 ### 12.2 椎体转移瘤 CT 靶区三维分割（2026）
 
-**艾念，周雪阳，薄宏宇，等. 基于残差 U-net 神经网络实现椎体转移瘤放疗靶区的自动勾画研究. 中国医学装备, 2026, 23(5):28-32.**
+**艾念，周雪阳，薄宏宇，姚鹏，周潘. 基于残差 U-net 神经网络实现椎体转移瘤放疗靶区的自动勾画研究. 中国医学装备, 2026, 23(5):28-32.**（2026-08-30 已由《中国医学装备》期刊官网/CNKI 期刊页一手页面复核；页面 DOI 字段为空）
 
 该研究基于 87 例匿名化 CT 影像比较 2D/3D U-Net 与 2D/3D ResUNet，并同时采用 DSC、IoU 和 Hausdorff Distance 评价。它直接支持本项目两个设计判断：
 

@@ -326,4 +326,4 @@ Uncertainty 在独立 test 上仍保留一定错误排序能力（AUROC=`0.86424
 21. Xiong X, Graves S A, Gross B A, et al. Lumbar and Thoracic Vertebrae Segmentation in CT Scans Using a 3D Multi-Object Localization and Segmentation CNN. Tomography, 2024, 10(5):738-760.
 22. Isensee F, Jaeger P F, Kohl S A A, Petersen J, Maier-Hein K H. nnU-Net: a self-configuring method for deep learning-based biomedical image segmentation. Nature Methods, 2021, 18:203-211.
 
-> 本稿采用顺序编码引用，正文新增引用均与本节编号对应。机器可用参考文献库位于 `paper/references.bib`（当前 42 条英文核心条目），结构化文献矩阵见 `docs/08_literature_matrix.md`（当前 44 条）。正式投稿前仍需按目标期刊格式统一题录，并对国内文献与最新正式发表版本再次核验。
+> 本稿采用顺序编码引用，正文新增引用均与本节编号对应。机器可用参考文献库位于 `paper/references.bib`（当前 44 条：42 条英文核心 + 2 条已核验中文文献），结构化文献矩阵见 `docs/08_literature_matrix.md`（当前 44 条）。两条国内文献已分别通过万方医学网与《中国医学装备》期刊官网/CNKI 期刊页完成题录核验；正式投稿前仍需按目标期刊/学校模板统一参考文献样式，并复核届时是否出现更新的正式发表版本。

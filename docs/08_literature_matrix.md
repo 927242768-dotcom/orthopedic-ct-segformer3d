@@ -44,8 +44,8 @@
 | S04 | Lessmann et al., **Iterative fully convolutional neural networks for automatic vertebra segmentation and identification** | 2019, Medical Image Analysis | 迭代式单椎体分割/识别 | 说明 vertebra instance/identification 不等于简单 binary segmentation；有助于最终任务定义 | A |
 | S05 | Wasserthal et al., **TotalSegmentator: Robust Segmentation of 104 Anatomic Structures in CT Images** | 2023, Radiology: AI | 大规模多器官/骨结构 CT segmentation | 可做弱外部泛化/标签来源参考；不能与专用 vertebra benchmark 混为同一任务 | A |
 | S06 | Li et al., **VerFormer: Vertebrae-Aware Transformer for Automatic Spine Segmentation from CT Images** | 2024, Diagnostics 14(17):1859 | Vertebrae-aware Global block / VGQ；VerSe 2019/2020 | 直接证明已有 Transformer 脊柱 CT 研究；其作者也讨论固定 token 对多尺度的限制，可作为本项目 3D 多尺度路线的直接对照 | A |
-| S07 | 国内肋骨 CT 三维分割与三维重组相关研究（见 `docs/02_literature_survey.md` 原始记录） | 国内文献 | 肋骨 CT segmentation + reconstruction | 用于国内研究现状；最终投稿前应回 CNKI/万方逐条核验题录和引用格式 | B |
-| S08 | 国内椎体转移瘤 CT 2D/3D U-Net/ResUNet 对比研究（见原始调研） | 国内文献 | 病变/椎体 CT segmentation | 支撑国内骨科 CT 已有 2D/3D CNN 应用；正式中文参考文献需数据库复核 | B |
+| S07 | 伍志发，刘梦秋，吴娇艳，刘影，**基于深度学习的 CT 图像肋骨自动分割与三维重组研究** | 2022, 临床放射学杂志 41(2):351–356；万方核验 | 130 例胸部 CT；UNet 3D / VNet / DenseNet 3D / DenseVoxelNet；另三台 CT 设备独立验证；三维重组 | 支撑国内骨 CT “3D 分割→跨设备验证→三维重组”的完整研究闭环；题录已由万方医学网一手页面核验 | B |
+| S08 | 艾念，周雪阳，薄宏宇，姚鹏，周潘，**基于残差 U-net 神经网络实现椎体转移瘤放疗靶区的自动勾画研究** | 2026, 中国医学装备 23(5):28–32；期刊官网/CNKI 核验 | 87 例匿名化 CT；UNet-2D/3D、RESUNet-2D/3D；DSC / IoU / HD | 支撑骨/椎体 CT 的真实 3D CNN 对照及“不能只报 Dice”的评价设计；题录已由期刊官网/CNKI 一手页面核验 | B |
 | S09 | Zhang et al., **SpineMamba: Enhancing 3D spinal segmentation in clinical imaging through residual visual Mamba layers and shape priors** | 2025, Computerized Medical Imaging and Graphics 123:102531 | 3D spine segmentation；Residual Visual Mamba + learnable 3D spine shape prior | 直接说明 2025 年脊柱 3D 分割已开始用 state-space model 与显式形状先验；本项目若主打 topology/shape 约束，必须与该类现代结构先验工作区分并做强 baseline | A |
 | S10 | Yang et al., **Transformer-enhanced vertebrae segmentation and anatomical variation recognition from CT images** | 2025, Scientific Reports 15:34329 | VerSe 2019/2020；WNet segmentation + ViT typing + anatomical-variation attention | 支撑“椎体分割还需考虑解剖变异与全局上下文”；其公开方法也做 slice skipping/noise/scanner variation 鲁棒性测试，可启发本项目困难病例与 domain-shift 设计 | A |
 | S11 | Du et al., **Structure-aware multi-task learning with domain generalization for robust vertebrae analysis in spinal CT** | 2026, npj Digital Medicine 9:217 | VertebraFormer；segmentation + numbering + lesion localization；multi-domain / leave-one-domain-out | 直接支撑患者级划分、跨域外部验证、结构感知与多任务分析；对本项目后续“公开数据→临床脱敏数据”的 domain generalization 设计价值高 | A |
@@ -167,12 +167,12 @@ coarse logits
 paper/references.bib
 ```
 
-本矩阵当前收录 **44 个方法/数据/重建条目（含 2 个国内待数据库二次核验条目）**；`paper/references.bib` 当前有 **42 个英文核心 BibTeX 条目**。本轮新增并核验 2026 开放椎体体部数据/Residual-Encoder nnU-Net、2025 椎体骨折 nnU-Net pipeline、2025 真实腰椎金属植入物 deep-MAR，以及 2024 直接讨论低骨密度导致椎体融合/分裂失败的 3D segmentation 工作；此前已核验 SpineMamba、Scientific Reports 解剖变异 Transformer、VertebraFormer，并保留对 CTSpine1K、VerSe、VerFormer、nnFormer、SegFormer3D、TEDS-Net、EDUE 等易错题录的纠正。英文核心条目优先依据官方出版页面、PubMed、会议 Open Access、出版社页面或 arXiv 原始记录核对。
+本矩阵当前收录 **44 个方法/数据/重建条目，44 个条目均已完成当前阶段题录核验**；`paper/references.bib` 当前有 **44 个机器可用 BibTeX 条目（42 个英文核心 + 2 个已核验中文条目）**。两条国内文献已分别通过万方医学网与《中国医学装备》期刊官网/CNKI 期刊页核验作者、卷期、页码和基金信息；对应页面未提供可确认 DOI，因此不补造 DOI。本轮同时保留已核验的 2026 开放椎体体部数据/Residual-Encoder nnU-Net、2025 椎体骨折 nnU-Net pipeline、2025 真实腰椎金属植入物 deep-MAR，以及 2024 低骨密度椎体 fusion/split 失败证据。英文核心条目优先依据官方出版页面、PubMed、会议 Open Access、出版社页面或 arXiv 原始记录核对。
 
 后续扩展时遵守：
 
 - 正式投稿前逐条检查作者顺序、页码、卷期、DOI；
 - arXiv 工作若已有正式发表版本，优先换为正式版本；
-- 国内条目必须回 CNKI/万方核验，不凭二手网页补题录；
+- 国内条目必须回 CNKI/万方/期刊官网核验，不凭二手网页补题录；当前 S07/S08 已完成一手页面核验；
 - 不把仅“主题相近”的论文写成直接支持骨科 CT 结论；
 - 每次新增/删除主引用时同时更新 `paper/references.bib` 与本矩阵。

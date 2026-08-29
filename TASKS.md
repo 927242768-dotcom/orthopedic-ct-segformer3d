@@ -13,7 +13,7 @@
 | 模块 | 状态 | 说明 |
 |---|---|---|
 | 总体方案 | ✅ 已完成 | 数据→分割→不确定性→三维→Web 技术路线已建立 |
-| 文献调研 | ✅ 主体完成 | 44 条结构化矩阵，42 条英文核心 BibTeX |
+| 文献调研 | ✅ 当前阶段完成 | 44 条结构化矩阵；44 条机器可用 BibTeX（42 英文核心 + 2 已核验中文） |
 | CPU 开发环境 | ✅ 已完成 | Python 3.11.7 + `.venv`，PyTorch 2.1.0 CPU |
 | 训练算力环境 | ✅ CPU formal-pilot 可用 | Ryzen 7 8745H / PyTorch 2.1.0+cpu；显式 `--allow-cpu` 后 readiness 可通过，GPU 仅为后续提速选项 |
 | 公开数据接入 | ✅ 当前 formal-pipeline pilot 已完成 | CTSpine1K MSD-T10 真实 10 例 CT+label 已处理并固定 7/2/1 split；最终论文仍需扩样本 |
@@ -32,7 +32,7 @@
 | 三维重建工程链 | ✅ validation + independent 闭环 | physical MC、2.0 mm feature-weighted simplification、0.4 mm SDF、WebGL2 与物理测量均已完成 |
 | Web 科研原型 | ✅ validation + independent 闭环 | MPR/QC/results-review/research-3d 已读取真实 validation 与 independent evaluation 产物并完成 Edge 实机验收 |
 | 临床脱敏数据 | 🔴 外部阻塞 | 等授权/脱敏/伦理 |
-| 论文/中期材料 | 🟡 当前 pilot 已同步 | validation + 最终 independent Results、Discussion、Limitations、Conclusion 已写入；强 baseline、扩样本、CNKI/万方最终题录和全文润色仍待完成 |
+| 论文/中期材料 | 🟡 当前 pilot 已同步 | validation + 最终 independent Results、Discussion、Limitations、Conclusion 已写入；国内 CNKI/万方/期刊官网题录已核验，强 baseline、扩样本和目标模板最终格式仍待完成 |
 | 自动化测试 | ✅ 最终门禁通过 | 138 passed + Ruff clean + `git diff --check` + JS syntax check |
 
 ---
@@ -68,7 +68,7 @@
 - [x] uncertainty / calibration 相关文献
 - [x] Marching Cubes / mesh / SDF 相关文献
 - [x] 44 条结构化文献矩阵
-- [x] 42 条英文核心 BibTeX
+- [x] 44 条机器可用 BibTeX（42 条英文核心 + 2 条已核验中文文献）
 
 ### C. 数据接入与预处理
 
@@ -187,7 +187,7 @@
 - [x] 138 个 pytest 全部通过
 - [x] Ruff clean
 - [x] 4 个前端 JS 语法检查通过
-- [x] 42 条 BibTeX 结构检查通过
+- [x] 44 条 BibTeX 结构检查通过
 - [x] PowerShell 脚本语法检查通过
 - [x] GitHub Actions CI：PR/push 自动执行 pytest、Ruff、JS、JSON 与 PowerShell 静态检查
 - [x] CI 新鲜 runner 可复现获取固定 SegFormer3D `e314242` 并应用受版本控制的 PyTorch 2.1 兼容补丁
@@ -460,7 +460,7 @@
 - [x] 3D mesh 实机验收；validation 与 independent 均已完成
 - [x] Discussion 已补真实 validation/independent failure interpretation
 - [x] Conclusion 已补正式 independent test 结论
-- [ ] 中文 CNKI/万方题录最终核验
+- [x] 中文题录最终核验：伍志发等 2022 已由万方医学网核验；艾念等 2026 已由《中国医学装备》期刊官网/CNKI 期刊页核验；数据库页面未给出可确认 DOI 的条目不补造
 - [x] 当前中文技术稿章节/术语/主要顺序引用已统一并完成本轮语言润色
 - [ ] 目标期刊/学校模板确定后的最终格式与参考文献样式定稿
 - [x] 中期/结题展示源材料更新：`docs/12_final_presentation_outline.md`

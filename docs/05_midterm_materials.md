@@ -40,7 +40,7 @@ DICOM/NIfTI
 
 ### 3.2 国内外文献调研与结构化题录
 
-已形成 `docs/08_literature_matrix.md` 的 **44 条结构化文献矩阵**，并建立 `paper/references.bib` 的 **42 条英文核心 BibTeX**。当前覆盖：
+已形成 `docs/08_literature_matrix.md` 的 **44 条结构化文献矩阵**，并建立 `paper/references.bib` 的 **44 条机器可用 BibTeX（42 条英文核心 + 2 条已核验中文文献）**。当前覆盖：
 
 - SegFormer / SegFormer3D；
 - UNETR / nnFormer / Swin UNETR；
@@ -55,7 +55,7 @@ DICOM/NIfTI
 - EDUE / UCTNet 等不确定性方法；
 - 国内肋骨 CT 三维分割与重建、椎体 CT 三维分割研究。
 
-当前结论：本项目不应把“使用 Transformer”本身作为主要创新，而应聚焦**骨科 CT 标准化、多尺度轻量 3D 分割、表面/拓扑质量、困难病例和不确定性可靠性**。本轮同时纠正了 CTSpine1K、VerSe、VerFormer、nnFormer、SegFormer3D、TEDS-Net、EDUE 等易被二手题录写错的条目；国内文献仍需投稿前回 CNKI/万方逐条复核。
+当前结论：本项目不应把“使用 Transformer”本身作为主要创新，而应聚焦**骨科 CT 标准化、多尺度轻量 3D 分割、表面/拓扑质量、困难病例和不确定性可靠性**。本轮同时纠正了 CTSpine1K、VerSe、VerFormer、nnFormer、SegFormer3D、TEDS-Net、EDUE 等易被二手题录写错的条目；两条国内文献已分别通过万方医学网与《中国医学装备》期刊官网/CNKI 期刊页完成一手题录复核。
 
 ### 3.3 独立实验环境
 
@@ -252,7 +252,7 @@ Ruff: All checks passed!
 
 ## 5. 中期报告“研究进展”可直接使用的表达
 
-截至当前阶段，项目已完成总体技术路线设计、44 条结构化文献矩阵与 42 条英文核心 BibTeX，并搭建项目内 Python 3.11.7 / PyTorch 2.1.0 CPU 环境。CTSpine1K `MSD-T10` 10 例真实 CT+label 已全部完成 1 mm 标准化、自动审计与人工 QC（10/10 pass），首个任务固定为 `vertebra_binary_ctspine1k_msd_t10_v1`，patient-level split 固定为 7 train / 2 validation / 1 test。围绕 SegFormer3D 已完成训练稳定性诊断、输入、Region/Boundary/Topology loss、sampling、augmentation、模型驱动困难样本，以及 uncertainty/calibration 消融；最终 validation baseline 选择 v13：CT-only + Region+Boundary + Bernoulli sampling（foreground_probability=0.25、patches_per_case=4）+ flip-only，两例 mean Dice≈`0.05471`、HD95/ASSD≈`185.95/51.49 mm`。7-train-case uncertainty refinement 虽有候选 Dice 上升，但 Recall、fragmentation、病例稳定性与耗时恶化，因此综合判定 **REFINEMENT=FAIL**。validation/3D/Web 阶段提交 `2f333ba` push 后，最终参数通过 `docs/10_final_parameter_lock.md` 锁定并提交为 `eb0a824`；确认 `HEAD == origin/main` 后，才首次按最终锁定协议对官方 `test_private liver_169` 执行 FINAL FORMAL INDEPENDENT TEST。仓库中更早的 5-epoch pilot test 仅作为历史工程链证据，不属于本次最终锁定测试，也未用于 v13 参数选择。最终锁定协议下的正式 independent test 得到 Dice≈`0.02878`、HD95≈`136.87 mm`、ASSD≈`43.97 mm`、foreground ratio≈`2.21×`、prediction/GT components=`236/1`；uncertainty AUROC≈`0.86424`。测试后没有重新调 threshold、refinement 或模型参数。独立 prediction 的 2.0 mm simplification 顶点减少约 `77.73%`，0.4 mm SDF components `236→236`，并已在 Edge 完成 independent results-review MPR 与 3D/SDF WebGL 实机验收。当前结论必须保持：工程闭环已完整，但模型绝对分割精度仍低，不属于高精度临床系统。
+截至当前阶段，项目已完成总体技术路线设计、44 条结构化文献矩阵与 44 条机器可用 BibTeX（42 条英文核心 + 2 条已核验中文文献），并搭建项目内 Python 3.11.7 / PyTorch 2.1.0 CPU 环境。CTSpine1K `MSD-T10` 10 例真实 CT+label 已全部完成 1 mm 标准化、自动审计与人工 QC（10/10 pass），首个任务固定为 `vertebra_binary_ctspine1k_msd_t10_v1`，patient-level split 固定为 7 train / 2 validation / 1 test。围绕 SegFormer3D 已完成训练稳定性诊断、输入、Region/Boundary/Topology loss、sampling、augmentation、模型驱动困难样本，以及 uncertainty/calibration 消融；最终 validation baseline 选择 v13：CT-only + Region+Boundary + Bernoulli sampling（foreground_probability=0.25、patches_per_case=4）+ flip-only，两例 mean Dice≈`0.05471`、HD95/ASSD≈`185.95/51.49 mm`。7-train-case uncertainty refinement 虽有候选 Dice 上升，但 Recall、fragmentation、病例稳定性与耗时恶化，因此综合判定 **REFINEMENT=FAIL**。validation/3D/Web 阶段提交 `2f333ba` push 后，最终参数通过 `docs/10_final_parameter_lock.md` 锁定并提交为 `eb0a824`；确认 `HEAD == origin/main` 后，才首次按最终锁定协议对官方 `test_private liver_169` 执行 FINAL FORMAL INDEPENDENT TEST。仓库中更早的 5-epoch pilot test 仅作为历史工程链证据，不属于本次最终锁定测试，也未用于 v13 参数选择。最终锁定协议下的正式 independent test 得到 Dice≈`0.02878`、HD95≈`136.87 mm`、ASSD≈`43.97 mm`、foreground ratio≈`2.21×`、prediction/GT components=`236/1`；uncertainty AUROC≈`0.86424`。测试后没有重新调 threshold、refinement 或模型参数。独立 prediction 的 2.0 mm simplification 顶点减少约 `77.73%`，0.4 mm SDF components `236→236`，并已在 Edge 完成 independent results-review MPR 与 3D/SDF WebGL 实机验收。当前结论必须保持：工程闭环已完整，但模型绝对分割精度仍低，不属于高精度临床系统。
 
 ---
 

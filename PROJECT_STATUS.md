@@ -83,7 +83,7 @@
 | SegFormer3D 上游调研 | ✅ 已完成 | 100% | 已读 README、核心架构、loss、依赖与许可证；官方仓库已克隆到 `third_party/SegFormer3D` |
 | 项目目录与交接机制 | ✅ 已完成 | 100% | 已建立工程目录和本主台账；明确“每次实质修改必须更新本文件” |
 | 总体方案设计 | ✅ 已完成 | 100% | 已形成数据层、模型层、三维层、Web 层和实验追踪设计 |
-| 国内外文献调研 | 🟡 进行中 | 97% | 已形成 44 条结构化文献矩阵与 42 条英文核心 BibTeX；已核验现代强 baseline、骨折、真实金属植入物以及低骨密度椎体 fusion/split 直接分割失败证据。近期直接脊柱链覆盖 Residual-Encoder nnU-Net、SpineMamba、解剖变异 Transformer、VertebraFormer 等；后续重点收敛到国内 CNKI/万方正式题录复核和根据正式任务筛选实际可跑 baseline |
+| 国内外文献调研 | ✅ 当前阶段完成 | 100% | 已形成 44 条结构化文献矩阵；`paper/references.bib` 共 44 条机器可用题录（42 条英文核心 + 2 条已核验中文文献）。现代强 baseline、骨折、真实金属植入物、低骨密度椎体 fusion/split 证据均已核验；两条国内文献已分别通过万方医学网与《中国医学装备》期刊官网/CNKI 期刊页完成一手题录复核。后续只在扩大正式实验时按任务补必要文献，不再机械凑数量 |
 | 实验环境 | ✅ 已完成（CPU 可训练环境） | 96% | 项目内 Python 3.11.7 + `.venv` 已完成；当前实测 Ryzen 7 8745H（8C/16T）、约 20 GB RAM、PyTorch `2.1.0+cpu`。真实 36³ patch 与 3-epoch binary engineering pilot 均已在本机 CPU 跑通；`train.py`/`formal_readiness.py` 新增显式 `--allow-cpu`，无 NVIDIA 不再是方法学硬 blocker。GPU 仅作为后续提速选项 |
 | DICOM/CT 处理流程 | 🟡 进行中 | 96% | NIfTI pipeline 0.3.0 已在 10 例真实 CTSpine1K CT+label 上完成 1 mm 重采样、HU clip→case-wise z-score、骨窗、label nearest-neighbor、自动/交互 QC；10/10 自动审计通过。2026-08-26 复核 `manual_qc_review.csv`：10/10 四项人工检查均 `yes`、10/10 `pass`、reviewer 已填写，人工 QC P0 已解除；真实多层 DICOM series 仍待后续数据来源验证 |
 | patient-level 数据划分 | ✅ 已完成（10例 formal pilot） | 96% | 已固定 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，patient-level 互斥；官方 `test_private liver_169` 只进入 test、不参与训练/调参；`formal_experiment=true`。最终论文仍需扩大病例规模 |
@@ -99,9 +99,9 @@
 | 评价指标 | ✅ 已完成（含正式 independent test） | 100% | Dice、IoU、Precision、Recall、HD95、ASSD、component count/error、false merge/break、uncertainty 与 ECE/MCE/Brier/NLL 已接入。锁参提交 `eb0a824` push 并确认远端一致后，已对 `test_private liver_169` 执行唯一一次 FINAL FORMAL INDEPENDENT TEST：Dice=`0.02878288`、IoU=`0.01460158`、Precision=`0.02089816`、Recall=`0.04622219`、HD95=`136.8722 mm`、ASSD=`43.97199 mm`、foreground ratio=`2.21178×`、pred/target components=`236/1`、component error=`235`、false merge=`0`、false break=`29`、inference=`9.4128 s`；uncertainty AUROC/AUPRC=`0.86424/0.29665`、Top-10% error recall=`0.54993`，ECE/MCE/Brier/NLL=`0.02740/0.08782/0.08328/0.23559`。历史 pilot 结果仍只作为工程链证据 |
 | Web 科研辅助分析原型 | ✅ validation + independent test 闭环 | 99% | 首页/上传/健康检查、MPR、10 例人工 QC reviewer、C1–L6 可读标签、真值 PLY WebGL2 3D、简化/物理测量均已完成；QC reviewer 已修复全站 `.card` grid-column 与 QC 网格冲突，病例选择后使用 `hidden + display:none!important` 彻底关闭病例层并进入主审核区，“上一例 / 下一例”保持审核区，悬浮按钮可随时重新打开病例列表；已在本机 Edge 对真实 `liver_0` 完成点击关闭/重新展开实机验证。SDF surface 与 evaluation results-review 已读取真实 prediction/entropy MPR；`results-review` 已实机读取真实 v13 validation evaluation，Edge 已显示 prediction MPR overlay 与 predictive-entropy/uncertainty overlay；`research-3d` 已加载 liver_8 的 2.0 mm feature-weighted prediction mesh 与 SDF σ=0.4 mm surface，并完成 GT/prediction 双来源切换。锁参后正式 independent evaluation 已在 `results-review` 被真实识别，prediction/uncertainty MPR API 均返回 200；`research-3d` 已在 Edge 实机加载 independent liver_169 的 2.0 mm prediction mesh 与 SDF σ=0.4 mm surface |
 | 三维重建 | ✅ validation + independent test 闭环 | 99% | 已实现 physical-space Marching Cubes、PLY/JSON、vertex-clustering、SDF surface、WebGL2 与物理测量；新增相邻法向变化驱动的特征保护 vertex-clustering 候选，真实 `liver_0` 在 2.0 mm/同 30,260 顶点下将高特征区域 mean-NN 约 0.679→0.620 mm、HD95 约 1.068→1.000 mm，作为真值网格工程证据；0.4 mm SDF 保持 2→2 连通域，0.8 mm 因 2→3 被保护机制拒绝。已在 v13 validation 真实 prediction surface 上完成工程验证：liver_7/liver_8 的 2.0 mm、feature strength=8 简化分别保留约 298,840/296,483 顶点，顶点缩减约 78.18%/77.89%，简化工程 ASSD/HD95≈0.55845/1.09434 mm 与 0.54806/1.08294 mm；0.4 mm SDF 分别保持 1564→1564、1528→1528 连通域，SDF-vs-original 工程 ASSD/HD95≈0.02919/0.06790 mm 与 0.02929/0.06671 mm。独立 test prediction 也已完成：原始 mesh `365,247` 顶点 / `724,694` 面；2.0 mm + feature strength=8 后 `81,353` 顶点 / `160,384` 面，顶点缩减约 `77.73%`，简化工程 ASSD/HD95≈`0.56490/1.07159 mm`；0.4 mm SDF 保持 `236→236` components，SDF-vs-original 工程 ASSD/HD95≈`0.02536/0.06367 mm`；prediction-vs-GT vertex-nearest engineering ASSD/HD95≈`41.1398/131.8726 mm`，且 size/spacing/origin/direction 全部一致。以上均为 engineering surface 指标，不冒充分割临床 HD95/ASSD |
-| 论文 | 🟡 进行中 | 97% | 中文技术稿已完整同步当前 formal-pipeline pilot：validation 主结果、输入/loss/sampling/augmentation/difficult-sample 消融、uncertainty/calibration、`REFINEMENT=FAIL`、prediction 3D/SDF、Web prototype，以及最终锁定 v13 协议下的正式 `liver_169` independent test（Dice=`0.02878`）均已进入 Results；Discussion、Failure Cases、Limitations、Conclusion 已同步并明确低精度/非临床定位。跨架构强 baseline、扩大数据规模、CNKI/万方最终题录核验、全文格式/语言润色仍未完成，不伪造结果 |
+| 论文 | 🟡 进行中 | 98% | 中文技术稿已完整同步当前 formal-pipeline pilot：validation 主结果、输入/loss/sampling/augmentation/difficult-sample 消融、uncertainty/calibration、`REFINEMENT=FAIL`、prediction 3D/SDF、Web prototype，以及最终锁定 v13 协议下的正式 `liver_169` independent test（Dice=`0.02878`）均已进入 Results；Discussion、Failure Cases、Limitations、Conclusion 已同步并明确低精度/非临床定位。两条国内中文题录已完成一手数据库/期刊页核验；仍未完成的是跨架构强 baseline、扩大数据规模，以及目标期刊/学校模板确定后的最终格式定稿 |
 | 中期材料 | 🟡 进行中 | 98% | 已同步 10 例真实数据、`pytest=138 passed`、10/10 人工 QC、正式 binary task lock、7/2/1 formal-pilot split、`formal_readiness ready=true`；validation 消融、`REFINEMENT=FAIL`、prediction 3D/SDF、Web 实机验收，以及最终锁定协议下的正式 independent full-volume test / uncertainty-calibration / independent 3D/SDF/Web 均已写入。旧 5-epoch pilot test 仅标为历史工程链证据；后续主要外部缺口是扩大样本规模后的主实验、合法临床数据与外部验证 |
-| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 138 passed`；`ruff: All checks passed`；新增 decoder-feature freeze policy、仅保留 `linear_pred` trainable、恢复 trainability 与 v11/v10 单变量 config diff 回归测试；focused freeze tests=`15 passed`。同时保留 BatchNorm running-stat freeze、encoder freeze、fixed-per-case sampling、`region_dice_ce` 权重、`patches_per_case` 多 patch 随机流、foreground-fraction evaluation、checkpoint resume、分病例 full-volume evaluation、CPU 非 AMP autocast、epoch-aware sampling 与 `allow_cpu` readiness 测试；42 条 BibTeX 结构正常 |
+| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 138 passed`；`ruff: All checks passed`；新增 decoder-feature freeze policy、仅保留 `linear_pred` trainable、恢复 trainability 与 v11/v10 单变量 config diff 回归测试；focused freeze tests=`15 passed`。同时保留 BatchNorm running-stat freeze、encoder freeze、fixed-per-case sampling、`region_dice_ce` 权重、`patches_per_case` 多 patch 随机流、foreground-fraction evaluation、checkpoint resume、分病例 full-volume evaluation、CPU 非 AMP autocast、epoch-aware sampling 与 `allow_cpu` readiness 测试；文献库现为 44 条 BibTeX，结构检查确认 44 entries / 0 duplicate key / brace balance=0 |
 
 ### 2.1 2026-08-29 validation 阶段最终门禁
 
@@ -465,14 +465,14 @@ paper/references.bib
 
 - 研究问题、Introduction、Related Work、Methods 与 Experiment Design 主体；
 - 数据标准化、SegFormer3D、联合损失、困难样本、uncertainty/calibration、ROI refinement、physical-space mesh / SDF 与 Web 科研复核方法描述；
-- 44 条结构化文献矩阵 + 42 条英文核心 BibTeX；
+- 44 条结构化文献矩阵 + 44 条机器可用 BibTeX（42 条英文核心 + 2 条已核验中文文献）；
 - v11～v23 validation 消融的真实结果整理；
 - v13 最终 validation 主结果、uncertainty/calibration、`REFINEMENT=FAIL`、3D/SDF/Web 工程结果；
 - 最终锁定协议下唯一一次 `liver_169` independent test 的 Results；
 - Discussion、Failure Cases、Limitations 与 Conclusion；
 - 正文顺序引用已开始统一，并与当前参考文献编号对应。
 
-当前 Results 已有可追溯真实数字，不再是 TBD。仍未完成且不得伪造的部分包括：扩大样本后的主实验、真实跨架构强 baseline、metal/fracture/low-density 正式 subgroup、合法临床/多中心验证、统计显著性，以及 CNKI/万方国内题录最终核验与目标期刊格式定稿。
+当前 Results 已有可追溯真实数字，不再是 TBD。国内中文题录已完成当前阶段一手数据库/期刊页核验；仍未完成且不得伪造的部分包括：扩大样本后的主实验、真实跨架构强 baseline、metal/fracture/low-density 正式 subgroup、合法临床/多中心验证、统计显著性，以及目标期刊/学校模板确定后的最终格式定稿。
 
 ---
 
@@ -500,7 +500,7 @@ paper/references.bib
 | `docs/12_final_presentation_outline.md` | v0.3.0 中期/结题展示统一源材料 | ✅ 2026-08-29 更新 |
 | `paper/outline.md` | 论文持续写作框架 | ✅ |
 | `paper/manuscript_zh_v0.1.md` | 中文论文技术稿；validation/independent Results、Discussion、Failure Cases、Limitations、Conclusion 已同步，继续做引用/格式/语言收尾 | 🟡 |
-| `paper/references.bib` | 42 条英文核心机器可用 BibTeX，已做 key/括号结构检查 | ✅ |
+| `paper/references.bib` | 44 条机器可用 BibTeX（42 英文核心 + 2 已核验中文）；提交前执行 key/括号结构检查 | ✅ |
 | `env/requirements.txt` | 固定项目依赖 | ✅ |
 | `env/setup_env.ps1` | 项目内 Python 3.11/.venv 环境搭建；优先 uv | ✅ |
 | `env/fetch_segformer3d.ps1` | 获取官方 SegFormer3D | ✅ |
@@ -704,7 +704,7 @@ CTSpine1K Hugging Face 在早期也出现超时和并行下载失败；但改为
 ### P4｜论文/中期/软著
 
 - [x] 已建立 44 条结构化文献矩阵；已补 SpineMamba、2025 解剖变异 Transformer、2026 VertebraFormer、2026 Residual-Encoder nnU-Net、2025 骨折 pipeline、真实金属植入物 deep-MAR 与 2024 低骨密度 fusion/split 直接分割证据；
-- [x] 已建立 42 条英文核心 `paper/references.bib`，并纠正多条易错题录；
+- [x] 已建立 44 条机器可用 `paper/references.bib`（42 条英文核心 + 2 条已核验中文文献），并纠正多条易错题录；
 - [ ] 用真实实验更新论文 Results；
 - [ ] 生成主结果表和消融表；
 - [ ] 做失败案例图；
@@ -722,7 +722,7 @@ CTSpine1K Hugging Face 在早期也出现超时和并行下载失败；但改为
 - [x] 论文正文顺序引用开始统一，已补主要方法/数据集/相关工作的引用编号；
 - [x] GitHub 首页保持简洁，详细 v11～v23 过程只放 `PROJECT_STATUS.md`；
 - [x] v0.3.0 Release 已存在且内容与正式收尾状态一致，不因纯文档同步重复发版本；
-- [ ] 国内 CNKI/万方题录最终逐条核验（需要可访问数据库/真实题录证据）；
+- [x] 国内中文题录最终核验：伍志发等 2022 已由万方医学网一手页面核验；艾念等 2026 已由《中国医学装备》期刊官网/CNKI 期刊页核验；未提供可确认 DOI 的条目保持空缺，不补造；
 - [ ] 目标期刊/学校最终格式模板确定后，再做最后一轮格式定稿；
 - [ ] GitHub `LICENSE` 需项目负责人结合自研代码与 SegFormer3D GPL-3.0 边界明确选择；当前仓库未声明许可证，不自动代选。
 
@@ -2577,3 +2577,19 @@ git diff --check
 ```
 
 当前科研边界不变：正式 `liver_169` 结果已经冻结，绝对性能不满足临床应用；扩大数据、强 baseline、临床/多中心验证和统计显著性仍未完成，不得在论文、README、Release 或答辩中伪造。
+
+
+### 2026-08-30｜阶段 BM：国内中文题录一手数据库核验闭环
+
+从 `HEAD == origin/main == 817e2b817eea4a62aae9eb4e831043f27a12bb11`、working tree clean 接管。严格保持最终 independent test 冻结：本阶段只处理文献与文档，不重新训练、不重新 validation，也不再次访问 `liver_169` 做模型推理。
+
+本阶段完成两条原先标记为“国内数据库待复核”的中文文献一手核验：
+
+- 伍志发、刘梦秋、吴娇艳、刘影：《基于深度学习的 CT 图像肋骨自动分割与三维重组研究》，《临床放射学杂志》2022, 41(2):351-356。万方医学网一手页面确认作者、卷期、页码、130 例胸部 CT、四种 3D 分割网络、三台额外 CT 设备独立验证及基金信息；页面未列 DOI，因此不补造 DOI。
+- 艾念、周雪阳、薄宏宇、姚鹏、周潘：《基于残差 U-net 神经网络实现椎体转移瘤放疗靶区的自动勾画研究》，《中国医学装备》2026, 23(5):28-32。《中国医学装备》期刊官网/CNKI 期刊页确认作者、卷期、页码、87 例匿名化 CT、2D/3D U-Net 与 ResUNet 对照、DSC/IoU/HD 评价及基金信息；页面 DOI 字段为空，因此不补造 DOI。
+
+同步更新 `docs/02_literature_survey.md`、`docs/08_literature_matrix.md`、`docs/05_midterm_materials.md`、`paper/references.bib`、`paper/manuscript_zh_v0.1.md`、`README.md`、`TASKS.md` 与本主台账。文献库当前为 44 条机器可用 BibTeX：42 条英文核心 + 2 条已核验中文文献；44 条结构化文献矩阵在当前阶段均已有可追溯题录依据。
+
+仍未完成且不得伪造：扩大病例规模后的主实验、新预注册 split、真实 nnU-Net/Residual-Encoder nnU-Net 强 baseline、可靠 difficult subgroup、合法临床/多中心验证、统计分析，以及目标期刊/学校模板确定后的最终格式定稿。
+
+本阶段最终门禁：`pytest tests -q`=`138 passed, 153 warnings`；`ruff check src web tests`=`All checks passed!`；4 个前端 JS `node --check` 全部通过；BibTeX=`44 entries / 0 duplicate key / brace balance=0`；`git diff --check`=PASS。

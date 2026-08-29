@@ -79,7 +79,7 @@ D:\国创项目
 │  └─ frontend/
 ├─ paper/
 │  ├─ outline.md
-│  ├─ references.bib            # 42 条已核验英文核心 BibTeX
+│  ├─ references.bib            # 44 条机器可用 BibTeX（42 英文核心 + 2 已核验中文）
 │  └─ manuscript_zh_v0.1.md     # 中文论文技术稿，已同步 validation/independent Results
 ├─ third_party/
 │  └─ SegFormer3D/              # 官方上游仓库，保留 Git/许可证/本地兼容补丁
