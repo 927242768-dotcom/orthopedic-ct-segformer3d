@@ -13,7 +13,7 @@
 - 正式病例：`ctspine1k-msd-t10-liver_169`
 - source split：`test_private`
 - 该病例在锁参前未用于训练、validation、消融或参数选择。
-- 本次为第一次且唯一一次 FINAL FORMAL INDEPENDENT TEST；测试后禁止依据结果重新调参或重复正式测试。
+- 本次为最终锁定 v13 协议下第一次且唯一一次 FINAL FORMAL INDEPENDENT TEST；仓库中更早的 5-epoch pilot evaluation 仅为历史工程链证据，不属于本次最终正式测试，也未用于 v13 参数选择；测试后禁止依据结果重新调参或重复最终正式测试。
 
 ## 2. 固定 pipeline
 

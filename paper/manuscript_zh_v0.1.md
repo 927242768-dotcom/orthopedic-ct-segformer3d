@@ -135,7 +135,7 @@ U(v)=-\sum_c p_c(v)\log(p_c(v)+\epsilon).
 
 ### 4.2 数据划分
 
-本 pilot 采用固定 patient-level split：`liver_0`—`liver_6` 为 7 个 train cases，`liver_7/liver_8` 为 2 个 validation cases，官方 `test_private liver_169` 为唯一 independent test case；split 文件为 `data/splits/ctspine1k_msd_t10_binary_formal_pilot_v1.json`。所有输入、loss、sampling、augmentation、困难样本、uncertainty/refinement 和三维工程选择均只依据 train/validation 完成。正式 test 在锁参提交 `eb0a824c34af4f7d900432e169759115f99a2687` 已推送并确认 `HEAD == origin/main` 后才首次访问，且仅运行一次；测试结果不再用于参数选择。
+本 pilot 采用固定 patient-level split：`liver_0`—`liver_6` 为 7 个 train cases，`liver_7/liver_8` 为 2 个 validation cases，官方 `test_private liver_169` 为唯一 independent test case；split 文件为 `data/splits/ctspine1k_msd_t10_binary_formal_pilot_v1.json`。所有输入、loss、sampling、augmentation、困难样本、uncertainty/refinement 和三维工程选择均只依据 train/validation 完成。锁参提交 `eb0a824c34af4f7d900432e169759115f99a2687` 推送并确认 `HEAD == origin/main` 后，才首次按最终锁定 v13 协议执行 FINAL FORMAL INDEPENDENT TEST，且该正式测试仅运行一次；仓库中更早的 5-epoch pilot evaluation 仅作为历史工程链证据，不属于本次最终锁定测试，也未用于 v13 参数选择。
 
 ### 4.3 对比方法
 
@@ -247,7 +247,7 @@ Web 原型未重新推理或生成虚构 prediction，而是从 `experiments/<ev
 
 ### 5.9 正式独立测试
 
-最终参数锁定记录为 `docs/10_final_parameter_lock.md`，对应锁参提交 `eb0a824c34af4f7d900432e169759115f99a2687`。该提交已推送并确认 `HEAD == origin/main` 后，才对官方 `test_private liver_169` 执行**第一次且唯一一次** FINAL FORMAL INDEPENDENT TEST。测试严格使用锁定的 v13 config、`best.pt`、softmax/argmax decision 和 `refinement=disabled`，formal preflight 为 `ready=true`、0 error/0 warning。
+最终参数锁定记录为 `docs/10_final_parameter_lock.md`，对应锁参提交 `eb0a824c34af4f7d900432e169759115f99a2687`。该提交已推送并确认 `HEAD == origin/main` 后，才对官方 `test_private liver_169` 执行**最终锁定协议下第一次且唯一一次** FINAL FORMAL INDEPENDENT TEST。测试严格使用锁定的 v13 config、`best.pt`、softmax/argmax decision 和 `refinement=disabled`，formal preflight 为 `ready=true`、0 error/0 warning；更早的 5-epoch pilot evaluation 只保留为历史工程链证据，不作为本文最终独立测试结果。
 
 | Independent test case | Dice | IoU | Precision | Recall | HD95 (mm) | ASSD (mm) | Pred/GT FG | Pred/GT components | Component error | False merge | False break | Inference (s) |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|

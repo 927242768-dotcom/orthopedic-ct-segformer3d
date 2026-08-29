@@ -16,7 +16,7 @@
 | 文献调研 | ✅ 主体完成 | 44 条结构化矩阵，42 条英文核心 BibTeX |
 | CPU 开发环境 | ✅ 已完成 | Python 3.11.7 + `.venv`，PyTorch 2.1.0 CPU |
 | 训练算力环境 | ✅ CPU formal-pilot 可用 | Ryzen 7 8745H / PyTorch 2.1.0+cpu；显式 `--allow-cpu` 后 readiness 可通过，GPU 仅为后续提速选项 |
-| 公开数据接入 | ✅ 已完成工程子集 | CTSpine1K MSD-T10 真实 10 例 CT+label 已处理 |
+| 公开数据接入 | ✅ 当前 formal-pipeline pilot 已完成 | CTSpine1K MSD-T10 真实 10 例 CT+label 已处理并固定 7/2/1 split；最终论文仍需扩样本 |
 | CT 标准化流程 | ✅ 基本完成 | 1 mm 重采样、HU、z-score、骨窗、QC、label NN 重采样 |
 | 自动 QC | ✅ 已完成 | 10/10 自动审计通过 |
 | 人工 QC | ✅ 已完成 | 10/10 orientation/spacing/alignment/bone-window 均通过，reviewer 已填写 |
@@ -26,13 +26,14 @@
 | 不确定性与精修 | ✅ 当前 validation 闭环 | entropy/calibration 已完成；7-train-case refinement + liver_7/liver_8 3×3 grid/full-volume 对照已真实完成，综合判定 REFINEMENT=FAIL，最终保留 v13 coarse |
 | 正式任务定义 | ✅ 已锁定 | `vertebra_binary_ctspine1k_msd_t10_v1`，`binary_semantic`，2 类 |
 | formal-pilot patient-level split | ✅ 已固定 | 7 train / 2 validation / 1 test；`liver_169` 仅 test |
-| CPU CT-only formal-pilot baseline | 🟡 已跑通但严重欠训练 | 5 epoch 完成，最佳 patch-val Dice≈0.2719（epoch 4） |
-| 独立 full-volume pilot test | ✅ 工程链完成 | `liver_169` Dice≈0.0221，inference≈9.29 s；仅 10 例 pilot 证据，禁止作为论文正式结果 |
-| 三维重建工程链 | ✅ 基本完成 | physical MC、SDF、简化、WebGL2、物理测量 |
-| Web 科研原型 | ✅ 主体完成 | MPR/QC/3D/results-review 已具备 |
+| 旧 CPU CT-only 5-epoch pilot | ✅ 历史工程证据 | 5 epoch 完成，最佳 patch-val Dice≈0.2719（epoch 4）；后续已由 full-volume validation 驱动的 v11–v23 系列取代 |
+| 旧独立 full-volume pilot evaluation | ✅ 历史工程证据 | `liver_169` Dice≈0.0221，inference≈9.29 s；不属于最终锁定 v13 的 FINAL FORMAL INDEPENDENT TEST，也未用于 v13 参数选择 |
+| 最终锁定 v13 formal independent test | ✅ 已完成一次 | `liver_169` Dice=`0.02878`、HD95=`136.87 mm`、ASSD=`43.97 mm`、uncertainty AUROC=`0.86424`；最终锁定协议下只运行一次，测试后未调参 |
+| 三维重建工程链 | ✅ validation + independent 闭环 | physical MC、2.0 mm feature-weighted simplification、0.4 mm SDF、WebGL2 与物理测量均已完成 |
+| Web 科研原型 | ✅ validation + independent 闭环 | MPR/QC/results-review/research-3d 已读取真实 validation 与 independent evaluation 产物并完成 Edge 实机验收 |
 | 临床脱敏数据 | 🔴 外部阻塞 | 等授权/脱敏/伦理 |
-| 论文 Methods | ✅ 主体完成 | Results 仍保持 TBD |
-| 自动化测试 | ✅ 当前通过 | 125 passed + Ruff clean |
+| 论文/中期材料 | 🟡 当前 pilot 已同步 | validation + 最终 independent Results、Discussion、Limitations、Conclusion 已写入；强 baseline、扩样本、CNKI/万方最终题录和全文润色仍待完成 |
+| 自动化测试 | ✅ 最终门禁通过 | 138 passed + Ruff clean + `git diff --check` + JS syntax check |
 
 ---
 
@@ -228,7 +229,7 @@
 - [x] `lock parameters=YES`
 - [x] `formal independent test ready=YES`
 - [x] 锁参记录：`docs/10_final_parameter_lock.md`
-- [ ] 锁参提交 push 并确认 `HEAD == origin/main` 后，才允许唯一一次正式访问 `liver_169`
+- [x] 锁参提交 `eb0a824` 已 push 并确认 `HEAD == origin/main`；随后才首次按最终锁定协议执行 `liver_169` 的 FINAL FORMAL INDEPENDENT TEST，且正式测试只运行一次
 
 > 模板 `vertebra_task_template.json` 继续保留为未锁定模板；真正实验引用新的 locked spec。当前训练链不支持真正的 instance segmentation，不能用 semantic segmentation 冒充。从最终锁参提交开始，不得依据 independent test 调整 threshold、refinement 或其它参数。
 
@@ -279,7 +280,7 @@
 - [x] `evaluate.py` 新增安全 `--case-id`：只能评估当前 validation/test split 内指定病例，用于 CPU 分病例 full-volume 执行；越界病例直接拒绝
 - [x] 使用 `liver_7 / liver_8` 分病例 full-volume validation 复核 long-v2 `best.pt` 与 `last.pt`：`best.pt` 平均 Dice≈0.03698，`last.pt` 平均 Dice≈0.04953；`last.pt` 平均 ASSD≈50.78 mm、component count error≈1084，也优于 `best.pt` 的≈56.77 mm / 1617
 - [x] 明确发现固定 64³ foreground patch validation 与 full-volume validation 严重不一致：epoch 1 patch-val Dice≈0.3613，但其 full-volume 平均 Dice≈0.037；当前 patch proxy 不能继续作为可靠 checkpoint selector
-- [ ] P1 优先修复 checkpoint selection：训练期按可控频率执行 full-volume validation，或保留多个候选 checkpoint 后在 `liver_7/liver_8` 上统一 full-volume 比较；在此之前禁止重新 test `liver_169`
+- [x] checkpoint selection 风险已在后续 v3+ 实验中改为/结合 `liver_7/liver_8` full-volume validation 处理，并最终通过 v13 validation + 独立锁参记录完成参数选择；禁止依据正式 `liver_169` 结果反向选 checkpoint
 - [x] 已定位首要根因：long-v2 每 epoch 仅 7 个训练 patch，9 epoch 共 63 个；复现实采样后训练 patch 平均前景≈21.2%，而 7 个 train 全卷平均前景仅≈0.68%。两例 validation 预测前景≈14.5%–17.1%，是真值≈0.57%–0.70% 的约 24–27 倍，属于严重 foreground/background sampling prior 失配
 - [x] `ProcessedOrthopedicCTDataset` 新增 `patches_per_case`，同病例同 epoch 可产生多个独立可复现 patch；`train.py` 支持 `training.patches_per_case` 并写入 metadata/summary，解决 7 例数据每 epoch 只有 7 次训练 step 的欠采样问题
 - [x] `evaluate.py` 新增 `prediction_foreground_fraction`、`target_foreground_fraction`、`prediction_to_target_foreground_ratio`，以后 full-volume evaluation 可直接量化全卷假阳性膨胀
@@ -328,7 +329,7 @@
 - [x] formal-pilot 单病例 CPU full-volume inference≈9.29 s
 - [x] formal-pilot test 真实指标：Dice≈0.0221、IoU≈0.0112、Precision≈0.0116、Recall≈0.2479、HD95≈190.93 mm、ASSD≈53.42 mm、component_count_error=157、false_merge=0、false_break=15
 - [x] formal-pilot test uncertainty/calibration 已生成：AUROC≈0.6137、AUPRC≈0.4395、ECE≈0.2990、MCE≈0.3378、Brier≈0.6347、NLL≈2.1329
-- [ ] **5 epoch 模型严重欠训练；上述单病例 test 只证明完整科研评估链真实跑通，不能作为论文正式结果**
+- [x] **旧 5-epoch pilot 单病例 test 已明确降级为历史工程链证据，不作为论文 FINAL FORMAL INDEPENDENT TEST；最终论文结果使用锁参后的 v13 formal test，并与旧 pilot 数字严格分开**
 - [ ] 扩大数据规模后重新报告正式主实验 test 指标
 
 ### P1-2 输入消融
@@ -417,7 +418,7 @@
 
 - [x] validation 提交 `2f333ba` 已 push 并确认 `HEAD == origin/main`
 - [x] 最终锁参记录 `docs/10_final_parameter_lock.md` 已提交为 `eb0a824`，push 后再次确认 `HEAD == origin/main`
-- [x] 第一次且唯一一次正式访问 `test_private liver_169`，formal preflight=`ready=true`、0 error/0 warning
+- [x] 最终锁定 v13 协议下第一次且唯一一次执行 `test_private liver_169` 的 FINAL FORMAL INDEPENDENT TEST，formal preflight=`ready=true`、0 error/0 warning；更早 5-epoch pilot evaluation 仅保留为历史工程链证据
 - [x] FINAL FORMAL INDEPENDENT TEST 已完成一次：Dice=`0.02878288`、IoU=`0.01460158`、Precision=`0.02089816`、Recall=`0.04622219`、HD95=`136.8722 mm`、ASSD=`43.97199 mm`
 - [x] 正式结构结果：foreground ratio=`2.21178×`、pred/target components=`236/1`、component error=`235`、false merge=`0`、false break=`29`
 - [x] 正式 uncertainty/calibration：AUROC/AUPRC=`0.86424/0.29665`、Top-10% error recall=`0.54993`、ECE/MCE/Brier/NLL=`0.02740/0.08782/0.08328/0.23559`
