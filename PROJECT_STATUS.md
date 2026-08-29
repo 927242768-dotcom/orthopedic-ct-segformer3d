@@ -94,7 +94,7 @@
 | Boundary Loss | 🟡 进行中 | 85% | v13 已完成 3-epoch validation 消融；相对 Region 的 HD95/ASSD 仅约改善 0.1002/0.0355 mm，收益极弱，暂保留为 sampling baseline 候选但不宣称明确优势 |
 | Topology Loss | 🟡 进行中 | 80% | v14/v15 已完成 validation 消融；结构/表面指标有改善信号，但 foreground overprediction 与 calibration 代价明显，当前不选作后续 baseline；骨折/非管状骨结构适用性仍待独立检查 |
 | 困难样本增强 | ✅ 当前 validation 阶段闭环 | 94% | boundary-proxy、冻结 v13 模型驱动 high-loss / high-uncertainty mining 均已完成真实 validation 消融；v22/v23 均失败并按 STOP 规则停在 epoch2，最终保留 v13 Bernoulli sampling。thick-slice 仅获得 train patch-level difficulty signal；metal/fracture/low-density 因 metadata 证据不足，不伪造 subgroup 结果 |
-| 不确定性机制 | 🟡 进行中 | 90% | v13 validation `liver_7/liver_8` 已有真实 prediction + predictive entropy，并完成 uncertainty/calibration 两例稳定性分析：AUROC=`0.92949/0.94466`、AUPRC=`0.33354/0.33014`、Top-10% error recall=`0.72891/0.79450`；ECE=`0.01418/0.00767`、Brier=`0.05465/0.03969`、NLL=`0.12079/0.08571`。error voxel entropy 约为 correct voxel 的 `10.4×/12.4×`，支持 uncertainty 作为 error indicator/QC/refinement trigger 的 validation 信号；但仅 2 例，不能声称总体稳定或已完成 calibration。ROI refinement 仍待真实 validation |
+| 不确定性机制 | ✅ 当前 validation 阶段闭环 | 97% | v13 validation `liver_7/liver_8` uncertainty/calibration 已完成；随后真实完成 7 个 train cases 训练的 uncertainty ROI refinement 两例 `3×3` validation grid（Top-5/10/20% × dilation 0/1/2）及 full-volume second-pass。canonical reconstruction 两例 mismatch=`0`，entropy max abs error≈`9.86e-7`，所有 ROI-only `outside_roi_changed_fraction=0`。最佳均值候选 Top-20%+dilation2 的 Dice=`0.07407`、HD95/ASSD=`175.96/47.13 mm`、foreground ratio=`0.965×`，但 Recall 从 coarse `0.13649` 降至 `0.06965`、component error 从 `1543.5` 恶化到 `2397.5`、false break 从 `64.5` 恶化到 `138`，且 `liver_7` HD95/ASSD 反而恶化；mean pipeline time 从 `75.01 s` 增至 `99.95 s`。因此按综合区域/表面/拓扑/稳定性/耗时判定 **REFINEMENT=FAIL**，最终 pipeline 保留 v13 coarse `best.pt`；独立 test 尚未访问 |
 | 训练/验证框架 | 🟡 进行中 | 99% | DataLoader/AdamW/AMP/gradient accumulation/sliding-window、scheduler、完整 run 追踪已接入；`train.py` 支持 `--allow-cpu`、可靠 `--resume` 与 `training.patches_per_case`。balanced v3 已实际使用 `validation.patch_mode=false`，逐 epoch 直接以 `liver_7/liver_8` full-volume Dice 选 checkpoint；epoch 1/2 已完成，说明 full-volume-aware selector 已进入真实训练闭环，不再依赖固定 foreground patch proxy |
 | 评价指标 | ✅ 已完成（代码+首个真实 pilot test） | 100% | Dice、IoU、Precision、Recall、HD95、ASSD、component count/error、false merge/break 已接入；包含 uncertainty→error 与 ECE/MCE/Brier/NLL 等指标；`evaluate.py` 可统一写入逐病例 CSV 与 summary，并新增安全 `--case-id` 以支持 CPU 分病例 full-volume 执行，且强制病例必须属于当前 validation/test split。5-epoch formal-pilot 已对独立 `liver_169` 完成 full-volume CPU evaluation；该旧结果仅为 10 例流程 pilot，禁止作为论文正式结果 |
 | Web 科研辅助分析原型 | 🟡 进行中 | 85% | 首页/上传/健康检查、MPR、10 例人工 QC reviewer、C1–L6 可读标签、真值 PLY WebGL2 3D、简化/物理测量均已完成；QC reviewer 已修复全站 `.card` grid-column 与 QC 网格冲突，病例选择后使用 `hidden + display:none!important` 彻底关闭病例层并进入主审核区，“上一例 / 下一例”保持审核区，悬浮按钮可随时重新打开病例列表；已在本机 Edge 对真实 `liver_0` 完成点击关闭/重新展开实机验证。另有 SDF surface 选择与 evaluation results-review，可读取未来 prediction/entropy MPR。当前 `/api/research/evaluations` 实测 200 且 total=0，真实 checkpoint/prediction 仍不存在，系统没有伪造结果 |
@@ -675,13 +675,16 @@ CTSpine1K Hugging Face 在早期也出现超时和并行下载失败；但改为
 ### P2｜不确定性精修
 
 - [x] 已实现 entropy→error AUROC/AUPRC、错误/正确平均 entropy、Top-percent error recall、ROI error rate/fraction 的定量评价代码；
-- [ ] 在真实 baseline checkpoint 上验证 entropy 与真实错误空间相关性；
-- [ ] 用 validation 确定 Top-percent/threshold；
+- [x] 已在 v13 `liver_7/liver_8` 真实 baseline checkpoint 上验证 entropy 与真实错误空间相关性；
+- [x] 已完成 validation Top-percent/threshold 小网格：Top-5/10/20% × dilation 0/1/2；不继续无限扫参；
 - [x] 已实现 `UncertaintyRefinementNet3D` 局部残差 refinement head/network（工程代码）；
 - [x] 已实现 coarse 冻结、ROI-normalized loss、ROI/global error delta 的二阶段 refinement 训练基线；
-- [ ] 对比无精修 vs 全图二次推理 vs uncertainty ROI；
-- [ ] 报告额外时间/显存/ROI 比例；
-- [ ] 评估 uncertainty 是否可用于 QC。
+- [x] 已完成 coarse vs ROI-only vs full-volume second-pass 两例对照；
+- [x] 已报告额外时间与 ROI 比例；当前 CPU validation 不报告/伪造 GPU 显存结果；
+- [x] ROI-only 外部 prediction 逐体素保持不变：全部 candidate `outside_roi_changed_fraction=0`；
+- [x] canonical prediction+entropy reconstruction 两例 mismatch=`0`，entropy max abs error≈`9.86e-7`；
+- [x] 最终综合判定：**REFINEMENT=FAIL**。虽然 mean Dice/IoU/Precision、foreground ratio、global error 与部分 surface 指标改善，但 mean Recall≈`0.13649→0.06965`，component error≈`1543.5→2397.5`，false break≈`64.5→138`，`liver_7` surface 退化且耗时增加，不满足两例稳定综合改善；最终 validation pipeline 保留 v13 coarse；
+- [x] uncertainty 可用于当前 validation 的 QC 高风险区域提示，但仅 2 例，仍需扩大病例验证。
 
 ### P3｜三维重建与 Web
 
@@ -696,8 +699,9 @@ CTSpine1K Hugging Face 在早期也出现超时和并行下载失败；但改为
 - [x] 椎体类别显示：`1–25 → C1–L6` 工程 schema，不改原标签值；
 - [x] 物理 XYZ 距离/三点夹角计算 API；
 - [x] 10 例人工 QC reviewer + 交互 MPR/真值 overlay 接口；病例列表支持选择后自动收起、随时展开、自动进入主审核区，上一例/下一例保持审核区，宽屏/窄窗口均有对应布局；
-- [x] evaluation results-review 页面与 prediction/entropy MPR 接口已准备；当前真实 evaluation=0；
-- [ ] 取得真实 checkpoint 后生成 prediction / uncertainty / prediction mesh 并在 Web 展示正式结果。
+- [x] evaluation results-review 页面与 prediction/entropy MPR 接口已准备；v13 已存在真实 validation prediction + entropy，下一步进行 Web 实机接入验收；
+- [ ] 使用最终 v13 validation prediction 完成 prediction mesh / SDF / simplification 真实验证并接入 Web；
+- [ ] Edge 实机完成 prediction overlay / entropy overlay / results-review / prediction 3D 验收。
 
 ### P4｜论文/中期/软著
 
@@ -2504,3 +2508,13 @@ calibration 方面 ECE / confidence gap 都较低，`liver_8` 好于 `liver_7`�
 **真实 data-evidence**：train 中 `liver_0/liver_1` 原始 z-spacing≈`5.0 mm`，其余 train 多为≈`0.8–1.0 mm`；validation `liver_7/liver_8` 均为 `1.0 mm`。冻结 v13 guidance 的真实训练 patch 统计显示，两例 5 mm thick-slice case 的平均 candidate loss 比其余 train 高约 `12.9%`，平均 uncertainty 高约 `13.0%`。因此当前只能写：**thick-slice train cases 在当前 v13 patch-level model score 上呈现更高 difficulty signal**。validation 没有 thick-slice 病例，所以 **validation thick-slice subgroup 数据不足**，不能伪造 subgroup Dice。当前 metadata / 病例记录也不足以可靠标记 metal artifact、fracture、low-density 病例，因此这些 subgroup 继续记为“数据不足 / 未完成”，禁止人为指定病例。
 
 最终 difficult-sample 决策：**boundary-hard、high-loss、high-uncertainty 均未带来可接受 validation 改善，继续保留 v13 Bernoulli sampling（foreground_probability=`0.25`、patches_per_case=`4`）作为最终 validation baseline。** 当前仍为 `lock parameters=NO`、`formal independent test ready=NO`；下一阶段直接进入 ROI refinement，并优先复用 v13 已有 prediction + entropy，避免重复 coarse inference。
+
+### 2026-08-29｜阶段 BK：不确定性 ROI 精修真实 validation 完成并判定 FAIL
+
+先恢复真实断点并核验进程：`HEAD==origin/main==55c10f9`，Git 作者为 `927242768-dotcom <927242768@qq.com>`；发现原 refinement validation launcher PID=`21024`、child Python PID=`40108` 仍在真实 CPU 计算，因此全程复用原进程，未启动第二份 validation，也未重新训练 refinement。期间 @PYB 多次瞬断，但均先复核同一 PID 与文件更新时间，没有因工具 timeout/断线重启昂贵任务。最终 run=`experiments/20260829_044259_v13_uncertainty_roi_refinement_v1` 于 `2026-08-29T13:32:13` 完成，两例全部 9 个 ROI candidate 与 full-volume second-pass prediction、`metrics_per_case.csv`、`summary_by_candidate.csv`、`summary.json` 已生成。
+
+canonical reconstruction blocker 已确认解除：`liver_7/liver_8` 的 `canonical_reconstruction_prediction_mismatch_voxels=0`，两例 entropy max abs error 均约 `9.8618e-7`；Top-5/10/20% × dilation 0/1/2 的所有 ROI-only candidate 均满足 `outside_roi_changed_fraction=0`，证明 ROI 外 prediction 逐体素保持不变。refinement checkpoint 只来自 7 个 train cases 的既有 `checkpoint/last.pt`；本轮是 validation-only，`test_accessed=false`，没有访问独立 test。
+
+coarse v13 两例均值：Dice=`0.05470944`、IoU=`0.02814807`、Precision=`0.03423040`、Recall=`0.13649179`、HD95/ASSD=`185.9498/51.4865 mm`、foreground ratio=`4.02696×`、component error=`1543.5`、false break=`64.5`、global error=`0.03025086`、pipeline time=`75.0131 s`。ROI-only 数值最强候选 Top-20%+dilation2：Dice=`0.07407384`、IoU=`0.03865424`、Precision=`0.08146804`、Recall=`0.06965428`、HD95/ASSD=`175.9586/47.1264 mm`、foreground ratio=`0.96487×`、component error=`2397.5`、false break=`138`、global error=`0.01173338`、pipeline time=`99.9478 s`。full-volume second-pass 的分割指标与该候选相同，但没有形成额外选择优势。
+
+病例稳定性否定了“只看均值 Dice”的 PASS：`liver_7` Dice 仅 `0.04531→0.04783`，Recall `0.11879→0.05268`，HD95 `197.39→201.25 mm`、ASSD `55.36→57.79 mm` 反而恶化，component error `1561→2470`、false break `69→132`；`liver_8` 虽 Dice `0.06411→0.10032`、HD95/ASSD `174.51/47.61→150.67/36.47 mm` 明显改善，但 Recall `0.15420→0.08663`、component error `1526→2325`、false break `60→144` 同样恶化。综合区域、表面、foreground ratio、拓扑、ROI/global error、推理时间和两例稳定性后，正式判定：**REFINEMENT=FAIL**。因此不把 refinement 写成成功方法，最终 validation pipeline 继续使用 v13 coarse `best.pt`；当前 `lock parameters=NO`、`formal independent test ready=NO`，下一步只做 v13 validation prediction 的 3D/SDF/Web 真实验收和参数最终锁定，然后才允许独立 test。

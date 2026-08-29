@@ -23,7 +23,7 @@
 | SegFormer3D 工程适配 | ✅ 已完成工程链 | 真实 patch forward/backward/optimizer step 已通过；CPU 训练兼容路径已回归测试 |
 | 联合损失代码 | ✅ 已完成代码 | Region + Boundary + soft-clDice |
 | 困难样本策略代码 | ✅ 已完成首版 | 3D 几何/强度增强 + boundary hard sampling |
-| 不确定性与精修代码 | ✅ 已完成工程链 | entropy、ROI、AUROC/AUPRC、calibration、ROI-only refinement |
+| 不确定性与精修 | ✅ 当前 validation 闭环 | entropy/calibration 已完成；7-train-case refinement + liver_7/liver_8 3×3 grid/full-volume 对照已真实完成，综合判定 REFINEMENT=FAIL，最终保留 v13 coarse |
 | 正式任务定义 | ✅ 已锁定 | `vertebra_binary_ctspine1k_msd_t10_v1`，`binary_semantic`，2 类 |
 | formal-pilot patient-level split | ✅ 已固定 | 7 train / 2 validation / 1 test；`liver_169` 仅 test |
 | CPU CT-only formal-pilot baseline | 🟡 已跑通但严重欠训练 | 5 epoch 完成，最佳 patch-val Dice≈0.2719（epoch 4） |
@@ -373,37 +373,39 @@
 - [x] formal-pilot 真实 checkpoint 已生成 entropy NIfTI
 - [x] formal-pilot uncertainty→error AUROC≈0.6137 / AUPRC≈0.4395
 - [x] formal-pilot Top-10% error recall≈0.1385，ROI error rate≈0.4909
-- [ ] ROI threshold / percentile validation
+- [x] ROI threshold / percentile validation：固定最小 grid Top-5/10/20% × dilation 0/1/2，未无限扫参
 - [x] calibration 指标工程实现与评估输出接入
-- [x] formal-pilot test 已计算 ECE≈0.2990 / Brier≈0.6347 / NLL≈2.1329 / confidence gap≈0.2990
-- [x] v13 validation `liver_7/liver_8` uncertainty/calibration 两例稳定性分析：AUROC=`0.92949/0.94466`、AUPRC=`0.33354/0.33014`、Top-10% error recall=`0.72891/0.79450`；ECE=`0.01418/0.00767`、Brier=`0.05465/0.03969`、NLL=`0.12079/0.08571`；error entropy 约为 correct entropy 的 `10.41×/12.42×`。支持 uncertainty 作为 validation error indicator/QC/refinement trigger，但仅 2 例且 Dice 很低，不能宣称总体稳定或前景校准完成
+- [x] formal-pilot test 已计算 ECE≈0.2990 / Brier≈0.6347 / NLL≈2.1329 / confidence gap≈0.2990；该旧 pilot 仅为历史工程链证据
+- [x] v13 validation `liver_7/liver_8` uncertainty/calibration 两例稳定性分析：AUROC=`0.92949/0.94466`、AUPRC=`0.33354/0.33014`、Top-10% error recall=`0.72891/0.79450`；ECE=`0.01418/0.00767`、Brier=`0.05465/0.03969`、NLL=`0.12079/0.08571`；error entropy 约为 correct entropy 的 `10.41×/12.42×`
 - [ ] 扩大 validation 病例后复核 reliability / calibration 稳定性
-- [ ] coarse baseline
-- [ ] full-volume second pass 对照
-- [ ] uncertainty ROI refinement
-- [ ] 比较 Dice / HD95 / ASSD
-- [ ] 比较 ROI error
-- [ ] 比较推理时间
-- [ ] 比较显存
+- [x] coarse baseline：v13 两例 mean Dice=`0.05470944`、HD95/ASSD=`185.95/51.49 mm`
+- [x] full-volume second pass 对照完成
+- [x] uncertainty ROI refinement：只用 7 个 train cases 训练，validation 只用 liver_7/liver_8；canonical mismatch 两例=`0`
+- [x] 比较 Dice / IoU / Precision / Recall / HD95 / ASSD / foreground ratio / component topology
+- [x] 比较 ROI/global error；全部 ROI-only `outside_roi_changed_fraction=0`
+- [x] 比较推理时间：coarse mean≈`75.01 s`，Top-20%+dil2≈`99.95 s`
+- [ ] GPU 显存：当前 CPU validation 无真实 GPU 显存数据，保持未完成/不伪造
+- [x] refinement 最终判定：**FAIL**。Top-20%+dil2 虽 mean Dice=`0.07407`、foreground ratio≈`0.965×`，但 Recall≈`0.13649→0.06965`，component error≈`1543.5→2397.5`，false break≈`64.5→138`，`liver_7` HD95/ASSD 反向恶化且耗时增加；不满足综合改善与两例稳定性，最终保留 v13 coarse
 - [x] 评估 uncertainty 是否能作为 QC 信号：当前两例 validation 均支持作为高风险区域提示信号（AUROC>0.92、Top-10% 覆盖约 73%–79% 错误），但仍需更多病例验证
 
 ---
 
 ## 5. 三维与 Web 正式结果任务（P3）
 
-- [ ] prediction mask → physical mesh
+- [ ] v13 validation prediction mask → physical mesh
 - [ ] prediction mesh vs GT surface
-- [ ] prediction surface HD95 / ASSD
+- [ ] prediction surface HD95 / ASSD（已有 segmentation evaluation 表面指标；仍需 prediction mesh/SDF 工程链验证）
 - [ ] SDF prediction surface 验证
 - [ ] 简化误差评估
 - [x] 曲率/关键边缘保护候选：法向变化加权 vertex-clustering（真值网格工程验证，待 prediction 验证）
-- [ ] Web 接正式 inference
+- [ ] Web 接最终 v13 真实 validation prediction
 - [ ] prediction overlay
 - [ ] entropy overlay
-- [ ] results-review 载入真实 evaluation
+- [ ] results-review 载入真实 v13 evaluation
 - [ ] prediction 3D mesh
 - [ ] GT/prediction 对比
 - [ ] uncertainty QC 提示
+- [ ] Edge 实机 UI 验收
 - [ ] 生成中期/结题/论文截图
 
 ---

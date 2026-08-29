@@ -17,6 +17,77 @@ from torch import nn
 from src.modeling.uncertainty import predictive_entropy, probability_from_logits
 
 
+def canonical_binary_logits_from_prediction_entropy(
+    prediction: torch.Tensor,
+    normalized_entropy: torch.Tensor,
+    *,
+    eps: float = 1e-8,
+    iterations: int = 40,
+) -> torch.Tensor:
+    """由二分类 prediction + 归一化熵恢复一组等价 canonical logits。
+
+    对二分类 softmax，已知 argmax 类别以及归一化 binary entropy 后，较大类别的
+    confidence 在 ``[0.5, 1)`` 上唯一确定。这里用单调二分恢复 confidence，再令
+    ``logits = log(probability)``。这不会恢复原网络 logits 的公共平移项，但 softmax、
+    predictive entropy 与最终 argmax 均保持等价，因此可复用已保存的 prediction +
+    entropy，而无需为 refinement 重跑 full-volume coarse inference。
+    """
+    if iterations <= 0:
+        raise ValueError("iterations 必须 > 0")
+    if not (0.0 < eps < 0.5):
+        raise ValueError("eps 必须位于 (0,0.5)")
+
+    pred = prediction
+    entropy = normalized_entropy
+    if pred.ndim == 3:
+        pred = pred.unsqueeze(0)
+    if entropy.ndim == 5 and entropy.shape[1] == 1:
+        entropy = entropy[:, 0]
+    elif entropy.ndim == 3:
+        entropy = entropy.unsqueeze(0)
+    if pred.ndim == 5 and pred.shape[1] == 1:
+        pred = pred[:, 0]
+    if pred.ndim != 4 or entropy.ndim != 4:
+        raise ValueError("prediction/normalized_entropy 必须为 (D,H,W) 或 (B,D,H,W)")
+    if pred.shape != entropy.shape:
+        raise ValueError("prediction 与 normalized_entropy shape 必须一致")
+    if torch.any((pred != 0) & (pred != 1)):
+        raise ValueError("当前 canonical 恢复只支持二分类 prediction=0/1")
+    if not torch.isfinite(entropy).all():
+        raise ValueError("normalized_entropy 包含 NaN/Inf")
+    if torch.any(entropy < -1e-6) or torch.any(entropy > 1.0 + 1e-6):
+        raise ValueError("normalized_entropy 必须位于 [0,1]")
+
+    entropy = entropy.to(dtype=torch.float32).clamp(0.0, 1.0)
+    low = torch.full_like(entropy, 0.5)
+    high = torch.full_like(entropy, 1.0 - eps)
+    log2 = torch.log(torch.tensor(2.0, dtype=entropy.dtype, device=entropy.device))
+    for _ in range(iterations):
+        confidence = (low + high) * 0.5
+        binary_entropy = -(
+            confidence * torch.log(confidence.clamp_min(eps))
+            + (1.0 - confidence) * torch.log((1.0 - confidence).clamp_min(eps))
+        ) / log2
+        # binary entropy 在 [0.5,1) 上单调递减。
+        move_right = binary_entropy > entropy
+        low = torch.where(move_right, confidence, low)
+        high = torch.where(move_right, high, confidence)
+
+    confidence = (low + high) * 0.5
+    # float32 保存的最大熵附近会把反演结果舍入为恰好 0.5；此时两个
+    # canonical logits 完全相同，torch.argmax 会固定选择 class 0，导致原本
+    # saved prediction=1 的体素被错误翻转。把较大类别的 confidence 至少推进
+    # 到 0.5 之后的下一个可表示浮点数，既严格保留 saved prediction 类别，
+    # 又只引入 float32 ULP 级别的熵误差。
+    half = torch.full_like(confidence, 0.5)
+    above_half = torch.nextafter(half, torch.ones_like(half))
+    confidence = torch.maximum(confidence, above_half)
+    p1 = torch.where(pred.long() == 1, confidence, 1.0 - confidence)
+    probabilities = torch.stack([1.0 - p1, p1], dim=1).clamp_min(eps)
+    probabilities = probabilities / probabilities.sum(dim=1, keepdim=True)
+    return torch.log(probabilities)
+
+
 def blend_refinement_logits(
     coarse_logits: torch.Tensor,
     residual_logits: torch.Tensor,
@@ -84,12 +155,12 @@ class UncertaintyRefinementNet3D(nn.Module):
         nn.init.zeros_(self.head.weight)
         nn.init.zeros_(self.head.bias)
 
-    def forward(
+    def residual_logits(
         self,
         image: torch.Tensor,
         coarse_logits: torch.Tensor,
-        roi_mask: torch.Tensor,
     ) -> torch.Tensor:
+        """预测 residual logits；不在这里应用 ROI mask，便于 tiled validation 复用计算。"""
         if image.ndim != 5:
             raise ValueError("image 必须为 (B,C,D,H,W)")
         if coarse_logits.ndim != 5:
@@ -108,5 +179,13 @@ class UncertaintyRefinementNet3D(nn.Module):
         probabilities = probability_from_logits(coarse_logits)
         uncertainty = predictive_entropy(coarse_logits)
         features = torch.cat([image, probabilities, uncertainty], dim=1)
-        residual = self.head(self.features(features))
+        return self.head(self.features(features))
+
+    def forward(
+        self,
+        image: torch.Tensor,
+        coarse_logits: torch.Tensor,
+        roi_mask: torch.Tensor,
+    ) -> torch.Tensor:
+        residual = self.residual_logits(image, coarse_logits)
         return blend_refinement_logits(coarse_logits, residual, roi_mask)

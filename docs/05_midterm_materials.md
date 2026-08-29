@@ -147,7 +147,7 @@ qc.json
 - Top-percent error recall、ROI error rate 与 ROI fraction；
 - calibration：ECE、MCE、multiclass Brier score、NLL、mean confidence、体素 accuracy 与 confidence gap。
 
-校准指标已接入独立 checkpoint evaluation，并使用固定分箱/固定随机种子体素采样保证不同实验可复现比较。已进一步实现 `UncertaintyRefinementNet3D` 局部残差精修原型和二阶段 ROI-only 训练基线：以影像、coarse 预测和 uncertainty 为输入，只在高不确定 ROI 内修正 logits，coarse 默认冻结，loss 在 ROI 内归一化，ROI 外保持 coarse 结果不变，并记录 refinement 前后 ROI/global error delta。当前尚未在真实 checkpoint 上完成消融，因此不能声称精修已经带来性能提升。
+校准指标已接入 checkpoint evaluation，并使用固定分箱/固定随机种子体素采样保证不同实验可复现比较。`UncertaintyRefinementNet3D` 已完成真实二阶段验证：refinement 仅使用 7 个 train cases 训练，`liver_7/liver_8` 仅用于 validation；复用 v13 已保存 prediction + predictive entropy，通过 canonical binary logits 重建避免重复 coarse full-volume inference。两例 reconstruction prediction mismatch 均为 0、entropy max abs error≈`9.86e-7`；Top-5/10/20% × dilation 0/1/2 的 3×3 grid 与 full-volume second-pass 已全部完成，所有 ROI-only candidate 的 `outside_roi_changed_fraction=0`。数值最强候选 Top-20%+dilation2 虽把两例 mean Dice 从 `0.05471` 提到 `0.07407`、foreground ratio 从 `4.03×` 拉近到 `0.965×`，但 mean Recall 从 `0.13649` 降至 `0.06965`、component error 从 `1543.5` 恶化到 `2397.5`、false break 从 `64.5` 恶化到 `138`，`liver_7` HD95/ASSD 还出现反向恶化，CPU pipeline time 从约 `75.01 s` 增至 `99.95 s`。因此综合判定 **REFINEMENT=FAIL**，最终 validation pipeline 保留 v13 coarse，不把局部精修包装为成功结果。
 
 ### 3.8 训练与评价框架
 
@@ -185,7 +185,7 @@ qc.json
 - CTSpine1K/VerSe `1–25 → C1–L6` 可读标签显示，原始数值不重编码且不锁定正式任务；
 - 真实真值 label 的 WebGL2 3D PLY 查看、1.5/2.0 mm 简化选项；
 - binary mask→physical signed-distance field→零等值面 SDF 表面选项，并设置连通域保护；真实 `liver_0` 的 0.4 mm 参数可加载，0.8 mm 因 2→3 连通域变化被拒绝；
-- evaluation results-review 页面：可发现未来正式 `evaluate.py` 输出，并查看 prediction/entropy MPR overlay；当前真实 evaluation 数为 0，因此不会伪造模型结果；
+- evaluation results-review 页面：可发现真实 `evaluate.py` 输出并查看 prediction/entropy MPR overlay；v13 已存在 `liver_7/liver_8` 真实 validation prediction + entropy，下一步进行 Web 实机接入和 Edge 验收；
 - 物理毫米坐标距离和三点夹角计算 API；
 - 研究用途免责声明；
 - 模型分割接口已预留。
@@ -235,15 +235,15 @@ Ruff: All checks passed!
 
 ## 4. 当前尚未完成、不能在中期材料中伪写完成的内容
 
-1. **CTSpine1K 10 例真实工程子集已下载/标准化，但正式论文主数据集及全量预处理尚未确定；**
-2. **10 例自动 QC 已完成，`manual_qc_review.csv` 仍待项目成员逐例人工签字；**
+1. **CTSpine1K 10 例真实工程子集已下载/标准化，但最终论文主数据规模仍偏小，后续仍需扩大病例；**
+2. **10/10 自动 QC 与 10/10 人工 QC 已完成并通过；**
 3. **临床脱敏数据尚未提供；**
-4. **首个具体骨科任务/标签集尚需最终确定；**
-5. **GPU 正式训练未开始；**
-6. **无 baseline Dice / HD95 / ASSD；**
-7. **无联合损失、困难增强、uncertainty refinement 的真实消融数字；**
-8. **Marching Cubes、真实 label 网格、1.5/2.0 mm 工程简化、10 例重采样几何误差以及真值 mask 的 SDF 表面工程基线已验证；但真实模型 prediction mask 的表面质量仍未验证；**
-9. **Web 已接入人工 QC、交互 MPR+真值 overlay、真实 label 3D/SDF 表面、物理坐标测量和 evaluation results-review；由于尚无正式 checkpoint，当前真实 evaluation 列表为 0，prediction/uncertainty overlay 与预测网格没有可供展示的正式结果。**
+4. **首个任务已锁定为 `vertebra_binary_ctspine1k_msd_t10_v1`，binary semantic，7/2/1 patient-level split 已固定；**
+5. **当前真实训练/validation 在 CPU 跑通，GPU 仅是提速项，不应把“无 GPU”写成方法学未完成；**
+6. **v13 validation baseline 已有真实 Dice/IoU/Precision/Recall/HD95/ASSD/结构/uncertainty/calibration 指标，但仍属于 engineering/validation，不是正式 independent-test final Results；**
+7. **输入、loss、sampling、augmentation、困难样本、uncertainty/calibration 与 ROI refinement 均已有真实 validation 消融；其中 refinement 综合判定 FAIL，不能只凭 Dice 上升写成成功；**
+8. **Marching Cubes、真实 label 网格、1.5/2.0 mm 工程简化、10 例重采样几何误差以及真值 mask 的 SDF 表面工程基线已验证；最终 v13 prediction mask 的 mesh/SDF/simplification 工程验证仍待完成；**
+9. **Web 已接入人工 QC、交互 MPR+真值 overlay、真实 label 3D/SDF 表面、物理坐标测量和 evaluation results-review；v13 validation prediction/entropy 已存在，但 prediction 3D 与 Edge 实机最终验收仍待完成。**
 
 任务书中的 `Dice ≥ 0.93` 是目标值，不是当前成果。
 
@@ -251,7 +251,7 @@ Ruff: All checks passed!
 
 ## 5. 中期报告“研究进展”可直接使用的表达
 
-截至当前阶段，项目已完成总体技术路线设计、44 条结构化文献矩阵与 42 条英文核心 BibTeX，并搭建隔离实验环境。围绕骨科 CT 已建立 DICOM 序列识别、空间几何检查、HU 裁剪与 case-wise z-score、体素重采样、骨窗增强及质量控制流程。2026-08-16 已实际取得 CTSpine1K `MSD-T10` 10 例真实 CT+label（9 例官方 trainset、1 例 test_private），全部按 pipeline 0.3.0 重采样到 1 mm，自动几何/标签/normalization 审计 10/10 通过；人工审核系统已能逐例查看 contact sheet 与交互式 MPR+真值 overlay，但人工签字仍待项目成员完成。针对 SegFormer3D 与骨科 CT 的差异，项目已完成模型适配、三维 patch 数据加载、区域—边界—拓扑联合损失、困难增强、predictive entropy 定量评价、ECE/MCE/Brier/NLL 等概率校准评价、ROI-only 局部残差精修训练基线、区域/表面/连通结构评价、formal preflight、task lock、GPU/formal readiness、可复现训练日志及独立 checkpoint 评估。真实病例上的 CT+bone-window + joint-loss 单 patch forward/backward/optimizer step 已通过。Web 原型现支持上传、QC/MPR、真值 3D PLY/SDF 表面、1.5/2.0 mm 网格简化、物理距离/角度和未来 evaluation 结果复核；真实 `liver_0` 全前景网格为 131,983 顶点 / 264,362 面，0.4 mm SDF 表面通过连通域保护，0.8 mm 参数被拒绝，并已完成 10 例原始→1 mm 标签的重采样几何误差评估。当前正式任务仍未锁定，本机为 CPU PyTorch 且人工 QC 未签字，formal readiness 正确阻止正式 run，因此尚未产生可用于论文结论的 baseline DSC/HD95/ASSD 或消融数字。下一阶段重点仍是人工 QC 签字、正式任务/split/GPU baseline、真实逐病例评估与联合损失/困难增强/不确定性精修消融。
+截至当前阶段，项目已完成总体技术路线设计、44 条结构化文献矩阵与 42 条英文核心 BibTeX，并搭建项目内 Python 3.11.7 / PyTorch 2.1.0 CPU 环境。CTSpine1K `MSD-T10` 10 例真实 CT+label 已全部完成 1 mm 标准化、自动审计与人工 QC（10/10 pass），首个任务固定为 `vertebra_binary_ctspine1k_msd_t10_v1`，patient-level split 固定为 7 train / 2 validation / 1 test。围绕 SegFormer3D 已完成训练稳定性诊断、输入消融、Region/Boundary/Topology loss 消融、sampling 消融、augmentation 消融、模型驱动困难样本消融，以及 uncertainty/calibration 评价；当前 validation baseline 选择 v13：CT-only + Region+Boundary + Bernoulli sampling（foreground_probability=0.25、patches_per_case=4）+ flip-only，v13 两例 mean Dice≈`0.05471`、HD95/ASSD≈`185.95/51.49 mm`。进一步使用 7 个 train cases 训练 uncertainty refinement，并在 `liver_7/liver_8` 完成 Top-5/10/20% × dilation 0/1/2 与 full-volume second-pass：最佳均值候选 Dice≈`0.07407`，但 Recall、component error、false break、`liver_7` surface 和耗时出现明显代价，因此综合判定 **REFINEMENT=FAIL**，最终 pipeline 仍保留 v13 coarse。全部这些数字属于 engineering/validation 证据，不冒充 independent test；独立 `liver_169` 在最终参数锁定前保持禁止访问。三维方面已完成真值 physical mesh、SDF、简化与几何保护工程链，下一步把最终 v13 validation prediction 接入同一链路；Web 已具备 QC/MPR/results-review/prediction/entropy overlay 基础接口，下一步完成真实 v13 prediction 3D 与 Edge 实机验收，然后锁定最终参数并只运行一次正式 independent test。
 
 ---
 
@@ -274,14 +274,14 @@ Ruff: All checks passed!
 
 ## 7. 下一阶段形成可验收“中期硬证据”的最低清单
 
-- [ ] 明确首个任务：建议优先脊柱/椎体 CT；
+- [x] 明确首个任务：`vertebra_binary_ctspine1k_msd_t10_v1`，binary semantic；
 - [x] 下载并登记 CTSpine1K 10 例真实工程子集；
 - [x] 对 ≥10 例真实多层 CT 完成标准化和自动 QC；
-- [ ] 项目成员完成 10 例三视图/overlay 人工审核并在 CSV 签字；
-- [ ] 固定 patient-level split；
-- [ ] GPU 跑通 SegFormer3D baseline；
-- [ ] 生成第一版 `metrics_per_case.csv`；
-- [ ] 报告 baseline DSC / HD95 / ASSD；
+- [x] 项目成员完成 10 例三视图/overlay 人工审核并在 CSV 签字；
+- [x] 固定 patient-level split：7 train / 2 validation / 1 test；
+- [x] CPU 跑通 SegFormer3D engineering/validation baseline；GPU 仅作为后续提速项；
+- [x] 生成真实 validation `metrics_per_case.csv`；
+- [x] 报告 engineering/validation baseline DSC / HD95 / ASSD，并严格与最终 independent test 区分；
 - [ ] 完成 Region vs Region+Boundary 初步消融；
 - [ ] Web 接入真实 checkpoint，显示分割叠加；
 - [ ] 保存可复现 config / commit / checkpoint /日志；

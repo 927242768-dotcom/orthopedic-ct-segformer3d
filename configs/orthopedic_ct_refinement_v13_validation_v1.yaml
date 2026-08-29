@@ -1,0 +1,38 @@
+experiment_name: v13_uncertainty_roi_refinement_v1
+seed: 42
+
+coarse:
+  config: configs/orthopedic_ct_cpu_binary_loss_region_boundary_v13.yaml
+  checkpoint: experiments/20260828_002035_cpu_binary_loss_region_boundary_v13_roi64/checkpoint/best.pt
+  validation_artifacts:
+    ctspine1k-msd-t10-liver_7: experiments/evaluation_20260828_v13e3_liver7
+    ctspine1k-msd-t10-liver_8: experiments/evaluation_20260828_v13e3_liver8
+
+refinement:
+  image_channels: 1
+  num_classes: 2
+  hidden_channels: 8
+  residual_blocks: 1
+  tile_size_dhw: [64, 64, 64]
+
+training:
+  epochs: 2
+  batch_size: 1
+  num_workers: 0
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  train_roi_top_percent: 10.0
+  train_roi_dilation_iterations: 1
+  train_roi_min_voxels: 64
+
+validation:
+  top_percent_grid: [5.0, 10.0, 20.0]
+  dilation_iterations_grid: [0, 1, 2]
+  min_voxels: 64
+  compare_full_volume_second_pass: true
+  save_predictions: true
+
+notes:
+  - refinement network只使用train split训练；liver_7/liver_8仅用于validation参数选择。
+  - validation复用v13已保存prediction+predictive_entropy，并由二分类entropy恢复canonical softmax logits，避免重复full-volume coarse inference。
+  - 独立test liver_169在validation参数锁定前禁止访问。
