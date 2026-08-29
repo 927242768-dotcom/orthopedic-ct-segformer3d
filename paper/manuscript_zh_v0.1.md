@@ -1,14 +1,14 @@
-# 融合边界—拓扑约束与不确定性精修的骨科 CT SegFormer3D 分割方法
+# 基于 SegFormer3D 的骨科 CT 分割、不确定性评估与三维科研分析系统
 
-> 中文技术初稿 v0.1（2026-08-15）
+> 中文技术稿 v0.1（持续更新至 2026-08-29）
 >
-> **注意：本文的实验结果、统计显著性和最终结论均必须由真实训练与测试数据补齐。当前版本只完成研究背景、相关工作、方法与实验设计，严禁把 TBD/预期值改写成已经取得的结果。**
+> **结果声明：本文当前所有 validation、正式 independent test、uncertainty/calibration 与三维工程数字均来自项目真实产物；不使用随机权重、预期值或伪造指标。当前样本量极小，结论仅限本工程 pilot，不代表临床有效性。**
 
 ## 摘要
 
-骨科 CT 影像的高精度分割是三维重建、术前规划、骨折形态分析和计算机辅助测量的重要基础。传统阈值法和卷积神经网络在常规病例中能够获得较好的区域分割结果，但在复杂骨性边缘、相邻骨结构粘连、低骨密度、金属伪影以及层间分辨率较低的各向异性 CT 中仍可能出现边界偏移、细小结构漏分和拓扑断裂等问题。为此，本文拟以轻量级三维 Transformer 模型 SegFormer3D 为基础，构建面向骨科 CT 的标准化数据处理与多尺度分割框架。首先对 DICOM 影像进行序列识别、HU 恢复、空间方向校正、体素重采样、骨窗增强和质量控制，并研究标准化 CT 与骨窗双通道输入。随后在 SegFormer3D 的多尺度体特征编码和 all-MLP 解码基础上，引入区域重叠、边界约束和拓扑保持联合损失，以同时优化体素区域、骨表面和解剖连通性。针对骨折、低骨密度、金属伪影和大层厚等困难病例，进一步设计困难样本增强和基于预测熵的不确定性区域精修机制。实验计划在公开骨科/脊柱 CT 数据集及合法授权的脱敏临床数据上进行患者级划分，并采用 Dice、HD95、ASSD、Precision、Recall、结构连通性指标和推理效率进行综合评估，同时开展输入、损失、困难样本增强和不确定性精修的系统消融。最终将分割模型接入 Web 科研辅助分析原型，为后续三维重建、MPR 联动和交互测量提供统一接口。
+骨科 CT 自动分割是三维重建和计算机辅助测量的重要基础，但在小样本、低对比度、结构粘连/断裂及扫描差异下容易出现前景过预测、边界偏移和拓扑碎裂。本文以 SegFormer3D 为骨干，构建从 CT 标准化、患者级数据划分、训练与系统消融、预测熵不确定性/校准评价，到 physical-space 三维重建和 Web 科研复核的一体化工程流程。当前 pilot 使用 CTSpine1K `MSD-T10` 10 例真实 CT+label，固定为 7 train / 2 validation / 1 `test_private` independent test。通过输入、Region/Boundary/Topology loss、sampling、augmentation、困难样本和 uncertainty ROI refinement 消融，最终在测试前锁定 v13：CT-only、Region+Boundary、Bernoulli sampling、flip-only、64³ training ROI、softmax/argmax decision，refinement 因综合验证失败而禁用。两例 validation mean Dice 为 `0.05471`，正式独立 `liver_169` 一次性测试 Dice 为 `0.02878`、HD95 为 `136.87 mm`、ASSD 为 `43.97 mm`，显示当前模型绝对精度仍低。另一方面，predictive entropy 在 validation 上对错误区域具有较高排序能力，正式 test error AUROC 为 `0.86424`；2.0 mm 特征加权网格简化可减少约 `77.73%` 顶点，0.4 mm SDF 保持独立预测连通域 `236→236`，并已在 Edge WebGL2 实机展示 prediction/uncertainty/3D surface。结果表明，本工作完成了可追溯的科研工程闭环，但现阶段更适合作为方法探索与科研辅助原型，而非高精度临床分割模型。
 
-**关键词：** 骨科 CT；SegFormer3D；三维医学图像分割；边界损失；拓扑保持；不确定性；三维重建
+**关键词：** 骨科 CT；SegFormer3D；三维医学图像分割；不确定性；校准；三维重建；Web 科研辅助分析
 
 ---
 
@@ -24,7 +24,7 @@ CT 具有较高的空间分辨率和对骨组织良好的密度对比，是骨�
 
 此外，困难病例往往集中体现模型的实际风险。金属内固定造成的高密度条纹、低骨密度导致的骨—软组织对比下降、骨折导致的局部拓扑改变以及厚层扫描造成的层间信息不足，都可能引起预测不稳定。医学分割中的不确定性研究表明，预测可靠性与质量控制应与分割精度同时评估。因此，在粗分割后定位高不确定区域并进行局部精修，有望在有限额外计算成本下把模型资源集中到最容易出错的区域。
 
-基于上述分析，本文拟研究一种面向骨科 CT 的 SegFormer3D 改进框架。当前研究假设包括：（1）规范化 DICOM/HU/空间处理和骨窗多通道输入能够减少扫描协议差异；（2）区域、边界和拓扑联合目标能够改善骨表面误差和连接错误；（3）困难样本增强能够提高异常病例鲁棒性；（4）不确定性驱动的局部精修能够在较小额外计算量下改善困难区域。上述假设均将在统一患者级数据划分和严格消融实验中验证。
+基于上述分析，本文围绕四个可验证问题展开：规范化 CT 与骨窗双通道是否稳定改善分割；Boundary/Topology 约束能否在区域、表面和结构指标上形成一致收益；困难样本策略是否优于简单 Bernoulli sampling；predictive entropy 是否既能提示错误，又能通过局部 refinement 稳健改善结果。所有方法选择仅依据固定 validation，独立 test 在最终参数锁定并推送后只执行一次，从实验设计上避免依据 test 反向调参。
 
 ---
 
@@ -111,13 +111,13 @@ L_{total}=\lambda_r L_{region}+\lambda_b L_{boundary}+\lambda_t L_{topology}.
 U(v)=-\sum_c p_c(v)\log(p_c(v)+\epsilon).
 \]
 
-根据 uncertainty map 选择 Top-k 百分位或高于阈值的体素，并对其连通区域进行适度膨胀得到候选 ROI。首先使用 uncertainty→error AUROC、AUPRC、错误/正确体素平均 entropy、Top-percent error recall、ROI error rate 与 ROI fraction 定量判断预测熵是否真的集中于错误区域，而不是仅依赖热图主观判断。与此同时，对模型概率输出增加体素级 calibration 评价：采用固定分箱的 Expected Calibration Error（ECE）与 Maximum Calibration Error（MCE），并报告 multiclass Brier score、negative log-likelihood（NLL）、mean confidence、体素 accuracy 与 confidence gap。对超大三维体积采用固定随机种子的体素下采样，以保证不同实验之间可复现比较。当前工程原型进一步实现了三维局部残差精修网络：将 CT/骨窗等影像通道、coarse probability/logits 与 uncertainty 作为输入预测残差，只在 ROI mask 内更新 coarse logits，ROI 外严格保留原预测。二阶段训练中 coarse 分割默认冻结，精修损失只在 ROI 内归一化，并记录精修前后 ROI/global error delta。实验将比较：无精修、全图二次推理和 uncertainty ROI 精修，以区分“额外计算”与“不确定性定位”本身的贡献。上述实现目前只完成工程测试，尚无真实 checkpoint 性能结论。
+根据 uncertainty map 选择 Top-k 百分位或高于阈值的体素，并对其连通区域进行适度膨胀得到候选 ROI。首先使用 uncertainty→error AUROC、AUPRC、错误/正确体素平均 entropy、Top-percent error recall、ROI error rate 与 ROI fraction 定量判断预测熵是否真的集中于错误区域，而不是仅依赖热图主观判断。与此同时，对模型概率输出增加体素级 calibration 评价：采用固定分箱的 Expected Calibration Error（ECE）与 Maximum Calibration Error（MCE），并报告 multiclass Brier score、negative log-likelihood（NLL）、mean confidence、体素 accuracy 与 confidence gap。对超大三维体积采用固定随机种子的体素下采样，以保证不同实验之间可复现比较。工程中进一步实现了三维局部残差精修网络：将 CT/骨窗等影像通道、coarse probability/logits 与 uncertainty 作为输入预测残差，只在 ROI mask 内更新 coarse logits，ROI 外严格保留原预测。二阶段训练中 coarse 分割冻结，精修损失只在 ROI 内归一化，并记录精修前后 ROI/global error delta。正式 validation 消融已完成无精修、uncertainty ROI 精修及 full-volume second-pass 对照；虽然部分候选 Dice 上升，但 Recall、fragmentation、病例稳定性和耗时综合恶化，因此最终判定 **REFINEMENT=FAIL**，正式 independent test 保持 refinement disabled。
 
 ### 3.7 质量控制与可追溯性
 
 每例数据保存原始/处理后 shape、spacing、origin、direction、强度统计、DICOM series 数量和 QC warning。所有训练实验保存 config、患者级 split、随机种子、checkpoint、逐病例指标和代码版本。测试集只用于最终评估，不能反复用于选择 loss 权重或模型结构。
 
-为避免工程 smoke 被误写成论文实验，训练/评估入口设置 formal preflight：在正式运行前检查病例级 split 泄漏、官方 test-private 误用、人工 QC、pipeline/输入通道、标签范围与 `num_classes`，正式训练还要求可用 CUDA 环境。当前 CTSpine1K/VerSe `1–25` 的 `C1–L6` 映射只用于 QC/Web 可读显示，不改变原始标签值，也不提前决定正式任务采用 binary、multi-class semantic 或 instance segmentation。
+为避免工程 smoke 被误写成论文实验，训练/评估入口设置 formal preflight：在正式运行前检查病例级 split 泄漏、官方 test-private 误用、人工 QC、pipeline/输入通道、标签范围与 `num_classes`。本 pilot 已在显式 `--allow-cpu` 条件下通过 formal readiness 并完成 CPU 正式流程；GPU 仅作为后续扩大实验规模时的加速条件，不再作为当前方法学完成与否的门槛。当前 CTSpine1K/VerSe `1–25` 的 `C1–L6` 映射只用于 QC/Web 可读显示，不改变原始标签值，也不提前决定正式任务采用 binary、multi-class semantic 或 instance segmentation。
 
 ### 3.8 物理空间表面重建与工程几何控制
 
@@ -129,23 +129,17 @@ U(v)=-\sum_c p_c(v)\log(p_c(v)+\epsilon).
 
 ### 4.1 数据集
 
-首阶段公开数据候选：CTSpine1K、VerSe 2019/2020、TotalSegmentator 中与目标骨结构匹配的子集。2026-08-16 已使用 CTSpine1K `MSD-T10` 的 10 例真实 CT+label 完成工程预处理验证（9 例官方 `trainset`、1 例 `test_private`），10/10 自动几何/标签/QC 审计通过，并验证真实双通道单 patch 的 SegFormer3D+联合损失 forward/backward 链。Web/QC 使用与 VerSe 一致的 `1–25 → C1–L6` 可读映射，但原始标签不重编码。该 10 例子集仅作为工程证据，不作为论文正式 train/validation/test，也不产生可写入 Results 的性能数字。最终主数据集、binary/multiclass/instance 标签定义和实际病例数量仍待组内确认和正式实验方案固定。
+当前 formal pipeline pilot 使用 CTSpine1K `MSD-T10` 的 10 例真实 CT+label：9 例官方 `trainset` 与 1 例官方 `test_private`。10/10 病例均完成 1 mm 重采样、HU clip、逐病例 z-score、骨窗生成、nearest-neighbor label 重采样、自动审计和人工 QC。任务固定为 `binary_semantic`；训练/评价时将原始前景标签 `1..25` 统一映射为二值前景 1，而 Web/QC 仍保留原始标签及 `1–25 → C1–L6` 可读映射，不篡改源标签。该 10 例数据用于本研究的**正式流程 pilot**并产生本文当前 Results，但病例规模极小，不能替代扩大数据规模后的正式临床/多中心研究，也不能据此声称临床泛化能力。
 
 临床数据仅在获得合法研究授权且完成脱敏后纳入；临床数据的机构来源、纳排标准、伦理/授权信息和划分策略必须在最终论文中明确说明。
 
 ### 4.2 数据划分
 
-所有划分以患者为单位，避免同一患者不同切片进入不同集合。若采用公开 benchmark 的官方 split，则优先保持官方划分；若需要内部划分，则预先固定 train/validation/test，并保存唯一 split 文件。对于多来源数据，将额外设计 leave-one-source-out 或外部测试以评价泛化。
+本 pilot 采用固定 patient-level split：`liver_0`—`liver_6` 为 7 个 train cases，`liver_7/liver_8` 为 2 个 validation cases，官方 `test_private liver_169` 为唯一 independent test case；split 文件为 `data/splits/ctspine1k_msd_t10_binary_formal_pilot_v1.json`。所有输入、loss、sampling、augmentation、困难样本、uncertainty/refinement 和三维工程选择均只依据 train/validation 完成。正式 test 在锁参提交 `eb0a824c34af4f7d900432e169759115f99a2687` 已推送并确认 `HEAD == origin/main` 后才首次访问，且仅运行一次；测试结果不再用于参数选择。
 
 ### 4.3 对比方法
 
-计划至少包括：
-
-1. nnU-Net（资源允许时）；
-2. 原始/适配后的 SegFormer3D baseline；
-3. 本文完整方法。
-
-若显存和时间允许，再增加 UNETR、Swin UNETR 或近期脊柱专用方法作为对比。所有方法尽可能使用一致的数据划分、spacing 与输入分辨率。
+受当前 10 例 pilot 样本规模与 CPU 计算条件限制，本阶段不伪造未运行的跨架构 baseline。本文当前 Results 的方法比较限定于同一 SegFormer3D 工程链内的 v11—v23 真实变体，包括输入、loss、sampling、augmentation、困难样本与 refinement 消融。nnU-Net、Residual-Encoder nnU-Net、UNETR、Swin UNETR 及近期脊柱专用方法只作为后续扩大数据规模后的外部强 baseline 计划；在实际完成同一 split/spacing/评价协议下的运行前，不填写其性能数字。
 
 ### 4.4 消融实验
 
@@ -179,11 +173,11 @@ U(v)=-\sum_c p_c(v)\log(p_c(v)+\epsilon).
 
 主指标包括 Dice Similarity Coefficient、IoU、HD95、ASSD、Precision 和 Recall。对于结构连通性，候选指标包括 clDice、连通域数量差异、错误粘连与断裂数。若采用 multi-class 椎体任务，逐病例 macro 只对真值或预测实际出现的前景类别求平均，双方都缺失的类别不计入，以避免空类别产生虚高分数，并同时输出逐类别指标。对于 uncertainty，额外报告 error AUROC/AUPRC、错误/正确体素平均 entropy、Top-percent error recall、ROI error rate 与 ROI fraction；对于概率校准，报告 ECE、MCE、Brier score、NLL、mean confidence、体素 accuracy 和 confidence gap。工程指标包括参数量、FLOPs、峰值显存、单病例预处理时间、推理时间和三维重建时间。
 
-逐病例结果同时报告 mean±std 和 median[IQR]。方法比较采用配对统计检验，并根据分布选择配对 t 检验或 Wilcoxon signed-rank test；同时报告效应量或置信区间，避免只报告 p 值。
+由于当前 validation 仅 2 例、formal independent test 仅 1 例，本 pilot 只报告逐病例数值与两例 validation mean，不进行无意义的显著性检验，也不报告不稳定的 median[IQR] 或 p 值。后续扩大病例规模后，再根据分布采用配对 t 检验或 Wilcoxon signed-rank test，并同时报告效应量或置信区间。
 
 ### 4.6 实现细节
 
-当前官方 SegFormer3D 基础环境参考 Python 3.11.7、PyTorch 2.1.0 和其仓库依赖。最终论文需要根据实际运行环境补齐 GPU 型号、显存、batch size、ROI size、optimizer、学习率、epoch、AMP、随机种子和 sliding-window overlap 等参数。
+当前实验环境为项目内 Python 3.11.7、PyTorch `2.1.0+cpu`、MONAI 1.2.0，在 Ryzen 7 8745H CPU 上执行。v13 使用 `ct_normalized` 单通道输入：HU clip `[-1000,2000]` 后逐病例 z-score，目标 spacing 为 1 mm。随机种子为 42，training ROI=`64×64×64`，batch size=1，patches/case=4，Bernoulli foreground probability=0.25；优化器为 AdamW（lr=`5e-5`，weight decay=`0.01`），warmup 1 epoch 后使用 cosine annealing warm restarts。augmentation 保留 flip-only。epoch 2 起冻结 encoder、decoder feature 与 BatchNorm running statistics，仅继续更新 `linear_pred`。full-volume inference 使用 sliding-window ROI=`128×128×128`、overlap=0.25、sw_batch_size=1，关闭 AMP；prediction decision 固定为 `evaluate.py` 的 softmax+argmax，refinement 关闭。
 
 ---
 
@@ -253,7 +247,17 @@ Web 原型未重新推理或生成虚构 prediction，而是从 `experiments/<ev
 
 ### 5.9 正式独立测试
 
-**最终参数已经锁定，但正式 independent-test 结果尚未产生。** 锁参记录为 `docs/10_final_parameter_lock.md`；正式 independent test 必须在该锁参记录提交并推送、再次确认 `HEAD == origin/main` 后，对 `test_private liver_169` 以完全固定的 v13 config、`best.pt`、softmax/argmax decision 与 `refinement=disabled` 仅运行一次。结果产生后将单列 Dice、IoU、Precision、Recall、HD95、ASSD、foreground ratio、component/false merge/false break、uncertainty、calibration、inference time 以及 independent prediction 3D/SDF 工程结果；无论结果好坏均不得据此继续调参。
+最终参数锁定记录为 `docs/10_final_parameter_lock.md`，对应锁参提交 `eb0a824c34af4f7d900432e169759115f99a2687`。该提交已推送并确认 `HEAD == origin/main` 后，才对官方 `test_private liver_169` 执行**第一次且唯一一次** FINAL FORMAL INDEPENDENT TEST。测试严格使用锁定的 v13 config、`best.pt`、softmax/argmax decision 和 `refinement=disabled`，formal preflight 为 `ready=true`、0 error/0 warning。
+
+| Independent test case | Dice | IoU | Precision | Recall | HD95 (mm) | ASSD (mm) | Pred/GT FG | Pred/GT components | Component error | False merge | False break | Inference (s) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| `liver_169` | **0.02878** | 0.01460 | 0.02090 | 0.04622 | 136.8722 | 43.9720 | 2.2118× | 236 / 1 | 235 | 0 | 29 | 9.41 |
+
+正式 test 的 uncertainty error AUROC/AUPRC 为 `0.86424/0.29665`，Top-10% uncertainty error recall=`0.54993`；ECE/MCE/Brier/NLL=`0.02740/0.08782/0.08328/0.23559`，confidence gap=`0.02740`。尽管体素 calibration 数字并未异常失控，但 Dice、Precision、Recall 和结构连通性仍很差，因此不能把较低 ECE 解释为模型具有临床可靠性；高 background 占比会显著影响体素级 accuracy/confidence 指标。
+
+独立 prediction 的 physical-space full mesh 为 `365,247` 顶点 / `724,694` 三角面；2.0 mm + feature strength=8 简化后为 `81,353` 顶点 / `160,384` 三角面，顶点减少约 `77.73%`，相对原 prediction surface 的工程 ASSD/HD95=`0.56490/1.07159 mm`。SDF σ=0.4 mm 保持 components `236→236`，SDF-vs-original 工程 ASSD/HD95=`0.02536/0.06367 mm`。prediction-vs-GT vertex-nearest engineering ASSD/HD95=`41.1398/131.8726 mm`，且 prediction 与 GT 的 size、spacing、origin、direction 完全一致。上述 vertex-nearest 距离仍只属于三维工程检查，不替代本表中的正式 segmentation HD95/ASSD。
+
+Web `results-review` 已识别该独立 evaluation，prediction 与 uncertainty MPR 接口均返回 200；Edge `research-3d` 已实际加载 independent 2.0 mm prediction mesh 与 SDF σ=0.4 mm WebGL。测试完成后未再修改 threshold、loss、sampling、augmentation、refinement 或模型参数，也不重复运行该 formal test。
 
 ---
 
@@ -269,7 +273,15 @@ Boundary 项仅带来极弱的 Dice 与 surface 改善；Topology 项虽然在 H
 
 当前 Web 原型的价值主要是可追溯科研复核：同一 evaluation 下可以检查 prediction、uncertainty、3D surface 与指标，且不重新生成模型结果。它有助于将模型失败以可视化方式暴露出来，但不构成医疗诊断系统，也不能弥补模型准确率不足。
 
-正式 independent test 的作用仅是评价已锁定 pipeline 的泛化，不再用于方法选择。若 independent test 结果更差，应将其作为小样本、数据分布和模型欠拟合风险的真实证据；若偶然更好，也不能反向调整 threshold、refinement 或模型参数后重新测试。
+### 6.1 失败病例与失败模式
+
+正式 independent test `liver_169` 是当前最重要的失败病例证据。其 prediction/GT foreground ratio=`2.21×`，同时出现 `236/1` 的 component 数量差异和 `29` 个 false break，说明问题不仅是边界位置偏移，而是前景碎片化和错误前景区域大量存在。Web MPR、prediction mesh 和 SDF 复核进一步确认这些错误来自锁定模型的真实 prediction，而不是后续简化或 SDF 生成过程；prediction 与 GT 的 size、spacing、origin、direction 完全一致，也排除了明显的物理空间配准元数据不一致作为主要解释。
+
+正式 independent test 将 validation 阶段的主要失败模式进一步暴露出来。独立 Dice=`0.02878`，低于两例 validation mean=`0.05471`；Precision=`0.02090`、Recall=`0.04622` 均很低，且 prediction/GT foreground ratio=`2.21×`、components=`236/1`，说明明显的前景过预测与 fragmentation 仍然存在。独立 HD95=`136.87 mm` 虽数值上低于 validation mean HD95≈`185.95 mm`，但单病例表面范围、目标体积与错误分布不同，不能据此认定泛化改善；区域重叠反而明确下降。
+
+Uncertainty 在独立 test 上仍保留一定错误排序能力（AUROC=`0.86424`），但弱于 validation 的 >0.92；Top-10% uncertainty 仅覆盖约 55.0% 错误，也低于 validation 的约 72.9%–79.4%。这支持 entropy 作为风险提示信号，但同时表明其跨病例稳定性有限。独立 ECE≈`0.0274` 不能与低 Dice 脱离解释，因为二值体数据以 background 为主，较高总体 confidence/accuracy 并不等价于前景分割可靠。
+
+因此 independent test 的作用严格限定为评价锁定 pipeline，而不是继续选方法。测试完成后没有依据结果反向调整 threshold、refinement、sampling、augmentation 或模型参数；较差结果被直接保留为当前小样本、模型欠拟合和结构碎裂风险的真实证据。
 
 ---
 
@@ -281,9 +293,11 @@ Boundary 项仅带来极弱的 Dice 与 surface 改善；Topology 项虽然在 H
 
 ## 8 结论
 
-截至 validation 阶段，本研究建立了从骨科 CT 标准化、SegFormer3D 训练与消融、uncertainty/calibration、失败可追溯的 ROI refinement，到 physical-space 3D reconstruction 与 Web 科研复核的完整工程链。统一消融后，当前 validation 最终候选为 CT-only、Region+Boundary、Bernoulli sampling、flip-only 的 v13 coarse 模型；其两例 mean Dice≈`0.05471`，说明分割精度仍远未达到临床应用水平。Predictive entropy 对错误区域具有较好的 validation 排序能力，但 uncertainty ROI refinement 综合判定为 **FAIL**，因此最终 pipeline 禁用 refinement。真实 prediction 的 2.0 mm 简化和 0.4 mm SDF 在可控工程误差下完成 WebGL2 实机展示，证明三维/Web 闭环可运行，但没有掩盖模型本身的低精度。
+本研究完成了从骨科 CT 标准化、患者级划分、SegFormer3D 训练与系统消融、uncertainty/calibration、失败可追溯的 ROI refinement，到 physical-space 3D reconstruction 与 Web 科研复核的完整工程链。统一 validation 消融后，最终锁定 CT-only、Region+Boundary、Bernoulli sampling、flip-only 的 v13 coarse pipeline；两例 validation mean Dice≈`0.05471`。Predictive entropy 能够提示部分错误区域，但 uncertainty ROI refinement 综合判定为 **FAIL**，因此最终 pipeline 禁用 refinement。
 
-validation 阶段远端同步已经完成，并已形成不可更改的最终参数锁定。待锁参提交本身推送并再次确认远端一致后，研究将只运行一次正式 independent test，并无论结果好坏如实补充到 5.9、Discussion 与最终结论；独立测试结果不得用于再次调参。
+在锁参提交推送并确认远端一致后，唯一一次正式 independent test 得到 Dice=`0.02878`、HD95=`136.87 mm`、ASSD=`43.97 mm`，且存在 `236/1` 的 prediction/GT component 差异，进一步证明模型绝对精度与结构连续性仍远未达到临床应用要求。独立 test entropy error AUROC=`0.86424`，说明 uncertainty 仍有 QC 提示价值，但跨病例稳定性有限。与此同时，2.0 mm 特征加权简化将独立 prediction 顶点减少约 `77.73%`，0.4 mm SDF 保持 components `236→236`，并已在 Edge WebGL2 完成 prediction/uncertainty/3D 实机复核。
+
+因此，本项目当前最可信的成果不是“高精度临床分割”，而是一个结果可追溯、失败不隐藏、严格区分 validation/test、能够将分割—不确定性—三维—Web 串联起来的科研工程闭环。后续研究应优先扩大训练与独立测试样本规模、引入强基线和合法临床/多中心验证，而不是围绕当前单病例 test 继续调参。
 
 ---
 
