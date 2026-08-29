@@ -14,7 +14,10 @@
 6. [`docs/04_experiment_plan.md`](./docs/04_experiment_plan.md) —— 模型实验与消融计划；
 7. [`docs/06_public_dataset_onboarding.md`](./docs/06_public_dataset_onboarding.md) —— 公开数据接入与首轮 baseline 操作手册；
 8. [`docs/09_public_repository_manifest.md`](./docs/09_public_repository_manifest.md) —— 公开 GitHub 仓库允许/禁止提交内容；
-9. [`paper/outline.md`](./paper/outline.md) —— 论文持续写作框架。
+9. [`docs/10_final_parameter_lock.md`](./docs/10_final_parameter_lock.md) —— 最终 v13 参数锁定记录；
+10. [`docs/11_final_independent_test.md`](./docs/11_final_independent_test.md) —— 唯一一次正式独立测试记录；
+11. [`docs/12_final_presentation_outline.md`](./docs/12_final_presentation_outline.md) —— v0.3.0 中期/结题展示提纲；
+12. [`paper/outline.md`](./paper/outline.md) —— 论文持续写作框架。
 
 **所有实质性修改完成后必须同步更新 `PROJECT_STATUS.md`。**
 
@@ -53,7 +56,10 @@ D:\国创项目
 │  ├─ 06_public_dataset_onboarding.md # 公开数据接入与 baseline 手册
 │  ├─ 07_real_data_validation_20260816.md # CTSpine1K 10 例真实工程验证记录
 │  ├─ 08_literature_matrix.md   # 44 条结构化文献矩阵
-│  └─ 09_public_repository_manifest.md # GitHub 公开内容/排除清单
+│  ├─ 09_public_repository_manifest.md # GitHub 公开内容/排除清单
+│  ├─ 10_final_parameter_lock.md # 最终 v13 参数锁定记录
+│  ├─ 11_final_independent_test.md # 唯一一次正式独立测试记录
+│  └─ 12_final_presentation_outline.md # 中期/结题展示源材料
 ├─ configs/                     # baseline / joint-loss 实验配置与标签 schema
 ├─ env/
 │  ├─ requirements.txt
@@ -74,7 +80,7 @@ D:\国创项目
 ├─ paper/
 │  ├─ outline.md
 │  ├─ references.bib            # 42 条已核验英文核心 BibTeX
-│  └─ manuscript_zh_v0.1.md     # 中文论文技术初稿，结果区保持 TBD
+│  └─ manuscript_zh_v0.1.md     # 中文论文技术稿，已同步 validation/independent Results
 ├─ third_party/
 │  └─ SegFormer3D/              # 官方上游仓库，保留 Git/许可证/本地兼容补丁
 ├─ tests/
@@ -85,7 +91,7 @@ D:\国创项目
 
 ## 环境原则
 
-上游 SegFormer3D 官方示例使用 Python 3.11.7、PyTorch 2.1.0、CUDA 11.8。当前机器系统侧可见 Python 3.13，但没有检测到 Conda，也没有检测到 `nvidia-smi`。本项目已使用 `uv` 在目录内安装 **Python 3.11.7 (`.python`) + 独立虚拟环境 (`.venv`)**，当前环境已通过依赖导入与单元测试；现阶段安装的是 **PyTorch 2.1.0 CPU 版**，GPU 训练环境仍需在具有 NVIDIA GPU/驱动的设备或服务器上确认。
+上游 SegFormer3D 官方示例使用 Python 3.11.7、PyTorch 2.1.0、CUDA 11.8。当前机器系统侧没有检测到 `nvidia-smi`，本项目使用 `uv` 在目录内安装 **Python 3.11.7 (`.python`) + 独立虚拟环境 (`.venv`)**，当前为 **PyTorch 2.1.0 CPU 版**。当前 10 例 formal-pipeline pilot 的训练、validation 与唯一一次 independent test 已在显式 `--allow-cpu` 条件下完成；NVIDIA GPU 仅作为后续扩大数据规模和缩短训练时间的加速条件。
 
 重新搭建或修复环境时运行：
 

@@ -1,6 +1,6 @@
 # 05 中期研究材料持续汇总
 
-> 版本：v0.1｜2026-08-15
+> 版本：v0.3｜2026-08-29
 >
 > 用途：用于 2026 年 11 月中期检查前持续累积真实材料。本文只记录已经完成或明确处于进行中的工作；模型性能数字必须由正式实验产生后再填写。
 
@@ -12,7 +12,7 @@
 
 根据任务书，2026 年 5—7 月应完成文献调研、总体方案和实验环境，并建立 DICOM 解析、灰度/HU 标准化、空间重采样、骨窗增强和质量控制流程；2026 年 7—9 月应围绕 SegFormer 建立骨科 CT 多尺度分割、联合损失、困难样本增强、不确定性精修，并开展模型训练、调参与消融。
 
-当前材料按“**已有工程证据—尚缺真实实验**”分开记录，避免把计划写成结果。
+当前材料按“**已完成的真实工程/实验结果—仍缺的规模化与外部验证**”分开记录，避免把计划、目标值或外部阻塞写成已完成结果。
 
 ---
 
@@ -165,9 +165,9 @@ qc.json
 - connected-component count / false merge / false break；
 - 独立 checkpoint evaluation，可输出逐病例 `metrics_per_case.csv`、prediction、entropy NIfTI，以及 uncertainty/calibration 指标；
 - 逐病例评价设计；
-- 正式/工程 `preflight`：阻止 engineering split、test_private 泄漏、人工 QC 未通过、标签范围/类别数不匹配或正式训练无 CUDA 时误启动论文实验；
+- 正式/工程 `preflight`：阻止 engineering split、test_private 泄漏、人工 QC 未通过、标签范围/类别数不匹配等不合格正式实验；CPU 正式路径必须显式 `--allow-cpu`，避免把算力降级静默混入实验；
 - `task_lock`：只有组内明确 `task_locked=true` 且 binary/multiclass semantic 定义、类别数、数据与 split 均完整时才允许编译正式 config；当前 instance 任务因训练/评价链尚未实现而明确拒绝；
-- `gpu_environment` + `formal_readiness`：只读检查 PyTorch CUDA build、可见 GPU、显存、`nvidia-smi`，并将 task/GPU/formal preflight 汇总为统一 blocker 报告；当前真实工程 split 验证返回 `ready=false`，不会误启动正式训练；
+- `gpu_environment` + `formal_readiness`：只读检查 PyTorch CUDA build、可见 GPU、显存、`nvidia-smi`，并将 task/GPU/formal preflight 汇总为统一报告；不合格 split/config 会被正确阻断，当前锁定 10 例 pilot 在显式 `--allow-cpu` 下已验证 `ready=true / blocker_count=0`；
 - multiclass 逐病例宏平均只统计真值或预测实际出现的前景类别，并输出 `metrics_per_class.csv`，避免双方都缺失的类别虚高 Dice。
 
 2026-08-16 已在 CTSpine1K `MSD-T10` 真实标准化病例上完成 CT+bone-window 双通道、joint loss、backward、AdamW.step 的 36³ CPU 单 patch smoke test，证明真实数据训练链可运行。**这仍不是正式训练，随机权重 loss/梯度不属于模型性能。**
@@ -234,7 +234,7 @@ Ruff: All checks passed!
 
 ---
 
-## 4. 当前尚未完成、不能在中期材料中伪写完成的内容
+## 4. 当前边界、已完成门禁与仍未完成内容
 
 1. **CTSpine1K 10 例真实工程子集已下载/标准化，但最终论文主数据规模仍偏小，后续仍需扩大病例；**
 2. **10/10 自动 QC 与 10/10 人工 QC 已完成并通过；**
@@ -258,7 +258,7 @@ Ruff: All checks passed!
 
 ## 6. 中期展示建议
 
-中期 PPT 建议只展示能被工程文件复核的内容：
+统一的 v0.3.0 中期/结题展示源材料见 `docs/12_final_presentation_outline.md`。正式 PPT 建议只展示能被工程文件复核的内容：
 
 1. 任务书技术路线与本项目实际模块图；
 2. DICOM → HU → spacing → bone window → QC 流程图；

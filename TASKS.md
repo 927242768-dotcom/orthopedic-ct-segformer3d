@@ -144,7 +144,7 @@
 - [x] task lock 编译器
 - [x] GPU/CUDA 只读检查器
 - [x] formal readiness 汇总检查器
-- [x] 当前环境能正确返回 `ready=false` 并列出 blocker
+- [x] formal readiness 能正确阻止不合格配置；当前锁定 pilot 在显式 `--allow-cpu` 下已验证 `ready=true / blocker_count=0`
 
 ### G. 三维重建
 
@@ -175,8 +175,8 @@
 - [x] full / simplified / SDF mesh
 - [x] distance / angle API
 - [x] results-review 页面
-- [x] future prediction / entropy overlay 接口
-- [x] 当前无真实 evaluation 时正确显示 total=0
+- [x] 真实 evaluation prediction / entropy overlay 接口与页面
+- [x] 无 evaluation 时的空状态可正确显示；当前已能读取真实 validation / independent evaluation
 
 ### I. 文档与质量
 
@@ -184,7 +184,7 @@
 - [x] 实验设计
 - [x] 中期材料
 - [x] 组会汇报源材料
-- [x] 108 个 pytest 全部通过
+- [x] 138 个 pytest 全部通过
 - [x] Ruff clean
 - [x] 4 个前端 JS 语法检查通过
 - [x] 42 条 BibTeX 结构检查通过
@@ -461,10 +461,12 @@
 - [x] Discussion 已补真实 validation/independent failure interpretation
 - [x] Conclusion 已补正式 independent test 结论
 - [ ] 中文 CNKI/万方题录最终核验
-- [ ] 全文引用/格式统一
-- [ ] 最终语言润色
-- [ ] 中期/结题 PPT 更新
+- [x] 当前中文技术稿章节/术语/主要顺序引用已统一并完成本轮语言润色
+- [ ] 目标期刊/学校模板确定后的最终格式与参考文献样式定稿
+- [x] 中期/结题展示源材料更新：`docs/12_final_presentation_outline.md`
+- [ ] 最终 PPT 文件：待学校/答辩模板确定后生成
 - [ ] 软著材料（如需要）
+- [ ] GitHub `LICENSE`：需项目负责人确认自研代码许可与 SegFormer3D GPL-3.0 边界后再添加，不自动代选
 
 ---
 

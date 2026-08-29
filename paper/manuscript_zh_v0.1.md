@@ -16,13 +16,13 @@
 
 CT 具有较高的空间分辨率和对骨组织良好的密度对比，是骨折、脊柱疾病、骨关节病变及术前规划中的重要影像手段。临床二维阅片能够提供丰富的断层信息，但当目标结构具有复杂三维几何形态时，仅依赖逐层观察不利于快速理解骨折断端、骨块关系、关节面形态和手术入路。将 CT 体数据转化为可交互三维模型通常需要准确的骨结构分割，而人工逐层勾画既耗时又具有观察者差异，因此自动化分割成为骨科影像智能分析的重要基础环节。
 
-公开脊柱 CT 基准进一步说明了这一任务的复杂性。VerSe 数据包含不同视野、空间分辨率、扫描设备、解剖变异与病理情况，并特别涉及骨折、金属植入和过渡椎等困难情形。其基准研究指出，算法性能会受到罕见解剖变异和跨数据分布差异的显著影响。这意味着骨科 CT 分割不能只追求常规病例的平均 Dice，还需要关注跨中心泛化、边界质量、结构连通性与失败病例。
+公开脊柱 CT 基准进一步说明了这一任务的复杂性。VerSe 数据包含不同视野、空间分辨率、扫描设备、解剖变异与病理情况，并特别涉及骨折、金属植入和过渡椎等困难情形。其基准研究指出，算法性能会受到罕见解剖变异和跨数据分布差异的显著影响[6]。这意味着骨科 CT 分割不能只追求常规病例的平均 Dice，还需要关注跨中心泛化、边界质量、结构连通性与失败病例。
 
-近年来，Transformer 通过自注意力机制增强了对长距离依赖和全局上下文的建模能力。SegFormer 使用分层 Transformer 编码器提取多尺度特征，并利用轻量 MLP 解码器完成语义分割；其无固定位置编码的设计也为跨分辨率输入提供了较好的适应性。SegFormer3D 将这一思想扩展至三维体数据，通过 3D patch embedding、空间降采样注意力和多尺度体特征聚合，在保持较低参数量和计算量的同时完成医学体分割。然而，其官方实现主要验证于 BraTS、Synapse 和 ACDC 等通用医学数据，并未针对骨科 CT 的 HU 标准化、骨窗、各向异性、骨边界和拓扑错误进行专门设计。
+近年来，Transformer 通过自注意力机制增强了对长距离依赖和全局上下文的建模能力。SegFormer 使用分层 Transformer 编码器提取多尺度特征，并利用轻量 MLP 解码器完成语义分割；其无固定位置编码的设计也为跨分辨率输入提供了较好的适应性[1]。SegFormer3D 将这一思想扩展至三维体数据，通过 3D patch embedding、空间降采样注意力和多尺度体特征聚合，在保持较低参数量和计算量的同时完成医学体分割[4]。然而，其官方实现主要验证于 BraTS、Synapse 和 ACDC 等通用医学数据，并未针对骨科 CT 的 HU 标准化、骨窗、各向异性、骨边界和拓扑错误进行专门设计。
 
-另一方面，单纯使用交叉熵或 Dice 类区域损失容易把优化重点放在整体体素重叠，而骨科三维重建对毫米级表面误差、细小骨性突起、结构断裂和相邻骨粘连更加敏感。Boundary Loss 等方法通过距离场把优化信号直接引入目标边界；clDice 等方法则表明，可微骨架/拓扑约束能够补充传统区域指标对连通关系不敏感的问题。需要注意的是，clDice 最初主要面向管状和网络结构，因此其在不同骨结构上的适用性必须通过消融验证，而不能直接假设为有效。
+另一方面，单纯使用交叉熵或 Dice 类区域损失容易把优化重点放在整体体素重叠，而骨科三维重建对毫米级表面误差、细小骨性突起、结构断裂和相邻骨粘连更加敏感。Boundary Loss 等方法通过距离场把优化信号直接引入目标边界[15]；clDice 等方法则表明，可微骨架/拓扑约束能够补充传统区域指标对连通关系不敏感的问题[16]。需要注意的是，clDice 最初主要面向管状和网络结构，因此其在不同骨结构上的适用性必须通过消融验证，而不能直接假设为有效。
 
-此外，困难病例往往集中体现模型的实际风险。金属内固定造成的高密度条纹、低骨密度导致的骨—软组织对比下降、骨折导致的局部拓扑改变以及厚层扫描造成的层间信息不足，都可能引起预测不稳定。医学分割中的不确定性研究表明，预测可靠性与质量控制应与分割精度同时评估。因此，在粗分割后定位高不确定区域并进行局部精修，有望在有限额外计算成本下把模型资源集中到最容易出错的区域。
+此外，困难病例往往集中体现模型的实际风险。金属内固定造成的高密度条纹、低骨密度导致的骨—软组织对比下降、骨折导致的局部拓扑改变以及厚层扫描造成的层间信息不足，都可能引起预测不稳定。医学分割中的不确定性研究表明，预测可靠性与质量控制应与分割精度同时评估[17-18]。因此，在粗分割后定位高不确定区域并进行局部精修，有望在有限额外计算成本下把模型资源集中到最容易出错的区域。
 
 基于上述分析，本文围绕四个可验证问题展开：规范化 CT 与骨窗双通道是否稳定改善分割；Boundary/Topology 约束能否在区域、表面和结构指标上形成一致收益；困难样本策略是否优于简单 Bernoulli sampling；predictive entropy 是否既能提示错误，又能通过局部 refinement 稳健改善结果。所有方法选择仅依据固定 validation，独立 test 在最终参数锁定并推送后只执行一次，从实验设计上避免依据 test 反向调参。
 
@@ -32,7 +32,7 @@ CT 具有较高的空间分辨率和对骨组织良好的密度对比，是骨�
 
 ### 2.1 三维医学图像分割
 
-U-Net 系列通过编码器—解码器和跳跃连接成为医学分割的经典范式，nnU-Net 进一步通过自配置数据预处理、网络结构和训练策略建立了强大的通用基线。随着 Transformer 在视觉任务中的发展，UNETR 将三维体数据切分为 patch 序列并利用 Transformer 编码长距离关系；nnFormer 进一步面向体数据设计局部与全局注意力及 skip attention。这些方法提高了全局建模能力，但其计算成本和复杂解码结构也增加了大体积 CT 的训练与部署负担。
+U-Net 系列通过编码器—解码器和跳跃连接成为医学分割的经典范式，nnU-Net 进一步通过自配置数据预处理、网络结构和训练策略建立了强大的通用基线[22]。随着 Transformer 在视觉任务中的发展，UNETR 将三维体数据切分为 patch 序列并利用 Transformer 编码长距离关系[2]；nnFormer 进一步面向体数据设计局部与全局注意力及 skip attention[3]。这些方法提高了全局建模能力，但其计算成本和复杂解码结构也增加了大体积 CT 的训练与部署负担。
 
 ### 2.2 SegFormer 与 SegFormer3D
 
@@ -40,15 +40,15 @@ SegFormer 使用多阶段层次化 Transformer 编码器输出不同尺度特征
 
 ### 2.3 脊柱与骨结构 CT 分割
 
-CTSpine1K 提供大规模椎体 CT 标注，为脊柱自动分割和跨来源评估提供数据基础。VerSe 2019/2020 则建立了多设备、多中心、含解剖变异和病理情况的椎体标注基准，强调了异常解剖和 domain shift 对算法性能的影响。2024 年的 VerFormer 从骨科/脊柱场景出发，在 Transformer 中引入 vertebrae-aware global query，以突出与椎体相关的 token，并在 VerSe 数据上验证。近期研究进一步扩大了竞争范围：2025 年 SpineMamba 将 Residual Visual Mamba 与可学习三维脊柱形状先验结合；同年的椎体 Transformer 工作将 WNet 分割、ViT 类型分析与解剖变异感知结合，并针对切片缺失、噪声和扫描差异开展鲁棒性分析；椎体骨折研究则采用 nnU-Net 分割与骨折分类组成完整 pipeline，说明真实断裂病例需要独立评价；真实腰椎金属植入物的 deep-MAR 研究进一步证明金属伪影应优先用真实病例校验；2024 年 3D 椎体分割研究还直接观察到低骨密度情况下的相邻椎体融合和单椎体分裂失败，支持把 low-density 病例与 false merge/false break 单独分析。2026 年 VertebraFormer 把椎体分割、编号和病灶定位统一到结构感知多任务框架，并采用多域与 leave-one-domain-out 方案研究泛化；同年开放的 1,460 例椎体体部数据与 Residual-Encoder nnU-Net 研究进一步抬高了通用 CNN baseline 的强度。因此本文不能把“采用 Transformer”本身作为主要创新，也不能只与弱 CNN 对照，而应重点验证三维多尺度骨科适配、边界/拓扑约束、困难样本、不确定性局部精修以及从体素分割到物理空间表面的误差闭环。
+CTSpine1K 提供大规模椎体 CT 标注，为脊柱自动分割和跨来源评估提供数据基础[5]。VerSe 2019/2020 则建立了多设备、多中心、含解剖变异和病理情况的椎体标注基准，强调了异常解剖和 domain shift 对算法性能的影响[6]。2024 年的 VerFormer 从骨科/脊柱场景出发，在 Transformer 中引入 vertebrae-aware global query，以突出与椎体相关的 token，并在 VerSe 数据上验证[8]。近期研究进一步扩大了竞争范围：2025 年 SpineMamba 将 Residual Visual Mamba 与可学习三维脊柱形状先验结合[9]；同年的椎体 Transformer 工作将 WNet 分割、ViT 类型分析与解剖变异感知结合，并针对切片缺失、噪声和扫描差异开展鲁棒性分析[10]；椎体骨折研究则采用 nnU-Net 分割与骨折分类组成完整 pipeline，说明真实断裂病例需要独立评价[13]；真实腰椎金属植入物的 deep-MAR 研究进一步证明金属伪影应优先用真实病例校验[14]；2024 年 3D 椎体分割研究还直接观察到低骨密度情况下的相邻椎体融合和单椎体分裂失败，支持把 low-density 病例与 false merge/false break 单独分析[21]。2026 年 VertebraFormer 把椎体分割、编号和病灶定位统一到结构感知多任务框架，并采用多域与 leave-one-domain-out 方案研究泛化[11]；同年开放的 1,460 例椎体体部数据与 Residual-Encoder nnU-Net 研究进一步抬高了通用 CNN baseline 的强度[12]。因此本文不能把“采用 Transformer”本身作为主要创新，也不能只与弱 CNN 对照，而应重点验证三维多尺度骨科适配、边界/拓扑约束、困难样本、不确定性局部精修以及从体素分割到物理空间表面的误差闭环。
 
 ### 2.4 边界与拓扑约束
 
-区域损失直接优化预测区域与标签之间的体素重叠，但不能完全描述表面位置和解剖连通性。Boundary Loss 通过标签边界的距离信息建立可微表面约束，可与 Dice/CE 等区域损失联合。clDice 利用预测与真值软骨架之间的拓扑精确率和召回率刻画连通性，为结构保持提供了可微目标。2024 年的多类别 Betti matching 工作进一步将 persistent-homology 拓扑约束扩展到多类别医学分割；TEDS-Net 则通过对具有正确拓扑的先验形状进行连续形变生成解剖合理分割。这些进展说明“拓扑正确”可以被显式优化，但骨折等骨科病例的真实解剖本身可能发生断裂，因此固定拓扑先验并不总是成立。本文不把某一种拓扑损失预设为最终最优方案，而是在骨科 CT 目标上分别评估区域、边界、拓扑及其组合，并对骨折病例单独分析。
+区域损失直接优化预测区域与标签之间的体素重叠，但不能完全描述表面位置和解剖连通性。Boundary Loss 通过标签边界的距离信息建立可微表面约束，可与 Dice/CE 等区域损失联合[15]。clDice 利用预测与真值软骨架之间的拓扑精确率和召回率刻画连通性，为结构保持提供了可微目标[16]。2024 年的多类别 Betti matching 工作进一步将 persistent-homology 拓扑约束扩展到多类别医学分割[19]；TEDS-Net 则通过对具有正确拓扑的先验形状进行连续形变生成解剖合理分割[20]。这些进展说明“拓扑正确”可以被显式优化，但骨折等骨科病例的真实解剖本身可能发生断裂，因此固定拓扑先验并不总是成立。本文不把某一种拓扑损失预设为最终最优方案，而是在骨科 CT 目标上分别评估区域、边界、拓扑及其组合，并对骨折病例单独分析。
 
 ### 2.5 不确定性估计与分割质量控制
 
-常见不确定性估计包括 Monte Carlo Dropout、Deep Ensemble、测试时增强和预测熵等。近期 EDUE 等工作强调医学分割的不确定性应与真实错误、标注者分歧或质量控制能力相关，而不是仅生成视觉热图；UCTNet 则进一步把不确定性作为特征学习的引导信号，表明 uncertainty 可以直接参与分割网络的信息选择。由于本项目首阶段公开数据通常只有单一标准标签，本文优先采用无需多标注者的预测熵作为低成本基线，并分析其与分割误差的空间相关性；后续如获得多专家标注，可进一步研究 aleatoric uncertainty 与标注分歧的一致性，若熵图在困难区域验证有效，再评估 uncertainty-guided feature/refinement 结构。
+常见不确定性估计包括 Monte Carlo Dropout、Deep Ensemble、测试时增强和预测熵等。近期 EDUE 等工作强调医学分割的不确定性应与真实错误、标注者分歧或质量控制能力相关，而不是仅生成视觉热图[17]；UCTNet 则进一步把不确定性作为特征学习的引导信号，表明 uncertainty 可以直接参与分割网络的信息选择[18]。由于本项目首阶段公开数据通常只有单一标准标签，本文优先采用无需多标注者的预测熵作为低成本基线，并分析其与分割误差的空间相关性；后续如获得多专家标注，可进一步研究 aleatoric uncertainty 与标注分歧的一致性，若熵图在困难区域验证有效，再评估 uncertainty-guided feature/refinement 结构。
 
 ---
 
@@ -117,7 +117,7 @@ U(v)=-\sum_c p_c(v)\log(p_c(v)+\epsilon).
 
 每例数据保存原始/处理后 shape、spacing、origin、direction、强度统计、DICOM series 数量和 QC warning。所有训练实验保存 config、患者级 split、随机种子、checkpoint、逐病例指标和代码版本。测试集只用于最终评估，不能反复用于选择 loss 权重或模型结构。
 
-为避免工程 smoke 被误写成论文实验，训练/评估入口设置 formal preflight：在正式运行前检查病例级 split 泄漏、官方 test-private 误用、人工 QC、pipeline/输入通道、标签范围与 `num_classes`。本 pilot 已在显式 `--allow-cpu` 条件下通过 formal readiness 并完成 CPU 正式流程；GPU 仅作为后续扩大实验规模时的加速条件，不再作为当前方法学完成与否的门槛。当前 CTSpine1K/VerSe `1–25` 的 `C1–L6` 映射只用于 QC/Web 可读显示，不改变原始标签值，也不提前决定正式任务采用 binary、multi-class semantic 或 instance segmentation。
+为避免工程 smoke 被误写成论文实验，训练/评估入口设置 formal preflight：在正式运行前检查病例级 split 泄漏、官方 test-private 误用、人工 QC、pipeline/输入通道、标签范围与 `num_classes`。本 pilot 已在显式 `--allow-cpu` 条件下通过 formal readiness 并完成 CPU 正式流程；GPU 仅作为后续扩大实验规模时的加速条件，不再作为当前方法学完成与否的门槛。当前 CTSpine1K/VerSe `1–25` 的 `C1–L6` 映射只用于 QC/Web 可读显示，不改变原始标签值。本文 formal-pipeline pilot 的正式任务已经锁定为 `vertebra_binary_ctspine1k_msd_t10_v1`（binary semantic，2 类）；显示 schema 与任务标签映射保持分离。
 
 ### 3.8 物理空间表面重建与工程几何控制
 
@@ -324,5 +324,6 @@ Uncertainty 在独立 test 上仍保留一定错误排序能力（AUROC=`0.86424
 19. Berger A H, Stucki N, Lux L, et al. Topologically Faithful Multi-class Segmentation in Medical Images. arXiv:2403.11001, 2024.
 20. Wyburd M K, Dinsdale N K, Jenkinson M, Namburete A I L. Anatomically plausible segmentations: Explicitly preserving topology through prior deformations. Medical Image Analysis, 2024, 97:103222.
 21. Xiong X, Graves S A, Gross B A, et al. Lumbar and Thoracic Vertebrae Segmentation in CT Scans Using a 3D Multi-Object Localization and Segmentation CNN. Tomography, 2024, 10(5):738-760.
+22. Isensee F, Jaeger P F, Kohl S A A, Petersen J, Maier-Hein K H. nnU-Net: a self-configuring method for deep learning-based biomedical image segmentation. Nature Methods, 2021, 18:203-211.
 
-> 机器可用参考文献库已建立于 `paper/references.bib`（当前 42 条英文核心条目），结构化文献矩阵见 `docs/08_literature_matrix.md`（当前 44 条）。正式投稿前仍需统一期刊格式，并对国内文献与最新正式发表版本再次核验。
+> 本稿采用顺序编码引用，正文新增引用均与本节编号对应。机器可用参考文献库位于 `paper/references.bib`（当前 42 条英文核心条目），结构化文献矩阵见 `docs/08_literature_matrix.md`（当前 44 条）。正式投稿前仍需按目标期刊格式统一题录，并对国内文献与最新正式发表版本再次核验。

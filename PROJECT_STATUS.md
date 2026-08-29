@@ -214,7 +214,7 @@ setuptools          80.9.0（为 Lightning/pkg_resources 兼容固定 <81）
 
 `uv pip ... --dry-run` 当前显示依赖一致、无需变更。
 
-当前 Windows 系统侧没有检测到 `nvidia-smi`，因此不能据此确认存在可用于训练的 NVIDIA CUDA 环境；当前 `.venv` 明确为 CPU PyTorch。正式 3D CT 训练应迁移到已确认的 NVIDIA GPU/服务器环境，或重新运行环境脚本安装 CUDA 11.8 对应 PyTorch。
+当前 Windows 系统侧没有检测到 `nvidia-smi`，当前 `.venv` 明确为 CPU PyTorch。现有 10 例 formal-pipeline pilot 已在显式 `--allow-cpu` 条件下完成训练、validation 与唯一一次正式 independent test，因此无 NVIDIA GPU 已不再是当前工程闭环的方法学 blocker；GPU 仅作为后续扩大病例规模、运行跨架构强 baseline 和缩短三维训练墙钟时间的效率升级项，GPU 显存数据在没有真实设备前继续保持未报告。
 
 ### 3.5 自动化测试
 
@@ -225,7 +225,7 @@ ruff check src web tests
 → All checks passed!
 
 pytest tests -q
-→ 94 passed
+→ 138 passed
 
 JSON / BibTeX / frontend structural checks
 → data/datasets.json OK
@@ -342,11 +342,11 @@ src/preprocessing/qc_visualization.py
 - VerSe 与 CTSpine1K 批处理均可使用 `--qc` 生成逐例 `qc_contact_sheet.png`；
 - `qc_visualization` 可批量生成/刷新 QC 图，并输出 `manual_qc_review.csv` 与 `qc_visualization_summary.json`；
 - 合成 NIfTI 已验证前景标签驱动的三视图选层、骨窗显示、label overlay 与批量审核清单生成；
-- 真实 10 例已生成 contact sheet，`manual_qc_review.csv` 共 10 行，人工字段留空待签字；
+- 真实 10 例已生成 contact sheet；2026-08-26 已复核 `manual_qc_review.csv`，10/10 orientation/spacing/label alignment/bone-window 均为 `yes`，10/10 `review_status=pass`，reviewer 已填写；
 - `audit_processed` 对 10 例 pipeline/spacing/geometry/label/normalization 自动审计：10/10 pass；
 - 真实病例原始 z-spacing 覆盖约 0.8 / 1.0 / 5.0 mm，重采样后均为 1 mm。
 
-网络状态已发生变化：VerSe S3 仍未验证恢复；CTSpine1K Hugging Face 则通过浏览器**单文件顺序下载**成功完成 10 例。并行请求曾产生 `无法下载`，`liver_3/5/8` 顺序重试后成功。接管到项目的文件执行 SHA-256 源/目标一致性检查；因此当前阻塞已从“无真实数据”转为“正式任务/split/GPU baseline 未完成”。
+网络状态已发生变化：VerSe S3 仍未验证恢复；CTSpine1K Hugging Face 则通过浏览器**单文件顺序下载**成功完成 10 例。并行请求曾产生 `无法下载`，`liver_3/5/8` 顺序重试后成功。接管到项目的文件执行 SHA-256 源/目标一致性检查。当前 10 例 pilot 的任务锁定、人工 QC、7/2/1 split、validation 消融、参数锁定与唯一一次 independent test 均已完成；真正剩余的科研缺口是扩大病例规模、强 baseline、困难病例正式分层、合法临床/多中心验证等外部或新增实验条件。
 
 ---
 
@@ -406,23 +406,19 @@ soft-clDice 只是首个候选，并非“骨结构必然有效”。尤其对�
 
 ### 4.4 Web 阶段路线
 
-当前已实现：
+当前已完成科研复核主链：
 
 ```text
-上传 → 基础识别/QC → axial/coronal/sagittal MPR
+上传 / 真实病例 QC
+→ axial/coronal/sagittal MPR + label/prediction overlay
+→ predictive-entropy / uncertainty overlay
+→ evaluation results-review
+→ prediction / GT physical-space mesh
+→ 2.0 mm feature-weighted simplification / 0.4 mm SDF
+→ WebGL2 3D 切换与距离/角度测量
 ```
 
-下一阶段：
-
-```text
-真实 checkpoint 推理
-→ mask overlay
-→ uncertainty overlay
-→ mask→mesh
-→ 3D 旋转/透明/多骨开关
-→ 距离/角度测量
-→ 人工校核
-```
+validation 与正式 independent evaluation 的已保存 prediction / entropy / mesh / SDF 均已被 Web 实机读取；科研展示不通过临时 `/infer` 重跑最终模型。后续 Web 工作只属于易用性、更多病例与外部验证场景的扩展，不再把已完成的 prediction/uncertainty/3D 接入列为当前缺项。
 
 网站定位始终为**科研/辅助分析原型**，在没有医疗器械合规与临床验证前，不写“自动诊断疾病”或替代医生结论。
 
@@ -467,35 +463,16 @@ paper/references.bib
 
 已完成：
 
-- 论文研究问题；
-- Introduction 初稿；
-- Related Work 初稿；
-- 数据标准化方法描述；
-- SegFormer3D 方法描述；
-- 联合损失方案；
-- hard sample 方案；
-- uncertainty ROI + uncertainty→error 定量评价 + ROI-only refinement 方案；
-- physical-space mesh / 重采样几何控制方法描述；
-- formal preflight 与 multi-class 评价安全规则；
-- 37 条结构化文献矩阵 + 35 条英文核心 BibTeX；
-- 实验/消融设计；
-- 结果表格模板；
-- limitation 预留。
+- 研究问题、Introduction、Related Work、Methods 与 Experiment Design 主体；
+- 数据标准化、SegFormer3D、联合损失、困难样本、uncertainty/calibration、ROI refinement、physical-space mesh / SDF 与 Web 科研复核方法描述；
+- 44 条结构化文献矩阵 + 42 条英文核心 BibTeX；
+- v11～v23 validation 消融的真实结果整理；
+- v13 最终 validation 主结果、uncertainty/calibration、`REFINEMENT=FAIL`、3D/SDF/Web 工程结果；
+- 最终锁定协议下唯一一次 `liver_169` independent test 的 Results；
+- Discussion、Failure Cases、Limitations 与 Conclusion；
+- 正文顺序引用已开始统一，并与当前参考文献编号对应。
 
-**Results 目前保持 TBD。**
-
-只有当 `experiments/<run_id>/` 内存在可追溯的：
-
-```text
-config.yaml
-split.json
-history.csv / train.log
-checkpoint
-metrics_per_case.csv
-summary.json
-```
-
-并完成独立测试后，才允许把数字写进论文。
+当前 Results 已有可追溯真实数字，不再是 TBD。仍未完成且不得伪造的部分包括：扩大样本后的主实验、真实跨架构强 baseline、metal/fracture/low-density 正式 subgroup、合法临床/多中心验证、统计显著性，以及 CNKI/万方国内题录最终核验与目标期刊格式定稿。
 
 ---
 
@@ -514,12 +491,15 @@ summary.json
 | `docs/08_literature_matrix.md` | 44 条 3D 分割/脊柱/困难病例/损失/uncertainty/重建结构化文献矩阵 | ✅ 已更新强 baseline/骨折/金属植入物/低骨密度工作 |
 | `docs/03_data_pipeline_spec.md` | DICOM/HU/spacing/bone-window/QC SOP | ✅ 首版 |
 | `docs/04_experiment_plan.md` | baseline、联合损失、困难样本、uncertainty 消融矩阵 | ✅ 首版 |
-| `docs/05_midterm_materials.md` | 中期研究材料、已有证据、缺项、展示建议 | ✅ 首版 |
+| `docs/05_midterm_materials.md` | 中期研究材料、真实结果、边界与展示建议 | ✅ v0.3 已同步最终 validation/independent 状态 |
 | `docs/06_public_dataset_onboarding.md` | VerSe/CTSpine1K/TotalSegmentator 登记、下载、10 例 QC 与 baseline 接入 SOP | ✅ 已更新真实状态 |
 | `docs/07_real_data_validation_20260816.md` | CTSpine1K 10 例真实落盘、pipeline 0.3.0、审计、patch smoke、真实 mesh 证据 | ✅ |
-| `docs/09_public_repository_manifest.md` | 公开 GitHub 仓库纳入/排除文件、医学数据隐私与提交前检查清单 | ✅ 新增 |
+| `docs/09_public_repository_manifest.md` | 公开 GitHub 仓库纳入/排除文件、医学数据隐私与提交前检查清单 | ✅ |
+| `docs/10_final_parameter_lock.md` | 最终 v13 参数锁定、独立测试访问纪律 | ✅ 已冻结 |
+| `docs/11_final_independent_test.md` | 唯一一次 FINAL FORMAL INDEPENDENT TEST 与 3D/Web 记录 | ✅ 已完成 |
+| `docs/12_final_presentation_outline.md` | v0.3.0 中期/结题展示统一源材料 | ✅ 2026-08-29 更新 |
 | `paper/outline.md` | 论文持续写作框架 | ✅ |
-| `paper/manuscript_zh_v0.1.md` | 中文论文技术初稿，Methods/Experiment Design 持续补强，Results 保持 TBD | 🟡 |
+| `paper/manuscript_zh_v0.1.md` | 中文论文技术稿；validation/independent Results、Discussion、Failure Cases、Limitations、Conclusion 已同步，继续做引用/格式/语言收尾 | 🟡 |
 | `paper/references.bib` | 42 条英文核心机器可用 BibTeX，已做 key/括号结构检查 | ✅ |
 | `env/requirements.txt` | 固定项目依赖 | ✅ |
 | `env/setup_env.ps1` | 项目内 Python 3.11/.venv 环境搭建；优先 uv | ✅ |
@@ -527,7 +507,7 @@ summary.json
 | `env/download_verse.ps1` | VerSe 2019/2020 下载计划与显式下载辅助；默认不下载 | ✅ |
 | `env/download_ctspine1k_sample.ps1` | CTSpine1K MSD-T10 小样本 CT+label 下载计划与显式下载；默认不下载 | ✅ |
 | `env/check_gpu.ps1` | 项目 GPU/CUDA/PyTorch 只读验收入口 | ✅ 本机正确报告 CPU/no CUDA |
-| `env/check_formal_readiness.ps1` | task + GPU + formal preflight 一站式验收入口 | ✅ 当前阻塞正确返回 exit 2 |
+| `env/check_formal_readiness.ps1` | task + 算力 + formal preflight 一站式验收入口 | ✅ 不合格配置可阻断；锁定 pilot `--allow-cpu` 已 ready=true |
 | `third_party/README.md` | 上游许可证边界和本地兼容补丁说明 | ✅ |
 | `third_party/SegFormer3D/` | 官方上游代码，基线 `e314242` + 1 个本地兼容补丁 | ✅ |
 | `configs/orthopedic_ct_baseline.yaml` | 单 CT + Region baseline | ✅ 配置完成 |
@@ -540,32 +520,32 @@ summary.json
 | `src/preprocessing/nifti_pipeline.py` | 公开 NIfTI image/label 几何校验、重采样、标准化与训练标准输出 | ✅ 10 例真实 CTSpine1K 验证 |
 | `src/preprocessing/prepare_verse.py` | VerSe CT/mask 配对、source split、防患者泄漏、批量预处理，可选 `--qc` | ✅ 工程验证，🟠 待真实数据 |
 | `src/preprocessing/prepare_ctspine1k.py` | CTSpine1K CT/mask 配对、官方 split 标记、批量标准化，可选 `--qc` | ✅ 10 例真实处理通过 |
-| `src/preprocessing/qc_visualization.py` | 三视图 × normalized/bone-window/label-overlay QC 图与人工审核 CSV | ✅ 10 例真实数据已生成，人工字段待签字 |
+| `src/preprocessing/qc_visualization.py` | 三视图 × normalized/bone-window/label-overlay QC 图与人工审核 CSV | ✅ 10 例真实数据已生成并完成人工审核，10/10 pass |
 | `src/preprocessing/audit_processed.py` | 标准化病例 pipeline/geometry/spacing/label/normalization 自动审计 | ✅ 10/10 real pass |
 | `src/preprocessing/create_split.py` | patient-level split、防重复患者泄漏 | ✅ |
 | `src/modeling/segformer3d_adapter.py` | 官方 SegFormer3D 与本项目配置适配 | ✅ |
 | `src/modeling/dataset.py` | 标准化 NIfTI、多通道、3D patch dataset | ✅ 首版 |
-| `src/modeling/joint_loss.py` | Region + Boundary + soft-clDice | 🟠 待消融 |
+| `src/modeling/joint_loss.py` | Region + Boundary + soft-clDice | ✅ v11/v13/v14/v15 validation 消融已完成；最终 v13 使用 Region+Boundary |
 | `src/modeling/metrics.py` | Dice/IoU/Precision/Recall/HD95/ASSD | ✅ |
-| `src/modeling/uncertainty.py` | entropy、ROI、uncertainty-error overlap/AUROC/AUPRC/Top-percent 定量指标 | ✅ 工程实现，🟠 待真实模型验证 |
-| `src/modeling/refinement.py` | uncertainty ROI 局部残差 3D 精修网络与 ROI 融合 | ✅ 工程实现，🟠 待真实消融 |
-| `src/modeling/refinement_training.py` | coarse 冻结 + ROI-normalized 二阶段精修 loss/step/error delta | ✅ 工程实现，🟠 待真实 checkpoint |
+| `src/modeling/uncertainty.py` | entropy、ROI、uncertainty-error overlap/AUROC/AUPRC/Top-percent 与 calibration | ✅ validation + independent test 已真实验证 |
+| `src/modeling/refinement.py` | uncertainty ROI 局部残差 3D 精修网络与 ROI 融合 | ✅ validation 3×3 grid + full-volume 对照已完成，最终判定 REFINEMENT=FAIL |
+| `src/modeling/refinement_training.py` | coarse 冻结 + ROI-normalized 二阶段精修 loss/step/error delta | ✅ 7 个 train cases 真实 refinement 训练与两例 validation 已完成 |
 | `src/modeling/preflight.py` | formal/engineering 实验前置验收与泄漏/人工QC/GPU/标签配置保护 | ✅ real engineering/formal 拦截验证 |
 | `src/modeling/task_lock.py` | 锁定 binary/multiclass semantic 任务并编译带 SHA-256 指纹的正式 config；拒绝未实现 instance | ✅ targeted + full regression pass |
 | `src/modeling/gpu_environment.py` | PyTorch CUDA/device/显存/`nvidia-smi` 只读验收 | ✅ 本机 CPU blocker 已实测 |
-| `src/modeling/formal_readiness.py` | 汇总 task/GPU/formal preflight/config binding 的一站式正式实验验收 | ✅ 当前 real smoke override 返回 9 blockers |
-| `src/modeling/train.py` | 训练、验证、scheduler、checkpoint、固定 split/config/环境/train.log | 🟠 待 GPU 正式训练 |
+| `src/modeling/formal_readiness.py` | 汇总 task/GPU/formal preflight/config binding 的一站式正式实验验收 | ✅ 不合格配置可正确阻断；当前锁定 pilot 在 `--allow-cpu` 下 ready=true / 0 blocker |
+| `src/modeling/train.py` | 训练、验证、scheduler、checkpoint、固定 split/config/环境/train.log | ✅ 当前 CPU formal-pipeline validation 训练链已完成；扩样本/GPU 训练属后续研究 |
 | `src/modeling/evaluate.py` | checkpoint sliding-window 独立评估、per-case/per-class、uncertainty 定量指标/prediction/entropy 输出 | ✅ validation + locked formal independent test 已真实运行 |
 | `src/modeling/real_patch_smoke.py` | 真实标准化病例双通道 joint-loss 单 patch forward/backward 工程验收 | ✅ real pass |
-| `src/reconstruction/mesh.py` | mask→物理空间 Marching Cubes + vertex-clustering + 法向变化加权特征保护候选 | ✅ real-label engineering pass |
-| `src/reconstruction/export_mesh.py` | NIfTI label/prediction→全分辨率/简化 PLY+JSON 可追溯导出 | ✅ real-label pass |
+| `src/reconstruction/mesh.py` | mask→物理空间 Marching Cubes + vertex-clustering + 法向变化加权特征保护 | ✅ GT + validation/independent prediction engineering pass |
+| `src/reconstruction/export_mesh.py` | NIfTI label/prediction→全分辨率/简化 PLY+JSON 可追溯导出 | ✅ GT + validation/independent prediction pass |
 | `src/reconstruction/resampling_error.py` | 原始 label vs 1 mm label physical-surface 重采样几何误差 | ✅ 10/10 real pass |
-| `src/reconstruction/sdf_surface.py` | physical-mm signed-distance smoothing + zero-level MC + 连通域保护 | ✅ real `liver_0` sweep/Web pass |
+| `src/reconstruction/sdf_surface.py` | physical-mm signed-distance smoothing + zero-level MC + 连通域保护 | ✅ GT sweep + validation/independent prediction + Web pass |
 | `src/reconstruction/measurement.py` | 物理坐标距离/三点夹角与 voxel→physical 工具 | ✅ |
-| `web/backend/app.py` | FastAPI 本地科研服务：上传/MPR/QC reviewer/真值3D+SDF/results-review/测量/推理占位 | 🟡 |
-| `web/frontend/` | 上传/QC、交互 MPR+overlay、QC 病例栏折叠/审核区聚焦、WebGL2 真值 3D/SDF、results-review、测量前端 | 🟡 |
+| `web/backend/app.py` | FastAPI 本地科研服务：上传/MPR/QC/results-review/prediction+uncertainty/3D+SDF/测量 | ✅ 当前科研原型闭环 |
+| `web/frontend/` | 上传/QC、交互 MPR+prediction/entropy overlay、results-review、WebGL2 GT/prediction/SDF、测量前端 | ✅ Edge 实机验收闭环 |
 | `web/run_web.ps1` | localhost Web 启动脚本 | ✅ |
-| `tests/` | 自动化测试 | ✅ 94 passed |
+| `tests/` | 自动化测试 | ✅ 138 passed |
 | `data/README.md` | 数据治理与隐私规则、当前真实 CTSpine1K 子集说明 | ✅ |
 | `data/datasets.json` | 公开数据集来源/版本/许可/本地状态；已登记 10 例 CTSpine1K 工程子集 | ✅ |
 | `data/splits/ctspine1k_msd_t10_engineering_smoke.json` | 1/1/1 真实数据工程 smoke split，明确 `formal_experiment=false` | ✅ 非正式实验 |
@@ -575,15 +555,16 @@ summary.json
 
 ## 8. 当前阻塞与风险
 
-### R1｜真实工程数据已落盘，但正式论文数据方案尚未固定
+### R1｜当前 pilot 已闭环，但最终论文样本规模不足
 
-CTSpine1K `MSD-T10` 已有 10 例真实 CT+label 完成落盘和 pipeline 0.3.0 标准化，自动审计 10/10 pass；其中 9 例官方 `trainset`、1 例 `test_private`。这已经解除“完全没有真实数据”的工程阻塞，但**不能直接把该方便子集当正式论文 split**。当前仍需：
+CTSpine1K `MSD-T10` 10 例真实 CT+label 已完成 pipeline 0.3.0 标准化、10/10 自动审计与人工 QC；当前 pilot 已锁定 `vertebra_binary_ctspine1k_msd_t10_v1`，固定 7 train / 2 validation / 1 `test_private` patient-level split，并完成 validation 消融、最终参数锁定和唯一一次 independent test。该 10 例结果可以作为**正式流程 pilot**写入当前技术稿，但样本量过小，不能代表最终论文或临床泛化结论。后续真正需要的是：
 
-- 组内确定 binary / multi-class / instance 等正式标签任务；
-- 确定主数据集/官方 split 或预注册内部 split；
-- 完成 10 例人工 QC 签字；
-- 在 NVIDIA GPU 上跑 baseline；
-- 之后才能产生可写入论文的 DSC/HD95/ASSD、调参/消融和 Web 真实推理结果。
+- 扩大病例规模并建立新的预注册 patient-level split；
+- 在新 split 上运行强跨架构 baseline，并重新形成主实验结果；
+- 有可靠 metadata 后再做 metal/fracture/low-density/thick-slice 正式 subgroup；
+- 引入外部/多中心或合法临床数据后再讨论泛化与统计结论。
+
+本次 `liver_169` 结果已经冻结，不得因扩样本前的任何文档工作重新用于调参。
 
 ### R2｜临床数据授权/伦理
 
@@ -595,36 +576,17 @@ CTSpine1K `MSD-T10` 已有 10 例真实 CT+label 完成落盘和 pipeline 0.3.0 
 - 不把患者姓名、身份证号、联系方式写入日志/文件名/截图；
 - 如学校/医院要求伦理审批，先完成审批再用于研究。
 
-### R3｜GPU 训练条件
+### R3｜GPU/算力仅是后续规模化效率风险
 
-当前项目环境为 PyTorch CPU。`src.modeling.gpu_environment` 已实测：PyTorch `2.1.0+cpu`、`torch.version.cuda=None`、`cuda_available=false`、0 个 CUDA device、无 `nvidia-smi`。3D CT 正式训练需要确认：
+当前项目环境为 PyTorch `2.1.0+cpu`；`src.modeling.gpu_environment` 实测 `torch.version.cuda=None`、`cuda_available=false`、0 个 CUDA device、无 `nvidia-smi`。现有 10 例 formal-pipeline pilot 已在显式 `--allow-cpu` 下完成，因此 GPU 不再是当前阶段的完成阻塞。
 
-- NVIDIA GPU；
-- 驱动；
-- CUDA/PyTorch 匹配；
-- 可用显存；
-- 训练存储空间。
+若扩大病例、运行 nnU-Net / Residual-Encoder nnU-Net 等强 baseline 或开展更大 ROI/更长训练，建议再确认 NVIDIA GPU、驱动、CUDA/PyTorch、显存与存储空间。没有真实 GPU 设备前不填写峰值显存或 GPU 加速数字。当前本机无 `nvidia-smi` 也不能推断学校服务器或其他设备没有 GPU。
 
-当前 `nvidia-smi` 未检测到只能说明本机当前没有可见 NVIDIA 工具链，**不能据此推断学校服务器或其他设备也没有 GPU**。
+### R4｜当前 pilot 任务已锁定；未来扩任务必须重新预注册
 
-### R4｜主任务/标签范围尚未最终定稿
+当前 formal-pipeline pilot 的任务已经锁定为 `vertebra_binary_ctspine1k_msd_t10_v1`：binary semantic，2 类，原始前景标签 `1..25` 在训练/评价中统一映射为前景 1。`configs/label_schemas/ctspine1k_verse.json` 的 `1–25 → C1–L6` 仍只用于 QC/Web 可读显示，不改变源标签。
 
-建议首篇论文优先：
-
-```text
-脊柱/椎体 CT
-```
-
-理由：CTSpine1K/VerSe 数据、骨边界、相邻骨粘连/断裂、跨来源泛化与三维重建问题都较契合当前创新设计。
-
-但最终仍需组内确认是：
-
-- 整体脊柱 binary；
-- 单椎体/多椎体 semantic；
-- vertebra instance；
-- 或其他骨科部位。
-
-标签定义一旦确定，loss、topology、指标、数据集和 Web 测量都会随之固定。当前已建立 `configs/label_schemas/ctspine1k_verse.json`，仅把 `1–25` 工程显示为 `C1–L6`，用于 QC/3D 可读性；另已建立 `configs/task_specs/vertebra_task_template.json` + `task_lock.py`，模板默认 `task_locked=false`，未锁定时拒绝编译正式 config，instance 任务因当前链未实现而明确拒绝。**不能把显示 schema 或模板当成正式任务已经定稿**。
+若未来扩大研究到 multi-class semantic、vertebra instance 或其他骨科部位，必须新建 task spec、新 split、新 config 和新的 validation/test 方案，不能把当前 v13 / `liver_169` 的锁定结果反向改写为另一任务。当前 instance 训练/评价链仍未实现，因此不能用 semantic segmentation 冒充 instance 结果。
 
 ### R5｜Topology 与真实骨折的冲突
 
@@ -661,9 +623,11 @@ CTSpine1K Hugging Face 在早期也出现超时和并行下载失败；但改为
 
 ---
 
-## 9. 下一步任务——必须按优先级执行
+## 9. validation 阶段历史任务清单（归档）
 
-### P0｜当前第一优先：修复 full-volume checkpoint selection 与 baseline
+> 本节保留 v3～v15 等阶段当时的勾选状态与待办，用于追溯实验决策，不再代表 2026-08-29 v0.3.0 收尾后的当前任务。**当前真实待办以本节末尾“9.1 当前下一步”为准。**
+
+### P0｜历史：修复 full-volume checkpoint selection 与 baseline
 
 - [x] 首个正式任务已锁定：`vertebra_binary_ctspine1k_msd_t10_v1`，binary semantic，2 类；
 - [x] 10/10 人工 QC 已完成，7 train / 2 validation / 1 test patient-level split 已固定；`liver_169` 仅允许最终独立 test；
@@ -749,6 +713,30 @@ CTSpine1K Hugging Face 在早期也出现超时和并行下载失败；但改为
 - [ ] 软著材料严格区分上游和自研代码；
 - [ ] 每次材料更新同步回写本台账。
 
+### 9.1 当前下一步（v0.3.0 收尾后）
+
+**本机可继续完成：**
+
+- [x] 对 README / PROJECT_STATUS / TASKS / 中期材料 / 中文论文做当前状态一致性复核；
+- [x] 论文已写入 validation 与唯一一次 independent test 真实结果，并保留低性能、非临床定位；
+- [x] 论文正文顺序引用开始统一，已补主要方法/数据集/相关工作的引用编号；
+- [x] GitHub 首页保持简洁，详细 v11～v23 过程只放 `PROJECT_STATUS.md`；
+- [x] v0.3.0 Release 已存在且内容与正式收尾状态一致，不因纯文档同步重复发版本；
+- [ ] 国内 CNKI/万方题录最终逐条核验（需要可访问数据库/真实题录证据）；
+- [ ] 目标期刊/学校最终格式模板确定后，再做最后一轮格式定稿；
+- [ ] GitHub `LICENSE` 需项目负责人结合自研代码与 SegFormer3D GPL-3.0 边界明确选择；当前仓库未声明许可证，不自动代选。
+
+**需要新增数据/算力/外部条件后再做：**
+
+- [ ] 扩大真实病例规模，并建立新的预注册 patient-level split；
+- [ ] 在新 split 上真实运行 nnU-Net / Residual-Encoder nnU-Net 等强 baseline；
+- [ ] 有可靠病例标记后报告 metal / fracture / low-density / thick-slice 正式 subgroup；
+- [ ] 有真实 NVIDIA 设备后再报告 GPU 显存/加速数据；
+- [ ] 获得合法授权临床脱敏数据后开展外部/多中心验证；
+- [ ] 样本量足够后再进行置信区间、效应量和统计显著性分析。
+
+**永久约束：**最终 `liver_169` 正式 test 已冻结，禁止再次运行 `evaluate.py` 对其做最终模型推理，也禁止依据其结果重新选择 threshold、loss、sampling、augmentation、refinement、checkpoint 或模型参数。
+
 ---
 
 ## 10. 继续项目时的推荐检查命令
@@ -776,7 +764,7 @@ python -m ruff check src web tests
 当前基准应为：
 
 ```text
-103 passed
+138 passed
 All checks passed!
 ```
 
@@ -800,27 +788,21 @@ powershell -ExecutionPolicy Bypass -File .\web\run_web.ps1
 http://127.0.0.1:8000
 ```
 
-### 10.5 正式训练前
+### 10.5 后续新增正式实验前
 
-必须先满足：
+当前 v13 / `liver_169` formal-pipeline 已冻结，不再重复训练或最终测试。未来**新增数据规模或新任务**的正式实验必须使用新的 task spec / split / config，并至少满足：
 
 ```text
 真实处理后数据存在
-+ 正式 split_file 存在且 formal_experiment 允许
++ 新的预注册 patient-level split 存在且 formal_experiment 允许
 + 标签定义固定
-+ 人工 QC 达到正式 run 要求
-+ GPU 环境确认
-+ 上游 SegFormer3D 可加载
++ 对应病例人工 QC 达到正式 run 要求
++ 上游 SegFormer3D / baseline 实现可加载
 + formal preflight ready=true
++ 若使用 CPU，必须显式 --allow-cpu；若报告 GPU 指标，必须有真实 GPU 证据
 ```
 
-训练入口：
-
-```powershell
-python -m src.modeling.train --config configs\orthopedic_ct_baseline.yaml
-```
-
-当前不要执行正式训练命令，除非上述条件已经满足。
+不得把旧 `liver_169` 重新纳入新的 validation/调参过程。
 
 ---
 
@@ -2552,3 +2534,46 @@ canonical reconstruction blocker 已确认解除：`liver_7/liver_8` 的 `canoni
 coarse v13 两例均值：Dice=`0.05470944`、IoU=`0.02814807`、Precision=`0.03423040`、Recall=`0.13649179`、HD95/ASSD=`185.9498/51.4865 mm`、foreground ratio=`4.02696×`、component error=`1543.5`、false break=`64.5`、global error=`0.03025086`、pipeline time=`75.0131 s`。ROI-only 数值最强候选 Top-20%+dilation2：Dice=`0.07407384`、IoU=`0.03865424`、Precision=`0.08146804`、Recall=`0.06965428`、HD95/ASSD=`175.9586/47.1264 mm`、foreground ratio=`0.96487×`、component error=`2397.5`、false break=`138`、global error=`0.01173338`、pipeline time=`99.9478 s`。full-volume second-pass 的分割指标与该候选相同，但没有形成额外选择优势。
 
 病例稳定性否定了“只看均值 Dice”的 PASS：`liver_7` Dice 仅 `0.04531→0.04783`，Recall `0.11879→0.05268`，HD95 `197.39→201.25 mm`、ASSD `55.36→57.79 mm` 反而恶化，component error `1561→2470`、false break `69→132`；`liver_8` 虽 Dice `0.06411→0.10032`、HD95/ASSD `174.51/47.61→150.67/36.47 mm` 明显改善，但 Recall `0.15420→0.08663`、component error `1526→2325`、false break `60→144` 同样恶化。综合区域、表面、foreground ratio、拓扑、ROI/global error、推理时间和两例稳定性后，正式判定：**REFINEMENT=FAIL**。因此不把 refinement 写成成功方法，最终 validation pipeline 继续使用 v13 coarse `best.pt`；当前 `lock parameters=NO`、`formal independent test ready=NO`，下一步只做 v13 validation prediction 的 3D/SDF/Web 真实验收和参数最终锁定，然后才允许独立 test。
+
+
+### 2026-08-29｜阶段 BL：v0.3.0 正式闭环后的最终文档一致性与展示材料收尾
+
+本轮从 `HEAD == origin/main == 1037c44dafd636903da1716fe175295f74bcdaea`、working tree clean 接管，Git `user.name/user.email` 真实核验为 `927242768-dotcom / 927242768@qq.com`。严格遵守最终测试冻结规则：**没有重新训练 v1～v23，没有重新运行 validation，没有再次运行 `evaluate.py` 对 `liver_169` 做最终正式模型推理**；所有 independent-test 数字、prediction/entropy、mesh/SDF/Web 结论只复用既有正式产物与已冻结文档记录。
+
+重新核对最终阶段链：validation prediction 3D/Web 提交=`2f333ba`；最终参数锁定=`eb0a824`；唯一一次正式 independent test=`20311d8`；正式测试论文/中期同步=`6f69d80`；最终验收与 Release 基线=`4981dba`（tag `v0.3.0`）；README 当前工程阶段精简=`1037c44`。GitHub 远端已确认 `v0.3.0 - Formal Independent Test & Research Pipeline Closure` 存在，Release 正确保留低 Dice、非临床和未来强 baseline/扩样本限制，因此本轮纯文档与展示材料收尾**不新建重复 Release**。
+
+本轮实际完成：
+
+- 修复 README 的论文结果状态与 CPU/GPU 当前口径，并把最终锁参、正式独立测试、v0.3.0 展示提纲加入首页导航；
+- 修复 `TASKS.md` 中旧 `ready=false`、future overlay、108 tests 等过期条目，重新区分“当前技术稿已完成”和“需要外部条件/模板的真正待办”；
+- 系统清理 `PROJECT_STATUS.md` 当前状态区的旧 94/103 tests、Results TBD、人工 QC 未签字、GPU 是正式实验 blocker、任务未锁定、Web/prediction/3D 尚待完成等过期口径；按日期保留历史阶段记录，不反向篡改当时事实；
+- 将旧“下一步任务”明确归档为 validation 阶段历史清单，并新增 v0.3.0 收尾后的真实待办：扩样本、新预注册 split、强 baseline、困难 subgroup、合法临床/多中心验证、统计分析、国内题录核验与最终格式；
+- `docs/05_midterm_materials.md` 更新至 v0.3，修正 CPU `--allow-cpu` / formal readiness 口径并链接统一展示材料；
+- 新增 `docs/12_final_presentation_outline.md`，形成可直接用于中期/结题 PPT 的 10 页展示源材料，完整保留 validation mean Dice=`0.05471`、independent Dice=`0.02878288`、`REFINEMENT=FAIL`、uncertainty、3D/SDF/Web 与非临床限制；
+- `paper/manuscript_zh_v0.1.md` 修正正式 binary task 已锁定的表述，补齐 SegFormer/SegFormer3D、nnU-Net、UNETR、nnFormer、CTSpine1K、VerSe、VerFormer、Boundary Loss、clDice、EDUE/UCTNet 等主要顺序引用；新增 nnU-Net 参考文献编号 22；当前编号 1～22 连续，正文引用无越界；
+- GitHub 公开仓库元数据复核发现 description 正常、`v0.3.0` Release 正常；当前仓库未声明 `LICENSE`，该事项涉及自研代码许可与 SegFormer3D GPL-3.0 边界，已作为需要项目负责人明确选择的待办，不擅自代选。
+
+本轮最终门禁：
+
+```text
+pytest tests -q
+→ 138 passed, 153 warnings
+
+ruff check src web tests
+→ All checks passed!
+
+node --check web/frontend/app.js
+node --check web/frontend/qc_review.js
+node --check web/frontend/research_3d.js
+node --check web/frontend/results_review.js
+→ PASS
+
+git diff --check
+→ PASS（仅 Windows LF→CRLF 提示，无 whitespace error）
+
+公开仓库禁止文件检查
+→ DICOM/NIfTI/checkpoint/experiments/.venv/runtime/third_party checkout: PASS
+→ .env/private-key/certificate filename pattern: PASS
+```
+
+当前科研边界不变：正式 `liver_169` 结果已经冻结，绝对性能不满足临床应用；扩大数据、强 baseline、临床/多中心验证和统计显著性仍未完成，不得在论文、README、Release 或答辩中伪造。
