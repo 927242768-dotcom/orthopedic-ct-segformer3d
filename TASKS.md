@@ -413,6 +413,24 @@
 - [x] Edge 实机 UI 验收：prediction 2.0 mm、SDF σ=0.4 mm、GT/prediction 切换均完成
 - [x] 生成 validation 阶段验收截图：保存在本地 `.devspace-computer/`，不作为数据源或实验结果本身
 
+### P3-2 最终正式独立测试
+
+- [x] validation 提交 `2f333ba` 已 push 并确认 `HEAD == origin/main`
+- [x] 最终锁参记录 `docs/10_final_parameter_lock.md` 已提交为 `eb0a824`，push 后再次确认 `HEAD == origin/main`
+- [x] 第一次且唯一一次正式访问 `test_private liver_169`，formal preflight=`ready=true`、0 error/0 warning
+- [x] FINAL FORMAL INDEPENDENT TEST 已完成一次：Dice=`0.02878288`、IoU=`0.01460158`、Precision=`0.02089816`、Recall=`0.04622219`、HD95=`136.8722 mm`、ASSD=`43.97199 mm`
+- [x] 正式结构结果：foreground ratio=`2.21178×`、pred/target components=`236/1`、component error=`235`、false merge=`0`、false break=`29`
+- [x] 正式 uncertainty/calibration：AUROC/AUPRC=`0.86424/0.29665`、Top-10% error recall=`0.54993`、ECE/MCE/Brier/NLL=`0.02740/0.08782/0.08328/0.23559`
+- [x] prediction NIfTI / predictive-entropy NIfTI 已保存；inference=`9.41277 s`
+- [x] independent 原始 prediction mesh：`365,247` 顶点 / `724,694` 面
+- [x] independent 2.0 mm + feature strength=8：`81,353` 顶点 / `160,384` 面，顶点缩减约 `77.73%`，简化工程 ASSD/HD95≈`0.56490/1.07159 mm`
+- [x] independent SDF σ=0.4 mm：components `236→236`，preserved=true，工程 ASSD/HD95≈`0.02536/0.06367 mm`
+- [x] independent prediction-vs-GT physical geometry 完全一致；vertex-nearest engineering ASSD/HD95≈`41.1398/131.8726 mm`
+- [x] `results-review` 已识别正式 independent evaluation；prediction/uncertainty MPR API 均 200
+- [x] Edge `research-3d` 已实机加载 independent 2.0 mm prediction mesh 与 SDF σ=0.4 mm WebGL
+- [x] 正式测试后没有调整 threshold / loss / sampling / augmentation / refinement / model parameters，也没有重复 formal test
+- [x] 正式测试记录：`docs/11_final_independent_test.md`
+
 ---
 
 ## 6. 临床/外部验证任务（P4，外部条件）
@@ -429,18 +447,18 @@
 
 ## 7. 论文/结题任务（P5）
 
-- [ ] 正式主结果表
-- [ ] baseline comparison
-- [ ] 输入消融表
-- [ ] loss 消融表
-- [ ] uncertainty/refinement 表
-- [ ] difficult subset 表
-- [ ] 3D surface 表
-- [ ] failure cases 图
-- [ ] prediction overlay 图
-- [ ] 3D mesh 图
-- [ ] Discussion
-- [ ] Conclusion
+- [x] 当前 formal-pilot 主结果表：validation 与 independent test 已严格分列
+- [ ] 跨架构 baseline comparison：nnU-Net / Residual-Encoder nnU-Net 等尚未真实运行，禁止伪造
+- [x] 输入消融结果
+- [x] loss 消融结果
+- [x] uncertainty/refinement 结果（含 `REFINEMENT=FAIL`）
+- [ ] difficult subset 正式表：metal/fracture/low-density metadata 不足，当前不能可靠分组
+- [x] 3D surface validation + independent test 结果
+- [x] failure case 分析：正式 `liver_169` fragmentation / foreground overprediction 已写入论文
+- [x] prediction overlay 实机验收；截图保留在本地验收目录
+- [x] 3D mesh 实机验收；validation 与 independent 均已完成
+- [x] Discussion 已补真实 validation/independent failure interpretation
+- [x] Conclusion 已补正式 independent test 结论
 - [ ] 中文 CNKI/万方题录最终核验
 - [ ] 全文引用/格式统一
 - [ ] 最终语言润色
