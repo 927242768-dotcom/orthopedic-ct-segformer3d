@@ -392,21 +392,21 @@
 
 ## 5. 三维与 Web 正式结果任务（P3）
 
-- [ ] v13 validation prediction mask → physical mesh
-- [ ] prediction mesh vs GT surface
-- [ ] prediction surface HD95 / ASSD（已有 segmentation evaluation 表面指标；仍需 prediction mesh/SDF 工程链验证）
-- [ ] SDF prediction surface 验证
-- [ ] 简化误差评估
-- [x] 曲率/关键边缘保护候选：法向变化加权 vertex-clustering（真值网格工程验证，待 prediction 验证）
-- [ ] Web 接最终 v13 真实 validation prediction
-- [ ] prediction overlay
-- [ ] entropy overlay
-- [ ] results-review 载入真实 v13 evaluation
-- [ ] prediction 3D mesh
-- [ ] GT/prediction 对比
-- [ ] uncertainty QC 提示
-- [ ] Edge 实机 UI 验收
-- [ ] 生成中期/结题/论文截图
+- [x] v13 validation prediction mask → physical mesh：`liver_7/liver_8` 均已由真实 evaluation prediction 生成 physical-space mesh
+- [x] prediction mesh vs GT surface：已完成 vertex-nearest 工程对照；`liver_7/liver_8` ASSD≈`53.4817/46.9266 mm`、HD95≈`186.1664/173.3450 mm`，仅作工程 surface error，不冒充分割临床指标
+- [x] prediction surface HD95 / ASSD：segmentation evaluation 指标与 mesh engineering 指标已严格区分记录
+- [x] SDF prediction surface 验证：σ=`0.4 mm`，`liver_7` components `1564→1564`、`liver_8` `1528→1528`，均 preserved=true
+- [x] 简化误差评估：2.0 mm + feature strength=8；`liver_7/liver_8` 顶点缩减约 `78.18%/77.89%`，简化 ASSD≈`0.55845/0.54806 mm`、HD95≈`1.09434/1.08294 mm`
+- [x] 曲率/关键边缘保护候选：法向变化加权 vertex-clustering 已从真值扩展到真实 validation prediction，Web 复用 strength=8
+- [x] Web 接最终 v13 真实 validation prediction
+- [x] prediction overlay：Edge `results-review` 实机已显示绿色 prediction MPR overlay
+- [x] entropy overlay：Edge `results-review` 实机已显示 predictive entropy / uncertainty overlay
+- [x] results-review 载入真实 v13 evaluation：已选 `evaluation_20260828_v13e3_liver8`
+- [x] prediction 3D mesh：Edge WebGL2 已加载 `liver_8` 2.0 mm prediction，`296,483` 顶点 / `591,833` 三角面
+- [x] GT/prediction 对比：`research-3d` 双来源切换已实机验收
+- [x] uncertainty QC 提示：当前 validation AUROC>0.92、Top-10% error recall≈73%–79%，仅作为 QC 风险提示，不写成临床可靠性
+- [x] Edge 实机 UI 验收：prediction 2.0 mm、SDF σ=0.4 mm、GT/prediction 切换均完成
+- [x] 生成 validation 阶段验收截图：保存在本地 `.devspace-computer/`，不作为数据源或实验结果本身
 
 ---
 

@@ -185,7 +185,7 @@ qc.json
 - CTSpine1K/VerSe `1–25 → C1–L6` 可读标签显示，原始数值不重编码且不锁定正式任务；
 - 真实真值 label 的 WebGL2 3D PLY 查看、1.5/2.0 mm 简化选项；
 - binary mask→physical signed-distance field→零等值面 SDF 表面选项，并设置连通域保护；真实 `liver_0` 的 0.4 mm 参数可加载，0.8 mm 因 2→3 连通域变化被拒绝；
-- evaluation results-review 页面：可发现真实 `evaluate.py` 输出并查看 prediction/entropy MPR overlay；v13 已存在 `liver_7/liver_8` 真实 validation prediction + entropy，下一步进行 Web 实机接入和 Edge 验收；
+- evaluation results-review 页面：已发现并读取真实 `evaluate.py` 输出；Edge 实机已选择 v13 validation evaluation，真实显示 prediction MPR overlay 与 predictive entropy / uncertainty overlay；
 - 物理毫米坐标距离和三点夹角计算 API；
 - 研究用途免责声明；
 - 模型分割接口已预留。
@@ -203,7 +203,7 @@ GET /           → 200 text/html
 
 已在真实 `liver_0` 标签上完成 physical-space Marching Cubes：131,983 顶点 / 264,362 面。为适配 Web，又实现 vertex-clustering 简化：1.5 mm 档约减少 60% 顶点/面，顶点近邻 HD95 约 0.707 mm；全分辨率网格仍保留，不被简化版覆盖。2026-08-26 进一步加入“法向变化加权”的曲率/关键边缘保护候选：在 2.0 mm clustering、保持相同 30,260 个简化顶点的条件下，真实 `liver_0` 高法向变化区域平均最近邻误差由约 0.679 mm 降至 0.620 mm，HD95 由约 1.068 mm 降至 1.000 mm，表面积相对变化由约 -6.47% 改善至 -5.95%。这些结果只用于真值网格工程参数筛选，尚未在 prediction surface 上验证。
 
-进一步实现 physical-mm SDF 平滑表面基线：0.3/0.4/0.5/0.8 mm 参数已在真实 `liver_0` 上做工程 sweep。0.4 mm 保持 2→2 连通域且 Web summary/PLY 均返回 200，作为当前工程默认候选；0.8 mm 导致 2→3 连通域变化，Web 按拓扑保护返回 422 拒绝加载。该 sweep 的表面差异只用于重建参数选择，不属于分割模型性能。
+进一步实现 physical-mm SDF 平滑表面基线：0.3/0.4/0.5/0.8 mm 参数已在真实 `liver_0` 上做工程 sweep。0.4 mm 保持 2→2 连通域且 Web summary/PLY 均返回 200，作为当前工程默认候选；0.8 mm 导致 2→3 连通域变化，Web 按拓扑保护返回 422 拒绝加载。随后在 v13 validation 的真实 prediction surface 上完成正式工程复核：`liver_7/liver_8` 原始 prediction mesh 顶点约 `1,369,586/1,340,666`；2.0 mm + feature strength=8 后约 `298,840/296,483`，顶点缩减约 `78.18%/77.89%`，简化工程 ASSD≈`0.55845/0.54806 mm`、HD95≈`1.09434/1.08294 mm`。0.4 mm SDF 分别保持 components `1564→1564`、`1528→1528`，相对原 prediction surface 的工程 ASSD≈`0.02919/0.02929 mm`、HD95≈`0.06790/0.06671 mm`。这些 vertex-nearest surface 数字只用于三维重建工程控制，不属于临床 segmentation HD95/ASSD。
 
 同时对 10 例原始 label 与 1 mm nearest-neighbor 重采样 label 做物理表面离散化比较：整体顶点近邻 ASSD 约 0.403 mm、HD95 约 0.734 mm；原始 5 mm 厚层的 3 例扰动更明显（ASSD 约 0.514 mm、HD95 约 1.069 mm）。这些数字只描述**预处理/离散化工程误差**，不是模型性能或临床测量误差。
 
@@ -243,7 +243,7 @@ Ruff: All checks passed!
 6. **v13 validation baseline 已有真实 Dice/IoU/Precision/Recall/HD95/ASSD/结构/uncertainty/calibration 指标，但仍属于 engineering/validation，不是正式 independent-test final Results；**
 7. **输入、loss、sampling、augmentation、困难样本、uncertainty/calibration 与 ROI refinement 均已有真实 validation 消融；其中 refinement 综合判定 FAIL，不能只凭 Dice 上升写成成功；**
 8. **Marching Cubes、真实 label 网格、1.5/2.0 mm 工程简化、10 例重采样几何误差以及真值 mask 的 SDF 表面工程基线已验证；最终 v13 prediction mask 的 mesh/SDF/simplification 工程验证仍待完成；**
-9. **Web 已接入人工 QC、交互 MPR+真值 overlay、真实 label 3D/SDF 表面、物理坐标测量和 evaluation results-review；v13 validation prediction/entropy 已存在，但 prediction 3D 与 Edge 实机最终验收仍待完成。**
+9. **Web validation 阶段实机验收已完成：人工 QC、交互 MPR、真值 3D/SDF、物理坐标测量、v13 prediction/entropy overlay、真实 prediction 2.0 mm WebGL、0.4 mm SDF WebGL、GT/prediction 双来源切换均已验证；这仍是科研原型，不代表临床系统。**
 
 任务书中的 `Dice ≥ 0.93` 是目标值，不是当前成果。
 
@@ -251,7 +251,7 @@ Ruff: All checks passed!
 
 ## 5. 中期报告“研究进展”可直接使用的表达
 
-截至当前阶段，项目已完成总体技术路线设计、44 条结构化文献矩阵与 42 条英文核心 BibTeX，并搭建项目内 Python 3.11.7 / PyTorch 2.1.0 CPU 环境。CTSpine1K `MSD-T10` 10 例真实 CT+label 已全部完成 1 mm 标准化、自动审计与人工 QC（10/10 pass），首个任务固定为 `vertebra_binary_ctspine1k_msd_t10_v1`，patient-level split 固定为 7 train / 2 validation / 1 test。围绕 SegFormer3D 已完成训练稳定性诊断、输入消融、Region/Boundary/Topology loss 消融、sampling 消融、augmentation 消融、模型驱动困难样本消融，以及 uncertainty/calibration 评价；当前 validation baseline 选择 v13：CT-only + Region+Boundary + Bernoulli sampling（foreground_probability=0.25、patches_per_case=4）+ flip-only，v13 两例 mean Dice≈`0.05471`、HD95/ASSD≈`185.95/51.49 mm`。进一步使用 7 个 train cases 训练 uncertainty refinement，并在 `liver_7/liver_8` 完成 Top-5/10/20% × dilation 0/1/2 与 full-volume second-pass：最佳均值候选 Dice≈`0.07407`，但 Recall、component error、false break、`liver_7` surface 和耗时出现明显代价，因此综合判定 **REFINEMENT=FAIL**，最终 pipeline 仍保留 v13 coarse。全部这些数字属于 engineering/validation 证据，不冒充 independent test；独立 `liver_169` 在最终参数锁定前保持禁止访问。三维方面已完成真值 physical mesh、SDF、简化与几何保护工程链，下一步把最终 v13 validation prediction 接入同一链路；Web 已具备 QC/MPR/results-review/prediction/entropy overlay 基础接口，下一步完成真实 v13 prediction 3D 与 Edge 实机验收，然后锁定最终参数并只运行一次正式 independent test。
+截至当前阶段，项目已完成总体技术路线设计、44 条结构化文献矩阵与 42 条英文核心 BibTeX，并搭建项目内 Python 3.11.7 / PyTorch 2.1.0 CPU 环境。CTSpine1K `MSD-T10` 10 例真实 CT+label 已全部完成 1 mm 标准化、自动审计与人工 QC（10/10 pass），首个任务固定为 `vertebra_binary_ctspine1k_msd_t10_v1`，patient-level split 固定为 7 train / 2 validation / 1 test。围绕 SegFormer3D 已完成训练稳定性诊断、输入消融、Region/Boundary/Topology loss 消融、sampling 消融、augmentation 消融、模型驱动困难样本消融，以及 uncertainty/calibration 评价；当前 validation baseline 选择 v13：CT-only + Region+Boundary + Bernoulli sampling（foreground_probability=0.25、patches_per_case=4）+ flip-only，v13 两例 mean Dice≈`0.05471`、HD95/ASSD≈`185.95/51.49 mm`。进一步使用 7 个 train cases 训练 uncertainty refinement，并在 `liver_7/liver_8` 完成 Top-5/10/20% × dilation 0/1/2 与 full-volume second-pass：最佳均值候选 Dice≈`0.07407`，但 Recall、component error、false break、`liver_7` surface 和耗时出现明显代价，因此综合判定 **REFINEMENT=FAIL**，最终 pipeline 仍保留 v13 coarse。全部这些数字属于 engineering/validation 证据，不冒充 independent test；独立 `liver_169` 在最终参数锁定前保持禁止访问。三维方面已将最终 v13 validation prediction 接入 physical mesh、2.0 mm feature-weighted simplification 与 0.4 mm SDF 工程链；Web 已在 Edge 完成 QC/MPR/results-review/prediction/entropy overlay、prediction 3D/SDF 与 GT/prediction 切换实机验收。当前锁参前 `/api/research/cases` 只暴露 liver_0—liver_8 共 9 例，`test_private liver_169` 继续隔离；validation 阶段提交并 push 后将单独锁定最终参数，再只运行一次正式 independent test。
 
 ---
 
@@ -283,6 +283,7 @@ Ruff: All checks passed!
 - [x] 生成真实 validation `metrics_per_case.csv`；
 - [x] 报告 engineering/validation baseline DSC / HD95 / ASSD，并严格与最终 independent test 区分；
 - [ ] 完成 Region vs Region+Boundary 初步消融；
-- [ ] Web 接入真实 checkpoint，显示分割叠加；
+- [x] Web 接入真实 evaluation prediction/entropy，Edge 实机显示分割与不确定性叠加；
+- [x] Web `research-3d` 实机加载 v13 validation prediction 2.0 mm mesh 与 0.4 mm SDF，并验证 GT/prediction 双来源切换；
 - [ ] 保存可复现 config / commit / checkpoint /日志；
 - [ ] 更新论文 Results 第一张真实表。

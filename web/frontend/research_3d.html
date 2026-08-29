@@ -12,7 +12,7 @@
     <div>
       <div class="eyebrow">PHYSICAL-SPACE MESH VIEWER</div>
       <h1>真实骨结构 3D 工程查看器</h1>
-      <p>CTSpine1K 真值 label → 物理空间 Marching Cubes → 本地 WebGL2</p>
+      <p>CTSpine1K 真值 / 真实模型 prediction → 物理空间表面 → 本地 WebGL2</p>
     </div>
     <div class="viewer-header-actions">
       <span id="viewerStatus" class="badge badge-neutral">等待加载</span>
@@ -23,9 +23,18 @@
   <main class="viewer-layout">
     <section class="card viewer-controls-card">
       <div class="notice warning">
-        <strong>工程演示：</strong> 当前显示的是公开数据的真值标签网格，不是 SegFormer3D 模型预测，也不是临床诊断结果。
+        <strong>科研复核：</strong> 可切换公开数据真值标签与磁盘中已有的真实模型 prediction。prediction 只来自可追溯 evaluation 产物，不会用随机权重或临时重跑结果替代。
       </div>
       <div class="viewer-controls">
+        <label>数据来源
+          <select id="sourceSelect">
+            <option value="gt" selected>真值 label</option>
+            <option value="prediction">真实 evaluation prediction</option>
+          </select>
+        </label>
+        <label id="evaluationLabel" class="hidden">评估 run
+          <select id="evaluationSelect"></select>
+        </label>
         <label>病例
           <select id="caseSelect"></select>
         </label>
@@ -83,8 +92,9 @@
         <div><small>物理包围盒</small><strong>—</strong></div>
       </div>
       <div class="notice viewer-note">
-        表面积和包围盒仅用于几何工程追踪。若后续用于论文/临床测量，必须先验证网格重建误差、标签定义和测量协议。
+        表面积和包围盒仅用于几何工程追踪。prediction 模式下可在同一病例中切换 GT / prediction，并结合下方 evaluation 指标复核差异；不能替代临床测量结论。
       </div>
+      <div id="evaluationMetrics" class="measurement-result">GT 模式：无模型评价指标</div>
 
       <div class="measurement-panel">
         <div class="card-head">
@@ -105,9 +115,9 @@
 
   <footer>
     <span>纯本地 WebGL2 · 不依赖外部 CDN</span>
-    <span>Research prototype · Ground-truth engineering view</span>
+    <span>Research prototype · GT / real-prediction engineering view</span>
   </footer>
 
-  <script src="/static/research_3d.js?v=20260816-3"></script>
+  <script src="/static/research_3d.js?v=20260829-1"></script>
 </body>
 </html>

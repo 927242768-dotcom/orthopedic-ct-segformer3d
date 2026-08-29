@@ -25,6 +25,9 @@ def _prepare_evaluation(processed_root: Path, experiments_root: Path) -> tuple[s
     bone = np.zeros((12, 14, 16), dtype=np.float32)
     bone[2:10, 3:12, 4:14] = 0.8
     _write_image(case_dir / "image_bone_window.nii.gz", bone)
+    label = np.zeros_like(bone, dtype=np.int16)
+    label[3:10, 4:12, 5:14] = 24
+    _write_image(case_dir / "label.nii.gz", label)
 
     evaluation_id = "evaluation_test"
     evaluation_dir = experiments_root / evaluation_id
@@ -121,6 +124,39 @@ def test_results_review_lists_evaluation_and_serves_prediction_uncertainty_mpr(
         assert uncertainty.status_code == 200
         assert uncertainty.headers["x-overlay-mode"] == "uncertainty"
         assert uncertainty.content.startswith(b"\x89PNG\r\n\x1a\n")
+
+        built_prediction = client.post(
+            f"/api/research/evaluations/{evaluation_id}/cases/{case_id}/mesh/build",
+            params={"source": "prediction", "simplify_mm": 2.0},
+        )
+        assert built_prediction.status_code == 200
+        prediction_payload = built_prediction.json()
+        assert prediction_payload["source"] == "prediction"
+        assert prediction_payload["summary"]["selection"] == "foreground_gt_0"
+        assert prediction_payload["summary"]["simplification"]["method"] == (
+            "vertex_clustering_feature_weighted"
+        )
+
+        prediction_summary = client.get(
+            f"/api/research/evaluations/{evaluation_id}/cases/{case_id}/mesh/summary",
+            params={"source": "prediction", "simplify_mm": 2.0},
+        )
+        assert prediction_summary.status_code == 200
+        assert prediction_summary.json()["vertex_count"] > 0
+
+        prediction_mesh = client.get(
+            f"/api/research/evaluations/{evaluation_id}/cases/{case_id}/mesh",
+            params={"source": "prediction", "simplify_mm": 2.0},
+        )
+        assert prediction_mesh.status_code == 200
+        assert prediction_mesh.content.startswith(b"ply")
+
+        built_gt = client.post(
+            f"/api/research/evaluations/{evaluation_id}/cases/{case_id}/mesh/build",
+            params={"source": "gt", "simplify_mm": 2.0},
+        )
+        assert built_gt.status_code == 200
+        assert built_gt.json()["source"] == "gt"
 
 
 def test_results_review_empty_root_and_unknown_case_are_safe(tmp_path: Path, monkeypatch) -> None:

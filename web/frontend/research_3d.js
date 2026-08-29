@@ -1,4 +1,7 @@
 const viewerState = {
+  gtCases: [],
+  evaluations: [],
+  currentEvaluation: null,
   cases: [],
   gl: null,
   program: null,
@@ -27,7 +30,16 @@ function setViewerStatus(text, type = "neutral") {
   node.className = `badge badge-${type}`;
 }
 
+function selectedSource() {
+  return el("sourceSelect").value;
+}
+
+function selectedEvaluationId() {
+  return el("evaluationSelect").value;
+}
+
 function selectedClassId() {
+  if (selectedSource() === "prediction") return null;
   const value = el("classSelect").value;
   return value === "foreground" ? null : Number(value);
 }
@@ -58,10 +70,26 @@ function meshQuery(classId, simplifyMm, surface, sdfSigmaMm) {
   return query ? `?${query}` : "";
 }
 
+function evaluationMeshQuery(simplifyMm, surface, sdfSigmaMm) {
+  const params = new URLSearchParams({ source: "prediction" });
+  if (simplifyMm !== null) {
+    params.set("simplify_mm", String(simplifyMm));
+    params.set("feature_preservation_strength", "8");
+  }
+  if (surface === "sdf") {
+    params.set("surface", "sdf");
+    params.set("sdf_sigma_mm", String(sdfSigmaMm));
+  }
+  return `?${params.toString()}`;
+}
+
 function updateSurfaceControls() {
   const sdf = selectedSurface() === "sdf";
+  const prediction = selectedSource() === "prediction";
   el("sdfSigmaLabel").classList.toggle("hidden", !sdf);
   el("simplifySelect").disabled = sdf;
+  el("classSelect").disabled = prediction;
+  el("evaluationLabel").classList.toggle("hidden", !prediction);
 }
 
 function compileShader(gl, type, source) {
@@ -339,9 +367,10 @@ function populateClassSelect(caseItem) {
   foreground.value = "foreground";
   foreground.textContent = "全部前景 (>0)";
   select.appendChild(foreground);
-  const labelItems = Array.isArray(caseItem.label_items) && caseItem.label_items.length
+  if (selectedSource() === "prediction") return;
+  const labelItems = Array.isArray(caseItem?.label_items) && caseItem.label_items.length
     ? caseItem.label_items
-    : (caseItem.label_values || [])
+    : (caseItem?.label_values || [])
       .filter((value) => Number(value) > 0)
       .map((value) => ({ value, display: `标签 ${value}` }));
   for (const item of labelItems) {
@@ -354,6 +383,34 @@ function populateClassSelect(caseItem) {
 
 function selectedCase() {
   return viewerState.cases.find((item) => item.case_id === el("caseSelect").value) || null;
+}
+
+function metricValueText(value, digits = 4) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number.toFixed(digits) : "—";
+}
+
+function renderEvaluationMetrics() {
+  const node = el("evaluationMetrics");
+  if (selectedSource() !== "prediction") {
+    node.textContent = "GT 模式：无模型评价指标";
+    return;
+  }
+  const item = selectedCase();
+  if (!item) {
+    node.textContent = "Prediction 模式：等待真实 evaluation 病例";
+    return;
+  }
+  node.textContent = [
+    `Dice ${metricValueText(item.dice)}`,
+    `Precision ${metricValueText(item.precision)}`,
+    `Recall ${metricValueText(item.recall)}`,
+    `HD95 ${metricValueText(item.hd95_mm, 2)} mm`,
+    `ASSD ${metricValueText(item.assd_mm, 2)} mm`,
+    `FG ratio ${metricValueText(item.prediction_to_target_foreground_ratio, 2)}×`,
+    `component error ${metricValueText(item.component_count_error, 0)}`,
+    `false break ${metricValueText(item.false_break_count, 0)}`,
+  ].join(" · ");
 }
 
 function updateMeshStats(summary) {
@@ -376,27 +433,98 @@ function updateMeshStats(summary) {
   nodes[5].textContent = boundsText;
 }
 
+function populateCaseSelect(items, suffixBuilder = null) {
+  viewerState.cases = items || [];
+  const select = el("caseSelect");
+  select.innerHTML = "";
+  for (const item of viewerState.cases) {
+    const option = document.createElement("option");
+    option.value = item.case_id;
+    option.textContent = suffixBuilder ? suffixBuilder(item) : item.case_id;
+    select.appendChild(option);
+  }
+  if (!viewerState.cases.length) {
+    select.innerHTML = '<option value="">无可用病例</option>';
+    populateClassSelect(null);
+    renderEvaluationMetrics();
+    return;
+  }
+  populateClassSelect(viewerState.cases[0]);
+  renderEvaluationMetrics();
+}
+
+async function loadGtCases() {
+  const response = await fetch("/api/research/cases");
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || JSON.stringify(data));
+  viewerState.gtCases = data.cases || [];
+}
+
+async function loadEvaluations() {
+  const response = await fetch("/api/research/evaluations");
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || JSON.stringify(data));
+  viewerState.evaluations = data.evaluations || [];
+  const select = el("evaluationSelect");
+  select.innerHTML = "";
+  for (const item of viewerState.evaluations) {
+    const option = document.createElement("option");
+    option.value = item.evaluation_id;
+    option.textContent = `${item.evaluation_id} · ${item.split || "unknown"}`;
+    select.appendChild(option);
+  }
+  if (!viewerState.evaluations.length) {
+    select.innerHTML = '<option value="">暂无真实 evaluation</option>';
+  }
+}
+
+async function loadEvaluationDetail() {
+  const evaluationId = selectedEvaluationId();
+  if (!evaluationId) {
+    viewerState.currentEvaluation = null;
+    populateCaseSelect([]);
+    setViewerStatus("无真实 evaluation", "error");
+    setViewerMessage("当前没有可用于 prediction 3D 的真实 evaluation 输出。", "error");
+    return;
+  }
+  const response = await fetch(`/api/research/evaluations/${encodeURIComponent(evaluationId)}`);
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.detail || JSON.stringify(data));
+  viewerState.currentEvaluation = data;
+  const cases = (data.cases || []).filter((item) => item.prediction_available);
+  populateCaseSelect(cases, (item) => `${item.case_id} · Dice ${metricValueText(item.dice)}`);
+  setViewerStatus(`${cases.length} 例 prediction`, cases.length ? "ok" : "error");
+  setViewerMessage(
+    cases.length
+      ? "已接入磁盘中的真实 prediction。生成 Mesh 只做 3D 重建，不会重新运行模型推理。"
+      : "该 evaluation 没有 prediction.nii.gz。",
+    cases.length ? "ok" : "error",
+  );
+}
+
+async function applySourceSelection() {
+  updateSurfaceControls();
+  viewerState.indexCount = 0;
+  el("canvasPlaceholder").classList.remove("hidden");
+  updateMeshStats(null);
+  if (selectedSource() === "prediction") {
+    await loadEvaluationDetail();
+    return;
+  }
+  viewerState.currentEvaluation = null;
+  populateCaseSelect(
+    viewerState.gtCases,
+    (item) => `${item.case_id} · ${item.source_split || "unknown"}`,
+  );
+  setViewerStatus(`${viewerState.gtCases.length} 例 GT 可用`, "ok");
+  setViewerMessage("GT 模式：从标准化真值 label 构建物理空间表面。", "work");
+}
+
 async function loadResearchCases() {
-  setViewerStatus("加载病例…", "work");
+  setViewerStatus("加载病例与评估…", "work");
   try {
-    const response = await fetch("/api/research/cases");
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.detail || JSON.stringify(data));
-    viewerState.cases = data.cases || [];
-    const select = el("caseSelect");
-    select.innerHTML = "";
-    for (const item of viewerState.cases) {
-      const option = document.createElement("option");
-      option.value = item.case_id;
-      option.textContent = `${item.case_id} · ${item.source_split}`;
-      select.appendChild(option);
-    }
-    if (!viewerState.cases.length) throw new Error("没有可展示的标准化研究病例");
-    populateClassSelect(viewerState.cases[0]);
-    setViewerStatus(`${viewerState.cases.length} 例可用`, "ok");
-    if (viewerState.cases[0].foreground_mesh_ready) {
-      setViewerMessage("首例已存在真实 label mesh，可直接点击“加载 3D”。", "ok");
-    }
+    await Promise.all([loadGtCases(), loadEvaluations()]);
+    await applySourceSelection();
   } catch (error) {
     setViewerStatus("病例不可用", "error");
     setViewerMessage(`加载病例失败：${error.message}`, "error");
@@ -410,20 +538,28 @@ async function buildMesh() {
   const surface = selectedSurface();
   const sdfSigmaMm = selectedSdfSigmaMm();
   const simplifyMm = selectedSimplifyMm();
+  const source = selectedSource();
   const button = el("buildBtn");
   button.disabled = true;
   setViewerStatus("正在生成 Mesh…", "work");
   setViewerMessage(
     surface === "sdf"
       ? `正在生成 SDF σ=${sdfSigmaMm} mm 物理表面；连通域变化将被后端拒绝…`
-      : "正在从真值 NIfTI label 生成物理空间 Marching-Cubes 网格…",
+      : source === "prediction"
+        ? "正在从已保存的真实 prediction 构建物理空间网格；不会重新运行模型推理…"
+        : "正在从真值 NIfTI label 生成物理空间 Marching-Cubes 网格…",
     "work",
   );
   try {
-    const response = await fetch(
-      `/api/research/cases/${encodeURIComponent(item.case_id)}/mesh/build${meshQuery(classId, simplifyMm, surface, sdfSigmaMm)}`,
-      { method: "POST" },
-    );
+    let url;
+    if (source === "prediction") {
+      const evaluationId = selectedEvaluationId();
+      if (!evaluationId) throw new Error("没有可用的真实 evaluation");
+      url = `/api/research/evaluations/${encodeURIComponent(evaluationId)}/cases/${encodeURIComponent(item.case_id)}/mesh/build${evaluationMeshQuery(simplifyMm, surface, sdfSigmaMm)}`;
+    } else {
+      url = `/api/research/cases/${encodeURIComponent(item.case_id)}/mesh/build${meshQuery(classId, simplifyMm, surface, sdfSigmaMm)}`;
+    }
+    const response = await fetch(url, { method: "POST" });
     const data = await response.json();
     if (!response.ok) throw new Error(data.detail || JSON.stringify(data));
     updateMeshStats(data.summary);
@@ -445,23 +581,36 @@ async function loadMesh() {
   const surface = selectedSurface();
   const sdfSigmaMm = selectedSdfSigmaMm();
   const simplifyMm = selectedSimplifyMm();
+  const source = selectedSource();
   const button = el("loadBtn");
   button.disabled = true;
   setViewerStatus("加载 PLY…", "work");
   setViewerMessage("正在读取并解析本地 ASCII PLY，大网格可能需要数秒…", "work");
   try {
-    const summaryResponse = await fetch(
-      `/api/research/cases/${encodeURIComponent(item.case_id)}/mesh/summary${meshQuery(classId, simplifyMm, surface, sdfSigmaMm)}`,
-    );
+    let summaryUrl;
+    let meshUrl;
+    if (source === "prediction") {
+      const evaluationId = selectedEvaluationId();
+      if (!evaluationId) throw new Error("没有可用的真实 evaluation");
+      const query = evaluationMeshQuery(simplifyMm, surface, sdfSigmaMm);
+      const base = `/api/research/evaluations/${encodeURIComponent(evaluationId)}/cases/${encodeURIComponent(item.case_id)}/mesh`;
+      summaryUrl = `${base}/summary${query}`;
+      meshUrl = `${base}${query}`;
+    } else {
+      const query = meshQuery(classId, simplifyMm, surface, sdfSigmaMm);
+      const base = `/api/research/cases/${encodeURIComponent(item.case_id)}/mesh`;
+      summaryUrl = `${base}/summary${query}`;
+      meshUrl = `${base}${query}`;
+    }
+
+    const summaryResponse = await fetch(summaryUrl);
     if (!summaryResponse.ok) {
       const detail = await summaryResponse.json().catch(() => ({}));
       throw new Error(detail.detail || "Mesh 尚未生成，请先点击“生成 / 刷新 Mesh”");
     }
     const summary = await summaryResponse.json();
 
-    const meshResponse = await fetch(
-      `/api/research/cases/${encodeURIComponent(item.case_id)}/mesh${meshQuery(classId, simplifyMm, surface, sdfSigmaMm)}`,
-    );
+    const meshResponse = await fetch(meshUrl);
     if (!meshResponse.ok) {
       const detail = await meshResponse.json().catch(() => ({}));
       throw new Error(detail.detail || `HTTP ${meshResponse.status}`);
@@ -470,8 +619,9 @@ async function loadMesh() {
     const mesh = parseAsciiPly(text);
     uploadMesh(mesh);
     updateMeshStats(summary);
+    renderEvaluationMetrics();
     el("canvasPlaceholder").classList.add("hidden");
-    setViewerStatus("3D 已加载", "ok");
+    setViewerStatus(source === "prediction" ? "Prediction 3D 已加载" : "GT 3D 已加载", "ok");
     setViewerMessage(
       `已加载 ${mesh.vertexCount.toLocaleString()} 顶点 / ${mesh.faceCount.toLocaleString()} 三角面。拖拽旋转，滚轮缩放。`,
       "ok",
@@ -539,13 +689,38 @@ async function calculateAngle() {
   }
 }
 
+el("sourceSelect").addEventListener("change", async () => {
+  try {
+    await applySourceSelection();
+  } catch (error) {
+    setViewerStatus("来源切换失败", "error");
+    setViewerMessage(error.message, "error");
+  }
+});
+el("evaluationSelect").addEventListener("change", async () => {
+  if (selectedSource() !== "prediction") return;
+  viewerState.indexCount = 0;
+  el("canvasPlaceholder").classList.remove("hidden");
+  updateMeshStats(null);
+  try {
+    await loadEvaluationDetail();
+  } catch (error) {
+    setViewerStatus("评估加载失败", "error");
+    setViewerMessage(error.message, "error");
+  }
+});
 el("caseSelect").addEventListener("change", () => {
   const item = selectedCase();
   if (item) populateClassSelect(item);
   viewerState.indexCount = 0;
   el("canvasPlaceholder").classList.remove("hidden");
   updateMeshStats(null);
-  setViewerMessage(item?.foreground_mesh_ready ? "该病例存在前景 mesh，可直接加载。" : "请选择标签并生成 Mesh。", "work");
+  renderEvaluationMetrics();
+  if (selectedSource() === "prediction") {
+    setViewerMessage("真实 prediction 已选定；可生成/加载 Mesh，并与 GT 模式切换对照。", "work");
+  } else {
+    setViewerMessage(item?.foreground_mesh_ready ? "该病例存在前景 mesh，可直接加载。" : "请选择标签并生成 Mesh。", "work");
+  }
 });
 el("classSelect").addEventListener("change", () => {
   viewerState.indexCount = 0;

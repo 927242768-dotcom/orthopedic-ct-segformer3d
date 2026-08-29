@@ -187,56 +187,103 @@ U(v)=-\sum_c p_c(v)\log(p_c(v)+\epsilon).
 
 ---
 
-## 5 结果（待真实实验填写）
+## 5 结果
 
-> 本节当前不得填写“预期 Dice”作为真实结果。
+> **结果口径。** 本节 5.1—5.8 的数值均来自当前固定 patient-level split 中 `liver_7/liver_8` 的 **engineering / validation**，用于方法选择和工程闭环验证，不是 independent test。`test_private liver_169` 在最终参数锁定前保持隔离；正式 independent-test 结果仅允许在锁参提交并推送后一次性产生，并单列于 5.9。任何 mesh vertex-nearest distance 均为三维重建工程指标，不冒充分割评价中的临床 HD95/ASSD。
 
-### 5.1 与基线方法比较
+### 5.1 最终 validation 主模型
 
-| Method | Params | DSC ↑ | HD95 ↓ | ASSD ↓ | Time ↓ |
-|---|---:|---:|---:|---:|---:|
-| nnU-Net | TBD | TBD | TBD | TBD | TBD |
-| SegFormer3D | TBD | TBD | TBD | TBD | TBD |
-| Proposed | TBD | TBD | TBD | TBD | TBD |
+当前 validation 最终候选为 v13：SegFormer3D、CT-only、Region+Boundary（权重 `1.0/0.1`，topology=`0`）、Bernoulli sampling（foreground probability=`0.25`，patches/case=`4`）、flip-only augmentation、`64×64×64` training ROI、AdamW（峰值 lr=`5e-5`）。epoch 2 起冻结 encoder、decoder feature 与 BatchNorm running statistics，仅继续更新 `linear_pred`；验证采用 full-volume inference 与当前 `evaluate.py` 的 softmax/argmax class decision。
 
-### 5.2 联合损失消融
+| Validation case | Dice | IoU | Precision | Recall | HD95 (mm) | ASSD (mm) | Pred/GT FG | Component error | False break | Inference (s) |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| `liver_7` | 0.04531 | 0.02318 | 0.02799 | 0.11879 | 197.3914 | 55.3591 | 4.2437× | 1561 | 69 | 56.75 |
+| `liver_8` | 0.06411 | 0.03312 | 0.04047 | 0.15420 | 174.5083 | 47.6139 | 3.8102× | 1526 | 60 | 93.28 |
+| **Mean** | **0.05471** | **0.02815** | **0.03423** | **0.13649** | **185.9498** | **51.4865** | **4.0270×** | **1543.5** | **64.5** | **75.01** |
 
-| Region | Boundary | Topology | DSC ↑ | HD95 ↓ | ASSD ↓ | Structure metric ↑ |
-|---|---|---|---:|---:|---:|---:|
-| ✓ |  |  | TBD | TBD | TBD | TBD |
-| ✓ | ✓ |  | TBD | TBD | TBD | TBD |
-| ✓ |  | ✓ | TBD | TBD | TBD | TBD |
-| ✓ | ✓ | ✓ | TBD | TBD | TBD | TBD |
+该结果说明当前模型仍处于明显低精度状态：Dice 仅约 0.055，prediction foreground 约为 GT 的 4 倍，surface distance 很大，且 prediction component 数远高于 target，存在显著 fragmentation。本文不将其包装为高精度临床模型，而把其作为完成统一数据—训练—不确定性—三维—Web 科研闭环的真实 validation 基线。
 
-### 5.3 困难病例与不确定性
+### 5.2 输入通道消融
 
-待分别统计常规病例、骨折、低骨密度、金属伪影和厚层病例（以实际数据属性为准），并评价 uncertainty 与错误区域的相关性、精修后的指标变化及额外计算量。
+在 loss、optimizer、scheduler、sampling、ROI、augmentation、seed、freeze policy 与 full-volume validation 保持一致的条件下，比较 CT-only 与 CT+bone-window。CT-only（v11）两例平均 Dice/IoU/Precision≈`0.05466/0.02812/0.03425`，HD95/ASSD≈`186.05/51.52 mm`，prediction/GT foreground ratio≈`4.00×`，ECE/Brier/NLL≈`0.01084/0.04693/0.10288`。加入 bone-window 的 v12 平均 Dice/IoU/Precision降至≈`0.02803/0.01421/0.01422`；Recall 虽升至≈`0.96594`，但 foreground ratio 达≈`67.96×`，HD95/ASSD 恶化至≈`256.41/83.77 mm`，ECE/Brier/NLL≈`0.39319/0.80051/3.40655`。因此当前 normalization/architecture 下双通道导致严重 foreground overprediction，输入消融选择 **CT-only**。
+
+### 5.3 联合损失消融
+
+| Validation setting | Mean Dice | HD95 (mm) | ASSD (mm) | 结构/校准观察 | 结论 |
+|---|---:|---:|---:|---|---|
+| Region（v11） | 0.05466 | 186.0500 | 51.5220 | baseline | 基线 |
+| Region + Boundary（v13） | **0.05471** | 185.9498 | 51.4865 | FG ratio≈4.027×；校准基本维持 Region 水平 | **选用** |
+| Region + Topology（v14） | 0.05451 | 183.9914 | 50.5799 | component/false-break 有改善信号，但 overprediction 与 calibration 代价更明显 | 不选 |
+| Region + Boundary + Topology（v15，best epoch2） | 0.05452 | 184.5759 | 50.7512 | FG ratio≈4.8108×，component error≈1540，false break≈60 | 不选 |
+
+Boundary 相对 Region 的 Dice 增益约 `5.19×10^-5`，HD95/ASSD 仅改善约 `0.1002/0.0355 mm`，属于极弱证据，不能宣称显著边界收益。Topology 组合在 surface 与部分结构指标上出现改善信号，但伴随更强前景过预测与较差 calibration，因此综合选择 v13 Region+Boundary，而不是按单一 surface 指标选型。
+
+### 5.4 Sampling、augmentation 与困难样本消融
+
+Sampling 方面，v16 fixed-per-case 的跨 epoch sampling 更稳定，但 mean Dice≈`0.04575`、foreground ratio≈`6.51×`、ECE≈`0.02964`，整体劣于 v13；v17 boundary-hard mean Dice≈`0.03731`、foreground ratio≈`36.26×`、HD95≈`206.50 mm`、ECE≈`0.19569`，出现严重 foreground overprediction 与 calibration 崩坏。因此保留 v13 Bernoulli sampling。
+
+Augmentation 方面，v18 标准几何增强（±10° rotation、scale 0.9–1.1）mean Dice≈`0.05535`，虽略高于 v13，但 foreground ratio≈`7.56×`、Precision≈`0.03134`、ECE≈`0.02716` 均劣化；v19 gamma 按 STOP 规则提前终止，v20 Gaussian noise 完成三轮但综合指标不取代 v13，v21 ±50 HU shift 亦按规则停止。因此最终保留 **flip-only**。
+
+模型驱动困难样本采样同样未带来收益：v22 high-loss epoch1/2 mean Dice=`0.04728839/0.04728457`，v23 high-uncertainty=`0.00963475/0.01010232`，均明显低于 v13 并按预设规则停止。训练集中 `liver_0/liver_1` 的 z-spacing 约 5 mm，冻结 v13 guidance 下 candidate loss/uncertainty 分别高约 `12.9%/13.0%`，说明厚层病例具有更强 patch-level difficulty signal；但 validation 的 `liver_7/liver_8` 均为 1 mm，且现有 metadata 不足以可靠标记 metal/fracture/low-density subgroup，因此本文不伪造这些 subgroup 的 Dice。
+
+### 5.5 不确定性与校准
+
+| Validation case | Error AUROC | Error AUPRC | Top-10% error recall | ECE | MCE | Brier | NLL | Confidence gap |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| `liver_7` | 0.92949 | 0.33354 | 0.72891 | 0.01418 | 0.07593 | 0.05465 | 0.12079 | 0.01411 |
+| `liver_8` | 0.94466 | 0.33014 | 0.79450 | 0.00767 | 0.03988 | 0.03969 | 0.08571 | 0.00767 |
+
+两例 error voxel 的平均预测熵约为 correct voxel 的 `10.41×/12.42×`；Top-10% uncertainty 区域分别覆盖约 72.9% 与 79.4% 的错误。该结果支持 predictive entropy 作为当前 validation 条件下的 **error indicator / QC signal / refinement trigger**，但两例样本量极小且整体 segmentation Dice 很低，不能据此宣称模型已充分校准或具备临床可靠性。
+
+### 5.6 不确定性 ROI 精修消融：FAIL
+
+Refinement 仅使用 7 个 train cases 训练，在 `liver_7/liver_8` 上完成 Top-5/10/20% × dilation 0/1/2 的 3×3 validation grid 及 full-volume second-pass。canonical reconstruction 的 prediction mismatch 两例均为 0，entropy max absolute error≈`9.86×10^-7`，所有 ROI-only candidate 的 `outside_roi_changed_fraction=0`，因此比较不依赖重新运行 coarse model。
+
+数值最强候选 Top-20%+dilation2 的两例均值为 Dice≈`0.07407384`、IoU≈`0.03865424`、Precision≈`0.08146804`、Recall≈`0.06965428`、HD95≈`175.9586 mm`、ASSD≈`47.1264 mm`。然而相对 coarse v13，Recall 从≈`0.13649` 降至≈`0.06965`，component error 从≈`1543.5` 恶化到≈`2397.5`，false break 从≈`64.5` 增至≈`138`；`liver_7` 的 surface 指标反向恶化，mean CPU pipeline time 也由≈`75.01 s` 增至≈`99.95 s`。因此按区域、表面、拓扑、两例稳定性与计算成本综合判定 **REFINEMENT=FAIL**，最终 pipeline 禁用 refinement，保留 v13 coarse `best.pt`。该失败结果是本文的重要负结果，而不是需要隐藏的异常。
+
+### 5.7 真实 prediction 三维重建工程验证
+
+对 v13 validation 的真实 prediction 完成 physical-space Marching Cubes、2.0 mm feature-preservation vertex-clustering 与 0.4 mm SDF surface。`liver_7/liver_8` 原始 prediction mesh 顶点约为 `1,369,586/1,340,666`；2.0 mm + feature strength=8 后约为 `298,840/296,483`，顶点缩减约 `78.18%/77.89%`。简化相对原 prediction surface 的 vertex-nearest engineering ASSD≈`0.55845/0.54806 mm`、HD95≈`1.09434/1.08294 mm`。
+
+0.4 mm SDF 在两例上分别保持 connected components `1564→1564` 与 `1528→1528`；SDF 相对原 prediction surface 的 engineering ASSD≈`0.02919/0.02929 mm`、HD95≈`0.06790/0.06671 mm`。prediction-vs-GT 的 vertex-nearest engineering ASSD≈`53.4817/46.9266 mm`、HD95≈`186.1664/173.3450 mm`，与前述低分割质量一致。这里的 vertex-nearest 数字只用于三维工程误差跟踪，不能替代 segmentation evaluation 中基于体素/表面的正式 HD95/ASSD。
+
+### 5.8 Web 科研原型实机验收
+
+Web 原型未重新推理或生成虚构 prediction，而是从 `experiments/<evaluation>/predictions/<case>/prediction.nii.gz` 读取已保存的真实 evaluation 产物。Edge 实机中，`results-review` 已显示 v13 validation 的 prediction MPR overlay 与 predictive entropy / uncertainty overlay；`research-3d` 已加载 `liver_8` 2.0 mm prediction mesh（`296,483` 顶点 / `591,833` 三角面）以及 SDF σ=0.4 mm surface（`1,340,319` 顶点 / `2,672,566` 三角面），并验证 GT/prediction 双来源切换。锁参前 `/api/research/cases` 仅暴露 `liver_0`—`liver_8` 共 9 例，`test_private liver_169` 保持隔离。
+
+### 5.9 正式独立测试
+
+**参数锁定前不填写。** 正式 independent test 必须在锁参记录提交并推送后，对 `test_private liver_169` 以完全固定的 v13 config、`best.pt`、softmax/argmax decision 与 `refinement=disabled` 仅运行一次。结果产生后将单列 Dice、IoU、Precision、Recall、HD95、ASSD、foreground ratio、component/false merge/false break、uncertainty、calibration、inference time 以及 independent prediction 3D/SDF 工程结果；无论结果好坏均不得据此继续调参。
 
 ---
 
-## 6 讨论（待结果后完成）
+## 6 讨论
 
-最终讨论至少回答：
+当前 validation 证据首先说明，本项目的最大限制不是“缺少复杂模块”，而是基础分割精度本身仍然很低。v13 mean Dice 仅约 0.0547，同时存在约 4 倍 foreground overprediction、超过 180 mm 的 mean HD95 以及千级 component count error。因此，Boundary、Topology、hard mining 或 refinement 带来的局部数字变化必须放在这一低基线背景下解释，不能用小幅相对改善掩盖绝对性能不足。
 
-1. 边界项改善的是 Dice 还是 surface metric，收益是否具有统计意义；
-2. 拓扑项在目标骨结构上是否真的有效，是否出现过平滑/错误连接副作用；
-3. 骨窗双通道的收益是否稳定，是否只对某些病例有效；
-4. hard augmentation 是否提升困难子集而牺牲普通病例；
-5. uncertainty 是否能发现真实错误，精修收益是否值得额外计算；
-6. 多中心/多来源 domain shift 下性能下降程度；
-7. 分割误差如何传递到三维网格和测量结果。
+Boundary 项仅带来极弱的 Dice 与 surface 改善；Topology 项虽然在 HD95/ASSD、component error 和 false break 上出现一定正向信号，却伴随更明显的前景过预测和 calibration 代价。这说明对当前二值骨结构任务而言，单纯增加约束项并不能自动转化为综合性能提升。CT+bone-window 同样未验证最初假设：在当前 case-wise normalization 与 architecture 下，它把 Recall 推高的同时造成约 68 倍 foreground overprediction，因而 CT-only 更稳健。
+
+不确定性模块提供了相对清晰的正结果和负结果。正面看，predictive entropy 在两例 validation 上对错误具有较高 AUROC，并能让 Top-10% uncertainty 覆盖大部分错误，适合作为科研复核/QC 风险提示。负面看，将其直接用于 ROI refinement 并没有得到稳健综合改善：Dice 上升伴随 Recall 和 topology fragmentation 显著恶化，且增加推理时间。因此本文保留 uncertainty 作为“发现哪里可能错”的辅助信号，而拒绝把 refinement 作为最终分割步骤。
+
+三维工程结果进一步展示了“模型误差”和“重建误差”必须分开。2.0 mm feature-weighted 简化在减少约 78% 顶点的同时，把相对原 prediction surface 的工程 HD95 控制在约 1.1 mm；0.4 mm SDF 对原 prediction surface 的工程 HD95 约 0.067 mm 且保持 component count。这说明三维展示链本身可在可控几何误差下工作，但 prediction-vs-GT surface discrepancy 仍然很大，瓶颈仍来自 segmentation，而不是 Web mesh 简化或 SDF 表面生成。
+
+当前 Web 原型的价值主要是可追溯科研复核：同一 evaluation 下可以检查 prediction、uncertainty、3D surface 与指标，且不重新生成模型结果。它有助于将模型失败以可视化方式暴露出来，但不构成医疗诊断系统，也不能弥补模型准确率不足。
+
+正式 independent test 的作用仅是评价已锁定 pipeline 的泛化，不再用于方法选择。若 independent test 结果更差，应将其作为小样本、数据分布和模型欠拟合风险的真实证据；若偶然更好，也不能反向调整 threshold、refinement 或模型参数后重新测试。
 
 ---
 
 ## 7 局限性
 
-预期需要讨论但仍须根据真实实验修订：数据中心数量有限、部分困难病例稀缺、标签存在观察者差异、拓扑损失可能并不适用于所有骨结构、模型尚未经过前瞻性临床验证，以及科研 Web 原型与合规医疗器械之间仍存在较大工程与监管距离。
+本研究当前存在至少以下局限。第一，validation 仅有 2 例，正式独立测试也只有 1 个 `test_private` 病例，统计稳定性非常有限，不能据此得出临床泛化结论。第二，当前 v13 的绝对分割精度低，foreground overprediction、surface distance 和 component fragmentation 均明显，项目更适合作为完整科研工程闭环与方法探索，而非高精度临床模型。第三，现有 metadata 不足以可靠构建 metal artifact、fracture、low-density 等困难病例 subgroup，厚层信号也仅在 train patch-level 得到观察，不能伪造 subgroup 结果。第四，Boundary/Topology/refinement 的结论均受当前小样本与低基线影响，扩大数据规模后需要重新验证。第五，当前主要在 CPU 环境完成实验，墙钟时间只代表本机条件，不用于跨硬件效率比较。第六，mesh vertex-nearest engineering error 并非临床表面距离或测量精度；虽然已复核 spacing/origin/direction、简化误差和 SDF topology preservation，仍需更严格的临床几何测量验证。第七，尚无合法授权的临床脱敏数据与前瞻性验证，科研 Web prototype 与合规医疗器械之间仍存在显著的工程、伦理和监管距离。
 
 ---
 
-## 8 结论（待真实实验后填写）
+## 8 结论
 
-当前版本不提前写结论。最终结论只能总结真实数据支持的发现。
+截至 validation 阶段，本研究建立了从骨科 CT 标准化、SegFormer3D 训练与消融、uncertainty/calibration、失败可追溯的 ROI refinement，到 physical-space 3D reconstruction 与 Web 科研复核的完整工程链。统一消融后，当前 validation 最终候选为 CT-only、Region+Boundary、Bernoulli sampling、flip-only 的 v13 coarse 模型；其两例 mean Dice≈`0.05471`，说明分割精度仍远未达到临床应用水平。Predictive entropy 对错误区域具有较好的 validation 排序能力，但 uncertainty ROI refinement 综合判定为 **FAIL**，因此最终 pipeline 禁用 refinement。真实 prediction 的 2.0 mm 简化和 0.4 mm SDF 在可控工程误差下完成 WebGL2 实机展示，证明三维/Web 闭环可运行，但没有掩盖模型本身的低精度。
+
+在完成 validation 阶段远端同步并形成不可更改的参数锁定后，研究将只运行一次正式 independent test，并无论结果好坏如实补充到 5.9、Discussion 与最终结论；独立测试结果不得用于再次调参。
 
 ---
 

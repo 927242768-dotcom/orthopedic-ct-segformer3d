@@ -300,6 +300,32 @@ def _surface_mesh_paths(
     return ply, ply.with_suffix(".json")
 
 
+def _evaluation_case_row(evaluation_dir: Path, case_id: str) -> dict[str, object]:
+    for row in _read_metrics_per_case(evaluation_dir):
+        if str(row.get("case_id")) == case_id:
+            return row
+    raise HTTPException(status_code=404, detail="该评估中不存在此 case_id")
+
+
+def _evaluation_surface_mesh_paths(
+    evaluation_dir: Path,
+    case_id: str,
+    *,
+    source: Literal["prediction", "gt"],
+    simplify_mm: float | None,
+    surface: str,
+    sdf_sigma_mm: float,
+) -> tuple[Path, Path]:
+    output_dir = evaluation_dir / "reconstruction" / case_id / source
+    return _surface_mesh_paths(
+        output_dir,
+        None,
+        simplify_mm,
+        surface=surface,
+        sdf_sigma_mm=sdf_sigma_mm,
+    )
+
+
 def _read_sdf_summary_checked(json_path: Path) -> dict[str, object]:
     if not json_path.exists():
         raise HTTPException(status_code=404, detail="SDF mesh summary 尚未生成")
@@ -935,6 +961,133 @@ def evaluation_case_mpr(
     )
 
 
+@app.post("/api/research/evaluations/{evaluation_id}/cases/{case_id}/mesh/build")
+def build_evaluation_case_mesh(
+    evaluation_id: str,
+    case_id: str,
+    source: Literal["prediction", "gt"] = Query("prediction"),
+    simplify_mm: float | None = Query(None, gt=0, le=10),
+    surface: Literal["mask", "sdf"] = Query("mask"),
+    sdf_sigma_mm: float = Query(0.4, gt=0, le=3),
+    feature_preservation_strength: float = Query(8.0, ge=0, le=100),
+) -> dict:
+    evaluation_dir = _evaluation_dir(evaluation_id)
+    _evaluation_case_row(evaluation_dir, case_id)
+    case_dir = _research_case_dir(case_id)
+    if source == "prediction":
+        input_path = evaluation_dir / "predictions" / case_id / "prediction.nii.gz"
+        if not input_path.exists():
+            raise HTTPException(status_code=404, detail="该评估病例没有 prediction.nii.gz")
+    else:
+        input_path = case_dir / "label.nii.gz"
+        if not input_path.exists():
+            raise HTTPException(status_code=404, detail="该病例缺少 label.nii.gz")
+
+    ply_path, json_path = _evaluation_surface_mesh_paths(
+        evaluation_dir,
+        case_id,
+        source=source,
+        simplify_mm=simplify_mm,
+        surface=surface,
+        sdf_sigma_mm=sdf_sigma_mm,
+    )
+    try:
+        if surface == "sdf":
+            summary = export_nifti_sdf_surface(
+                input_path,
+                ply_path,
+                sigma_mm=sdf_sigma_mm,
+                summary_path=json_path,
+                require_component_preservation=True,
+            )
+        else:
+            summary = export_nifti_mask_mesh(
+                input_path,
+                ply_path,
+                summary_path=json_path,
+                simplify_cluster_mm=simplify_mm,
+                feature_preservation_strength=feature_preservation_strength,
+            )
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(
+            status_code=500,
+            detail=f"evaluation mesh 生成失败: {type(exc).__name__}: {exc}",
+        ) from exc
+
+    return {
+        "status": "built",
+        "evaluation_id": evaluation_id,
+        "case_id": case_id,
+        "source": source,
+        "surface": surface,
+        "simplify_mm": simplify_mm,
+        "sdf_sigma_mm": sdf_sigma_mm if surface == "sdf" else None,
+        "feature_preservation_strength": (
+            feature_preservation_strength if surface == "mask" and simplify_mm is not None else None
+        ),
+        "summary": summary,
+        "research_only": True,
+        "note": "只从已保存的真实 evaluation prediction 或对应 GT label 构建 3D；不重新运行模型推理。",
+    }
+
+
+@app.get("/api/research/evaluations/{evaluation_id}/cases/{case_id}/mesh")
+def get_evaluation_case_mesh(
+    evaluation_id: str,
+    case_id: str,
+    source: Literal["prediction", "gt"] = Query("prediction"),
+    simplify_mm: float | None = Query(None, gt=0, le=10),
+    surface: Literal["mask", "sdf"] = Query("mask"),
+    sdf_sigma_mm: float = Query(0.4, gt=0, le=3),
+) -> FileResponse:
+    evaluation_dir = _evaluation_dir(evaluation_id)
+    _evaluation_case_row(evaluation_dir, case_id)
+    ply_path, _ = _evaluation_surface_mesh_paths(
+        evaluation_dir,
+        case_id,
+        source=source,
+        simplify_mm=simplify_mm,
+        surface=surface,
+        sdf_sigma_mm=sdf_sigma_mm,
+    )
+    if not ply_path.exists():
+        raise HTTPException(status_code=404, detail="evaluation mesh 尚未生成")
+    if surface == "sdf":
+        _read_sdf_summary_checked(ply_path.with_suffix(".json"))
+    return FileResponse(ply_path, media_type="application/octet-stream", filename=ply_path.name)
+
+
+@app.get("/api/research/evaluations/{evaluation_id}/cases/{case_id}/mesh/summary")
+def get_evaluation_case_mesh_summary(
+    evaluation_id: str,
+    case_id: str,
+    source: Literal["prediction", "gt"] = Query("prediction"),
+    simplify_mm: float | None = Query(None, gt=0, le=10),
+    surface: Literal["mask", "sdf"] = Query("mask"),
+    sdf_sigma_mm: float = Query(0.4, gt=0, le=3),
+) -> dict:
+    evaluation_dir = _evaluation_dir(evaluation_id)
+    _evaluation_case_row(evaluation_dir, case_id)
+    _, json_path = _evaluation_surface_mesh_paths(
+        evaluation_dir,
+        case_id,
+        source=source,
+        simplify_mm=simplify_mm,
+        surface=surface,
+        sdf_sigma_mm=sdf_sigma_mm,
+    )
+    if surface == "sdf":
+        return _read_sdf_summary_checked(json_path)
+    if not json_path.exists():
+        raise HTTPException(status_code=404, detail="evaluation mesh summary 尚未生成")
+    try:
+        return json.loads(json_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise HTTPException(status_code=422, detail=f"evaluation mesh summary 无法解析: {exc}") from exc
+
+
 @app.get("/research-3d")
 def research_3d_page() -> FileResponse:
     page = FRONTEND_DIR / "research_3d.html"
@@ -951,7 +1104,9 @@ def list_research_cases() -> dict:
     case_dirs = sorted(
         path
         for path in RESEARCH_PROCESSED_ROOT.iterdir()
-        if path.is_dir() and (path / "label.nii.gz").exists()
+        if path.is_dir()
+        and (path / "label.nii.gz").exists()
+        and "test" not in source_splits.get(path.name, "unknown").lower()
     )
     cases = [
         _research_case_summary(path, source_splits.get(path.name))
