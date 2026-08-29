@@ -253,7 +253,7 @@ Web 原型未重新推理或生成虚构 prediction，而是从 `experiments/<ev
 
 ### 5.9 正式独立测试
 
-**参数锁定前不填写。** 正式 independent test 必须在锁参记录提交并推送后，对 `test_private liver_169` 以完全固定的 v13 config、`best.pt`、softmax/argmax decision 与 `refinement=disabled` 仅运行一次。结果产生后将单列 Dice、IoU、Precision、Recall、HD95、ASSD、foreground ratio、component/false merge/false break、uncertainty、calibration、inference time 以及 independent prediction 3D/SDF 工程结果；无论结果好坏均不得据此继续调参。
+**最终参数已经锁定，但正式 independent-test 结果尚未产生。** 锁参记录为 `docs/10_final_parameter_lock.md`；正式 independent test 必须在该锁参记录提交并推送、再次确认 `HEAD == origin/main` 后，对 `test_private liver_169` 以完全固定的 v13 config、`best.pt`、softmax/argmax decision 与 `refinement=disabled` 仅运行一次。结果产生后将单列 Dice、IoU、Precision、Recall、HD95、ASSD、foreground ratio、component/false merge/false break、uncertainty、calibration、inference time 以及 independent prediction 3D/SDF 工程结果；无论结果好坏均不得据此继续调参。
 
 ---
 
@@ -283,7 +283,7 @@ Boundary 项仅带来极弱的 Dice 与 surface 改善；Topology 项虽然在 H
 
 截至 validation 阶段，本研究建立了从骨科 CT 标准化、SegFormer3D 训练与消融、uncertainty/calibration、失败可追溯的 ROI refinement，到 physical-space 3D reconstruction 与 Web 科研复核的完整工程链。统一消融后，当前 validation 最终候选为 CT-only、Region+Boundary、Bernoulli sampling、flip-only 的 v13 coarse 模型；其两例 mean Dice≈`0.05471`，说明分割精度仍远未达到临床应用水平。Predictive entropy 对错误区域具有较好的 validation 排序能力，但 uncertainty ROI refinement 综合判定为 **FAIL**，因此最终 pipeline 禁用 refinement。真实 prediction 的 2.0 mm 简化和 0.4 mm SDF 在可控工程误差下完成 WebGL2 实机展示，证明三维/Web 闭环可运行，但没有掩盖模型本身的低精度。
 
-在完成 validation 阶段远端同步并形成不可更改的参数锁定后，研究将只运行一次正式 independent test，并无论结果好坏如实补充到 5.9、Discussion 与最终结论；独立测试结果不得用于再次调参。
+validation 阶段远端同步已经完成，并已形成不可更改的最终参数锁定。待锁参提交本身推送并再次确认远端一致后，研究将只运行一次正式 independent test，并无论结果好坏如实补充到 5.9、Discussion 与最终结论；独立测试结果不得用于再次调参。
 
 ---
 

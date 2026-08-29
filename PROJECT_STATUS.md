@@ -31,7 +31,7 @@
 - `🔴 阻塞`：受数据、GPU、授权、伦理或其他外部条件限制；
 - `⚪ 未开始`：尚未开展。
 
-> **特别强调：任务书中的 Dice ≥ 0.93 是项目目标，不是当前实验结果。当前已产生真实 engineering / validation 实验，但尚未完成最终锁参与正式 independent test；validation 指标不得冒充 independent-test final Results。**
+> **特别强调：任务书中的 Dice ≥ 0.93 是项目目标，不是当前实验结果。当前已完成 engineering / validation 闭环并进入最终锁参，正式 independent test 尚未执行；validation 指标不得冒充 independent-test final Results。**
 
 ---
 
@@ -89,7 +89,7 @@
 | patient-level 数据划分 | ✅ 已完成（10例 formal pilot） | 96% | 已固定 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，patient-level 互斥；官方 `test_private liver_169` 只进入 test、不参与训练/调参；`formal_experiment=true`。最终论文仍需扩大病例规模 |
 | 公开数据集整理 | 🟡 进行中 | 94% | CTSpine1K `MSD-T10` 10 个真实 CT+label 已落盘：`liver_0`—`liver_8` + `liver_169`，官方 split 为 9 `trainset` + 1 `test_private`；真实文件接管执行 SHA-256 校验，10 例全部标准化/QC。该子集仍是工程验证，不替代正式论文主数据集/split |
 | 临床脱敏数据 | 🔴 阻塞 | 0% | 当前项目目录无临床数据；必须等待合法授权、脱敏与伦理/使用范围确认 |
-| SegFormer3D 骨科适配 | 🟡 进行中 | 96% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。v9 证明冻结 BN running stats 可显著缓解 v6 foreground explosion，但不能消除退化；v10 在 encoder 与 BN 全冻结后仍发生 mean Dice≈`1.65e-11` 的 catastrophic background collapse，否定 encoder parameter update 为必要条件。v11 从 epoch2 起同时冻结 encoder、BN running stats 与 decoder feature（`linear_c1..c4` + `linear_fuse`），仅允许 `linear_pred` 更新，并已完成 3 epoch：mean val Dice=`0.0540700072 → 0.0543761681 → 0.0546575740`，连续三轮无 catastrophic collapse。epoch3 `liver_7/liver_8` detailed Dice≈`0.04514/0.06417`、prediction/GT ratio≈`4.22/3.78`；新的 epoch1 exact-anchor→epoch3 dynamics 证明 encoder/BN/decoder-feature delta=`0`、fixed-patch encoder/fuse/head-input activation exact equal，仅 `linear_pred` 与 final logits 改变。与已保存的 epoch1→epoch2 dynamics 交叉验证后，正式判定 stable baseline=`YES`（engineering/validation）。绝对分割精度仍低，lock parameters=`NO`、formal independent test ready=`NO`；当前证据支持 decoder feature update 是 v10 collapse 的关键机制之一，但不写成唯一根因 |
+| SegFormer3D 骨科适配 | 🟡 进行中 | 96% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。v9 证明冻结 BN running stats 可显著缓解 v6 foreground explosion，但不能消除退化；v10 在 encoder 与 BN 全冻结后仍发生 mean Dice≈`1.65e-11` 的 catastrophic background collapse，否定 encoder parameter update 为必要条件。v11 从 epoch2 起同时冻结 encoder、BN running stats 与 decoder feature（`linear_c1..c4` + `linear_fuse`），仅允许 `linear_pred` 更新，并已完成 3 epoch：mean val Dice=`0.0540700072 → 0.0543761681 → 0.0546575740`，连续三轮无 catastrophic collapse。epoch3 `liver_7/liver_8` detailed Dice≈`0.04514/0.06417`、prediction/GT ratio≈`4.22/3.78`；新的 epoch1 exact-anchor→epoch3 dynamics 证明 encoder/BN/decoder-feature delta=`0`、fixed-patch encoder/fuse/head-input activation exact equal，仅 `linear_pred` 与 final logits 改变。与已保存的 epoch1→epoch2 dynamics 交叉验证后，正式判定 stable baseline=`YES`（engineering/validation）。绝对分割精度仍低，但 validation/3D/Web 闭环已完成并在 `2f333ba` 推送后正式锁参：lock parameters=`YES`、formal independent test ready=`YES`；锁参记录见 `docs/10_final_parameter_lock.md`。从锁参提交开始不得依据 independent test 调整 threshold、refinement 或其他参数；当前证据支持 decoder feature update 是 v10 collapse 的关键机制之一，但不写成唯一根因 |
 | 区域损失 | ✅ 已完成（代码） | 90% | Dice + CE/BCE 可运行并有 backward 测试 |
 | Boundary Loss | 🟡 进行中 | 85% | v13 已完成 3-epoch validation 消融；相对 Region 的 HD95/ASSD 仅约改善 0.1002/0.0355 mm，收益极弱，暂保留为 sampling baseline 候选但不宣称明确优势 |
 | Topology Loss | 🟡 进行中 | 80% | v14/v15 已完成 validation 消融；结构/表面指标有改善信号，但 foreground overprediction 与 calibration 代价明显，当前不选作后续 baseline；骨折/非管状骨结构适用性仍待独立检查 |
@@ -112,7 +112,7 @@
 - Edge 实机已完成：`results-review` prediction MPR + uncertainty MPR；`research-3d` v13 liver_8 2.0 mm prediction WebGL（296,483 顶点 / 591,833 三角面）；SDF σ=0.4 mm WebGL（1,340,319 顶点 / 2,672,566 三角面）；GT/prediction 双来源切换正常。
 - test 隔离保持有效：`/api/research/cases` live API 仅暴露 liver_0～liver_8 共 9 例；截至本门禁记录，`liver_169` 在本轮锁参前没有被读取影像、prediction、entropy、metrics、3D 或 diagnostics。
 - 质量门禁：`pytest tests -q`=`138 passed`；`ruff check src web tests`=`All checks passed!`；`git diff --check` 无 error；`node --check web/frontend/research_3d.js` 通过。
-- 当前状态仍为 `lock parameters=NO`、`formal independent test ready=NO`；下一步先提交并 push 本 validation 阶段，再单独记录锁参并 push，之后才允许首次正式访问 `liver_169`。
+- validation 阶段提交 `2f333ba` 已 push 并确认 `HEAD == origin/main`；当前进入最终参数锁定：`lock parameters=YES`、`formal independent test ready=YES`，唯一锁参记录为 `docs/10_final_parameter_lock.md`。本锁参提交 push 并再次确认远端一致后，才允许首次正式访问 `liver_169`。
 
 ---
 

@@ -224,8 +224,13 @@
 - [x] `task_locked=true`
 - [x] `src.modeling.task_lock` 实测 `ready=true`、0 error/0 warning
 - [x] 固定 CPU formal-pilot config：`configs/orthopedic_ct_cpu_binary_formal_pilot_v1.yaml`
+- [x] validation 全链路完成后锁定最终 independent-test pipeline：v13 CT-only + Region/Boundary=`1.0/0.1` + Bernoulli `p_fg=0.25` + `patches/case=4` + flip-only + 64³ ROI + v13 `best.pt` + softmax/argmax + refinement disabled
+- [x] `lock parameters=YES`
+- [x] `formal independent test ready=YES`
+- [x] 锁参记录：`docs/10_final_parameter_lock.md`
+- [ ] 锁参提交 push 并确认 `HEAD == origin/main` 后，才允许唯一一次正式访问 `liver_169`
 
-> 模板 `vertebra_task_template.json` 继续保留为未锁定模板；真正实验引用新的 locked spec。当前训练链不支持真正的 instance segmentation，不能用 semantic segmentation 冒充。
+> 模板 `vertebra_task_template.json` 继续保留为未锁定模板；真正实验引用新的 locked spec。当前训练链不支持真正的 instance segmentation，不能用 semantic segmentation 冒充。从最终锁参提交开始，不得依据 independent test 调整 threshold、refinement 或其它参数。
 
 ### P0-3 当前 10 例 formal-pilot patient-level split
 
