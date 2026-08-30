@@ -6,7 +6,7 @@
 >
 > 台账首次建立：2026-08-15
 >
-> 最近更新：2026-08-29
+> 最近更新：2026-08-30
 
 ---
 
@@ -75,7 +75,7 @@
 
 ---
 
-## 2. 当前总体状态（2026-08-29）
+## 2. 当前总体状态（2026-08-30）
 
 | 模块 | 状态 | 完成度 | 当前真实状态 |
 |---|---|---:|---|
@@ -231,7 +231,7 @@ JSON / BibTeX / frontend structural checks
 → data/datasets.json OK
 → configs/label_schemas/ctspine1k_verse.json OK
 → configs/task_specs/vertebra_task_template.json OK
-→ paper/references.bib: 42 entries, brace balanced, duplicate key none
+→ paper/references.bib: 44 entries, brace balanced, duplicate key none
 → app.js / qc_review.js / research_3d.js / results_review.js: node --check OK
 
 PowerShell parser
@@ -768,7 +768,7 @@ python -m ruff check src web tests
 All checks passed!
 ```
 
-附加结构检查：`data/datasets.json`、`configs/label_schemas/ctspine1k_verse.json`、`configs/task_specs/vertebra_task_template.json` 可解析；`paper/references.bib` 当前 42 entries、括号平衡且无重复 key；前端 `app.js / qc_review.js / research_3d.js / results_review.js` 均通过 `node --check`；当前纳入检查的 PowerShell 脚本语法 parser 通过。
+附加结构检查：`data/datasets.json`、`configs/label_schemas/ctspine1k_verse.json`、`configs/task_specs/vertebra_task_template.json` 可解析；`paper/references.bib` 当前 44 entries、括号平衡且无重复 key；前端 `app.js / qc_review.js / research_3d.js / results_review.js` 均通过 `node --check`；当前纳入检查的 PowerShell 脚本语法 parser 通过。
 
 ### 10.3 获取上游（仅当目录不存在）
 
@@ -2593,3 +2593,58 @@ git diff --check
 仍未完成且不得伪造：扩大病例规模后的主实验、新预注册 split、真实 nnU-Net/Residual-Encoder nnU-Net 强 baseline、可靠 difficult subgroup、合法临床/多中心验证、统计分析，以及目标期刊/学校模板确定后的最终格式定稿。
 
 本阶段最终门禁：`pytest tests -q`=`138 passed, 153 warnings`；`ruff check src web tests`=`All checks passed!`；4 个前端 JS `node --check` 全部通过；BibTeX=`44 entries / 0 duplicate key / brace balance=0`；`git diff --check`=PASS。
+
+
+### 2026-08-30｜阶段 BN：最终文档一致性、下载可靠性与 GitHub 展示复核
+
+从真实状态 `HEAD == origin/main == 949be766e5276fefef3bdaa6e21176aada737808` 接管；Git 身份为 `927242768-dotcom <927242768@qq.com>`。接管时工作区已有一处未提交的 `env/download_ctspine1k_sample.ps1` 改动，本阶段先检查内容与风险后保留并纳入验证，没有覆盖或重跑任何冻结实验。
+
+本阶段完成以下可在当前条件下安全收尾的事项：
+
+- 修正主台账“当前状态”日期为 2026-08-30，并清理当前检查段落中遗留的 `references.bib: 42 entries` 过期描述；文献库真实状态统一为 44 entries；
+- 论文正文补齐此前列表中存在但正文未引用的 `[7]` TotalSegmentator 引用，使当前顺序引用覆盖 1–22；同时明确 `paper/references.bib` 是 44 条项目扩展文献库，正式投稿时只导出当前正文实际引用条目；
+- `docs/12_final_presentation_outline.md` 更新日期同步到 2026-08-30；
+- `env/download_ctspine1k_sample.ps1` 增加 `.part` 原子下载、已有/新下载 `.nii.gz` 的 gzip 读取至 EOF 完整性校验、异常 partial 清理，并把文件大小和完整性检查状态写入下载 manifest，避免截断文件被静默复用；README/TASKS 已同步该工程改动；
+- GitHub 远端复核：仓库 description 已为简洁科研项目描述；最新 Release 仍为 `v0.3.0 - Formal Independent Test & Research Pipeline Closure`；`949be76` 对应 GitHub Actions CI 为 success；仓库当前 `license=null`，继续保持待负责人决策；Topics 当前为空，本轮没有可安全调用的仓库元数据写接口，因此不通过不稳定浏览器操作冒险修改。
+
+本阶段未运行任何训练、validation 或 `liver_169` 模型推理，正式 independent test 冻结状态保持不变。
+
+本阶段质量门禁：
+
+```text
+pytest tests -q
+→ 138 passed, 153 warnings
+
+ruff check src web tests
+→ All checks passed!
+
+PowerShell parser（env / web / 根目录 *.ps1）
+→ PASS
+
+download_ctspine1k_sample.ps1 dry plan（无 -Download）
+→ PASS；未下载或改动真实数据
+
+node --check web/frontend/app.js
+node --check web/frontend/qc_review.js
+node --check web/frontend/research_3d.js
+node --check web/frontend/results_review.js
+→ PASS
+
+Markdown code fences
+→ PASS
+
+manuscript citation numbers
+→ 1–22 连续覆盖
+
+paper/references.bib
+→ 44 entries / 0 duplicate key / brace balance=0
+
+公开仓库 tracked-file 禁止模式检查
+→ DICOM/NIfTI/checkpoint/experiments/.venv/.python/runtime/third_party checkout: PASS
+→ .env/private-key/certificate filename pattern: PASS
+
+git diff --check
+→ PASS（仅 Windows LF→CRLF 提示，无 whitespace error）
+```
+
+仍未完成且必须继续保持真实未完成：扩大病例规模、真实 nnU-Net/Residual-Encoder nnU-Net 等强 baseline、可靠 metal/fracture/low-density subgroup、合法授权临床脱敏数据、外部/多中心验证、统计显著性、真实 GPU 显存数据、目标期刊/学校模板后的最终格式、最终 PPT，以及自研代码 LICENSE 决策。普通文档/下载可靠性收尾不足以创建 `v0.3.1` Release。

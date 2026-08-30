@@ -13,6 +13,75 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+function Test-GzipFile {
+    param([Parameter(Mandatory = $true)][string]$Path)
+
+    if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
+        return $false
+    }
+
+    $fileStream = $null
+    $gzipStream = $null
+    try {
+        $fileStream = [System.IO.File]::OpenRead($Path)
+        $gzipStream = [System.IO.Compression.GZipStream]::new(
+            $fileStream,
+            [System.IO.Compression.CompressionMode]::Decompress
+        )
+        $buffer = New-Object byte[] (1024 * 1024)
+        while ($gzipStream.Read($buffer, 0, $buffer.Length) -gt 0) {
+            # Read to EOF so truncated gzip streams are detected before a file is trusted.
+        }
+        return $true
+    } catch {
+        Write-Warning "Gzip integrity check failed: $Path ($($_.Exception.Message))"
+        return $false
+    } finally {
+        if ($null -ne $gzipStream) {
+            $gzipStream.Dispose()
+        }
+        if ($null -ne $fileStream) {
+            $fileStream.Dispose()
+        }
+    }
+}
+
+function Save-GzipDownloadAtomic {
+    param(
+        [Parameter(Mandatory = $true)][string]$Uri,
+        [Parameter(Mandatory = $true)][string]$Target,
+        [Parameter(Mandatory = $true)][string]$Description
+    )
+
+    if (Test-Path -LiteralPath $Target -PathType Leaf) {
+        if (Test-GzipFile -Path $Target) {
+            Write-Host "Skip existing verified $Description`: $Target"
+            return
+        }
+        Write-Warning "Replacing incomplete $Description`: $Target"
+        Remove-Item -LiteralPath $Target -Force
+    }
+
+    $part = "$Target.part"
+    if (Test-Path -LiteralPath $part) {
+        Write-Warning "Removing stale partial download: $part"
+        Remove-Item -LiteralPath $part -Force
+    }
+
+    try {
+        Write-Host "Downloading $Description"
+        Invoke-WebRequest -Uri $Uri -OutFile $part -UseBasicParsing
+        if (-not (Test-GzipFile -Path $part)) {
+            throw "Downloaded gzip failed integrity validation: $Uri"
+        }
+        Move-Item -LiteralPath $part -Destination $Target -Force
+    } finally {
+        if (Test-Path -LiteralPath $part) {
+            Remove-Item -LiteralPath $part -Force
+        }
+    }
+}
+
 if ($CaseIds.Count -eq 0) {
     throw "CaseIds 不能为空"
 }
@@ -67,19 +136,8 @@ foreach ($item in $plan) {
     $volumeTarget = Join-Path $volumeDir $item.VolumeName
     $labelTarget = Join-Path $labelDir $item.LabelName
 
-    if (-not (Test-Path $volumeTarget)) {
-        Write-Host "Downloading CT: $($item.CaseId)"
-        Invoke-WebRequest -Uri $item.VolumeUrl -OutFile $volumeTarget -UseBasicParsing
-    } else {
-        Write-Host "Skip existing CT: $volumeTarget"
-    }
-
-    if (-not (Test-Path $labelTarget)) {
-        Write-Host "Downloading label: $($item.CaseId)"
-        Invoke-WebRequest -Uri $item.LabelUrl -OutFile $labelTarget -UseBasicParsing
-    } else {
-        Write-Host "Skip existing label: $labelTarget"
-    }
+    Save-GzipDownloadAtomic -Uri $item.VolumeUrl -Target $volumeTarget -Description "CT $($item.CaseId)"
+    Save-GzipDownloadAtomic -Uri $item.LabelUrl -Target $labelTarget -Description "label $($item.CaseId)"
 
     $downloaded += [pscustomobject]@{
         case_id = $item.CaseId
@@ -87,6 +145,9 @@ foreach ($item in $plan) {
         label = $labelTarget
         volume_url = $item.VolumeUrl
         label_url = $item.LabelUrl
+        volume_size_bytes = (Get-Item -LiteralPath $volumeTarget).Length
+        label_size_bytes = (Get-Item -LiteralPath $labelTarget).Length
+        gzip_integrity_checked = $true
     }
 }
 

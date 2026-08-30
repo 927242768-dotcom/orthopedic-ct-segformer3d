@@ -1,6 +1,6 @@
 # 基于 SegFormer3D 的骨科 CT 分割、不确定性评估与三维科研分析系统
 
-> 中文技术稿 v0.1（持续更新至 2026-08-29）
+> 中文技术稿 v0.1（持续更新至 2026-08-30）
 >
 > **结果声明：本文当前所有 validation、正式 independent test、uncertainty/calibration 与三维工程数字均来自项目真实产物；不使用随机权重、预期值或伪造指标。当前样本量极小，结论仅限本工程 pilot，不代表临床有效性。**
 
@@ -40,7 +40,7 @@ SegFormer 使用多阶段层次化 Transformer 编码器输出不同尺度特征
 
 ### 2.3 脊柱与骨结构 CT 分割
 
-CTSpine1K 提供大规模椎体 CT 标注，为脊柱自动分割和跨来源评估提供数据基础[5]。VerSe 2019/2020 则建立了多设备、多中心、含解剖变异和病理情况的椎体标注基准，强调了异常解剖和 domain shift 对算法性能的影响[6]。2024 年的 VerFormer 从骨科/脊柱场景出发，在 Transformer 中引入 vertebrae-aware global query，以突出与椎体相关的 token，并在 VerSe 数据上验证[8]。近期研究进一步扩大了竞争范围：2025 年 SpineMamba 将 Residual Visual Mamba 与可学习三维脊柱形状先验结合[9]；同年的椎体 Transformer 工作将 WNet 分割、ViT 类型分析与解剖变异感知结合，并针对切片缺失、噪声和扫描差异开展鲁棒性分析[10]；椎体骨折研究则采用 nnU-Net 分割与骨折分类组成完整 pipeline，说明真实断裂病例需要独立评价[13]；真实腰椎金属植入物的 deep-MAR 研究进一步证明金属伪影应优先用真实病例校验[14]；2024 年 3D 椎体分割研究还直接观察到低骨密度情况下的相邻椎体融合和单椎体分裂失败，支持把 low-density 病例与 false merge/false break 单独分析[21]。2026 年 VertebraFormer 把椎体分割、编号和病灶定位统一到结构感知多任务框架，并采用多域与 leave-one-domain-out 方案研究泛化[11]；同年开放的 1,460 例椎体体部数据与 Residual-Encoder nnU-Net 研究进一步抬高了通用 CNN baseline 的强度[12]。因此本文不能把“采用 Transformer”本身作为主要创新，也不能只与弱 CNN 对照，而应重点验证三维多尺度骨科适配、边界/拓扑约束、困难样本、不确定性局部精修以及从体素分割到物理空间表面的误差闭环。
+CTSpine1K 提供大规模椎体 CT 标注，为脊柱自动分割和跨来源评估提供数据基础[5]。VerSe 2019/2020 则建立了多设备、多中心、含解剖变异和病理情况的椎体标注基准，强调了异常解剖和 domain shift 对算法性能的影响[6]。TotalSegmentator 进一步展示了大规模 CT 多解剖结构自动分割与标准化基准的工程价值[7]。2024 年的 VerFormer 从骨科/脊柱场景出发，在 Transformer 中引入 vertebrae-aware global query，以突出与椎体相关的 token，并在 VerSe 数据上验证[8]。近期研究进一步扩大了竞争范围：2025 年 SpineMamba 将 Residual Visual Mamba 与可学习三维脊柱形状先验结合[9]；同年的椎体 Transformer 工作将 WNet 分割、ViT 类型分析与解剖变异感知结合，并针对切片缺失、噪声和扫描差异开展鲁棒性分析[10]；椎体骨折研究则采用 nnU-Net 分割与骨折分类组成完整 pipeline，说明真实断裂病例需要独立评价[13]；真实腰椎金属植入物的 deep-MAR 研究进一步证明金属伪影应优先用真实病例校验[14]；2024 年 3D 椎体分割研究还直接观察到低骨密度情况下的相邻椎体融合和单椎体分裂失败，支持把 low-density 病例与 false merge/false break 单独分析[21]。2026 年 VertebraFormer 把椎体分割、编号和病灶定位统一到结构感知多任务框架，并采用多域与 leave-one-domain-out 方案研究泛化[11]；同年开放的 1,460 例椎体体部数据与 Residual-Encoder nnU-Net 研究进一步抬高了通用 CNN baseline 的强度[12]。因此本文不能把“采用 Transformer”本身作为主要创新，也不能只与弱 CNN 对照，而应重点验证三维多尺度骨科适配、边界/拓扑约束、困难样本、不确定性局部精修以及从体素分割到物理空间表面的误差闭环。
 
 ### 2.4 边界与拓扑约束
 
@@ -326,4 +326,4 @@ Uncertainty 在独立 test 上仍保留一定错误排序能力（AUROC=`0.86424
 21. Xiong X, Graves S A, Gross B A, et al. Lumbar and Thoracic Vertebrae Segmentation in CT Scans Using a 3D Multi-Object Localization and Segmentation CNN. Tomography, 2024, 10(5):738-760.
 22. Isensee F, Jaeger P F, Kohl S A A, Petersen J, Maier-Hein K H. nnU-Net: a self-configuring method for deep learning-based biomedical image segmentation. Nature Methods, 2021, 18:203-211.
 
-> 本稿采用顺序编码引用，正文新增引用均与本节编号对应。机器可用参考文献库位于 `paper/references.bib`（当前 44 条：42 条英文核心 + 2 条已核验中文文献），结构化文献矩阵见 `docs/08_literature_matrix.md`（当前 44 条）。两条国内文献已分别通过万方医学网与《中国医学装备》期刊官网/CNKI 期刊页完成题录核验；正式投稿前仍需按目标期刊/学校模板统一参考文献样式，并复核届时是否出现更新的正式发表版本。
+> 本稿采用顺序编码引用，当前正文对应本节 1–22 条参考文献。机器可用 `paper/references.bib` 是项目扩展文献库（当前 44 条：42 条英文核心 + 2 条已核验中文文献），其中未在当前正文直接引用的背景文献不进入本稿顺序编号；正式投稿时应仅导出实际引用条目。结构化文献矩阵见 `docs/08_literature_matrix.md`（当前 44 条）。两条国内文献已分别通过万方医学网与《中国医学装备》期刊官网/CNKI 期刊页完成题录核验；正式投稿前仍需按目标期刊/学校模板统一参考文献样式，并复核届时是否出现更新的正式发表版本。

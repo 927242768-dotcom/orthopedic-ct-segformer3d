@@ -76,6 +76,7 @@
 - [x] CTSpine1K MSD-T10 10 个真实 CT+label 工程子集落盘
 - [x] 数据来源与 split 信息登记
 - [x] SHA-256 provenance 校验机制
+- [x] CTSpine1K 下载脚本使用 `.part` 原子落盘，并在复用/写入 `.nii.gz` 前读取至 EOF 做 gzip 完整性校验，避免截断文件被误当作有效数据
 - [x] DICOM series 发现
 - [x] DICOM 几何切片排序
 - [x] orientation / spacing / origin / direction 检查

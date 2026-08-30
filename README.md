@@ -66,7 +66,7 @@ D:\国创项目
 │  ├─ setup_env.ps1             # 只在本项目内创建 .python/.venv
 │  ├─ fetch_segformer3d.ps1     # 获取官方 SegFormer3D 到 third_party
 │  ├─ download_verse.ps1        # VerSe 下载计划/显式下载辅助脚本
-│  ├─ download_ctspine1k_sample.ps1 # CTSpine1K 小样本 CT+label 下载计划/显式下载
+│  ├─ download_ctspine1k_sample.ps1 # CTSpine1K 小样本 CT+label 下载；原子写入并校验 gzip 完整性
 │  ├─ check_gpu.ps1             # GPU/CUDA 只读验收
 │  └─ check_formal_readiness.ps1 # 任务+GPU+数据/QC 一站式正式实验验收
 ├─ src/
