@@ -160,12 +160,11 @@ function Start-Training {
 
     Remove-Item $StdoutLog, $StderrLog -Force -ErrorAction SilentlyContinue
 
-    $process = Start-Process \
-        -FilePath $python \
-        -ArgumentList $arguments \
-        -WorkingDirectory $ProjectRoot \
-        -RedirectStandardOutput $StdoutLog \
-        -RedirectStandardError $StderrLog \
+    $process = Start-Process -FilePath $python `
+        -ArgumentList $arguments `
+        -WorkingDirectory $ProjectRoot `
+        -RedirectStandardOutput $StdoutLog `
+        -RedirectStandardError $StderrLog `
         -PassThru
 
     Set-Content -Path $PidFile -Value $process.Id -Encoding ascii
