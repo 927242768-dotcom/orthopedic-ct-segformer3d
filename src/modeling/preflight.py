@@ -81,6 +81,8 @@ def _issue(
 def _channel_path(case_dir: Path, channel: str) -> Path:
     if channel == "ct_normalized":
         return case_dir / "image_normalized.nii.gz"
+    if channel == "ct_normalized_u16":
+        return case_dir / "image_normalized_u16.nii.gz"
     if channel == "bone_window":
         return case_dir / "image_bone_window.nii.gz"
     return case_dir / f"{channel}.nii.gz"
@@ -188,6 +190,9 @@ def run_preflight(
 
     data_cfg = config.get("data", {})
     model_cfg = config.get("model", {})
+    required_pipeline_version = data_cfg.get("required_pipeline_version")
+    if required_pipeline_version is not None:
+        required_pipeline_version = str(required_pipeline_version)
     processed_root = _resolve(
         processed_root_override
         if processed_root_override is not None
@@ -230,8 +235,22 @@ def run_preflight(
         for case_id in case_ids:
             memberships.setdefault(case_id, []).append(split)
 
+    meta = split_payload.get("_meta", {}) if split_payload else {}
+    purpose = str(meta.get("purpose", "")).strip().lower() if isinstance(meta, dict) else ""
+    allow_micro_overlap = bool(
+        mode == "engineering"
+        and isinstance(meta, dict)
+        and meta.get("formal_experiment") is False
+        and split_counts.get("test", 0) == 0
+        and "engineering" in purpose
+        and ("micro_overfit" in purpose or "tiny_overfit" in purpose)
+    )
+
     for case_id, member_splits in memberships.items():
         if len(member_splits) > 1:
+            if allow_micro_overlap and set(member_splits) == {"train", "validation"}:
+                _issue(issues, "warning", "engineering_micro_overlap", "engineering micro-overfit split overlap", case_id)
+                continue
             _issue(
                 issues,
                 "error",
@@ -409,6 +428,21 @@ def run_preflight(
                     )
 
             checked_case_count += 1
+
+    if required_pipeline_version is not None and pipeline_versions:
+        mismatched_versions = {
+            version: count
+            for version, count in pipeline_versions.items()
+            if version != required_pipeline_version
+        }
+        if mismatched_versions:
+            _issue(
+                issues,
+                "error",
+                "required_pipeline_version_mismatch",
+                f"config 要求 preprocessing pipeline={required_pipeline_version!r}，"
+                f"但实际发现 {pipeline_versions}",
+            )
 
     if mode == "formal" and len(pipeline_versions) > 1:
         _issue(

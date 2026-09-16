@@ -8,7 +8,7 @@ import pytest
 import torch
 import yaml
 
-from src.modeling.evaluate import _multiclass_case_rows, evaluate_checkpoint
+from src.modeling.evaluate import _aggregate_rows, _multiclass_case_rows, evaluate_checkpoint
 from src.modeling.segformer3d_adapter import build_orthopedic_segformer3d
 
 
@@ -123,6 +123,7 @@ def test_evaluate_checkpoint_writes_traceable_outputs(tmp_path: Path) -> None:
     summary = json.loads(summary_json.read_text(encoding="utf-8"))
     assert summary["split"] == "test"
     assert summary["case_filter"] == "case_eval"
+    assert summary["batchnorm_inference_mode"] == "running"
     assert summary["metrics"]["case_count"] == 1
     assert "prediction_foreground_fraction" in summary["metrics"]
     assert "target_foreground_fraction" in summary["metrics"]
@@ -130,6 +131,63 @@ def test_evaluate_checkpoint_writes_traceable_outputs(tmp_path: Path) -> None:
     assert "uncertainty_error_rate" in summary["metrics"]
     assert "calibration_expected_calibration_error" in summary["metrics"]
     assert "calibration_brier_score" in summary["metrics"]
+
+
+def test_aggregate_rows_ignores_blank_optional_values_from_resume_csv() -> None:
+    row = {
+        "dice": "0.5",
+        "iou": "0.333333",
+        "precision": "0.5",
+        "recall": "0.5",
+        "hd95_mm": "10.0",
+        "assd_mm": "2.0",
+        "prediction_foreground_fraction": "0.02",
+        "target_foreground_fraction": "0.01",
+        "component_count_error": "3",
+        "false_merge_count": "0",
+        "false_break_count": "1",
+        "inference_seconds": "5.0",
+        "prediction_to_target_foreground_ratio": "2.0",
+        "uncertainty_error_rate": "",
+        "uncertainty_error_auroc": "",
+        "calibration_expected_calibration_error": "0.03",
+    }
+
+    summary = _aggregate_rows([row])
+
+    assert summary["case_count"] == 1
+    assert summary["prediction_to_target_foreground_ratio"]["mean"] == 2.0
+    assert summary["calibration_expected_calibration_error"]["mean"] == 0.03
+    assert "uncertainty_error_rate" not in summary
+    assert "uncertainty_error_auroc" not in summary
+
+
+def test_evaluate_checkpoint_supports_batchnorm_batch_mode(tmp_path: Path) -> None:
+    processed = tmp_path / "processed"
+    _write_case(processed)
+    split_file = tmp_path / "split.json"
+    split_file.write_text(
+        json.dumps({"train": ["case_eval"], "validation": ["case_eval"], "test": ["case_eval"]}),
+        encoding="utf-8",
+    )
+    config = _config(processed, split_file)
+    config["inference"]["batchnorm_mode"] = "batch"
+    config_path = tmp_path / "config_batch_bn.yaml"
+    config_path.write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8")
+    model = build_orthopedic_segformer3d(config)
+    checkpoint_path = tmp_path / "checkpoint_batch_bn.pt"
+    torch.save({"model_state_dict": model.state_dict()}, checkpoint_path)
+
+    output = evaluate_checkpoint(
+        config_path,
+        checkpoint_path,
+        split="validation",
+        output_dir=tmp_path / "evaluation_batch_bn",
+        case_id="case_eval",
+    )
+    summary = json.loads((output / "summary.json").read_text(encoding="utf-8"))
+    assert summary["batchnorm_inference_mode"] == "batch"
+    assert summary["metrics"]["case_count"] == 1
 
 
 def test_evaluate_checkpoint_rejects_case_outside_requested_split(tmp_path: Path) -> None:

@@ -1,10 +1,12 @@
 from pathlib import Path
 
 import pytest
+import torch
 
 from src.modeling.segformer3d_adapter import (
     SegFormer3DUpstreamNotFound,
     _extract_model_parameters,
+    configure_normalization,
     ensure_upstream_available,
 )
 
@@ -40,6 +42,23 @@ def test_extract_model_parameters_rejects_missing_field() -> None:
     del config["model"]["depths"]
     with pytest.raises(ValueError, match="depths"):
         _extract_model_parameters(config)
+
+
+def test_configure_normalization_replaces_batchnorm3d() -> None:
+    model = torch.nn.Sequential(
+        torch.nn.Conv3d(4, 8, kernel_size=1),
+        torch.nn.BatchNorm3d(8),
+        torch.nn.Sequential(torch.nn.BatchNorm3d(16)),
+    )
+    replaced = configure_normalization(
+        model,
+        {"model": {"normalization": "groupnorm", "groupnorm_num_groups": 8}},
+    )
+
+    assert replaced == 2
+    assert not any(isinstance(module, torch.nn.BatchNorm3d) for module in model.modules())
+    groups = [module.num_groups for module in model.modules() if isinstance(module, torch.nn.GroupNorm)]
+    assert groups == [8, 8]
 
 
 def test_missing_upstream_has_actionable_error(tmp_path: Path) -> None:

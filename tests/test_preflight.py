@@ -165,3 +165,70 @@ def test_formal_preflight_accepts_signed_human_qc_when_gpu_not_required(tmp_path
     report = run_preflight(config, mode="formal", require_gpu=False)
 
     assert report.ready is True
+
+
+def test_engineering_micro_overfit_allows_intentional_train_validation_overlap(tmp_path: Path) -> None:
+    processed = tmp_path / "processed"
+    _write_case(processed, "case_a")
+    split = tmp_path / "split.json"
+    split.write_text(
+        json.dumps(
+            {
+                "_meta": {
+                    "formal_experiment": False,
+                    "purpose": "engineering_micro_overfit_sanity_only",
+                },
+                "train": ["case_a"],
+                "validation": ["case_a"],
+                "test": [],
+            }
+        ),
+        encoding="utf-8",
+    )
+    config = _write_config(tmp_path, processed, split)
+
+    report = run_preflight(config, mode="engineering")
+
+    assert report.ready is True
+    assert any(issue.code == "engineering_micro_overlap" and issue.severity == "warning" for issue in report.issues)
+    assert not any(issue.code == "case_split_leakage" for issue in report.issues)
+
+
+def test_engineering_overlap_without_micro_marker_is_rejected(tmp_path: Path) -> None:
+    processed = tmp_path / "processed"
+    _write_case(processed, "case_a")
+    split = tmp_path / "split.json"
+    _write_split(split, train=["case_a"], validation=["case_a"], test=[])
+    config = _write_config(tmp_path, processed, split)
+
+    report = run_preflight(config, mode="engineering")
+
+    assert report.ready is False
+    assert any(issue.code == "case_split_leakage" and issue.severity == "error" for issue in report.issues)
+
+
+def test_engineering_micro_marker_never_allows_overlap_with_test(tmp_path: Path) -> None:
+    processed = tmp_path / "processed"
+    for case_id in ("case_a", "case_b"):
+        _write_case(processed, case_id)
+    split = tmp_path / "split.json"
+    split.write_text(
+        json.dumps(
+            {
+                "_meta": {
+                    "formal_experiment": False,
+                    "purpose": "engineering_micro_overfit_sanity_only",
+                },
+                "train": ["case_a"],
+                "validation": ["case_b"],
+                "test": ["case_a"],
+            }
+        ),
+        encoding="utf-8",
+    )
+    config = _write_config(tmp_path, processed, split)
+
+    report = run_preflight(config, mode="engineering")
+
+    assert report.ready is False
+    assert any(issue.code == "case_split_leakage" and issue.severity == "error" for issue in report.issues)

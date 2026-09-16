@@ -1,0 +1,11 @@
+{
+  "_meta": {
+    "purpose": "engineering_micro_overfit_sanity_only",
+    "formal_experiment": false,
+    "preprocessing_pipeline": "0.6.0-compact-u16-fixed-hu-minmax-1p5mm-nibsafe",
+    "note": "One training case intentionally duplicated into validation; fixed one-patch capacity/optimization diagnostic only."
+  },
+  "train": ["ctspine1k-colonog-1.3.6.1.4.1.9328.50.4.0002"],
+  "validation": ["ctspine1k-colonog-1.3.6.1.4.1.9328.50.4.0002"],
+  "test": []
+}

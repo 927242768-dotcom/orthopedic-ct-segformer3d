@@ -1,0 +1,115 @@
+# CTSpine1K 完整数据改进版 v2。
+# 目的：修正 v1 在 epoch 22 后学习率 warm-restart、前景采样不足和全体积碎片假阳性问题。
+# 不覆盖 v1；需要单独启动新实验并单独验证。
+project: orthopedic_ct_segformer3d
+experiment_name: full_ctspine1k_large_scale_v2
+seed: 42
+
+data:
+  dataset_name: CTSpine1K/full
+  processed_root: H:/CTSpine1K_compact_1p5mm
+  split_file: H:/CTSpine1K_compact_1p5mm/split.json
+  input_channels:
+    - ct_normalized_u16
+  label_mode: binary
+  # v1=0.25 Bernoulli。v2 配合 fixed_per_case + patches_per_case=2，
+  # 每病例每 epoch 固定 1 个前景中心 patch + 1 个随机 patch；既提高前景暴露，又保留背景负样本。
+  foreground_probability: 0.50
+  foreground_sampling_mode: fixed_per_case
+  target_spacing_xyz_mm: [1.5, 1.5, 1.5]
+  hu_clip: [-1000, 2000]
+  # v1=64^3；温和增加上下文到 72^3，避免 80^3 + 多 patch 在 CPU 上代价过高。
+  roi_size_dhw: [72, 72, 72]
+  num_classes: 2
+
+model:
+  name: segformer3d
+  in_channels: 1
+  sr_ratios: [4, 2, 1, 1]
+  embed_dims: [32, 64, 160, 256]
+  patch_kernel_size: [7, 3, 3, 3]
+  patch_stride: [4, 2, 2, 2]
+  patch_padding: [3, 1, 1, 1]
+  mlp_ratios: [4, 4, 4, 4]
+  num_heads: [1, 2, 5, 8]
+  depths: [2, 2, 2, 2]
+  decoder_head_embedding_dim: 256
+  decoder_dropout: 0.0
+  num_classes: 2
+
+loss:
+  # v1 已出现严重碎片化假阳性；第一阶段先只验证最基础的区域学习链路。
+  # Dice 负责缓解前景/背景不平衡，CE 保留对假阳性的体素级惩罚；暂不叠加 boundary/topology。
+  type: region_dice_ce
+  dice_weight: 1.0
+  ce_weight: 1.0
+  include_background: false
+
+optimizer:
+  type: adamw
+  # v1 在 22->23 epoch 从低 LR 重启到 5e-5 后再未刷新 best；v2 改为无重启的保守恒定 LR。
+  lr: 0.00003
+  weight_decay: 0.01
+
+scheduler:
+  type: none
+
+training:
+  # 安全默认只跑第一阶段 5 Epoch；后续只有看到明确改善趋势才用 --max-epochs 继续到 15/30/40。
+  epochs: 5
+  batch_size: 1
+  patches_per_case: 2
+  # 每两张 patch 更新一次，保持约 610 次 optimizer update/epoch，同时让一次更新看到更多采样上下文。
+  gradient_accumulation_steps: 2
+  num_workers: 0
+  amp: true
+  save_metric: dice
+  # 5轮试训阶段不会因为前几轮波动过早停止；若之后继续训练，连续5轮无改善则停。
+  early_stopping_patience: 5
+  status_every_steps: 5
+  stop_on_target: false
+
+validation:
+  patch_mode: false
+  # v1 只有 12 例，波动较大；v2 用固定 24 例做 checkpoint selector。
+  # train.py 还会同步记录预测/真值前景比例与 component count error，专门检查碎片假阳性。
+  max_cases: 24
+
+inference:
+  sliding_window: true
+  roi_size_dhw: [96, 96, 96]
+  sw_batch_size: 1
+  overlap: 0.25
+  calibration:
+    enabled: true
+    n_bins: 15
+    metric_max_samples: 500000
+
+augmentation:
+  enabled: true
+  geometric:
+    # 第一阶段只保留低风险翻转，不叠加旋转/缩放插值，先确认基础训练/推理链路能正常学习。
+    random_flip: true
+    flip_probability: 0.5
+    flip_axes: [0, 1, 2]
+    random_rotate_deg: 0.0
+    random_scale_range: [1.0, 1.0]
+    transform_probability: 0.0
+  intensity:
+    # 只保留很轻的归一化域高斯噪声；gamma/HU shift 暂时关闭。
+    probability: 0.10
+    gamma_range: [1.0, 1.0]
+    gaussian_noise_std_range: [0.0, 0.003]
+    hu_shift_range: [0.0, 0.0]
+  hard_sampling:
+    enabled: false
+
+task:
+  task_id: vertebra_binary_ctspine1k_full_v1
+  task_type: binary_semantic
+  task_locked: true
+  task_spec: D:/国创项目/configs/task_specs/vertebra_binary_ctspine1k_full_v1.json
+  task_spec_sha256: 65483d535b6dee4f73b7fae92276a290950ca0f67c9254efb514fdba369f3ca6
+  label_schema_path: configs/label_schemas/ctspine1k_verse.json
+  foreground_labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
+  note: CTSpine1K v2 engineering experiment; test_private remains held out from training/model selection.

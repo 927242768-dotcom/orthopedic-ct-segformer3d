@@ -2,11 +2,11 @@
 
 > 项目目录：`D:\国创项目`
 >
-> 项目名称：**基于 SegFormer 的骨科 CT 影像智能分割与三维重建研究**
+> 项目名称：**基于 SegFormer3D 的骨科 CT 分割、三维重建与科研 Web 辅助分析协作项目**
 >
 > 台账首次建立：2026-08-15
 >
-> 最近更新：2026-08-30
+> 最近更新：2026-09-16
 
 ---
 
@@ -136,6 +136,21 @@
 - 最终全量门禁重新执行：`pytest tests -q`=`138 passed`；`ruff check src web tests`=`All checks passed!`；`git diff --check` 无 error；`node --check web/frontend/research_3d.js` 通过。
 - 公开仓库 tracked-file 检查未发现 DICOM/NIfTI、checkpoint、`experiments/`、`.venv/`、Web runtime 或 `third_party/SegFormer3D/` 被跟踪；常见 private-key/token 模式文件扫描无命中；当前最大 tracked 文件约 248 KB。
 - 当前论文与中期材料均如实保留 independent Dice=`0.02878` 的低性能结论；未填写未真实运行的 nnU-Net/Residual-Encoder nnU-Net 等跨架构指标，也未宣称临床性能或统计显著性。
+
+---
+
+### 2.4 2026-09-16 CTSpine1K v6 全规模开发阶段
+
+- 正式主线保持 `SegFormer3D + HR 3D Decoder + CT shallow spatial branch`，没有把 SegFormer3D 从主方案中移除；`direct_plus_coarse` 已作为较弱对照保留。
+- v6 紧凑缓存已经完成 807/807：train610 + validation197 + test0，failure=0；`test_private` 198 例仍未读取、未缓存、未参与调参。
+- 807 例全量 audit：missing=0、QC bad=0、geometry bad=0、suspicious HU=0；cache CRC 标志和 image/label affine 对齐检查通过。
+- 已修复 Windows 压缩 NIfTI 随机 CRC / 异常数值读取问题：预处理端加入稳定读取与 zlib sequential fallback，训练 dataset 使用 SimpleITK reader，并保持原 XYZ→DHW 语义。
+- full-scale engineering preflight=`ready=true`，checked=807，error=0，warning=0。
+- 当前 run：`experiments/20260916_163356_ctspine1k_v6_segformer3d_hr_full610_val197`；只从 stabilized pilot `best.pt` 加载模型权重，optimizer/scheduler fresh。
+- 截至本次 GitHub 阶段快照，epoch1—6 validation patch Dice=`0.81320 → 0.82648 → 0.82718 → 0.84610 → 0.84539 → 0.85848`；当前 best=`0.8584831380`，已超过 pilot best=`0.8215395933`。该数值是开发期 fixed-patch selector，不是 full-volume/最终 test 结果。
+- checkpoint / resume 链已核验：`RUNNING.lock`、`last.pt`、`best.pt`、optimizer、scheduler、Python/NumPy/Torch RNG 均存在；auto-continue 将在训练完成后执行 validation197 full-volume sliding-window evaluation。
+- 下一门禁：训练/early-stop 完成 → 锁定 best.pt → validation197 full-volume → 汇总区域/表面/结构/per-case/worst-case 指标；完成前禁止触碰 test198。
+- 详细记录：`docs/14_ctspine1k_v6_fullscale_stage_20260916.md`。
 
 ---
 

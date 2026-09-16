@@ -63,6 +63,155 @@ def probabilities_from_logits(logits: torch.Tensor) -> torch.Tensor:
     return torch.softmax(logits, dim=1)
 
 
+class RegionTverskyCELoss3D(nn.Module):
+    """Tversky + CE/BCE 区域损失，可显式提高 false-positive 惩罚。
+
+    Tversky 定义为 ``TP / (TP + alpha*FP + beta*FN)``。因此当
+    ``alpha > beta`` 时，同等概率质量下会更重地惩罚 FP，适合当前 v4-C
+    只改变 loss、抑制过分割的单变量实验。
+    """
+
+    def __init__(
+        self,
+        *,
+        tversky_weight: float = 1.0,
+        ce_weight: float = 1.0,
+        alpha: float = 0.65,
+        beta: float = 0.35,
+        include_background: bool = False,
+        smooth: float = 1e-5,
+    ) -> None:
+        super().__init__()
+        if tversky_weight < 0 or ce_weight < 0:
+            raise ValueError("Tversky/CE 权重不能为负数")
+        if tversky_weight == 0 and ce_weight == 0:
+            raise ValueError("Tversky/CE 权重不能同时为 0")
+        if alpha < 0 or beta < 0 or alpha + beta <= 0:
+            raise ValueError("Tversky alpha/beta 必须非负且不能同时为 0")
+        self.tversky_weight = float(tversky_weight)
+        self.ce_weight = float(ce_weight)
+        self.alpha = float(alpha)
+        self.beta = float(beta)
+        self.include_background = include_background
+        self.smooth = float(smooth)
+
+    def forward(self, logits: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+        probs = probabilities_from_logits(logits)
+        target_oh = _to_one_hot(logits, target)
+
+        if logits.shape[1] == 1:
+            ce = F.binary_cross_entropy_with_logits(logits, target_oh)
+            probs_fg = probs
+            target_fg = target_oh
+        else:
+            if target.ndim == 5 and target.shape[1] == logits.shape[1]:
+                target_index = target.argmax(dim=1)
+            elif target.ndim == 5 and target.shape[1] == 1:
+                target_index = target[:, 0].long()
+            else:
+                target_index = target.long()
+            ce = F.cross_entropy(logits, target_index)
+            if self.include_background:
+                probs_fg = probs
+                target_fg = target_oh
+            else:
+                probs_fg = probs[:, 1:]
+                target_fg = target_oh[:, 1:]
+
+        reduce_dims = (0, 2, 3, 4)
+        tp = torch.sum(probs_fg * target_fg, dim=reduce_dims)
+        fp = torch.sum(probs_fg * (1.0 - target_fg), dim=reduce_dims)
+        fn = torch.sum((1.0 - probs_fg) * target_fg, dim=reduce_dims)
+        score = (tp + self.smooth) / (
+            tp + self.alpha * fp + self.beta * fn + self.smooth
+        )
+        tversky_loss = 1.0 - score.mean()
+        return self.tversky_weight * tversky_loss + self.ce_weight * ce
+
+
+class RegionDiceWeightedCELoss3D(nn.Module):
+    """Dice + 类别加权 CE/BCE。
+
+    当前 v4-C 用于轻度提高背景类 CE 权重，从而直接增加“GT 为背景却预测为前景”
+    的代价。默认 background_weight=1.25，保持 foreground_weight=1.0；旧实验不使用
+    该 loss.type，因此不会改变历史行为。
+    """
+
+    def __init__(
+        self,
+        *,
+        dice_weight: float = 1.0,
+        ce_weight: float = 1.0,
+        background_weight: float = 1.25,
+        foreground_weight: float = 1.0,
+        include_background: bool = False,
+        smooth: float = 1e-5,
+    ) -> None:
+        super().__init__()
+        if dice_weight < 0 or ce_weight < 0:
+            raise ValueError("Dice/CE 权重不能为负数")
+        if dice_weight == 0 and ce_weight == 0:
+            raise ValueError("Dice/CE 权重不能同时为 0")
+        if background_weight <= 0 or foreground_weight <= 0:
+            raise ValueError("CE 类别权重必须 > 0")
+        self.dice_weight = float(dice_weight)
+        self.ce_weight = float(ce_weight)
+        self.background_weight = float(background_weight)
+        self.foreground_weight = float(foreground_weight)
+        self.include_background = bool(include_background)
+        self.smooth = float(smooth)
+
+    def forward(self, logits: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+        probs = probabilities_from_logits(logits)
+        target_oh = _to_one_hot(logits, target)
+
+        if logits.shape[1] == 1:
+            per_voxel_ce = F.binary_cross_entropy_with_logits(
+                logits, target_oh, reduction="none"
+            )
+            voxel_weight = (
+                self.background_weight * (1.0 - target_oh)
+                + self.foreground_weight * target_oh
+            )
+            ce = torch.mean(per_voxel_ce * voxel_weight)
+            probs_dice = probs
+            target_dice = target_oh
+        else:
+            if target.ndim == 5 and target.shape[1] == logits.shape[1]:
+                target_index = target.argmax(dim=1)
+            elif target.ndim == 5 and target.shape[1] == 1:
+                target_index = target[:, 0].long()
+            else:
+                target_index = target.long()
+            per_voxel_ce = F.cross_entropy(logits, target_index, reduction="none")
+            voxel_weight = logits.new_full(
+                target_index.shape, self.foreground_weight, dtype=logits.dtype
+            )
+            voxel_weight = torch.where(
+                target_index == 0,
+                logits.new_tensor(self.background_weight),
+                voxel_weight,
+            )
+            ce = torch.mean(per_voxel_ce * voxel_weight)
+            if self.include_background:
+                probs_dice = probs
+                target_dice = target_oh
+            else:
+                probs_dice = probs[:, 1:]
+                target_dice = target_oh[:, 1:]
+
+        reduce_dims = (0, 2, 3, 4)
+        intersection = torch.sum(probs_dice * target_dice, dim=reduce_dims)
+        denominator = torch.sum(probs_dice, dim=reduce_dims) + torch.sum(
+            target_dice, dim=reduce_dims
+        )
+        dice_per_class = (2.0 * intersection + self.smooth) / (
+            denominator + self.smooth
+        )
+        dice_loss = 1.0 - dice_per_class.mean()
+        return self.dice_weight * dice_loss + self.ce_weight * ce
+
+
 class RegionDiceCELoss3D(nn.Module):
     """Dice + CE/BCE 区域损失。
 
@@ -261,10 +410,18 @@ class JointOrthopedicSegLoss(nn.Module):
             raise ValueError("loss 权重不能为负数")
         self.weights = weights
         self.region = RegionDiceCELoss3D(include_background=include_background)
-        self.boundary = BoundaryLoss3D(include_background=include_background)
-        self.topology = SoftClDiceLoss3D(
-            iterations=topology_iterations,
-            include_background=include_background,
+        self.boundary = (
+            BoundaryLoss3D(include_background=include_background)
+            if weights.boundary > 0.0
+            else None
+        )
+        self.topology = (
+            SoftClDiceLoss3D(
+                iterations=topology_iterations,
+                include_background=include_background,
+            )
+            if weights.topology > 0.0
+            else None
         )
 
     def forward(
@@ -275,8 +432,9 @@ class JointOrthopedicSegLoss(nn.Module):
         return_components: bool = False,
     ) -> torch.Tensor | tuple[torch.Tensor, dict[str, torch.Tensor]]:
         region = self.region(logits, target)
-        boundary = self.boundary(logits, target)
-        topology = self.topology(logits, target)
+        zero = region.new_zeros(())
+        boundary = self.boundary(logits, target) if self.boundary is not None else zero
+        topology = self.topology(logits, target) if self.topology is not None else zero
 
         total = (
             self.weights.region * region

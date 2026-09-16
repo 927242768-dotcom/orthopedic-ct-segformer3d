@@ -125,6 +125,49 @@ def test_fixed_per_case_sampling_guarantees_foreground_slot_each_epoch(tmp_path:
         assert torch.any(first_slot["label"] > 0)
 
 
+def test_augmentation_disabled_is_true_noop(tmp_path: Path) -> None:
+    base = _build_dataset(tmp_path)
+    disabled = ProcessedOrthopedicCTDataset(
+        base.processed_root,
+        base.split_file,
+        "train",
+        roi_size_dhw=(36, 36, 36),
+        training=True,
+        foreground_probability=0.0,
+        label_mode="binary",
+        augmentation={"enabled": False},
+        seed=123,
+    )
+    explicit_noop = ProcessedOrthopedicCTDataset(
+        base.processed_root,
+        base.split_file,
+        "train",
+        roi_size_dhw=(36, 36, 36),
+        training=True,
+        foreground_probability=0.0,
+        label_mode="binary",
+        augmentation=_fixed_no_aug_config(),
+        seed=123,
+    )
+    disabled.set_epoch(2)
+    explicit_noop.set_epoch(2)
+
+    assert torch.equal(disabled[0]["image"], explicit_noop[0]["image"])
+    assert torch.equal(disabled[0]["label"], explicit_noop[0]["label"])
+
+
+def test_sampling_is_independent_of_process_level_torch_seed(tmp_path: Path) -> None:
+    dataset = _build_dataset(tmp_path)
+    dataset.set_epoch(3)
+
+    torch.manual_seed(1)
+    first = dataset[0]["image"].clone()
+    torch.manual_seed(987654321)
+    second = dataset[0]["image"].clone()
+
+    assert torch.equal(first, second)
+
+
 def test_set_epoch_rejects_negative_values(tmp_path: Path) -> None:
     dataset = _build_dataset(tmp_path)
     with pytest.raises(ValueError, match="epoch 不能为负数"):

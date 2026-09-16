@@ -16,6 +16,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+import torch
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_UPSTREAM_HOME = PROJECT_ROOT / "third_party" / "SegFormer3D"
@@ -82,6 +84,74 @@ def _extract_model_parameters(config: dict[str, Any]) -> dict[str, Any]:
     return {key: model_cfg[key] for key in required}
 
 
+def _group_count(num_channels: int, requested_groups: int) -> int:
+    """选择不超过 requested_groups 且能整除通道数的最大 GroupNorm group 数。"""
+    if requested_groups <= 0:
+        raise ValueError("groupnorm_num_groups 必须 > 0")
+    for groups in range(min(int(requested_groups), int(num_channels)), 0, -1):
+        if num_channels % groups == 0:
+            return groups
+    return 1
+
+
+def replace_batchnorm3d_with_groupnorm(
+    module: torch.nn.Module,
+    *,
+    num_groups: int = 16,
+) -> int:
+    """递归把 BatchNorm3d 替换为 GroupNorm，返回替换数量。"""
+    replaced = 0
+    for name, child in list(module.named_children()):
+        if isinstance(child, torch.nn.BatchNorm3d):
+            groups = _group_count(int(child.num_features), int(num_groups))
+            replacement = torch.nn.GroupNorm(
+                groups,
+                int(child.num_features),
+                eps=float(child.eps),
+                affine=bool(child.affine),
+            )
+            if child.affine:
+                with torch.no_grad():
+                    replacement.weight.copy_(child.weight.detach())
+                    replacement.bias.copy_(child.bias.detach())
+            setattr(module, name, replacement)
+            replaced += 1
+        else:
+            replaced += replace_batchnorm3d_with_groupnorm(
+                child,
+                num_groups=num_groups,
+            )
+    return replaced
+
+
+def configure_normalization(model: torch.nn.Module, config: dict[str, Any]) -> int:
+    """按项目配置替换上游 BN；默认 batchnorm 保持上游结构不变。"""
+    model_cfg = config.get("model", {})
+    normalization = str(model_cfg.get("normalization", "batchnorm")).lower()
+    if normalization in {"batchnorm", "batchnorm3d", "bn", "upstream"}:
+        return 0
+    if normalization not in {"groupnorm", "groupnorm3d", "gn"}:
+        raise ValueError(f"未知 model.normalization: {normalization}")
+
+    scope = str(model_cfg.get("groupnorm_scope", "all")).lower()
+    if scope == "all":
+        target = model
+    elif scope == "decoder":
+        target = getattr(model, "segformer_decoder", None)
+        if target is None:
+            raise RuntimeError("groupnorm_scope=decoder 但模型没有 segformer_decoder")
+    else:
+        raise ValueError("model.groupnorm_scope 仅支持 all 或 decoder")
+
+    replaced = replace_batchnorm3d_with_groupnorm(
+        target,
+        num_groups=int(model_cfg.get("groupnorm_num_groups", 16)),
+    )
+    if replaced == 0:
+        raise RuntimeError(f"启用 GroupNorm 但 scope={scope!r} 内没有 BatchNorm3d 可替换")
+    return replaced
+
+
 def build_orthopedic_segformer3d(
     config: dict[str, Any],
     *,
@@ -95,7 +165,9 @@ def build_orthopedic_segformer3d(
     module = load_upstream_module(upstream_home)
     model_parameters = _extract_model_parameters(config)
     upstream_config = {"model_parameters": model_parameters}
-    return module.build_segformer3d_model(upstream_config)
+    model = module.build_segformer3d_model(upstream_config)
+    configure_normalization(model, config)
+    return model
 
 
 def upstream_provenance(upstream_home: str | Path | None = None) -> dict[str, str]:

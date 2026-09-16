@@ -70,3 +70,9 @@ web/backend/runtime/
 .env.*
 *.pem
 *.key
+
+# Local diagnostic / patch scratch files
+scripts/_tmp_*.py
+scripts/_patch_*.py
+*.bak_*
+preflight/

@@ -301,6 +301,7 @@ def resample_image(
     target_spacing_xyz: Sequence[float],
     *,
     is_label: bool = False,
+    default_pixel_value: float = 0.0,
 ) -> sitk.Image:
     if len(target_spacing_xyz) != 3:
         raise ValueError("target_spacing_xyz 必须包含 3 个值")
@@ -321,7 +322,7 @@ def resample_image(
     resampler.SetOutputOrigin(image.GetOrigin())
     resampler.SetOutputDirection(image.GetDirection())
     resampler.SetTransform(sitk.Transform())
-    resampler.SetDefaultPixelValue(0)
+    resampler.SetDefaultPixelValue(float(default_pixel_value))
     resampler.SetInterpolator(sitk.sitkNearestNeighbor if is_label else sitk.sitkLinear)
     return resampler.Execute(image)
 

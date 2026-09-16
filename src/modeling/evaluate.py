@@ -18,6 +18,7 @@ import json
 import math
 import sys
 import time
+from contextlib import nullcontext
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -30,11 +31,13 @@ from monai.inferers import sliding_window_inference
 from torch.utils.data import DataLoader
 
 from src.modeling.dataset import ProcessedOrthopedicCTDataset
+from src.modeling.diagnostics import batchnorm_batch_stats_mode
 from src.modeling.metrics import (
     compute_binary_metrics,
     compute_multiclass_metrics,
     compute_structural_metrics,
 )
+from src.modeling.postprocessing import postprocess_prediction
 from src.modeling.preflight import run_preflight
 from src.modeling.segformer3d_adapter import build_orthopedic_segformer3d, upstream_provenance
 from src.modeling.train import PROJECT_ROOT, _model_predictor, _resolve_project_path, logits_to_prediction
@@ -59,6 +62,26 @@ def _spacing_dhw_from_label(label_path: Path) -> tuple[float, float, float]:
     image = nib.load(str(label_path))
     spacing_xyz = tuple(float(v) for v in image.header.get_zooms()[:3])
     return spacing_xyz[2], spacing_xyz[1], spacing_xyz[0]
+
+
+def _write_json_atomic(path: Path, payload: dict[str, Any]) -> None:
+    """原子写 JSON，避免 CPU 长验证中断后留下半截状态文件。"""
+    temp_path = path.with_suffix(path.suffix + ".tmp")
+    temp_path.write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2, allow_nan=False),
+        encoding="utf-8",
+    )
+    temp_path.replace(path)
+
+
+def _write_csv_atomic(path: Path, fieldnames: list[str], rows: list[dict[str, Any]]) -> None:
+    """每完成一个病例就原子落盘，支持中断后按 case_id 续验证。"""
+    temp_path = path.with_suffix(path.suffix + ".tmp")
+    with temp_path.open("w", encoding="utf-8", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(rows)
+    temp_path.replace(path)
 
 
 def _finite_stats(values: list[float]) -> dict[str, float | int | None]:
@@ -115,7 +138,9 @@ def _aggregate_rows(rows: list[dict[str, Any]]) -> dict[str, Any]:
         values = [
             float(row[key])
             for row in rows
-            if key in row and row[key] is not None
+            if key in row
+            and row[key] is not None
+            and str(row[key]).strip() != ""
         ]
         if values:
             summary[key] = _finite_stats(values)
@@ -215,6 +240,7 @@ def evaluate_checkpoint(
     split: str = "test",
     output_dir: str | Path | None = None,
     case_id: str | None = None,
+    resume: bool = False,
 ) -> Path:
     config_path = _resolve_project_path(config_path)
     checkpoint_path = _resolve_project_path(checkpoint_path)
@@ -241,7 +267,11 @@ def evaluate_checkpoint(
         output_path = PROJECT_ROOT / "experiments" / f"evaluation_{stamp}_{split}"
     else:
         output_path = _resolve_project_path(output_dir)
-    output_path.mkdir(parents=True, exist_ok=False)
+    if output_path.exists() and not resume:
+        raise FileExistsError(
+            f"评估输出目录已存在: {output_path}；如需断点续验证请显式使用 --resume"
+        )
+    output_path.mkdir(parents=True, exist_ok=resume)
 
     dataset = ProcessedOrthopedicCTDataset(
         processed_root,
@@ -253,136 +283,14 @@ def evaluate_checkpoint(
         label_mode=str(data_cfg.get("label_mode", "binary")),
         seed=int(config.get("seed", 42)),
     )
-    if case_id is not None:
-        case_id = str(case_id)
-        if case_id not in dataset.case_ids:
-            raise ValueError(f"case_id={case_id!r} 不属于 split={split!r}")
-        dataset.case_ids = [case_id]
-    loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=0)
+    case_filter = None if case_id is None else str(case_id)
+    if case_filter is not None:
+        if case_filter not in dataset.case_ids:
+            raise ValueError(f"case_id={case_filter!r} 不属于 split={split!r}")
+        dataset.case_ids = [case_filter]
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = build_orthopedic_segformer3d(config).to(device)
-    checkpoint = torch.load(checkpoint_path, map_location=device)
-    state_dict = checkpoint.get("model_state_dict", checkpoint)
-    model.load_state_dict(state_dict, strict=True)
-    model.eval()
-
-    roi = tuple(int(v) for v in infer_cfg.get("roi_size_dhw", data_cfg.get("roi_size_dhw", [128] * 3)))
-    sw_batch_size = int(infer_cfg.get("sw_batch_size", 1))
-    overlap = float(infer_cfg.get("overlap", 0.5))
-    num_classes = int(model_cfg["num_classes"])
-    label_mode = str(data_cfg.get("label_mode", "binary"))
-    save_predictions = bool(logging_cfg.get("save_predictions", True))
-    save_uncertainty = bool(logging_cfg.get("save_uncertainty", False))
-    uncertainty_cfg = infer_cfg.get("uncertainty", {})
-    evaluate_uncertainty = bool(uncertainty_cfg.get("enabled", False) or save_uncertainty)
-    uncertainty_top_percent = float(uncertainty_cfg.get("top_percent", 10.0))
-    uncertainty_max_samples = int(uncertainty_cfg.get("metric_max_samples", 500_000))
-    calibration_cfg = infer_cfg.get("calibration", {})
-    evaluate_calibration = bool(calibration_cfg.get("enabled", False))
-    calibration_bins = int(calibration_cfg.get("n_bins", 15))
-    calibration_max_samples = int(calibration_cfg.get("metric_max_samples", 500_000))
-
-    rows: list[dict[str, Any]] = []
-    per_class_rows: list[dict[str, Any]] = []
-    with torch.no_grad():
-        for batch in loader:
-            case_id = str(batch["case_id"][0])
-            image = batch["image"].to(device)
-            label = batch["label"].to(device)
-
-            start = time.perf_counter()
-            logits = sliding_window_inference(
-                inputs=image,
-                roi_size=roi,
-                sw_batch_size=sw_batch_size,
-                predictor=_model_predictor(model),
-                overlap=overlap,
-                mode="gaussian",
-            )
-            if device.type == "cuda":
-                torch.cuda.synchronize(device)
-            inference_seconds = time.perf_counter() - start
-
-            pred = logits_to_prediction(logits)[0].cpu().numpy().astype(np.int16)
-            target = label[0].cpu().numpy().astype(np.int16)
-            case_dir = processed_root / case_id
-            label_path = case_dir / "label.nii.gz"
-            spacing_dhw = _spacing_dhw_from_label(label_path)
-
-            if label_mode == "binary":
-                metric_payload = _binary_metrics_row(pred, target, spacing_dhw)
-                metric_payload.update(
-                    compute_structural_metrics(pred > 0, target > 0).to_dict()
-                )
-            else:
-                metric_payload, case_class_rows = _multiclass_case_rows(
-                    case_id,
-                    pred,
-                    target,
-                    spacing_dhw,
-                    num_classes,
-                )
-                per_class_rows.extend(case_class_rows)
-                structural = compute_structural_metrics(pred > 0, target > 0).to_dict()
-                metric_payload.update(structural)
-
-            prediction_foreground_fraction = float(np.mean(pred > 0))
-            target_foreground_fraction = float(np.mean(target > 0))
-            foreground_ratio = (
-                prediction_foreground_fraction / target_foreground_fraction
-                if target_foreground_fraction > 0.0
-                else None
-            )
-            row: dict[str, Any] = {
-                "case_id": case_id,
-                **metric_payload,
-                "prediction_foreground_fraction": prediction_foreground_fraction,
-                "target_foreground_fraction": target_foreground_fraction,
-                "prediction_to_target_foreground_ratio": foreground_ratio,
-                "inference_seconds": float(inference_seconds),
-            }
-            entropy: np.ndarray | None = None
-            if evaluate_uncertainty:
-                entropy = predictive_entropy(logits)[0, 0].cpu().numpy().astype(np.float32)
-                uncertainty_metrics = uncertainty_error_metrics(
-                    entropy,
-                    pred,
-                    target,
-                    top_percent=uncertainty_top_percent,
-                    max_samples=uncertainty_max_samples,
-                    seed=int(config.get("seed", 42)),
-                )
-                for key, value in uncertainty_metrics.to_dict().items():
-                    row[f"uncertainty_{key}"] = value
-            if evaluate_calibration:
-                calibration_metrics = segmentation_calibration_metrics(
-                    logits,
-                    label,
-                    n_bins=calibration_bins,
-                    max_samples=calibration_max_samples,
-                    seed=int(config.get("seed", 42)),
-                )
-                for key, value in calibration_metrics.to_dict().items():
-                    row[f"calibration_{key}"] = value
-            rows.append(row)
-
-            if save_predictions:
-                _save_dhw_nifti(
-                    pred.astype(np.int16),
-                    label_path,
-                    output_path / "predictions" / case_id / "prediction.nii.gz",
-                )
-            if save_uncertainty:
-                if entropy is None:
-                    entropy = predictive_entropy(logits)[0, 0].cpu().numpy().astype(np.float32)
-                _save_dhw_nifti(
-                    entropy,
-                    label_path,
-                    output_path / "uncertainty" / case_id / "predictive_entropy.nii.gz",
-                )
-
-    csv_path = output_path / "metrics_per_case.csv"
+    expected_case_ids = list(dataset.case_ids)
+    metrics_csv_path = output_path / "metrics_per_case.csv"
     fieldnames = [
         "case_id",
         "dice",
@@ -424,10 +332,194 @@ def evaluate_checkpoint(
         "calibration_accuracy",
         "calibration_confidence_gap",
     ]
-    with csv_path.open("w", encoding="utf-8", newline="") as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
+    rows: list[dict[str, Any]] = []
+    completed_case_ids: set[str] = set()
+    if resume and metrics_csv_path.exists():
+        with metrics_csv_path.open("r", encoding="utf-8", newline="") as f:
+            rows = list(csv.DictReader(f))
+        for row in rows:
+            completed_id = str(row.get("case_id") or "")
+            if not completed_id:
+                raise ValueError(f"断点 metrics 缺少 case_id: {metrics_csv_path}")
+            if completed_id not in expected_case_ids:
+                raise ValueError(
+                    f"断点 metrics 含不属于当前 split/filter 的病例 {completed_id!r}"
+                )
+            if completed_id in completed_case_ids:
+                raise ValueError(f"断点 metrics 出现重复病例 {completed_id!r}")
+            completed_case_ids.add(completed_id)
+        dataset.case_ids = [cid for cid in expected_case_ids if cid not in completed_case_ids]
+
+    loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=0)
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model = build_orthopedic_segformer3d(config).to(device)
+    checkpoint = torch.load(checkpoint_path, map_location=device)
+    state_dict = checkpoint.get("model_state_dict", checkpoint)
+    model.load_state_dict(state_dict, strict=True)
+    model.eval()
+
+    roi = tuple(int(v) for v in infer_cfg.get("roi_size_dhw", data_cfg.get("roi_size_dhw", [128] * 3)))
+    sw_batch_size = int(infer_cfg.get("sw_batch_size", 1))
+    overlap = float(infer_cfg.get("overlap", 0.5))
+    batchnorm_mode = str(infer_cfg.get("batchnorm_mode", "running")).lower()
+    if batchnorm_mode not in {"running", "batch"}:
+        raise ValueError("inference.batchnorm_mode 只能为 running 或 batch")
+    num_classes = int(model_cfg["num_classes"])
+    label_mode = str(data_cfg.get("label_mode", "binary"))
+    save_predictions = bool(logging_cfg.get("save_predictions", True))
+    save_uncertainty = bool(logging_cfg.get("save_uncertainty", False))
+    uncertainty_cfg = infer_cfg.get("uncertainty", {})
+    evaluate_uncertainty = bool(uncertainty_cfg.get("enabled", False) or save_uncertainty)
+    uncertainty_top_percent = float(uncertainty_cfg.get("top_percent", 10.0))
+    uncertainty_max_samples = int(uncertainty_cfg.get("metric_max_samples", 500_000))
+    postprocessing_cfg = infer_cfg.get("postprocessing", {})
+    calibration_cfg = infer_cfg.get("calibration", {})
+    evaluate_calibration = bool(calibration_cfg.get("enabled", False))
+    calibration_bins = int(calibration_cfg.get("n_bins", 15))
+    calibration_max_samples = int(calibration_cfg.get("metric_max_samples", 500_000))
+
+    per_class_rows: list[dict[str, Any]] = []
+    status_path = output_path / "evaluation_status.json"
+    _write_json_atomic(
+        status_path,
+        {
+            "updated_at": datetime.now().isoformat(),
+            "phase": "running",
+            "split": split,
+            "checkpoint": str(checkpoint_path),
+            "config": str(config_path),
+            "expected_case_count": len(expected_case_ids),
+            "completed_case_count": len(completed_case_ids),
+            "remaining_case_count": len(dataset.case_ids),
+            "resumed": bool(resume),
+        },
+    )
+    batchnorm_context = (
+        batchnorm_batch_stats_mode(model) if batchnorm_mode == "batch" else nullcontext()
+    )
+    with batchnorm_context, torch.no_grad():
+        for batch in loader:
+            current_case_id = str(batch["case_id"][0])
+            image = batch["image"].to(device)
+            label = batch["label"].to(device)
+
+            start = time.perf_counter()
+            logits = sliding_window_inference(
+                inputs=image,
+                roi_size=roi,
+                sw_batch_size=sw_batch_size,
+                predictor=_model_predictor(model),
+                overlap=overlap,
+                mode="gaussian",
+            )
+            if device.type == "cuda":
+                torch.cuda.synchronize(device)
+            inference_seconds = time.perf_counter() - start
+
+            pred = logits_to_prediction(logits)[0].cpu().numpy().astype(np.int16)
+            pred = postprocess_prediction(pred, postprocessing_cfg).astype(np.int16, copy=False)
+            target = label[0].cpu().numpy().astype(np.int16)
+            case_dir = processed_root / current_case_id
+            label_path = case_dir / "label.nii.gz"
+            spacing_dhw = _spacing_dhw_from_label(label_path)
+
+            if label_mode == "binary":
+                metric_payload = _binary_metrics_row(pred, target, spacing_dhw)
+                metric_payload.update(
+                    compute_structural_metrics(pred > 0, target > 0).to_dict()
+                )
+            else:
+                metric_payload, case_class_rows = _multiclass_case_rows(
+                    current_case_id,
+                    pred,
+                    target,
+                    spacing_dhw,
+                    num_classes,
+                )
+                per_class_rows.extend(case_class_rows)
+                structural = compute_structural_metrics(pred > 0, target > 0).to_dict()
+                metric_payload.update(structural)
+
+            prediction_foreground_fraction = float(np.mean(pred > 0))
+            target_foreground_fraction = float(np.mean(target > 0))
+            foreground_ratio = (
+                prediction_foreground_fraction / target_foreground_fraction
+                if target_foreground_fraction > 0.0
+                else None
+            )
+            row: dict[str, Any] = {
+                "case_id": current_case_id,
+                **metric_payload,
+                "prediction_foreground_fraction": prediction_foreground_fraction,
+                "target_foreground_fraction": target_foreground_fraction,
+                "prediction_to_target_foreground_ratio": foreground_ratio,
+                "inference_seconds": float(inference_seconds),
+            }
+            entropy: np.ndarray | None = None
+            if evaluate_uncertainty:
+                entropy = predictive_entropy(logits)[0, 0].cpu().numpy().astype(np.float32)
+                uncertainty_metrics = uncertainty_error_metrics(
+                    entropy,
+                    pred,
+                    target,
+                    top_percent=uncertainty_top_percent,
+                    max_samples=uncertainty_max_samples,
+                    seed=int(config.get("seed", 42)),
+                )
+                for key, value in uncertainty_metrics.to_dict().items():
+                    row[f"uncertainty_{key}"] = value
+            if evaluate_calibration:
+                calibration_metrics = segmentation_calibration_metrics(
+                    logits,
+                    label,
+                    n_bins=calibration_bins,
+                    max_samples=calibration_max_samples,
+                    seed=int(config.get("seed", 42)),
+                )
+                for key, value in calibration_metrics.to_dict().items():
+                    row[f"calibration_{key}"] = value
+            rows.append(row)
+            completed_case_ids.add(current_case_id)
+            _write_csv_atomic(metrics_csv_path, fieldnames, rows)
+            _write_json_atomic(
+                status_path,
+                {
+                    "updated_at": datetime.now().isoformat(),
+                    "phase": "running",
+                    "split": split,
+                    "checkpoint": str(checkpoint_path),
+                    "config": str(config_path),
+                    "expected_case_count": len(expected_case_ids),
+                    "completed_case_count": len(completed_case_ids),
+                    "remaining_case_count": len(expected_case_ids) - len(completed_case_ids),
+                    "last_completed_case": current_case_id,
+                    "resumed": bool(resume),
+                },
+            )
+            print(
+                f"[EVAL] {len(completed_case_ids)}/{len(expected_case_ids)} | "
+                f"case={current_case_id} | Dice={float(row['dice']):.6f} | "
+                f"HD95={float(row['hd95_mm']):.2f} mm | ASSD={float(row['assd_mm']):.2f} mm",
+                flush=True,
+            )
+
+            if save_predictions:
+                _save_dhw_nifti(
+                    pred.astype(np.int16),
+                    label_path,
+                    output_path / "predictions" / current_case_id / "prediction.nii.gz",
+                )
+            if save_uncertainty:
+                if entropy is None:
+                    entropy = predictive_entropy(logits)[0, 0].cpu().numpy().astype(np.float32)
+                _save_dhw_nifti(
+                    entropy,
+                    label_path,
+                    output_path / "uncertainty" / current_case_id / "predictive_entropy.nii.gz",
+                )
+
+    _write_csv_atomic(metrics_csv_path, fieldnames, rows)
 
     per_class_csv_path = None
     if per_class_rows:
@@ -451,13 +543,24 @@ def evaluate_checkpoint(
             writer.writeheader()
             writer.writerows(per_class_rows)
 
+    if len(rows) != len(expected_case_ids):
+        raise RuntimeError(
+            f"评估病例数不完整: completed={len(rows)}, expected={len(expected_case_ids)}"
+        )
+
     summary = {
         "evaluated_at": datetime.now().isoformat(),
+        "status": "completed",
         "split": split,
-        "case_filter": case_id,
+        "case_filter": case_filter,
+        "expected_case_count": len(expected_case_ids),
+        "completed_case_count": len(rows),
+        "resumed": bool(resume),
         "checkpoint": str(checkpoint_path),
         "config": str(config_path),
         "device": str(device),
+        "batchnorm_inference_mode": batchnorm_mode,
+        "postprocessing": dict(postprocessing_cfg),
         "upstream": upstream_provenance(),
         "metrics": _aggregate_rows(rows),
         "per_class_metrics": _aggregate_per_class_rows(per_class_rows) if per_class_rows else None,
@@ -470,9 +573,20 @@ def evaluate_checkpoint(
         ),
         "note": "Only independent test split metrics may be used as final test results.",
     }
-    (output_path / "summary.json").write_text(
-        json.dumps(summary, ensure_ascii=False, indent=2, allow_nan=False),
-        encoding="utf-8",
+    _write_json_atomic(output_path / "summary.json", summary)
+    _write_json_atomic(
+        status_path,
+        {
+            "updated_at": datetime.now().isoformat(),
+            "phase": "completed",
+            "split": split,
+            "checkpoint": str(checkpoint_path),
+            "config": str(config_path),
+            "expected_case_count": len(expected_case_ids),
+            "completed_case_count": len(rows),
+            "remaining_case_count": 0,
+            "resumed": bool(resume),
+        },
     )
     return output_path
 
@@ -492,6 +606,11 @@ def main() -> None:
         type=str,
         default=None,
         help="只评估当前 validation/test split 内指定病例；用于 CPU 分病例执行，方法和指标不变",
+    )
+    parser.add_argument(
+        "--resume",
+        action="store_true",
+        help="允许复用已存在 output-dir，并跳过 metrics_per_case.csv 中已完成的病例",
     )
     parser.add_argument(
         "--preflight-mode",
@@ -523,6 +642,7 @@ def main() -> None:
         split=args.split,
         output_dir=args.output_dir,
         case_id=args.case_id,
+        resume=args.resume,
     )
     print(f"Evaluation completed: {output}")
 

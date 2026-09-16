@@ -22,6 +22,7 @@ split JSON：
 
 from __future__ import annotations
 
+import hashlib
 import json
 import random
 from pathlib import Path
@@ -29,17 +30,24 @@ from typing import Sequence
 
 import nibabel as nib
 import numpy as np
+import SimpleITK as sitk
 import torch
 from scipy import ndimage
 from torch.utils.data import Dataset
 
+from src.sitk_compat import sitk_io_path
+
 
 def _load_nifti(path: Path, dtype: np.dtype | type = np.float32) -> np.ndarray:
+    """稳定读取 NIfTI，并保持历史 nibabel 接口的 XYZ 数组轴顺序。"""
     if not path.exists():
         raise FileNotFoundError(path)
-    image = nib.load(str(path))
-    array = np.asarray(image.dataobj)
-    return array.astype(dtype, copy=False)
+    image = sitk.ReadImage(sitk_io_path(path))
+    if image.GetDimension() != 3:
+        raise ValueError(f"只支持 3D NIfTI，当前 dimension={image.GetDimension()}: {path}")
+    array_zyx = sitk.GetArrayFromImage(image)
+    array_xyz = np.transpose(array_zyx, (2, 1, 0))
+    return array_xyz.astype(dtype, copy=False)
 
 
 def _pad_to_shape(
@@ -102,15 +110,25 @@ def _random_crop_3d(
     ):
         branch_mask = label > 0 if use_fg else label == 0
         preferred_candidates = np.logical_and(preferred_mask, branch_mask)
-    use_preferred = (
+    # hard-guidance 的概率判断使用主 RNG 的克隆流。这样当本次没有命中
+    # preferred center 时，普通 FG/BG fallback crop 与 hard_sampling 关闭时保持
+    # 完全相同，避免消耗一次 rng.random() 后把对照实验的其它随机 patch 也换掉。
+    preferred_rng: random.Random | None = None
+    has_preferred_candidates = (
         preferred_candidates is not None
         and preferred_candidates.shape == label.shape
         and np.any(preferred_candidates)
-        and rng.random() < preferred_probability
+    )
+    if has_preferred_candidates:
+        preferred_rng = random.Random()
+        preferred_rng.setstate(rng.getstate())
+    use_preferred = bool(
+        preferred_rng is not None and preferred_rng.random() < preferred_probability
     )
     if use_preferred:
+        assert preferred_candidates is not None and preferred_rng is not None
         coords = np.argwhere(preferred_candidates)
-        center = coords[rng.randrange(len(coords))]
+        center = coords[preferred_rng.randrange(len(coords))]
         starts = []
         for c, current, roi in zip(center, (d, h, w), (rd, rh, rw)):
             start = int(c) - roi // 2
@@ -272,7 +290,9 @@ def _augment_intensity(
 
     ``ct_normalized`` 是 HU clip 后的逐病例 z-score，因此 gamma/HU shift 会先利用
     metadata 中的 mean/std 恢复到 HU 域，再映射回 z-score。绝不把 z-score 误裁剪到
-    [0,1]。``bone_window`` 始终保持在 [0,1]。
+    [0,1]。``ct_normalized_u16`` 在 0.5.0+ 紧凑缓存中表示固定 HU min-max 的 [0,1]
+    映射（0=-1000HU，1=2000HU）；旧 0.4.0 缓存仅用于历史复现，不应继续训练新模型。
+    ``bone_window`` 始终保持在 [0,1]。
     """
     out = image.astype(np.float32, copy=True)
     if len(input_channels) != out.shape[0]:
@@ -311,7 +331,7 @@ def _augment_intensity(
                 out[channel_index] = (
                     hu_gamma - float(ct_zscore_mean_hu)
                 ) / float(ct_zscore_std_hu)
-            elif channel_name == "bone_window":
+            elif channel_name in {"bone_window", "ct_normalized_u16"}:
                 out[channel_index] = np.power(
                     np.clip(out[channel_index], 0.0, 1.0), gamma
                 )
@@ -325,6 +345,8 @@ def _augment_intensity(
             if channel_name == "ct_normalized":
                 assert ct_zscore_std_hu is not None
                 out[channel_index] += shift_hu / float(ct_zscore_std_hu)
+            elif channel_name == "ct_normalized_u16":
+                out[channel_index] += shift_hu / max(float(hu_max - hu_min), 1e-6)
             elif channel_name == "bone_window":
                 out[channel_index] += shift_hu / max(float(bone_window_width), 1e-6)
 
@@ -340,7 +362,7 @@ def _augment_intensity(
             out += np_rng.normal(0.0, noise_std, size=out.shape).astype(np.float32)
 
     for channel_index, channel_name in enumerate(input_channels):
-        if channel_name == "bone_window":
+        if channel_name in {"bone_window", "ct_normalized_u16"}:
             out[channel_index] = np.clip(out[channel_index], 0.0, 1.0)
     return out.astype(np.float32, copy=False)
 
@@ -411,17 +433,46 @@ class ProcessedOrthopedicCTDataset(Dataset):
         multiplier = self.patches_per_case if self.training else 1
         return len(self.case_ids) * multiplier
 
+    def _patch_rng_seed(self, *, case_id: str, patch_slot: int) -> int:
+        """生成跨进程/worker 稳定的 patch 随机种子。"""
+        payload = f"{self.seed}|{case_id}|{self.epoch}|{patch_slot}".encode("utf-8")
+        digest = hashlib.blake2b(payload, digest_size=8, person=b"ctpatch1").digest()
+        return int.from_bytes(digest, byteorder="little", signed=False)
+
     def _load_case(self, case_id: str) -> tuple[np.ndarray, np.ndarray, dict]:
         case_dir = self.processed_root / case_id
         channels = []
         for name in self.input_channels:
             if name == "ct_normalized":
                 path = case_dir / "image_normalized.nii.gz"
+                dtype = np.float32
+                decode_u16 = False
+            elif name == "ct_normalized_u16":
+                # 完整 CTSpine1K 的紧凑缓存：0..1 值量化为 uint16，训练时恢复为
+                # float32。0.5.0+ 缓存中该值是固定 HU min-max 映射；旧 0.4.0 缓存
+                # 存在 z-score 被错误 clip 到 [0,1] 的历史问题，只用于复现 v1/v2。
+                path = case_dir / "image_normalized_u16.nii.gz"
+                dtype = np.uint16
+                decode_u16 = True
             elif name == "bone_window":
                 path = case_dir / "image_bone_window.nii.gz"
+                dtype = np.float32
+                decode_u16 = False
             else:
                 path = case_dir / f"{name}.nii.gz"
-            channels.append(_load_nifti(path, np.float32))
+                dtype = np.float32
+                decode_u16 = False
+
+            try:
+                channel = _load_nifti(path, dtype)
+            except Exception as exc:
+                raise RuntimeError(
+                    f"{case_id}: 读取输入通道 {name!r} 失败: {path} | "
+                    f"{type(exc).__name__}: {exc}"
+                ) from exc
+            if decode_u16:
+                channel = channel.astype(np.float32) / 65535.0
+            channels.append(channel)
 
         shapes = {arr.shape for arr in channels}
         if len(shapes) != 1:
@@ -431,7 +482,14 @@ class ProcessedOrthopedicCTDataset(Dataset):
         # 模型内部只要求三维轴保持一致；这里统一重排到 C,D,H,W = C,Z,Y,X。
         image = np.transpose(image, (0, 3, 2, 1))
 
-        label = _load_nifti(case_dir / "label.nii.gz", np.int64)
+        label_path = case_dir / "label.nii.gz"
+        try:
+            label = _load_nifti(label_path, np.int64)
+        except Exception as exc:
+            raise RuntimeError(
+                f"{case_id}: 读取 label 失败: {label_path} | "
+                f"{type(exc).__name__}: {exc}"
+            ) from exc
         label = np.transpose(label, (2, 1, 0))  # D,H,W
         if self.label_mode == "binary":
             label = (label > 0).astype(np.int64)
@@ -454,19 +512,10 @@ class ProcessedOrthopedicCTDataset(Dataset):
         case_id = self.case_ids[case_index]
         image, label, metadata = self._load_case(case_id)
 
-        # 对每个病例/patch slot/worker/epoch 使用可复现但跨 epoch 不同的随机流。
-        # patches_per_case>1 时同一病例可在一个 epoch 暴露多个不同 patch，避免 7 个训练病例
-        # 每 epoch 只有 7 次 optimizer step 的严重欠采样；num_workers=0 时也显式混入 epoch。
-        worker_info = torch.utils.data.get_worker_info()
-        worker_seed = worker_info.seed if worker_info is not None else torch.initial_seed()
-        rng_seed = (
-            self.seed
-            ^ int(worker_seed)
-            ^ (case_index << 16)
-            ^ (self.epoch << 32)
-            ^ (patch_slot << 48)
-        )
-        rng = random.Random(rng_seed)
+        # 随机流只由 dataset seed + case_id + epoch + patch slot 决定。
+        # 不再混入 torch.initial_seed()/worker seed，保证独立 Python process
+        # 以及不同 DataLoader worker 数都能重建逐 voxel 相同的 crop。
+        rng = random.Random(self._patch_rng_seed(case_id=case_id, patch_slot=patch_slot))
 
         if self.training:
             force_foreground: bool | None = None
@@ -493,7 +542,12 @@ class ProcessedOrthopedicCTDataset(Dataset):
                 preferred_probability = float(hard_cfg.get("boundary_probability", 0.35))
                 if not (0.0 <= preferred_probability <= 1.0):
                     raise ValueError("boundary_probability 必须位于 [0,1]")
-            elif hard_enabled and hard_strategy in {"high_loss", "high_uncertainty"}:
+            elif hard_enabled and hard_strategy in {
+                "high_loss",
+                "high_uncertainty",
+                "false_positive",
+                "residual_false_positive",
+            }:
                 guidance_root_raw = hard_cfg.get("guidance_root")
                 if not guidance_root_raw:
                     raise ValueError(f"{hard_strategy} hard mining 必须配置 guidance_root")
@@ -505,11 +559,17 @@ class ProcessedOrthopedicCTDataset(Dataset):
                         f"{case_id}: hard guidance shape 不一致: "
                         f"{preferred_mask.shape} vs {label.shape}"
                     )
-                if not np.any(preferred_mask):
-                    raise ValueError(f"{case_id}: hard guidance 为空: {guidance_path}")
                 preferred_probability = float(hard_cfg.get("preferred_probability", 0.5))
                 if not (0.0 <= preferred_probability <= 1.0):
                     raise ValueError("preferred_probability 必须位于 [0,1]")
+                if not np.any(preferred_mask):
+                    if hard_strategy == "residual_false_positive":
+                        # 正式推理后没有残余 FP 的 train 病例不强造困难样本；
+                        # 该 background slot 严格回退到与 control 相同的普通采样。
+                        preferred_mask = None
+                        preferred_probability = 0.0
+                    else:
+                        raise ValueError(f"{case_id}: hard guidance 为空: {guidance_path}")
                 preferred_respects_foreground_branch = True
             elif hard_enabled and hard_strategy not in {"", "none", "tbd_after_baseline"}:
                 raise ValueError(f"暂不支持 hard_sampling.strategy={hard_strategy!r}")
@@ -562,8 +622,9 @@ class ProcessedOrthopedicCTDataset(Dataset):
                     ct_zscore_std_hu=normalization.get("clipped_std_hu"),
                     probability=float(intensity.get("probability", 0.5)),
                 )
-            else:
-                # 保持 baseline 既有行为：只做简单翻转。
+            elif bool(aug_cfg.get("legacy_flip_when_disabled", False)):
+                # 仅为需要精确复现旧实验时保留历史行为；正常情况下
+                # augmentation.enabled=false 必须是真正的 no-op。
                 image, label = _augment_flips(image, label, rng=rng)
 
         return {

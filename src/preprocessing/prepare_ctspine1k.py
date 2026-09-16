@@ -94,11 +94,14 @@ def parse_official_split(path: str | Path) -> dict[str, str]:
 
 
 def _find_volume_dirs(root: Path) -> list[Path]:
-    candidates: list[Path] = []
     direct = root / "raw_data" / "volumes"
     if direct.is_dir():
-        candidates.append(direct)
+        # 标准 CTSpine1K 布局已经明确时，不再递归扫描整个下载根目录。
+        # HuggingFace 的 .cache 可能包含重复/不完整下载；继续 rglob 不仅多余，
+        # 还可能因为缓存目录本身损坏而阻断真实数据集的发现与病例修复。
+        return [direct]
 
+    candidates: list[Path] = []
     for path in root.rglob("volumes"):
         if path.is_dir() and path not in candidates:
             candidates.append(path)

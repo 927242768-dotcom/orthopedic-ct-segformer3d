@@ -1,5 +1,9 @@
+from pathlib import Path
+
+import pytest
 import torch
 
+import src.modeling.train as train_module
 from src.modeling.train import (
     WarmupCosineRestarts,
     build_scheduler,
@@ -64,6 +68,8 @@ def test_training_checkpoint_round_trip_restores_resume_state(tmp_path) -> None:
         config=config,
         scheduler=scheduler,
     )
+    assert checkpoint_path.exists()
+    assert not checkpoint_path.with_suffix(".pt.tmp").exists()
 
     restored_model = torch.nn.Linear(3, 2)
     restored_optimizer = torch.optim.AdamW(restored_model.parameters(), lr=1e-3)
@@ -82,10 +88,50 @@ def test_training_checkpoint_round_trip_restores_resume_state(tmp_path) -> None:
     assert state == {
         "epoch": 3,
         "start_epoch": 4,
+        "val_dice": 0.4,
         "best_val_dice": 0.5,
         "epochs_without_improvement": 2,
+        "training_seconds_total": 0.0,
     }
     for expected, actual in zip(model.parameters(), restored_model.parameters()):
         assert torch.equal(expected, actual)
     assert restored_optimizer.param_groups[0]["lr"] == optimizer.param_groups[0]["lr"]
     assert restored_scheduler.state_dict() == scheduler.state_dict()
+
+
+def test_atomic_checkpoint_keeps_previous_file_when_save_is_interrupted(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    model = torch.nn.Linear(2, 1)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
+    checkpoint_path = tmp_path / "last.pt"
+
+    save_checkpoint(
+        checkpoint_path,
+        model=model,
+        optimizer=optimizer,
+        epoch=1,
+        val_dice=0.2,
+        best_val_dice=0.2,
+        config={},
+    )
+    previous_bytes = checkpoint_path.read_bytes()
+
+    def interrupted_save(_payload, path) -> None:
+        Path(path).write_bytes(b"partial checkpoint")
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(train_module.torch, "save", interrupted_save)
+    with pytest.raises(KeyboardInterrupt):
+        save_checkpoint(
+            checkpoint_path,
+            model=model,
+            optimizer=optimizer,
+            epoch=2,
+            val_dice=0.3,
+            best_val_dice=0.3,
+            config={},
+        )
+
+    assert checkpoint_path.read_bytes() == previous_bytes
+    assert not checkpoint_path.with_suffix(".pt.tmp").exists()
