@@ -28,7 +28,6 @@ import random
 from pathlib import Path
 from typing import Sequence
 
-import nibabel as nib
 import numpy as np
 import SimpleITK as sitk
 import torch
