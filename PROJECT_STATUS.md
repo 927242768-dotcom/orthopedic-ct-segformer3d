@@ -1,210 +1,210 @@
-﻿# Θ¬¿τºæ CT µÖ║Φâ╜σêåσë▓Σ╕ÄΣ╕ëτ╗┤Θçìσ╗║Θí╣τ¢«ΓÇöΓÇöΣ╕╗Φ┐¢σ║ªΣ╕ÄΣ║ñµÄÑσÅ░Φ┤ª
+# 骨科 CT 智能分割与三维重建项目——主进度与交接台账
 
-> Θí╣τ¢«τ¢«σ╜ò∩╝Ü`D:\σ¢╜σê¢Θí╣τ¢«`
+> 项目目录：`D:\国创项目`
 >
-> Θí╣τ¢«σÉìτº░∩╝Ü**σƒ║Σ║Ä SegFormer3D τÜäΘ¬¿τºæ CT σêåσë▓πÇüΣ╕ëτ╗┤Θçìσ╗║Σ╕Äτºæτáö Web Φ╛àσè⌐σêåµ₧ÉσìÅΣ╜£Θí╣τ¢«**
+> 项目名称：**基于 SegFormer3D 的骨科 CT 分割、三维重建与科研 Web 辅助分析协作项目**
 >
-> σÅ░Φ┤ªΘªûµ¼íσ╗║τ½ï∩╝Ü2026-08-15
+> 台账首次建立：2026-08-15
 >
-> µ£ÇΦ┐æµ¢┤µû░∩╝Ü2026-09-22
+> 最近更新：2026-09-22
 
 ---
 
-## 0. σ╝║σê╢τ╗┤µèñΦºäσêÖΓÇöΓÇöΣ╗╗Σ╜òΣ║║τ╗ºτ╗¡Θí╣τ¢«σ┐àΘí╗σàêΦ»╗
+## 0. 强制维护规则——任何人继续项目必须先读
 
-**µ£¼µûçΣ╗╢µÿ»Θí╣τ¢«σö»Σ╕ÇΣ╕╗Φ┐¢σ║ªσÅ░Φ┤ªπÇéΣ╗╗Σ╜òΣ╗úτáüπÇüµûçµíúπÇüΘàìτ╜«πÇüµò░µì«µ╡üτ¿ïπÇüµ¿íσ₧ïσ«₧Θ¬îπÇüτ╜æτ½ÖσèƒΦâ╜πÇüΦ«║µûçσåàσ«╣σÅæτöƒσ«₧Φ┤¿µÇºµ¢┤µö╣σÉÄ∩╝îΘâ╜σ┐àΘí╗σÉîµ¡Ñµ¢┤µû░µ£¼µûçΣ╗╢πÇé**
+**本文件是项目唯一主进度台账。任何代码、文档、配置、数据流程、模型实验、网站功能、论文内容发生实质性更改后，都必须同步更新本文件。**
 
-µ»Åµ¼íΣ┐«µö╣Θí╣τ¢«σÉÄ∩╝îµ£ÇσÉÄσ┐àΘí╗σ«îµêÉΣ╗ÑΣ╕ïµúÇµƒÑ∩╝Ü
+每次修改项目后，最后必须完成以下检查：
 
-1. µ¢┤µû░ΓÇ£σ╜ôσëìµÇ╗Σ╜ôτè╢µÇüΓÇ¥Σ╕¡σ»╣σ║öµ¿íσ¥ùτÜäτè╢µÇü/σ«îµêÉσ║ª∩╝¢
-2. σ£¿ΓÇ£µ£ÇΦ┐æσ╖ÑΣ╜£Φ«░σ╜òΓÇ¥Σ╕¡Φ┐╜σèáµ£¼µ¼íσ«₧ΘÖàσ«îµêÉσåàσ«╣πÇüµ╡ïΦ»òτ╗ôµ₧£σÆîΘüùτòÖΘù«Θóÿ∩╝¢
-3. σªéµû░σó₧/σêáΘÖñ/τº╗σè¿ΘçìΦªüµûçΣ╗╢∩╝îµ¢┤µû░ΓÇ£σà│Θö«µûçΣ╗╢τ┤óσ╝òΓÇ¥∩╝¢
-4. σªéΣ╗╗σèíΣ╝ÿσàêτ║ºσÅæτöƒσÅÿσîû∩╝îµ¢┤µû░ΓÇ£Σ╕ïΣ╕Çµ¡ÑΣ╗╗σèíΓÇ¥∩╝¢
-5. σªéσç║τÄ░µû░τÜäΣ╛¥Φ╡ûπÇüµò░µì«πÇüτí¼Σ╗╢πÇüΦ«╕σÅ»Φ»üπÇüσî╗σ¡ªσÉêΦºäΘúÄΘÖ⌐∩╝îµ¢┤µû░ΓÇ£Θÿ╗σí₧Σ╕ÄΘúÄΘÖ⌐ΓÇ¥∩╝¢
-6. **Σ╕ìσ╛ùµèèΦ«íσêÆπÇüΘóäµ£ƒµîçµáçπÇüΘÜÅµ£║µ¥âΘçìΦ╛ôσç║πÇüµ£¬Θ¬îΦ»üσèƒΦâ╜σåÖµêÉΓÇ£σ╖▓σ«îµêÉΓÇ¥µêûΦ«║µûçτ╗ôµ₧£πÇé**
+1. 更新“当前总体状态”中对应模块的状态/完成度；
+2. 在“最近工作记录”中追加本次实际完成内容、测试结果和遗留问题；
+3. 如新增/删除/移动重要文件，更新“关键文件索引”；
+4. 如任务优先级发生变化，更新“下一步任务”；
+5. 如出现新的依赖、数据、硬件、许可证、医学合规风险，更新“阻塞与风险”；
+6. **不得把计划、预期指标、随机权重输出、未验证功能写成“已完成”或论文结果。**
 
-τè╢µÇüτ╗ƒΣ╕ÇΣ╜┐τö¿∩╝Ü
+状态统一使用：
 
-- `Γ£à σ╖▓σ«îµêÉ`∩╝Üσ«₧τÄ░σ╖▓τ╗Åσ¡ÿσ£¿σ╣╢ΘÇÜΦ┐çσ╜ôσëìΘÿ╢µ«╡µëÇΘ£ÇτÜäσƒ║µ£¼Θ¬îΦ»ü∩╝¢
-- `≡ƒƒí Φ┐¢ΦíîΣ╕¡`∩╝Üσ╖▓σ╝Çσºï∩╝îµ£ëσÅ»µúÇµƒÑµêÉµ₧£∩╝îΣ╜åσ░Üµ£¬Φ╛╛σê░Θÿ╢µ«╡Θ¬îµö╢µ¥íΣ╗╢∩╝¢
-- `≡ƒƒá σ╛àτ£ƒσ«₧Θ¬îΦ»ü`∩╝ÜΣ╗úτáü/µû╣µíêσ¡ÿσ£¿∩╝îΣ╜åτ╝║σ░æτ£ƒσ«₧µò░µì«πÇüµ¡úσ╝Åσ«₧Θ¬îµêûσñûΘâ¿Θ¬îΦ»ü∩╝¢
-- `≡ƒö┤ Θÿ╗σí₧`∩╝ÜσÅùµò░µì«πÇüGPUπÇüµÄêµ¥âπÇüΣ╝ªτÉåµêûσà╢Σ╗ûσñûΘâ¿µ¥íΣ╗╢ΘÖÉσê╢∩╝¢
-- `ΓÜ¬ µ£¬σ╝Çσºï`∩╝Üσ░Üµ£¬σ╝Çσ▒òπÇé
+- `✅ 已完成`：实现已经存在并通过当前阶段所需的基本验证；
+- `🟡 进行中`：已开始，有可检查成果，但尚未达到阶段验收条件；
+- `🟠 待真实验证`：代码/方案存在，但缺少真实数据、正式实验或外部验证；
+- `🔴 阻塞`：受数据、GPU、授权、伦理或其他外部条件限制；
+- `⚪ 未开始`：尚未开展。
 
-> **τë╣σê½σ╝║Φ░â∩╝ÜΣ╗╗σèíΣ╣ªΣ╕¡τÜä Dice ΓëÑ 0.93 µÿ»Θí╣τ¢«τ¢«µáç∩╝îΣ╕ìµÿ»σ╜ôσëìσ«₧Θ¬îτ╗ôµ₧£πÇéσ╜ôσëìσ╖▓σ«îµêÉ engineering / validationπÇüµ£Çτ╗êΘöüσÅéΣ╕Äσö»Σ╕ÇΣ╕Çµ¼íµ¡úσ╝Å independent test∩╝¢validation Σ╕Ä independent-test µîçµáçσ┐àΘí╗Σ╕Ñµá╝σêåσêù∩╝îσ╜ôσëìµ¡úσ╝Å test Dice Σ╣ƒΣ╗ìσ╛êΣ╜Ä∩╝îτ╗¥Σ╕ìΦâ╜τ╛ÄσîûπÇé**
+> **特别强调：任务书中的 Dice ≥ 0.93 是项目目标，不是当前实验结果。当前已完成 engineering / validation、最终锁参与唯一一次正式 independent test；validation 与 independent-test 指标必须严格分列，当前正式 test Dice 也仍很低，绝不能美化。**
 
 ---
 
-## 1. Θí╣τ¢«Σ╗╗σèíσƒ║τ║┐
+## 1. 项目任务基线
 
-Θí╣τ¢«µÇ╗Σ╜ôµèÇµ£»Φ╖»τ║┐∩╝Ü
+项目总体技术路线：
 
 ```text
-µò░µì«µáçσçåσîûσñäτÉå
-ΓåÆ Θ¬¿τ╗ôµ₧äτ▓╛σçåσêåσë▓
-ΓåÆ Φ┐₧τ╗¡σçáΣ╜ò/Σ╕ëτ╗┤Θçìσ╗║
-ΓåÆ Φ╜╗ΘçÅσîû Web τ│╗τ╗ƒΘ¢åµêÉ
-ΓåÆ τ╗╝σÉêµ╡ïΦ»òΘ¬îΦ»ü
+数据标准化处理
+→ 骨结构精准分割
+→ 连续几何/三维重建
+→ 轻量化 Web 系统集成
+→ 综合测试验证
 ```
 
-Σ╗╗σèíΣ╣ªσëìΣ╕ñΘÿ╢µ«╡µá╕σ┐âΦªüµ▒é∩╝Ü
+任务书前两阶段核心要求：
 
-### 2026 σ╣┤ 5ΓÇö7 µ£ê∩╝Üσëìµ£ƒσçåσñçΣ╕Äµò░µì«σñäτÉå
+### 2026 年 5—7 月：前期准备与数据处理
 
-- σ¢╜σåàσñûτ¢╕σà│µûçτî«Φ░âτáö∩╝¢
-- Θí╣τ¢«µÇ╗Σ╜ôµû╣µíêΦ«╛Φ«í∩╝¢
-- σ«₧Θ¬îτÄ»σóâµÉ¡σ╗║∩╝¢
-- σà¼σ╝Çµò░µì«Θ¢åσÆîΣ╕┤σ║èΦä▒µòÅµò░µì«µò┤τÉå∩╝¢
-- DICOM Φºúµ₧É∩╝¢
-- HU/τü░σ║ªµáçσçåσîû∩╝¢
-- τ⌐║Θù┤ΘçìΘççµá╖∩╝¢
-- Θ¬¿τ¬ùσó₧σ╝║∩╝¢
-- Φ┤¿ΘçÅµÄºσê╢∩╝¢
-- σ╗║τ½ïΦºäΦîâσîûΘ¬¿τºæ CT µò░µì«σñäτÉåµ╡üτ¿ïπÇé
+- 国内外相关文献调研；
+- 项目总体方案设计；
+- 实验环境搭建；
+- 公开数据集和临床脱敏数据整理；
+- DICOM 解析；
+- HU/灰度标准化；
+- 空间重采样；
+- 骨窗增强；
+- 质量控制；
+- 建立规范化骨科 CT 数据处理流程。
 
-### 2026 σ╣┤ 7ΓÇö9 µ£ê∩╝ÜΘ¬¿Θ¬╝µÖ║Φâ╜σêåσë▓µ¿íσ₧ï
+### 2026 年 7—9 月：骨骼智能分割模型
 
-- σƒ║Σ║Ä SegFormer µ₧äσ╗║Θ¬¿τºæ CT σñÜσ░║σ║ªσêåσë▓µ¿íσ₧ï∩╝¢
-- σî║σƒƒΘçìσÅáπÇüΦ╛╣τòîτ║ªµ¥ƒπÇüµïôµëæΣ┐¥µîüΦüöσÉêµìƒσñ▒∩╝¢
-- σ¢░ΘÜ╛µá╖µ£¼σó₧σ╝║∩╝¢
-- Σ╕ìτí«σ«ÜµÇºτ▓╛Σ┐«∩╝¢
-- µ¿íσ₧ïΦ«¡τ╗âπÇüΦ░âσÅéΣ╕Äµ╢êΦ₧ì∩╝¢
-- σ╜óµêÉΘ½ÿτ▓╛σ║ªΘ¬¿Θ¬╝σêåσë▓µ¿íσ₧ïσÅèΣ╕¡µ£ƒµ¥ÉµûÖπÇé
+- 基于 SegFormer 构建骨科 CT 多尺度分割模型；
+- 区域重叠、边界约束、拓扑保持联合损失；
+- 困难样本增强；
+- 不确定性精修；
+- 模型训练、调参与消融；
+- 形成高精度骨骼分割模型及中期材料。
 
-τ╗äΣ╝Üµ¥ÉµûÖσÉîµù╢Φªüµ▒é 7ΓÇö8 µ£êσ«îµêÉΓÇ£τ│╗τ╗ƒµÅÉσìç + Σ╕¬Σ║║Φ»╗µçéτ│╗τ╗ƒΣ╗úτáü/σ¡ªΣ╣áµû░µèÇΦâ╜ΓÇ¥∩╝î9 µ£êµ▒çµÇ╗∩╝î11 µ£êσçåσñçΣ╕¡µ£ƒµúÇµƒÑ∩╝î12 µ£êΦ┐¢σàÑΦ«║µûçΘ¢åΣ╕¡µÆ░σåÖΘÿ╢µ«╡πÇéσ¢áµ¡ñσ╜ôσëìσ╖ÑΣ╜£µîëΓÇ£**σàêµèèτ│╗τ╗ƒσÆîσ«₧Θ¬îΘô╛σüÜσ«₧∩╝îσåìτö¿τ£ƒσ«₧τ╗ôµ₧£ΦíÑΦ«║µûç**ΓÇ¥µÄ¿Φ┐¢πÇé
+组会材料同时要求 7—8 月完成“系统提升 + 个人读懂系统代码/学习新技能”，9 月汇总，11 月准备中期检查，12 月进入论文集中撰写阶段。因此当前工作按“**先把系统和实验链做实，再用真实结果补论文**”推进。
 
 ---
 
-## 2. σ╜ôσëìµÇ╗Σ╜ôτè╢µÇü∩╝ê2026-09-22∩╝ë
+## 2. 当前总体状态（2026-09-22）
 
-> **µ£Çτ╗êΦ«¡τ╗âσå╗τ╗ôσ┐½τàº∩╝ÜSegFormer3D σ╜ôσëìσö»Σ╕Çσ╖Ñτ¿ïΣ╕╗µ¿íσ₧ïΣ╕║ v7πÇév7.1 Σ╕║ residual-FP refinement Φ┤ƒτ╗ôµ₧£∩╝îσ╖▓σ╜ÆµíúΣ╜åΣ╕ìµ¢┐µìó v7∩╝¢TRAINING LINE CLOSEDπÇéΣ╗ÑΣ╕ïσÄåσÅ▓ v13 / 10-case pilot Φ«░σ╜òΣ┐¥τòÖτö¿Σ║ÄσÅ»Φ┐╜µ║»µÇº∩╝îΣ╕ìσåìΣ╗úΦí¿σ╜ôσëìΣ╕╗µ¿íσ₧ïπÇé**
+> **最终训练冻结快照：SegFormer3D 当前唯一工程主模型为 v7。v7.1 为 residual-FP refinement 负结果，已归档但不替换 v7；TRAINING LINE CLOSED。以下历史 v13 / 10-case pilot 记录保留用于可追溯性，不再代表当前主模型。**
 
-| µ¿íσ¥ù | τè╢µÇü | σ«îµêÉσ║ª | σ╜ôσëìτ£ƒσ«₧τè╢µÇü |
+| 模块 | 状态 | 完成度 | 当前真实状态 |
 |---|---|---:|---|
-| Σ╗╗σèíΣ╣ª/τ╗äΣ╝Üµ¥ÉµûÖµó│τÉå | Γ£à σ╖▓σ«îµêÉ | 100% | σ╖▓µÅÉσÅûτáöτ⌐╢τ¢«µáçπÇüµù╢Θù┤Φ╜┤πÇüτ│╗τ╗ƒσèƒΦâ╜πÇüΦ«║µûç/Σ╕¡µ£ƒΦªüµ▒é |
-| SegFormer3D Σ╕èµ╕╕Φ░âτáö | Γ£à σ╖▓σ«îµêÉ | 100% | σ╖▓Φ»╗ READMEπÇüµá╕σ┐âµ₧╢µ₧äπÇülossπÇüΣ╛¥Φ╡ûΣ╕ÄΦ«╕σÅ»Φ»ü∩╝¢σ«ÿµû╣Σ╗ôσ║ôσ╖▓σàïΘÜåσê░ `third_party/SegFormer3D` |
-| Θí╣τ¢«τ¢«σ╜òΣ╕ÄΣ║ñµÄÑµ£║σê╢ | Γ£à σ╖▓σ«îµêÉ | 100% | σ╖▓σ╗║τ½ïσ╖Ñτ¿ïτ¢«σ╜òσÆîµ£¼Σ╕╗σÅ░Φ┤ª∩╝¢µÿÄτí«ΓÇ£µ»Åµ¼íσ«₧Φ┤¿Σ┐«µö╣σ┐àΘí╗µ¢┤µû░µ£¼µûçΣ╗╢ΓÇ¥ |
-| µÇ╗Σ╜ôµû╣µíêΦ«╛Φ«í | Γ£à σ╖▓σ«îµêÉ | 100% | σ╖▓σ╜óµêÉµò░µì«σ▒éπÇüµ¿íσ₧ïσ▒éπÇüΣ╕ëτ╗┤σ▒éπÇüWeb σ▒éσÆîσ«₧Θ¬îΦ┐╜Φ╕¬Φ«╛Φ«í |
-| σ¢╜σåàσñûµûçτî«Φ░âτáö | Γ£à σ╜ôσëìΘÿ╢µ«╡σ«îµêÉ | 100% | σ╖▓σ╜óµêÉ 44 µ¥íτ╗ôµ₧äσîûµûçτî«τƒ⌐Θÿ╡∩╝¢`paper/references.bib` σà▒ 44 µ¥íµ£║σÖ¿σÅ»τö¿Θóÿσ╜ò∩╝ê42 µ¥íΦï▒µûçµá╕σ┐â + 2 µ¥íσ╖▓µá╕Θ¬îΣ╕¡µûçµûçτî«∩╝ëπÇéτÄ░Σ╗úσ╝║ baselineπÇüΘ¬¿µèÿπÇüτ£ƒσ«₧Θçæσ▒₧µñìσàÑτë⌐πÇüΣ╜ÄΘ¬¿σ»åσ║ªµñÄΣ╜ô fusion/split Φ»üµì«σ¥çσ╖▓µá╕Θ¬î∩╝¢Σ╕ñµ¥íσ¢╜σåàµûçτî«σ╖▓σêåσê½ΘÇÜΦ┐çΣ╕çµû╣σî╗σ¡ªτ╜æΣ╕ÄπÇèΣ╕¡σ¢╜σî╗σ¡ªΦúàσñçπÇïµ£ƒσêèσ«ÿτ╜æ/CNKI µ£ƒσêèΘí╡σ«îµêÉΣ╕ÇµëïΘóÿσ╜òσñìµá╕πÇéσÉÄτ╗¡σÅ¬σ£¿µë⌐σñºµ¡úσ╝Åσ«₧Θ¬îµù╢µîëΣ╗╗σèíΦíÑσ┐àΦªüµûçτî«∩╝îΣ╕ìσåìµ£║µó░σçæµò░ΘçÅ |
-| σ«₧Θ¬îτÄ»σóâ | Γ£à σ╖▓σ«îµêÉ∩╝êCPU σÅ»Φ«¡τ╗âτÄ»σóâ∩╝ë | 96% | Θí╣τ¢«σåà Python 3.11.7 + `.venv` σ╖▓σ«îµêÉ∩╝¢σ╜ôσëìσ«₧µ╡ï Ryzen 7 8745H∩╝ê8C/16T∩╝ëπÇüτ║ª 20 GB RAMπÇüPyTorch `2.1.0+cpu`πÇéτ£ƒσ«₧ 36┬│ patch Σ╕Ä 3-epoch binary engineering pilot σ¥çσ╖▓σ£¿µ£¼µ£║ CPU Φ╖æΘÇÜ∩╝¢`train.py`/`formal_readiness.py` µû░σó₧µÿ╛σ╝Å `--allow-cpu`∩╝îµùá NVIDIA Σ╕ìσåìµÿ»µû╣µ│òσ¡ªτí¼ blockerπÇéGPU Σ╗àΣ╜£Σ╕║σÉÄτ╗¡µÅÉΘÇƒΘÇëΘí╣ |
-| DICOM/CT σñäτÉåµ╡üτ¿ï | ≡ƒƒí Φ┐¢ΦíîΣ╕¡ | 96% | NIfTI pipeline 0.3.0 σ╖▓σ£¿ 10 Σ╛ïτ£ƒσ«₧ CTSpine1K CT+label Σ╕èσ«îµêÉ 1 mm ΘçìΘççµá╖πÇüHU clipΓåÆcase-wise z-scoreπÇüΘ¬¿τ¬ùπÇülabel nearest-neighborπÇüΦç¬σè¿/Σ║ñΣ║Æ QC∩╝¢10/10 Φç¬σè¿σ«íΦ«íΘÇÜΦ┐çπÇé2026-08-26 σñìµá╕ `manual_qc_review.csv`∩╝Ü10/10 σ¢¢Θí╣Σ║║σ╖ÑµúÇµƒÑσ¥ç `yes`πÇü10/10 `pass`πÇüreviewer σ╖▓σí½σåÖ∩╝îΣ║║σ╖Ñ QC P0 σ╖▓ΦºúΘÖñ∩╝¢τ£ƒσ«₧σñÜσ▒é DICOM series Σ╗ìσ╛àσÉÄτ╗¡µò░µì«µ¥Ñµ║ÉΘ¬îΦ»ü |
-| patient-level µò░µì«σêÆσêå | Γ£à σ╖▓σ«îµêÉ∩╝ê10Σ╛ï formal pilot∩╝ë | 96% | σ╖▓σ¢║σ«Ü `ctspine1k_msd_t10_binary_formal_pilot_v1.json`∩╝Ü7 train / 2 validation / 1 test∩╝îpatient-level Σ║ÆµûÑ∩╝¢σ«ÿµû╣ `test_private liver_169` σÅ¬Φ┐¢σàÑ testπÇüΣ╕ìσÅéΣ╕ÄΦ«¡τ╗â/Φ░âσÅé∩╝¢`formal_experiment=true`πÇéµ£Çτ╗êΦ«║µûçΣ╗ìΘ£Çµë⌐σñºτùàΣ╛ïΦºäµ¿í |
-| σà¼σ╝Çµò░µì«Θ¢åµò┤τÉå | ≡ƒƒí Φ┐¢ΦíîΣ╕¡ | 96% | CTSpine1K `MSD-T10` 10 Σ╕¬τ£ƒσ«₧ CT+label σ╖▓ΦÉ╜τ¢ÿ∩╝Ü`liver_0`ΓÇö`liver_8` + `liver_169`∩╝îσ«ÿµû╣ split Σ╕║ 9 `trainset` + 1 `test_private`∩╝¢τ£ƒσ«₧µûçΣ╗╢µÄÑτ«íµëºΦíî SHA-256 µáíΘ¬î∩╝î10 Σ╛ïσà¿Θâ¿µáçσçåσîû/QC∩╝îσ╣╢σ╖▓µîë 7/2/1 σ«îµêÉσ╜ôσëì formal-pipeline pilotπÇéΦ»ÑΦºäµ¿íΣ╗ìΦ┐£σ░ÅΣ║Äµ£Çτ╗êΦ«║µûç/Σ╕┤σ║èΘ¬îΦ»üΦªüµ▒é∩╝îσÉÄτ╗¡Θ£Çµë⌐σñºτùàΣ╛ïσ╣╢σ╗║τ½ïµû░τÜäΘóäµ│¿σåî split |
-| Σ╕┤σ║èΦä▒µòÅµò░µì« | ≡ƒö┤ Θÿ╗σí₧ | 0% | σ╜ôσëìΘí╣τ¢«τ¢«σ╜òµùáΣ╕┤σ║èµò░µì«∩╝¢σ┐àΘí╗τ¡ëσ╛àσÉêµ│òµÄêµ¥âπÇüΦä▒µòÅΣ╕ÄΣ╝ªτÉå/Σ╜┐τö¿Φîâσ¢┤τí«Φ«ñ |
-| SegFormer3D Θ¬¿τºæΘÇéΘàì | ≡ƒƒí Φ┐¢ΦíîΣ╕¡ | 96% | adapterπÇüΘàìτ╜«πÇüdatasetπÇüΦ«¡τ╗âΘ¬¿µ₧╢σ╖▓σ«îµêÉ∩╝¢ΘªûΣ╕¬Σ╗╗σèíσ╖▓Θöüσ«ÜΣ╕║ `binary_semantic`πÇév9 Φ»üµÿÄσå╗τ╗ô BN running stats σÅ»µÿ╛Φæùτ╝ôΦºú v6 foreground explosion∩╝îΣ╜åΣ╕ìΦâ╜µ╢êΘÖñΘÇÇσîû∩╝¢v10 σ£¿ encoder Σ╕Ä BN σà¿σå╗τ╗ôσÉÄΣ╗ìσÅæτöƒ mean DiceΓëê`1.65e-11` τÜä catastrophic background collapse∩╝îσÉªσ«Ü encoder parameter update Σ╕║σ┐àΦªüµ¥íΣ╗╢πÇév11 Σ╗Ä epoch2 Φ╡╖σÉîµù╢σå╗τ╗ô encoderπÇüBN running stats Σ╕Ä decoder feature∩╝ê`linear_c1..c4` + `linear_fuse`∩╝ë∩╝îΣ╗àσàüΦ«╕ `linear_pred` µ¢┤µû░∩╝îσ╣╢σ╖▓σ«îµêÉ 3 epoch∩╝Ümean val Dice=`0.0540700072 ΓåÆ 0.0543761681 ΓåÆ 0.0546575740`∩╝îΦ┐₧τ╗¡Σ╕ëΦ╜«µùá catastrophic collapseπÇéepoch3 `liver_7/liver_8` detailed DiceΓëê`0.04514/0.06417`πÇüprediction/GT ratioΓëê`4.22/3.78`∩╝¢µû░τÜä epoch1 exact-anchorΓåÆepoch3 dynamics Φ»üµÿÄ encoder/BN/decoder-feature delta=`0`πÇüfixed-patch encoder/fuse/head-input activation exact equal∩╝îΣ╗à `linear_pred` Σ╕Ä final logits µö╣σÅÿπÇéΣ╕Äσ╖▓Σ┐¥σ¡ÿτÜä epoch1ΓåÆepoch2 dynamics Σ║ñσÅëΘ¬îΦ»üσÉÄ∩╝îµ¡úσ╝Åσêñσ«Ü stable baseline=`YES`∩╝êengineering/validation∩╝ëπÇéτ╗¥σ»╣σêåσë▓τ▓╛σ║ªΣ╗ìΣ╜Ä∩╝îΣ╜å validation/3D/Web Θù¡τÄ»σ╖▓σ«îµêÉσ╣╢σ£¿ `2f333ba` µÄ¿ΘÇüσÉÄµ¡úσ╝ÅΘöüσÅé∩╝Ülock parameters=`YES`πÇüformal independent test ready=`YES`∩╝¢ΘöüσÅéΦ«░σ╜òΦºü `docs/10_final_parameter_lock.md`πÇéΣ╗ÄΘöüσÅéµÅÉΣ║ñσ╝ÇσºïΣ╕ìσ╛ùΣ╛¥µì« independent test Φ░âµò┤ thresholdπÇürefinement µêûσà╢Σ╗ûσÅéµò░∩╝¢σ╜ôσëìΦ»üµì«µö»µîü decoder feature update µÿ» v10 collapse τÜäσà│Θö«µ£║σê╢Σ╣ïΣ╕Ç∩╝îΣ╜åΣ╕ìσåÖµêÉσö»Σ╕Çµá╣σ¢á |
-| σî║σƒƒµìƒσñ▒ | Γ£à σ╖▓σ«îµêÉ∩╝êΣ╗úτáü∩╝ë | 90% | Dice + CE/BCE σÅ»Φ┐ÉΦíîσ╣╢µ£ë backward µ╡ïΦ»ò |
-| Boundary Loss | ≡ƒƒí Φ┐¢ΦíîΣ╕¡ | 85% | v13 σ╖▓σ«îµêÉ 3-epoch validation µ╢êΦ₧ì∩╝¢τ¢╕σ»╣ Region τÜä HD95/ASSD Σ╗àτ║ªµö╣σûä 0.1002/0.0355 mm∩╝îµö╢τ¢èµ₧üσ╝▒∩╝îµÜéΣ┐¥τòÖΣ╕║ sampling baseline σÇÖΘÇëΣ╜åΣ╕ìσ«úτº░µÿÄτí«Σ╝ÿσè┐ |
-| Topology Loss | ≡ƒƒí Φ┐¢ΦíîΣ╕¡ | 80% | v14/v15 σ╖▓σ«îµêÉ validation µ╢êΦ₧ì∩╝¢τ╗ôµ₧ä/Φí¿Θ¥óµîçµáçµ£ëµö╣σûäΣ┐íσÅ╖∩╝îΣ╜å foreground overprediction Σ╕Ä calibration Σ╗úΣ╗╖µÿÄµÿ╛∩╝îσ╜ôσëìΣ╕ìΘÇëΣ╜£σÉÄτ╗¡ baseline∩╝¢Θ¬¿µèÿ/Θ¥₧τ«íτè╢Θ¬¿τ╗ôµ₧äΘÇéτö¿µÇºΣ╗ìσ╛àτï¼τ½ïµúÇµƒÑ |
-| σ¢░ΘÜ╛µá╖µ£¼σó₧σ╝║ | Γ£à σ╜ôσëì validation Θÿ╢µ«╡Θù¡τÄ» | 94% | boundary-proxyπÇüσå╗τ╗ô v13 µ¿íσ₧ïΘ⌐▒σè¿ high-loss / high-uncertainty mining σ¥çσ╖▓σ«îµêÉτ£ƒσ«₧ validation µ╢êΦ₧ì∩╝¢v22/v23 σ¥çσñ▒Φ┤Ñσ╣╢µîë STOP ΦºäσêÖσü£σ£¿ epoch2∩╝îµ£Çτ╗êΣ┐¥τòÖ v13 Bernoulli samplingπÇéthick-slice Σ╗àΦÄ╖σ╛ù train patch-level difficulty signal∩╝¢metal/fracture/low-density σ¢á metadata Φ»üµì«Σ╕ìΦ╢│∩╝îΣ╕ìΣ╝¬ΘÇá subgroup τ╗ôµ₧£ |
-| Σ╕ìτí«σ«ÜµÇºµ£║σê╢ | Γ£à σ╜ôσëì validation Θÿ╢µ«╡Θù¡τÄ» | 97% | v13 validation `liver_7/liver_8` uncertainty/calibration σ╖▓σ«îµêÉ∩╝¢ΘÜÅσÉÄτ£ƒσ«₧σ«îµêÉ 7 Σ╕¬ train cases Φ«¡τ╗âτÜä uncertainty ROI refinement Σ╕ñΣ╛ï `3├ù3` validation grid∩╝êTop-5/10/20% ├ù dilation 0/1/2∩╝ëσÅè full-volume second-passπÇécanonical reconstruction Σ╕ñΣ╛ï mismatch=`0`∩╝îentropy max abs errorΓëê`9.86e-7`∩╝îµëÇµ£ë ROI-only `outside_roi_changed_fraction=0`πÇéµ£ÇΣ╜│σ¥çσÇ╝σÇÖΘÇë Top-20%+dilation2 τÜä Dice=`0.07407`πÇüHD95/ASSD=`175.96/47.13 mm`πÇüforeground ratio=`0.965├ù`∩╝îΣ╜å Recall Σ╗Ä coarse `0.13649` ΘÖìΦç│ `0.06965`πÇücomponent error Σ╗Ä `1543.5` µü╢σîûσê░ `2397.5`πÇüfalse break Σ╗Ä `64.5` µü╢σîûσê░ `138`∩╝îΣ╕ö `liver_7` HD95/ASSD σÅìΦÇîµü╢σîû∩╝¢mean pipeline time Σ╗Ä `75.01 s` σó₧Φç│ `99.95 s`πÇéσ¢áµ¡ñµîëτ╗╝σÉêσî║σƒƒ/Φí¿Θ¥ó/µïôµëæ/τ¿│σ«ÜµÇº/ΦÇùµù╢σêñσ«Ü **REFINEMENT=FAIL**∩╝îµ£Çτ╗ê pipeline Σ┐¥τòÖ v13 coarse `best.pt`∩╝¢ΘöüσÅéσÉÄσö»Σ╕ÇΣ╕Çµ¼íµ¡úσ╝Å independent test σ╖▓σ«îµêÉ∩╝îΣ╕ìσåìΣ╛¥µì« test Φ░âµò┤ refinement |
-| Φ«¡τ╗â/Θ¬îΦ»üµíåµ₧╢ | ≡ƒƒí Φ┐¢ΦíîΣ╕¡ | 99% | DataLoader/AdamW/AMP/gradient accumulation/sliding-windowπÇüschedulerπÇüσ«îµò┤ run Φ┐╜Φ╕¬σ╖▓µÄÑσàÑ∩╝¢`train.py` µö»µîü `--allow-cpu`πÇüσÅ»Θ¥á `--resume` Σ╕Ä `training.patches_per_case`πÇébalanced v3 σ╖▓σ«₧ΘÖàΣ╜┐τö¿ `validation.patch_mode=false`∩╝îΘÇÉ epoch τ¢┤µÄÑΣ╗Ñ `liver_7/liver_8` full-volume Dice ΘÇë checkpoint∩╝¢epoch 1/2 σ╖▓σ«îµêÉ∩╝îΦ»┤µÿÄ full-volume-aware selector σ╖▓Φ┐¢σàÑτ£ƒσ«₧Φ«¡τ╗âΘù¡τÄ»∩╝îΣ╕ìσåìΣ╛¥Φ╡ûσ¢║σ«Ü foreground patch proxy |
-| Φ»äΣ╗╖µîçµáç | Γ£à σ╖▓σ«îµêÉ∩╝êσÉ½µ¡úσ╝Å independent test∩╝ë | 100% | DiceπÇüIoUπÇüPrecisionπÇüRecallπÇüHD95πÇüASSDπÇücomponent count/errorπÇüfalse merge/breakπÇüuncertainty Σ╕Ä ECE/MCE/Brier/NLL σ╖▓µÄÑσàÑπÇéΘöüσÅéµÅÉΣ║ñ `eb0a824` push σ╣╢τí«Φ«ñΦ┐£τ½»Σ╕ÇΦç┤σÉÄ∩╝îσ╖▓σ»╣ `test_private liver_169` µëºΦíîσö»Σ╕ÇΣ╕Çµ¼í FINAL FORMAL INDEPENDENT TEST∩╝ÜDice=`0.02878288`πÇüIoU=`0.01460158`πÇüPrecision=`0.02089816`πÇüRecall=`0.04622219`πÇüHD95=`136.8722 mm`πÇüASSD=`43.97199 mm`πÇüforeground ratio=`2.21178├ù`πÇüpred/target components=`236/1`πÇücomponent error=`235`πÇüfalse merge=`0`πÇüfalse break=`29`πÇüinference=`9.4128 s`∩╝¢uncertainty AUROC/AUPRC=`0.86424/0.29665`πÇüTop-10% error recall=`0.54993`∩╝îECE/MCE/Brier/NLL=`0.02740/0.08782/0.08328/0.23559`πÇéσÄåσÅ▓ pilot τ╗ôµ₧£Σ╗ìσÅ¬Σ╜£Σ╕║σ╖Ñτ¿ïΘô╛Φ»üµì« |
-| Web τºæτáöΦ╛àσè⌐σêåµ₧ÉσÄƒσ₧ï | Γ£à validation + independent test Θù¡τÄ» | 99% | ΘªûΘí╡/Σ╕èΣ╝á/σüÑσ║╖µúÇµƒÑπÇüMPRπÇü10 Σ╛ïΣ║║σ╖Ñ QC reviewerπÇüC1ΓÇôL6 σÅ»Φ»╗µáçτ¡╛πÇüτ£ƒσÇ╝ PLY WebGL2 3DπÇüτ«Çσîû/τë⌐τÉåµ╡ïΘçÅσ¥çσ╖▓σ«îµêÉ∩╝¢QC reviewer σ╖▓Σ┐«σñìσà¿τ½Ö `.card` grid-column Σ╕Ä QC τ╜æµá╝σå▓τ¬ü∩╝îτùàΣ╛ïΘÇëµï⌐σÉÄΣ╜┐τö¿ `hidden + display:none!important` σ╜╗σ║òσà│Θù¡τùàΣ╛ïσ▒éσ╣╢Φ┐¢σàÑΣ╕╗σ«íµá╕σî║∩╝îΓÇ£Σ╕èΣ╕ÇΣ╛ï / Σ╕ïΣ╕ÇΣ╛ïΓÇ¥Σ┐¥µîüσ«íµá╕σî║∩╝îµé¼µ╡«µîëΘÆ«σÅ»ΘÜÅµù╢Θçìµû░µëôσ╝ÇτùàΣ╛ïσêùΦí¿∩╝¢σ╖▓σ£¿µ£¼µ£║ Edge σ»╣τ£ƒσ«₧ `liver_0` σ«îµêÉτé╣σç╗σà│Θù¡/Θçìµû░σ▒òσ╝Çσ«₧µ£║Θ¬îΦ»üπÇéSDF surface Σ╕Ä evaluation results-review σ╖▓Φ»╗σÅûτ£ƒσ«₧ prediction/entropy MPR∩╝¢`results-review` σ╖▓σ«₧µ£║Φ»╗σÅûτ£ƒσ«₧ v13 validation evaluation∩╝îEdge σ╖▓µÿ╛τñ║ prediction MPR overlay Σ╕Ä predictive-entropy/uncertainty overlay∩╝¢`research-3d` σ╖▓σèáΦ╜╜ liver_8 τÜä 2.0 mm feature-weighted prediction mesh Σ╕Ä SDF ╧â=0.4 mm surface∩╝îσ╣╢σ«îµêÉ GT/prediction σÅîµ¥Ñµ║ÉσêçµìóπÇéΘöüσÅéσÉÄµ¡úσ╝Å independent evaluation σ╖▓σ£¿ `results-review` Φó½τ£ƒσ«₧Φ»åσê½∩╝îprediction/uncertainty MPR API σ¥çΦ┐öσ¢₧ 200∩╝¢`research-3d` σ╖▓σ£¿ Edge σ«₧µ£║σèáΦ╜╜ independent liver_169 τÜä 2.0 mm prediction mesh Σ╕Ä SDF ╧â=0.4 mm surface |
-| Σ╕ëτ╗┤Θçìσ╗║ | Γ£à validation + independent test Θù¡τÄ» | 99% | σ╖▓σ«₧τÄ░ physical-space Marching CubesπÇüPLY/JSONπÇüvertex-clusteringπÇüSDF surfaceπÇüWebGL2 Σ╕Äτë⌐τÉåµ╡ïΘçÅ∩╝¢µû░σó₧τ¢╕Θé╗µ│òσÉæσÅÿσîûΘ⌐▒σè¿τÜäτë╣σ╛üΣ┐¥µèñ vertex-clustering σÇÖΘÇë∩╝îτ£ƒσ«₧ `liver_0` σ£¿ 2.0 mm/σÉî 30,260 Θí╢τé╣Σ╕ïσ░åΘ½ÿτë╣σ╛üσî║σƒƒ mean-NN τ║ª 0.679ΓåÆ0.620 mmπÇüHD95 τ║ª 1.068ΓåÆ1.000 mm∩╝îΣ╜£Σ╕║τ£ƒσÇ╝τ╜æµá╝σ╖Ñτ¿ïΦ»üµì«∩╝¢0.4 mm SDF Σ┐¥µîü 2ΓåÆ2 Φ┐₧ΘÇÜσƒƒ∩╝î0.8 mm σ¢á 2ΓåÆ3 Φó½Σ┐¥µèñµ£║σê╢µïÆτ╗¥πÇéσ╖▓σ£¿ v13 validation τ£ƒσ«₧ prediction surface Σ╕èσ«îµêÉσ╖Ñτ¿ïΘ¬îΦ»ü∩╝Üliver_7/liver_8 τÜä 2.0 mmπÇüfeature strength=8 τ«Çσîûσêåσê½Σ┐¥τòÖτ║ª 298,840/296,483 Θí╢τé╣∩╝îΘí╢τé╣τ╝⌐σçÅτ║ª 78.18%/77.89%∩╝îτ«Çσîûσ╖Ñτ¿ï ASSD/HD95Γëê0.55845/1.09434 mm Σ╕Ä 0.54806/1.08294 mm∩╝¢0.4 mm SDF σêåσê½Σ┐¥µîü 1564ΓåÆ1564πÇü1528ΓåÆ1528 Φ┐₧ΘÇÜσƒƒ∩╝îSDF-vs-original σ╖Ñτ¿ï ASSD/HD95Γëê0.02919/0.06790 mm Σ╕Ä 0.02929/0.06671 mmπÇéτï¼τ½ï test prediction Σ╣ƒσ╖▓σ«îµêÉ∩╝ÜσÄƒσºï mesh `365,247` Θí╢τé╣ / `724,694` Θ¥ó∩╝¢2.0 mm + feature strength=8 σÉÄ `81,353` Θí╢τé╣ / `160,384` Θ¥ó∩╝îΘí╢τé╣τ╝⌐σçÅτ║ª `77.73%`∩╝îτ«Çσîûσ╖Ñτ¿ï ASSD/HD95Γëê`0.56490/1.07159 mm`∩╝¢0.4 mm SDF Σ┐¥µîü `236ΓåÆ236` components∩╝îSDF-vs-original σ╖Ñτ¿ï ASSD/HD95Γëê`0.02536/0.06367 mm`∩╝¢prediction-vs-GT vertex-nearest engineering ASSD/HD95Γëê`41.1398/131.8726 mm`∩╝îΣ╕ö size/spacing/origin/direction σà¿Θâ¿Σ╕ÇΦç┤πÇéΣ╗ÑΣ╕èσ¥çΣ╕║ engineering surface µîçµáç∩╝îΣ╕ìσåÆσààσêåσë▓Σ╕┤σ║è HD95/ASSD |
-| Φ«║µûç | ≡ƒƒí Φ┐¢ΦíîΣ╕¡ | 98% | Σ╕¡µûçµèÇµ£»τ¿┐σ╖▓σ«îµò┤σÉîµ¡Ñσ╜ôσëì formal-pipeline pilot∩╝Üvalidation Σ╕╗τ╗ôµ₧£πÇüΦ╛ôσàÑ/loss/sampling/augmentation/difficult-sample µ╢êΦ₧ìπÇüuncertainty/calibrationπÇü`REFINEMENT=FAIL`πÇüprediction 3D/SDFπÇüWeb prototype∩╝îΣ╗ÑσÅèµ£Çτ╗êΘöüσ«Ü v13 σìÅΦ««Σ╕ïτÜäµ¡úσ╝Å `liver_169` independent test∩╝êDice=`0.02878`∩╝ëσ¥çσ╖▓Φ┐¢σàÑ Results∩╝¢DiscussionπÇüFailure CasesπÇüLimitationsπÇüConclusion σ╖▓σÉîµ¡Ñσ╣╢µÿÄτí«Σ╜Äτ▓╛σ║ª/Θ¥₧Σ╕┤σ║èσ«ÜΣ╜ìπÇéΣ╕ñµ¥íσ¢╜σåàΣ╕¡µûçΘóÿσ╜òσ╖▓σ«îµêÉΣ╕Çµëïµò░µì«σ║ô/µ£ƒσêèΘí╡µá╕Θ¬î∩╝¢Σ╗ìµ£¬σ«îµêÉτÜäµÿ»Φ╖¿µ₧╢µ₧äσ╝║ baselineπÇüµë⌐σñºµò░µì«Φºäµ¿í∩╝îΣ╗ÑσÅèτ¢«µáçµ£ƒσêè/σ¡ªµáíµ¿íµ¥┐τí«σ«ÜσÉÄτÜäµ£Çτ╗êµá╝σ╝Åσ«Üτ¿┐ |
-| Σ╕¡µ£ƒµ¥ÉµûÖ | ≡ƒƒí Φ┐¢ΦíîΣ╕¡ | 98% | σ╖▓σÉîµ¡Ñ 10 Σ╛ïτ£ƒσ«₧µò░µì«πÇü`pytest=138 passed`πÇü10/10 Σ║║σ╖Ñ QCπÇüµ¡úσ╝Å binary task lockπÇü7/2/1 formal-pilot splitπÇü`formal_readiness ready=true`∩╝¢validation µ╢êΦ₧ìπÇü`REFINEMENT=FAIL`πÇüprediction 3D/SDFπÇüWeb σ«₧µ£║Θ¬îµö╢∩╝îΣ╗ÑσÅèµ£Çτ╗êΘöüσ«ÜσìÅΦ««Σ╕ïτÜäµ¡úσ╝Å independent full-volume test / uncertainty-calibration / independent 3D/SDF/Web σ¥çσ╖▓σåÖσàÑπÇéµùº 5-epoch pilot test Σ╗àµáçΣ╕║σÄåσÅ▓σ╖Ñτ¿ïΘô╛Φ»üµì«∩╝¢σÉÄτ╗¡Σ╕╗ΦªüσñûΘâ¿τ╝║σÅúµÿ»µë⌐σñºµá╖µ£¼Φºäµ¿íσÉÄτÜäΣ╕╗σ«₧Θ¬îπÇüσÉêµ│òΣ╕┤σ║èµò░µì«Σ╕ÄσñûΘâ¿Θ¬îΦ»ü |
-| Φç¬σè¿σîûµ╡ïΦ»ò/Σ╗úτáüΦ┤¿ΘçÅ | Γ£à σ╖▓σ«îµêÉ∩╝êσ╜ôσëìΘÿ╢µ«╡∩╝ë | 100% | `pytest: 138 passed`∩╝¢`ruff: All checks passed`∩╝¢µû░σó₧ decoder-feature freeze policyπÇüΣ╗àΣ┐¥τòÖ `linear_pred` trainableπÇüµüóσñì trainability Σ╕Ä v11/v10 σìòσÅÿΘçÅ config diff σ¢₧σ╜Æµ╡ïΦ»ò∩╝¢focused freeze tests=`15 passed`πÇéσÉîµù╢Σ┐¥τòÖ BatchNorm running-stat freezeπÇüencoder freezeπÇüfixed-per-case samplingπÇü`region_dice_ce` µ¥âΘçìπÇü`patches_per_case` σñÜ patch ΘÜÅµ£║µ╡üπÇüforeground-fraction evaluationπÇücheckpoint resumeπÇüσêåτùàΣ╛ï full-volume evaluationπÇüCPU Θ¥₧ AMP autocastπÇüepoch-aware sampling Σ╕Ä `allow_cpu` readiness µ╡ïΦ»ò∩╝¢µûçτî«σ║ôτÄ░Σ╕║ 44 µ¥í BibTeX∩╝îτ╗ôµ₧äµúÇµƒÑτí«Φ«ñ 44 entries / 0 duplicate key / brace balance=0 |
+| 任务书/组会材料梳理 | ✅ 已完成 | 100% | 已提取研究目标、时间轴、系统功能、论文/中期要求 |
+| SegFormer3D 上游调研 | ✅ 已完成 | 100% | 已读 README、核心架构、loss、依赖与许可证；官方仓库已克隆到 `third_party/SegFormer3D` |
+| 项目目录与交接机制 | ✅ 已完成 | 100% | 已建立工程目录和本主台账；明确“每次实质修改必须更新本文件” |
+| 总体方案设计 | ✅ 已完成 | 100% | 已形成数据层、模型层、三维层、Web 层和实验追踪设计 |
+| 国内外文献调研 | ✅ 当前阶段完成 | 100% | 已形成 44 条结构化文献矩阵；`paper/references.bib` 共 44 条机器可用题录（42 条英文核心 + 2 条已核验中文文献）。现代强 baseline、骨折、真实金属植入物、低骨密度椎体 fusion/split 证据均已核验；两条国内文献已分别通过万方医学网与《中国医学装备》期刊官网/CNKI 期刊页完成一手题录复核。后续只在扩大正式实验时按任务补必要文献，不再机械凑数量 |
+| 实验环境 | ✅ 已完成（CPU 可训练环境） | 96% | 项目内 Python 3.11.7 + `.venv` 已完成；当前实测 Ryzen 7 8745H（8C/16T）、约 20 GB RAM、PyTorch `2.1.0+cpu`。真实 36³ patch 与 3-epoch binary engineering pilot 均已在本机 CPU 跑通；`train.py`/`formal_readiness.py` 新增显式 `--allow-cpu`，无 NVIDIA 不再是方法学硬 blocker。GPU 仅作为后续提速选项 |
+| DICOM/CT 处理流程 | 🟡 进行中 | 96% | NIfTI pipeline 0.3.0 已在 10 例真实 CTSpine1K CT+label 上完成 1 mm 重采样、HU clip→case-wise z-score、骨窗、label nearest-neighbor、自动/交互 QC；10/10 自动审计通过。2026-08-26 复核 `manual_qc_review.csv`：10/10 四项人工检查均 `yes`、10/10 `pass`、reviewer 已填写，人工 QC P0 已解除；真实多层 DICOM series 仍待后续数据来源验证 |
+| patient-level 数据划分 | ✅ 已完成（10例 formal pilot） | 96% | 已固定 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，patient-level 互斥；官方 `test_private liver_169` 只进入 test、不参与训练/调参；`formal_experiment=true`。最终论文仍需扩大病例规模 |
+| 公开数据集整理 | 🟡 进行中 | 96% | CTSpine1K `MSD-T10` 10 个真实 CT+label 已落盘：`liver_0`—`liver_8` + `liver_169`，官方 split 为 9 `trainset` + 1 `test_private`；真实文件接管执行 SHA-256 校验，10 例全部标准化/QC，并已按 7/2/1 完成当前 formal-pipeline pilot。该规模仍远小于最终论文/临床验证要求，后续需扩大病例并建立新的预注册 split |
+| 临床脱敏数据 | 🔴 阻塞 | 0% | 当前项目目录无临床数据；必须等待合法授权、脱敏与伦理/使用范围确认 |
+| SegFormer3D 骨科适配 | 🟡 进行中 | 96% | adapter、配置、dataset、训练骨架已完成；首个任务已锁定为 `binary_semantic`。v9 证明冻结 BN running stats 可显著缓解 v6 foreground explosion，但不能消除退化；v10 在 encoder 与 BN 全冻结后仍发生 mean Dice≈`1.65e-11` 的 catastrophic background collapse，否定 encoder parameter update 为必要条件。v11 从 epoch2 起同时冻结 encoder、BN running stats 与 decoder feature（`linear_c1..c4` + `linear_fuse`），仅允许 `linear_pred` 更新，并已完成 3 epoch：mean val Dice=`0.0540700072 → 0.0543761681 → 0.0546575740`，连续三轮无 catastrophic collapse。epoch3 `liver_7/liver_8` detailed Dice≈`0.04514/0.06417`、prediction/GT ratio≈`4.22/3.78`；新的 epoch1 exact-anchor→epoch3 dynamics 证明 encoder/BN/decoder-feature delta=`0`、fixed-patch encoder/fuse/head-input activation exact equal，仅 `linear_pred` 与 final logits 改变。与已保存的 epoch1→epoch2 dynamics 交叉验证后，正式判定 stable baseline=`YES`（engineering/validation）。绝对分割精度仍低，但 validation/3D/Web 闭环已完成并在 `2f333ba` 推送后正式锁参：lock parameters=`YES`、formal independent test ready=`YES`；锁参记录见 `docs/10_final_parameter_lock.md`。从锁参提交开始不得依据 independent test 调整 threshold、refinement 或其他参数；当前证据支持 decoder feature update 是 v10 collapse 的关键机制之一，但不写成唯一根因 |
+| 区域损失 | ✅ 已完成（代码） | 90% | Dice + CE/BCE 可运行并有 backward 测试 |
+| Boundary Loss | 🟡 进行中 | 85% | v13 已完成 3-epoch validation 消融；相对 Region 的 HD95/ASSD 仅约改善 0.1002/0.0355 mm，收益极弱，暂保留为 sampling baseline 候选但不宣称明确优势 |
+| Topology Loss | 🟡 进行中 | 80% | v14/v15 已完成 validation 消融；结构/表面指标有改善信号，但 foreground overprediction 与 calibration 代价明显，当前不选作后续 baseline；骨折/非管状骨结构适用性仍待独立检查 |
+| 困难样本增强 | ✅ 当前 validation 阶段闭环 | 94% | boundary-proxy、冻结 v13 模型驱动 high-loss / high-uncertainty mining 均已完成真实 validation 消融；v22/v23 均失败并按 STOP 规则停在 epoch2，最终保留 v13 Bernoulli sampling。thick-slice 仅获得 train patch-level difficulty signal；metal/fracture/low-density 因 metadata 证据不足，不伪造 subgroup 结果 |
+| 不确定性机制 | ✅ 当前 validation 阶段闭环 | 97% | v13 validation `liver_7/liver_8` uncertainty/calibration 已完成；随后真实完成 7 个 train cases 训练的 uncertainty ROI refinement 两例 `3×3` validation grid（Top-5/10/20% × dilation 0/1/2）及 full-volume second-pass。canonical reconstruction 两例 mismatch=`0`，entropy max abs error≈`9.86e-7`，所有 ROI-only `outside_roi_changed_fraction=0`。最佳均值候选 Top-20%+dilation2 的 Dice=`0.07407`、HD95/ASSD=`175.96/47.13 mm`、foreground ratio=`0.965×`，但 Recall 从 coarse `0.13649` 降至 `0.06965`、component error 从 `1543.5` 恶化到 `2397.5`、false break 从 `64.5` 恶化到 `138`，且 `liver_7` HD95/ASSD 反而恶化；mean pipeline time 从 `75.01 s` 增至 `99.95 s`。因此按综合区域/表面/拓扑/稳定性/耗时判定 **REFINEMENT=FAIL**，最终 pipeline 保留 v13 coarse `best.pt`；锁参后唯一一次正式 independent test 已完成，不再依据 test 调整 refinement |
+| 训练/验证框架 | 🟡 进行中 | 99% | DataLoader/AdamW/AMP/gradient accumulation/sliding-window、scheduler、完整 run 追踪已接入；`train.py` 支持 `--allow-cpu`、可靠 `--resume` 与 `training.patches_per_case`。balanced v3 已实际使用 `validation.patch_mode=false`，逐 epoch 直接以 `liver_7/liver_8` full-volume Dice 选 checkpoint；epoch 1/2 已完成，说明 full-volume-aware selector 已进入真实训练闭环，不再依赖固定 foreground patch proxy |
+| 评价指标 | ✅ 已完成（含正式 independent test） | 100% | Dice、IoU、Precision、Recall、HD95、ASSD、component count/error、false merge/break、uncertainty 与 ECE/MCE/Brier/NLL 已接入。锁参提交 `eb0a824` push 并确认远端一致后，已对 `test_private liver_169` 执行唯一一次 FINAL FORMAL INDEPENDENT TEST：Dice=`0.02878288`、IoU=`0.01460158`、Precision=`0.02089816`、Recall=`0.04622219`、HD95=`136.8722 mm`、ASSD=`43.97199 mm`、foreground ratio=`2.21178×`、pred/target components=`236/1`、component error=`235`、false merge=`0`、false break=`29`、inference=`9.4128 s`；uncertainty AUROC/AUPRC=`0.86424/0.29665`、Top-10% error recall=`0.54993`，ECE/MCE/Brier/NLL=`0.02740/0.08782/0.08328/0.23559`。历史 pilot 结果仍只作为工程链证据 |
+| Web 科研辅助分析原型 | ✅ validation + independent test 闭环 | 99% | 首页/上传/健康检查、MPR、10 例人工 QC reviewer、C1–L6 可读标签、真值 PLY WebGL2 3D、简化/物理测量均已完成；QC reviewer 已修复全站 `.card` grid-column 与 QC 网格冲突，病例选择后使用 `hidden + display:none!important` 彻底关闭病例层并进入主审核区，“上一例 / 下一例”保持审核区，悬浮按钮可随时重新打开病例列表；已在本机 Edge 对真实 `liver_0` 完成点击关闭/重新展开实机验证。SDF surface 与 evaluation results-review 已读取真实 prediction/entropy MPR；`results-review` 已实机读取真实 v13 validation evaluation，Edge 已显示 prediction MPR overlay 与 predictive-entropy/uncertainty overlay；`research-3d` 已加载 liver_8 的 2.0 mm feature-weighted prediction mesh 与 SDF σ=0.4 mm surface，并完成 GT/prediction 双来源切换。锁参后正式 independent evaluation 已在 `results-review` 被真实识别，prediction/uncertainty MPR API 均返回 200；`research-3d` 已在 Edge 实机加载 independent liver_169 的 2.0 mm prediction mesh 与 SDF σ=0.4 mm surface |
+| 三维重建 | ✅ validation + independent test 闭环 | 99% | 已实现 physical-space Marching Cubes、PLY/JSON、vertex-clustering、SDF surface、WebGL2 与物理测量；新增相邻法向变化驱动的特征保护 vertex-clustering 候选，真实 `liver_0` 在 2.0 mm/同 30,260 顶点下将高特征区域 mean-NN 约 0.679→0.620 mm、HD95 约 1.068→1.000 mm，作为真值网格工程证据；0.4 mm SDF 保持 2→2 连通域，0.8 mm 因 2→3 被保护机制拒绝。已在 v13 validation 真实 prediction surface 上完成工程验证：liver_7/liver_8 的 2.0 mm、feature strength=8 简化分别保留约 298,840/296,483 顶点，顶点缩减约 78.18%/77.89%，简化工程 ASSD/HD95≈0.55845/1.09434 mm 与 0.54806/1.08294 mm；0.4 mm SDF 分别保持 1564→1564、1528→1528 连通域，SDF-vs-original 工程 ASSD/HD95≈0.02919/0.06790 mm 与 0.02929/0.06671 mm。独立 test prediction 也已完成：原始 mesh `365,247` 顶点 / `724,694` 面；2.0 mm + feature strength=8 后 `81,353` 顶点 / `160,384` 面，顶点缩减约 `77.73%`，简化工程 ASSD/HD95≈`0.56490/1.07159 mm`；0.4 mm SDF 保持 `236→236` components，SDF-vs-original 工程 ASSD/HD95≈`0.02536/0.06367 mm`；prediction-vs-GT vertex-nearest engineering ASSD/HD95≈`41.1398/131.8726 mm`，且 size/spacing/origin/direction 全部一致。以上均为 engineering surface 指标，不冒充分割临床 HD95/ASSD |
+| 论文 | 🟡 进行中 | 98% | 中文技术稿已完整同步当前 formal-pipeline pilot：validation 主结果、输入/loss/sampling/augmentation/difficult-sample 消融、uncertainty/calibration、`REFINEMENT=FAIL`、prediction 3D/SDF、Web prototype，以及最终锁定 v13 协议下的正式 `liver_169` independent test（Dice=`0.02878`）均已进入 Results；Discussion、Failure Cases、Limitations、Conclusion 已同步并明确低精度/非临床定位。两条国内中文题录已完成一手数据库/期刊页核验；仍未完成的是跨架构强 baseline、扩大数据规模，以及目标期刊/学校模板确定后的最终格式定稿 |
+| 中期材料 | 🟡 进行中 | 98% | 已同步 10 例真实数据、`pytest=138 passed`、10/10 人工 QC、正式 binary task lock、7/2/1 formal-pilot split、`formal_readiness ready=true`；validation 消融、`REFINEMENT=FAIL`、prediction 3D/SDF、Web 实机验收，以及最终锁定协议下的正式 independent full-volume test / uncertainty-calibration / independent 3D/SDF/Web 均已写入。旧 5-epoch pilot test 仅标为历史工程链证据；后续主要外部缺口是扩大样本规模后的主实验、合法临床数据与外部验证 |
+| 自动化测试/代码质量 | ✅ 已完成（当前阶段） | 100% | `pytest: 138 passed`；`ruff: All checks passed`；新增 decoder-feature freeze policy、仅保留 `linear_pred` trainable、恢复 trainability 与 v11/v10 单变量 config diff 回归测试；focused freeze tests=`15 passed`。同时保留 BatchNorm running-stat freeze、encoder freeze、fixed-per-case sampling、`region_dice_ce` 权重、`patches_per_case` 多 patch 随机流、foreground-fraction evaluation、checkpoint resume、分病例 full-volume evaluation、CPU 非 AMP autocast、epoch-aware sampling 与 `allow_cpu` readiness 测试；文献库现为 44 条 BibTeX，结构检查确认 44 entries / 0 duplicate key / brace balance=0 |
 
-### 2.1 2026-08-29 validation Θÿ╢µ«╡µ£Çτ╗êΘù¿τªü
+### 2.1 2026-08-29 validation 阶段最终门禁
 
-- µ£Çτ╗ê validation Σ╕╗µ¿íσ₧ïσ¢║σ«ÜσÇÖΘÇë∩╝Ü`configs/orthopedic_ct_cpu_binary_loss_region_boundary_v13.yaml` + `experiments/20260828_002035_cpu_binary_loss_region_boundary_v13_roi64/checkpoint/best.pt`∩╝¢CT-onlyπÇüRegion+Boundary∩╝ê1.0/0.1∩╝îtopology=0∩╝ëπÇüBernoulli `foreground_probability=0.25`πÇü`patches_per_case=4`πÇüflip-onlyπÇü64┬│ ROIπÇüepoch2 Φ╡╖σå╗τ╗ô encoder / decoder feature / BN stats∩╝îΣ╗àµ¢┤µû░ `linear_pred`πÇé
-- v13 `liver_7/liver_8` mean validation Dice=`0.05470944095`∩╝¢Σ╜Äτ▓╛σ║ªπÇüforeground overpredictionπÇüΦ╛âσñº surface distance Σ╕ÄµÿÄµÿ╛ component fragmentation σ¥çσªéσ«₧Σ┐¥τòÖ∩╝îΣ╕ìτ╛ÄσîûπÇé
-- uncertainty ROI refinement σ╖▓σ«îµêÉ 3├ù3 grid Σ╕Ä full-volume second pass∩╝¢µò░σÇ╝µ£Çσ╝║ Top-20%+dilation2 mean DiceΓëê`0.07407384`∩╝îΣ╜å RecallπÇücomponent topologyπÇüΣ╕ñΣ╛ïτ¿│σ«ÜµÇºΣ╕ÄΦÇùµù╢τ╗╝σÉêΣ╕ìΦ╛╛µáç∩╝îσ¢áµ¡ñ **REFINEMENT=FAIL**∩╝îµ£Çτ╗ê inference τªüτö¿ refinementπÇé
-- τ£ƒσ«₧ prediction 3D σ╖Ñτ¿ïΘô╛σ╖▓σ«îµêÉ∩╝Üliver_7/liver_8 σÄƒσºï prediction meshπÇü2.0 mm feature-weighted simplificationπÇü0.4 mm SDFπÇüphysical spacing/origin/direction σñìµá╕σ¥çσ«îµêÉ∩╝¢mesh vertex-nearest error σÅ¬Σ╜£Σ╕║σ╖Ñτ¿ïΦ»»σ╖«∩╝îΣ╕ìσåÆσààσêåσë▓Σ╕┤σ║èµîçµáçπÇé
-- Edge σ«₧µ£║σ╖▓σ«îµêÉ∩╝Ü`results-review` prediction MPR + uncertainty MPR∩╝¢`research-3d` v13 liver_8 2.0 mm prediction WebGL∩╝ê296,483 Θí╢τé╣ / 591,833 Σ╕ëΦºÆΘ¥ó∩╝ë∩╝¢SDF ╧â=0.4 mm WebGL∩╝ê1,340,319 Θí╢τé╣ / 2,672,566 Σ╕ëΦºÆΘ¥ó∩╝ë∩╝¢GT/prediction σÅîµ¥Ñµ║Éσêçµìóµ¡úσ╕╕πÇé
-- test ΘÜöτª╗Σ┐¥µîüµ£ëµòê∩╝Ü`/api/research/cases` live API Σ╗àµÜ┤Θ£▓ liver_0∩╜₧liver_8 σà▒ 9 Σ╛ï∩╝¢µê¬Φç│µ£¼Θù¿τªüΦ«░σ╜ò∩╝î`liver_169` σ£¿µ£¼Φ╜«ΘöüσÅéσëìµ▓íµ£ëΦó½Φ»╗σÅûσ╜▒σâÅπÇüpredictionπÇüentropyπÇümetricsπÇü3D µêû diagnosticsπÇé
-- Φ┤¿ΘçÅΘù¿τªü∩╝Ü`pytest tests -q`=`138 passed`∩╝¢`ruff check src web tests`=`All checks passed!`∩╝¢`git diff --check` µùá error∩╝¢`node --check web/frontend/research_3d.js` ΘÇÜΦ┐çπÇé
-- validation Θÿ╢µ«╡µÅÉΣ║ñ `2f333ba` σ╖▓ push σ╣╢τí«Φ«ñ `HEAD == origin/main`∩╝¢σ╜ôσëìΦ┐¢σàÑµ£Çτ╗êσÅéµò░Θöüσ«Ü∩╝Ü`lock parameters=YES`πÇü`formal independent test ready=YES`∩╝îσö»Σ╕ÇΘöüσÅéΦ«░σ╜òΣ╕║ `docs/10_final_parameter_lock.md`πÇéµ£¼ΘöüσÅéµÅÉΣ║ñ push σ╣╢σåìµ¼íτí«Φ«ñΦ┐£τ½»Σ╕ÇΦç┤σÉÄ∩╝îµëìσàüΦ«╕Θªûµ¼íµ¡úσ╝ÅΦ«┐Θù« `liver_169`πÇé
+- 最终 validation 主模型固定候选：`configs/orthopedic_ct_cpu_binary_loss_region_boundary_v13.yaml` + `experiments/20260828_002035_cpu_binary_loss_region_boundary_v13_roi64/checkpoint/best.pt`；CT-only、Region+Boundary（1.0/0.1，topology=0）、Bernoulli `foreground_probability=0.25`、`patches_per_case=4`、flip-only、64³ ROI、epoch2 起冻结 encoder / decoder feature / BN stats，仅更新 `linear_pred`。
+- v13 `liver_7/liver_8` mean validation Dice=`0.05470944095`；低精度、foreground overprediction、较大 surface distance 与明显 component fragmentation 均如实保留，不美化。
+- uncertainty ROI refinement 已完成 3×3 grid 与 full-volume second pass；数值最强 Top-20%+dilation2 mean Dice≈`0.07407384`，但 Recall、component topology、两例稳定性与耗时综合不达标，因此 **REFINEMENT=FAIL**，最终 inference 禁用 refinement。
+- 真实 prediction 3D 工程链已完成：liver_7/liver_8 原始 prediction mesh、2.0 mm feature-weighted simplification、0.4 mm SDF、physical spacing/origin/direction 复核均完成；mesh vertex-nearest error 只作为工程误差，不冒充分割临床指标。
+- Edge 实机已完成：`results-review` prediction MPR + uncertainty MPR；`research-3d` v13 liver_8 2.0 mm prediction WebGL（296,483 顶点 / 591,833 三角面）；SDF σ=0.4 mm WebGL（1,340,319 顶点 / 2,672,566 三角面）；GT/prediction 双来源切换正常。
+- test 隔离保持有效：`/api/research/cases` live API 仅暴露 liver_0～liver_8 共 9 例；截至本门禁记录，`liver_169` 在本轮锁参前没有被读取影像、prediction、entropy、metrics、3D 或 diagnostics。
+- 质量门禁：`pytest tests -q`=`138 passed`；`ruff check src web tests`=`All checks passed!`；`git diff --check` 无 error；`node --check web/frontend/research_3d.js` 通过。
+- validation 阶段提交 `2f333ba` 已 push 并确认 `HEAD == origin/main`；当前进入最终参数锁定：`lock parameters=YES`、`formal independent test ready=YES`，唯一锁参记录为 `docs/10_final_parameter_lock.md`。本锁参提交 push 并再次确认远端一致后，才允许首次正式访问 `liver_169`。
 
 ### 2.2 2026-08-29 FINAL FORMAL INDEPENDENT TEST
 
-- ΘöüσÅéµÅÉΣ║ñ∩╝Ü`eb0a824c34af4f7d900432e169759115f99a2687`∩╝ê`experiment: Θöüσ«Üµ£Çτ╗êτï¼τ½ïµ╡ïΦ»òσÅéµò░`∩╝ë∩╝îAuthor/Committer σ¥çΣ╕║ `927242768-dotcom <927242768@qq.com>`∩╝¢µ╡ïΦ»òσëìσ╖▓ push σ╣╢τí«Φ«ñ `HEAD == origin/main`πÇé
-- µ¡úσ╝Å test σÅ¬Φ┐ÉΦíîΣ╕Çµ¼í∩╝Ü`ctspine1k-msd-t10-liver_169`∩╝îΦ╛ôσç║τ¢«σ╜ò `experiments/final_independent_test_20260829_v13_locked_liver169`∩╝¢provenance µûçΣ╗╢µÿÄτí«µáçΦ«░Σ╕ìσ╛ùΘçìΦ╖æµêûµì« test Φ░âσÅéπÇé
-- Σ╜┐τö¿σ«îσà¿Θöüσ«ÜτÜä v13 config / `best.pt` / CT-only / Region+Boundary / softmax+argmax / refinement disabled∩╝¢formal preflight=`ready=true`πÇü0 error/0 warningπÇé
-- σî║σƒƒ/Φí¿Θ¥óµîçµáç∩╝ÜDice=`0.02878288`∩╝îIoU=`0.01460158`∩╝îPrecision=`0.02089816`∩╝îRecall=`0.04622219`∩╝îHD95=`136.8722 mm`∩╝îASSD=`43.97199 mm`πÇé
-- τ╗ôµ₧äµîçµáç∩╝Üprediction/GT foreground ratio=`2.21178├ù`∩╝îpred/target components=`236/1`∩╝îcomponent count error=`235`∩╝îfalse merge=`0`∩╝îfalse break=`29`πÇé
-- uncertainty∩╝ÜAUROC=`0.86424490`∩╝îAUPRC=`0.29665454`∩╝îTop-10% error recall=`0.54993443`∩╝¢calibration∩╝ÜECE=`0.02739661`∩╝îMCE=`0.08781999`∩╝îBrier=`0.08328483`∩╝îNLL=`0.23558760`∩╝îconfidence gap=`0.02739661`∩╝¢inference=`9.41277 s`πÇé
-- independent 3D∩╝ÜσÄƒσºï prediction mesh=`365,247` Θí╢τé╣ / `724,694` Θ¥ó∩╝¢2.0 mm + feature strength=8=`81,353` Θí╢τé╣ / `160,384` Θ¥ó∩╝îvertex reduction=`77.73%`∩╝îτ«Çσîûσ╖Ñτ¿ï ASSD/HD95=`0.56490/1.07159 mm`πÇé
-- SDF ╧â=0.4 mm∩╝Ücomponents=`236ΓåÆ236`πÇüpreserved=true∩╝îSDF-vs-original σ╖Ñτ¿ï ASSD/HD95=`0.02536/0.06367 mm`πÇé
-- prediction-vs-GT vertex-nearest engineering ASSD/HD95=`41.1398/131.8726 mm`∩╝¢prediction Σ╕Ä GT τÜä size/spacing/origin/direction σà¿Θâ¿Σ╕ÇΦç┤πÇéΦ»Ñσ╖Ñτ¿ï surface µò░σ¡ùΣ╕ìµ¢┐Σ╗úµ¡úσ╝Å segmentation HD95/ASSDπÇé
-- Web∩╝Ü`results-review` σ╖▓Φ»åσê½Φ»Ñ test evaluation∩╝¢prediction/uncertainty MPR API σ¥çΦ┐öσ¢₧ 200∩╝¢Edge `research-3d` σ╖▓τ£ƒσ«₧σèáΦ╜╜ independent 2.0 mm mesh Σ╕Ä SDF ╧â=0.4 mm WebGLπÇé
-- τºæτáöσêñµû¡∩╝Üµ¡úσ╝Å test τ╗ºτ╗¡Φ»üµÿÄσ╜ôσëìµ¿íσ₧ïτ╗¥σ»╣τ▓╛σ║ªΣ╜ÄπÇüfragmentation µÿÄµÿ╛∩╝¢µùáΦ«║ test µ»ö validation µƒÉΣ║¢Φí¿Θ¥óµîçµáçσÑ╜µêûσ¥Å∩╝îσ¥çΣ╕ìσàüΦ«╕σåìµ¼íΦ░â thresholdπÇürefinementπÇüsamplingπÇüaugmentationπÇüloss µêûµ¿íσ₧ïσÅéµò░πÇé
+- 锁参提交：`eb0a824c34af4f7d900432e169759115f99a2687`（`experiment: 锁定最终独立测试参数`），Author/Committer 均为 `927242768-dotcom <927242768@qq.com>`；测试前已 push 并确认 `HEAD == origin/main`。
+- 正式 test 只运行一次：`ctspine1k-msd-t10-liver_169`，输出目录 `experiments/final_independent_test_20260829_v13_locked_liver169`；provenance 文件明确标记不得重跑或据 test 调参。
+- 使用完全锁定的 v13 config / `best.pt` / CT-only / Region+Boundary / softmax+argmax / refinement disabled；formal preflight=`ready=true`、0 error/0 warning。
+- 区域/表面指标：Dice=`0.02878288`，IoU=`0.01460158`，Precision=`0.02089816`，Recall=`0.04622219`，HD95=`136.8722 mm`，ASSD=`43.97199 mm`。
+- 结构指标：prediction/GT foreground ratio=`2.21178×`，pred/target components=`236/1`，component count error=`235`，false merge=`0`，false break=`29`。
+- uncertainty：AUROC=`0.86424490`，AUPRC=`0.29665454`，Top-10% error recall=`0.54993443`；calibration：ECE=`0.02739661`，MCE=`0.08781999`，Brier=`0.08328483`，NLL=`0.23558760`，confidence gap=`0.02739661`；inference=`9.41277 s`。
+- independent 3D：原始 prediction mesh=`365,247` 顶点 / `724,694` 面；2.0 mm + feature strength=8=`81,353` 顶点 / `160,384` 面，vertex reduction=`77.73%`，简化工程 ASSD/HD95=`0.56490/1.07159 mm`。
+- SDF σ=0.4 mm：components=`236→236`、preserved=true，SDF-vs-original 工程 ASSD/HD95=`0.02536/0.06367 mm`。
+- prediction-vs-GT vertex-nearest engineering ASSD/HD95=`41.1398/131.8726 mm`；prediction 与 GT 的 size/spacing/origin/direction 全部一致。该工程 surface 数字不替代正式 segmentation HD95/ASSD。
+- Web：`results-review` 已识别该 test evaluation；prediction/uncertainty MPR API 均返回 200；Edge `research-3d` 已真实加载 independent 2.0 mm mesh 与 SDF σ=0.4 mm WebGL。
+- 科研判断：正式 test 继续证明当前模型绝对精度低、fragmentation 明显；无论 test 比 validation 某些表面指标好或坏，均不允许再次调 threshold、refinement、sampling、augmentation、loss 或模型参数。
 
-### 2.3 2026-08-29 µ£Çτ╗êµö╢σ░╛Θù¿τªü
+### 2.3 2026-08-29 最终收尾门禁
 
-- µ¡úσ╝Å independent test µ£¬ΘçìσñìΦ┐ÉΦíî∩╝¢µ£¼Φ╜«σÅ¬σñìτö¿σ╖▓σ¡ÿσ£¿τÜä metricsπÇüprediction/entropy Σ╕Ä 3D/Web Σ║ºτë⌐σ«îµêÉµûçµíúσÆîσ╖Ñτ¿ïΘ¬îµö╢πÇé
-- σ«₧Θ¬îΣ║ïσ«₧µÅÉΣ║ñ∩╝Ü`20311d8`∩╝ê`experiment: σ«îµêÉµ¡úσ╝Åτï¼τ½ïµ╡ïΦ»ò`∩╝ë∩╝¢Φ«║µûç/Σ╕¡µ£ƒµ¥ÉµûÖµÅÉΣ║ñ∩╝Ü`6f69d80`∩╝ê`docs: σÉîµ¡Ñµ¡úσ╝Åµ╡ïΦ»òΦ«║µûçΣ╕ÄΣ╕¡µ£ƒµ¥ÉµûÖ`∩╝ëπÇé
-- σ╜ôσëìµûçµíúσ╖▓µÿÄτí«σî║σêåµ¢┤µù⌐ 5-epoch pilot evaluation Σ╕Äµ£Çτ╗êΘöüσ«Ü v13 τÜä FINAL FORMAL INDEPENDENT TEST∩╝¢µùº pilot σÅ¬Σ╜£Σ╕║σÄåσÅ▓σ╖Ñτ¿ïΘô╛Φ»üµì«∩╝îΣ╕ìτö¿Σ║Ä v13 σÅéµò░ΘÇëµï⌐πÇé
-- µ£Çτ╗êσà¿ΘçÅΘù¿τªüΘçìµû░µëºΦíî∩╝Ü`pytest tests -q`=`138 passed`∩╝¢`ruff check src web tests`=`All checks passed!`∩╝¢`git diff --check` µùá error∩╝¢`node --check web/frontend/research_3d.js` ΘÇÜΦ┐çπÇé
-- σà¼σ╝ÇΣ╗ôσ║ô tracked-file µúÇµƒÑµ£¬σÅæτÄ░ DICOM/NIfTIπÇücheckpointπÇü`experiments/`πÇü`.venv/`πÇüWeb runtime µêû `third_party/SegFormer3D/` Φó½Φ╖ƒΦ╕¬∩╝¢σ╕╕Φºü private-key/token µ¿íσ╝ÅµûçΣ╗╢µë½µÅÅµùáσæ╜Σ╕¡∩╝¢σ╜ôσëìµ£Çσñº tracked µûçΣ╗╢τ║ª 248 KBπÇé
-- σ╜ôσëìΦ«║µûçΣ╕ÄΣ╕¡µ£ƒµ¥ÉµûÖσ¥çσªéσ«₧Σ┐¥τòÖ independent Dice=`0.02878` τÜäΣ╜ÄµÇºΦâ╜τ╗ôΦ«║∩╝¢µ£¬σí½σåÖµ£¬τ£ƒσ«₧Φ┐ÉΦíîτÜä nnU-Net/Residual-Encoder nnU-Net τ¡ëΦ╖¿µ₧╢µ₧äµîçµáç∩╝îΣ╣ƒµ£¬σ«úτº░Σ╕┤σ║èµÇºΦâ╜µêûτ╗ƒΦ«íµÿ╛ΦæùµÇºπÇé
-
----
-
-### 2.4 2026-09-16 CTSpine1K v6 σà¿Φºäµ¿íσ╝ÇσÅæΘÿ╢µ«╡
-
-- µ¡úσ╝ÅΣ╕╗τ║┐Σ┐¥µîü `SegFormer3D + HR 3D Decoder + CT shallow spatial branch`∩╝îµ▓íµ£ëµèè SegFormer3D Σ╗ÄΣ╕╗µû╣µíêΣ╕¡τº╗ΘÖñ∩╝¢`direct_plus_coarse` σ╖▓Σ╜£Σ╕║Φ╛âσ╝▒σ»╣τàºΣ┐¥τòÖπÇé
-- v6 τ┤ºσçæτ╝ôσ¡ÿσ╖▓τ╗Åσ«îµêÉ 807/807∩╝Ütrain610 + validation197 + test0∩╝îfailure=0∩╝¢`test_private` 198 Σ╛ïΣ╗ìµ£¬Φ»╗σÅûπÇüµ£¬τ╝ôσ¡ÿπÇüµ£¬σÅéΣ╕ÄΦ░âσÅéπÇé
-- 807 Σ╛ïσà¿ΘçÅ audit∩╝Ümissing=0πÇüQC bad=0πÇügeometry bad=0πÇüsuspicious HU=0∩╝¢cache CRC µáçσ┐ùσÆî image/label affine σ»╣Θ╜ÉµúÇµƒÑΘÇÜΦ┐çπÇé
-- σ╖▓Σ┐«σñì Windows σÄïτ╝⌐ NIfTI ΘÜÅµ£║ CRC / σ╝éσ╕╕µò░σÇ╝Φ»╗σÅûΘù«Θóÿ∩╝ÜΘóäσñäτÉåτ½»σèáσàÑτ¿│σ«ÜΦ»╗σÅûΣ╕Ä zlib sequential fallback∩╝îΦ«¡τ╗â dataset Σ╜┐τö¿ SimpleITK reader∩╝îσ╣╢Σ┐¥µîüσÄƒ XYZΓåÆDHW Φ»¡Σ╣ëπÇé
-- full-scale engineering preflight=`ready=true`∩╝îchecked=807∩╝îerror=0∩╝îwarning=0πÇé
-- σ╜ôσëì run∩╝Ü`experiments/20260916_163356_ctspine1k_v6_segformer3d_hr_full610_val197`∩╝¢σÅ¬Σ╗Ä stabilized pilot `best.pt` σèáΦ╜╜µ¿íσ₧ïµ¥âΘçì∩╝îoptimizer/scheduler freshπÇé
-- µê¬Φç│µ£¼µ¼í GitHub Θÿ╢µ«╡σ┐½τàº∩╝îepoch1ΓÇö6 validation patch Dice=`0.81320 ΓåÆ 0.82648 ΓåÆ 0.82718 ΓåÆ 0.84610 ΓåÆ 0.84539 ΓåÆ 0.85848`∩╝¢σ╜ôσëì best=`0.8584831380`∩╝îσ╖▓Φ╢àΦ┐ç pilot best=`0.8215395933`πÇéΦ»Ñµò░σÇ╝µÿ»σ╝ÇσÅæµ£ƒ fixed-patch selector∩╝îΣ╕ìµÿ» full-volume/µ£Çτ╗ê test τ╗ôµ₧£πÇé
-- checkpoint / resume Θô╛σ╖▓µá╕Θ¬î∩╝Ü`RUNNING.lock`πÇü`last.pt`πÇü`best.pt`πÇüoptimizerπÇüschedulerπÇüPython/NumPy/Torch RNG σ¥çσ¡ÿσ£¿∩╝¢auto-continue σ░åσ£¿Φ«¡τ╗âσ«îµêÉσÉÄµëºΦíî validation197 full-volume sliding-window evaluationπÇé
-- Σ╕ïΣ╕ÇΘù¿τªü∩╝ÜΦ«¡τ╗â/early-stop σ«îµêÉ ΓåÆ Θöüσ«Ü best.pt ΓåÆ validation197 full-volume ΓåÆ µ▒çµÇ╗σî║σƒƒ/Φí¿Θ¥ó/τ╗ôµ₧ä/per-case/worst-case µîçµáç∩╝¢σ«îµêÉσëìτªüµ¡óΦºªτó░ test198πÇé
-- Φ»ªτ╗åΦ«░σ╜ò∩╝Ü`docs/14_ctspine1k_v6_fullscale_stage_20260916.md`πÇé
+- 正式 independent test 未重复运行；本轮只复用已存在的 metrics、prediction/entropy 与 3D/Web 产物完成文档和工程验收。
+- 实验事实提交：`20311d8`（`experiment: 完成正式独立测试`）；论文/中期材料提交：`6f69d80`（`docs: 同步正式测试论文与中期材料`）。
+- 当前文档已明确区分更早 5-epoch pilot evaluation 与最终锁定 v13 的 FINAL FORMAL INDEPENDENT TEST；旧 pilot 只作为历史工程链证据，不用于 v13 参数选择。
+- 最终全量门禁重新执行：`pytest tests -q`=`138 passed`；`ruff check src web tests`=`All checks passed!`；`git diff --check` 无 error；`node --check web/frontend/research_3d.js` 通过。
+- 公开仓库 tracked-file 检查未发现 DICOM/NIfTI、checkpoint、`experiments/`、`.venv/`、Web runtime 或 `third_party/SegFormer3D/` 被跟踪；常见 private-key/token 模式文件扫描无命中；当前最大 tracked 文件约 248 KB。
+- 当前论文与中期材料均如实保留 independent Dice=`0.02878` 的低性能结论；未填写未真实运行的 nnU-Net/Residual-Encoder nnU-Net 等跨架构指标，也未宣称临床性能或统计显著性。
 
 ---
 
-## 3. σ╖▓Θ¬îΦ»üτÜäσà│Θö«µèÇµ£»Σ║ïσ«₧
+### 2.4 2026-09-16 CTSpine1K v6 全规模开发阶段
 
-### 3.1 Σ╕èµ╕╕ SegFormer3D
+- 正式主线保持 `SegFormer3D + HR 3D Decoder + CT shallow spatial branch`，没有把 SegFormer3D 从主方案中移除；`direct_plus_coarse` 已作为较弱对照保留。
+- v6 紧凑缓存已经完成 807/807：train610 + validation197 + test0，failure=0；`test_private` 198 例仍未读取、未缓存、未参与调参。
+- 807 例全量 audit：missing=0、QC bad=0、geometry bad=0、suspicious HU=0；cache CRC 标志和 image/label affine 对齐检查通过。
+- 已修复 Windows 压缩 NIfTI 随机 CRC / 异常数值读取问题：预处理端加入稳定读取与 zlib sequential fallback，训练 dataset 使用 SimpleITK reader，并保持原 XYZ→DHW 语义。
+- full-scale engineering preflight=`ready=true`，checked=807，error=0，warning=0。
+- 当前 run：`experiments/20260916_163356_ctspine1k_v6_segformer3d_hr_full610_val197`；只从 stabilized pilot `best.pt` 加载模型权重，optimizer/scheduler fresh。
+- 截至本次 GitHub 阶段快照，epoch1—6 validation patch Dice=`0.81320 → 0.82648 → 0.82718 → 0.84610 → 0.84539 → 0.85848`；当前 best=`0.8584831380`，已超过 pilot best=`0.8215395933`。该数值是开发期 fixed-patch selector，不是 full-volume/最终 test 结果。
+- checkpoint / resume 链已核验：`RUNNING.lock`、`last.pt`、`best.pt`、optimizer、scheduler、Python/NumPy/Torch RNG 均存在；auto-continue 将在训练完成后执行 validation197 full-volume sliding-window evaluation。
+- 下一门禁：训练/early-stop 完成 → 锁定 best.pt → validation197 full-volume → 汇总区域/表面/结构/per-case/worst-case 指标；完成前禁止触碰 test198。
+- 详细记录：`docs/14_ctspine1k_v6_fullscale_stage_20260916.md`。
 
-Σ╕èµ╕╕∩╝Ü`OSUPCVLab/SegFormer3D`∩╝îµ£¼σ£░τ¢«σ╜ò∩╝Ü
+---
+
+## 3. 已验证的关键技术事实
+
+### 3.1 上游 SegFormer3D
+
+上游：`OSUPCVLab/SegFormer3D`，本地目录：
 
 ```text
 third_party/SegFormer3D
 ```
 
-σ╜ôσëìΣ╕èµ╕╕σƒ║τ║┐µÅÉΣ║ñ∩╝Ü
+当前上游基线提交：
 
 ```text
 e314242
 ```
 
-τí«Φ«ñ∩╝Ü
+确认：
 
-- Θ¥óσÉæ 3D volumetric segmentation∩╝¢
-- σ¢¢Θÿ╢µ«╡σêåσ▒éπÇüσñÜσ░║σ║ª Transformer encoder∩╝¢
-- 3D patch embedding∩╝¢
-- spatial reduction attention∩╝¢
-- all-MLP decoder∩╝¢
-- σ«ÿµû╣τñ║Σ╛ïΣ╕╗ΦªüΣ╕║ BraTSπÇüSynapseπÇüACDC∩╝¢
-- σ«ÿµû╣ loss Σ╕╗ΦªüΣ╕║ CE/BCE/Dice/DiceCE∩╝¢
-- µ£¼Θí╣τ¢«µëÇΘ£Ç DICOM/HU/Θ¬¿τ¬ùπÇüBoundaryπÇüTopologyπÇüΣ╕ìτí«σ«ÜµÇºτ▓╛Σ┐«πÇüΣ╕ëτ╗┤/Web σ¥çσ▒₧Σ║ÄΘ£ÇΦªüΦç¬ΦíîΘÇéΘàì/µë⌐σ▒òτÜäΘâ¿σêå∩╝¢
-- Σ╕èµ╕╕Φ«╕σÅ»Φ»üΣ╕║ GPL-3.0∩╝îτ¼¼Σ╕ëµû╣Σ╗úτáüσ┐àΘí╗Σ┐¥τòÖµ¥Ñµ║ÉσÆîΦ«╕σÅ»Φ╛╣τòîπÇé
+- 面向 3D volumetric segmentation；
+- 四阶段分层、多尺度 Transformer encoder；
+- 3D patch embedding；
+- spatial reduction attention；
+- all-MLP decoder；
+- 官方示例主要为 BraTS、Synapse、ACDC；
+- 官方 loss 主要为 CE/BCE/Dice/DiceCE；
+- 本项目所需 DICOM/HU/骨窗、Boundary、Topology、不确定性精修、三维/Web 均属于需要自行适配/扩展的部分；
+- 上游许可证为 GPL-3.0，第三方代码必须保留来源和许可边界。
 
-### 3.2 Σ╕èµ╕╕µ£¼σ£░σà╝σ«╣ΦíÑΣ╕ü
+### 3.2 上游本地兼容补丁
 
-PyTorch 2.1 TorchScript σ»╝σàÑΣ╕èµ╕╕ `cube_root()` µù╢∩╝îΣ╝Üµèè `round(float)` ΦºåΣ╕║ float∩╝îΦÇîσç╜µò░Φ┐öσ¢₧µáçµ│¿Σ╕║ `int`∩╝îσ»╝Φç┤ import σñ▒Φ┤ÑπÇé
+PyTorch 2.1 TorchScript 导入上游 `cube_root()` 时，会把 `round(float)` 视为 float，而函数返回标注为 `int`，导致 import 失败。
 
-µ£¼σ£░Σ╗àσüÜΣ╗ÑΣ╕ïΦ»¡Σ╣ëΣ╕ìσÅÿσà╝σ«╣Σ┐«σñì∩╝Ü
+本地仅做以下语义不变兼容修复：
 
 ```python
 return int(round(n ** (1.0 / 3.0)))
 ```
 
-ΦíÑΣ╕üΣ╜ìτ╜«∩╝Ü
+补丁位置：
 
 ```text
 third_party/SegFormer3D/architectures/segformer3d.py
 ```
 
-ΦíÑΣ╕üΦ»┤µÿÄ∩╝Ü`third_party/README.md`πÇé
+补丁说明：`third_party/README.md`。
 
 ### 3.3 SegFormer3D smoke test
 
-σ£¿Θí╣τ¢« `.venv` τÜä PyTorch 2.1.0 CPU τÄ»σóâσ«îµêÉσëìσÉæ∩╝Ü
+在项目 `.venv` 的 PyTorch 2.1.0 CPU 环境完成前向：
 
 ```text
 input_shape  = (1, 1, 64, 64, 64)
@@ -212,12 +212,12 @@ output_shape = (1, 2, 64, 64, 64)
 params       = 4,492,066
 ```
 
-**Φ»Ñµ╡ïΦ»òσÅ¬Φ»┤µÿÄτ╜æτ╗£τ╗ôµ₧äπÇüΘÇéΘàìσÖ¿σÆîσ╜ôσëìΣ╛¥Φ╡ûσÅ»Σ╗ÑσëìσÉæΦ┐ÉΦíî∩╝îΣ╕ìΣ╗úΦí¿Σ╗╗Σ╜òσêåσë▓τ▓╛σ║ªπÇé**
+**该测试只说明网络结构、适配器和当前依赖可以前向运行，不代表任何分割精度。**
 
-### 3.4 σ╜ôσëìσ╝ÇσÅæτÄ»σóâ
+### 3.4 当前开发环境
 
 ```text
-Θí╣τ¢«σåà Python      3.11.7
+项目内 Python      3.11.7
 PyTorch            2.1.0+cpu
 MONAI              1.2.0
 pydicom            2.4.4
@@ -226,67 +226,67 @@ nibabel            5.1.0
 FastAPI            0.115.0
 Lightning          2.0.9
 PyTorch Lightning  2.0.9
-setuptools          80.9.0∩╝êΣ╕║ Lightning/pkg_resources σà╝σ«╣σ¢║σ«Ü <81∩╝ë
+setuptools          80.9.0（为 Lightning/pkg_resources 兼容固定 <81）
 ```
 
-`uv pip ... --dry-run` σ╜ôσëìµÿ╛τñ║Σ╛¥Φ╡ûΣ╕ÇΦç┤πÇüµùáΘ£ÇσÅÿµ¢┤πÇé
+`uv pip ... --dry-run` 当前显示依赖一致、无需变更。
 
-σ╜ôσëì Windows τ│╗τ╗ƒΣ╛ºµ▓íµ£ëµúÇµ╡ïσê░ `nvidia-smi`∩╝îσ╜ôσëì `.venv` µÿÄτí«Σ╕║ CPU PyTorchπÇéτÄ░µ£ë 10 Σ╛ï formal-pipeline pilot σ╖▓σ£¿µÿ╛σ╝Å `--allow-cpu` µ¥íΣ╗╢Σ╕ïσ«îµêÉΦ«¡τ╗âπÇüvalidation Σ╕Äσö»Σ╕ÇΣ╕Çµ¼íµ¡úσ╝Å independent test∩╝îσ¢áµ¡ñµùá NVIDIA GPU σ╖▓Σ╕ìσåìµÿ»σ╜ôσëìσ╖Ñτ¿ïΘù¡τÄ»τÜäµû╣µ│òσ¡ª blocker∩╝¢GPU Σ╗àΣ╜£Σ╕║σÉÄτ╗¡µë⌐σñºτùàΣ╛ïΦºäµ¿íπÇüΦ┐ÉΦíîΦ╖¿µ₧╢µ₧äσ╝║ baseline σÆîτ╝⌐τƒ¡Σ╕ëτ╗┤Φ«¡τ╗âσóÖΘÆƒµù╢Θù┤τÜäµòêτÄçσìçτ║ºΘí╣∩╝îGPU µÿ╛σ¡ÿµò░µì«σ£¿µ▓íµ£ëτ£ƒσ«₧Φ«╛σñçσëìτ╗ºτ╗¡Σ┐¥µîüµ£¬µèÑσæèπÇé
+当前 Windows 系统侧没有检测到 `nvidia-smi`，当前 `.venv` 明确为 CPU PyTorch。现有 10 例 formal-pipeline pilot 已在显式 `--allow-cpu` 条件下完成训练、validation 与唯一一次正式 independent test，因此无 NVIDIA GPU 已不再是当前工程闭环的方法学 blocker；GPU 仅作为后续扩大病例规模、运行跨架构强 baseline 和缩短三维训练墙钟时间的效率升级项，GPU 显存数据在没有真实设备前继续保持未报告。
 
-### 3.5 Φç¬σè¿σîûµ╡ïΦ»ò
+### 3.5 自动化测试
 
-µ£Çτ╗êµ£¼Φ╜«Θ¬îΦ»ü∩╝Ü
+最终本轮验证：
 
 ```text
 ruff check src web tests
-ΓåÆ All checks passed!
+→ All checks passed!
 
 pytest tests -q
-ΓåÆ 138 passed
+→ 138 passed
 
 JSON / BibTeX / frontend structural checks
-ΓåÆ data/datasets.json OK
-ΓåÆ configs/label_schemas/ctspine1k_verse.json OK
-ΓåÆ configs/task_specs/vertebra_task_template.json OK
-ΓåÆ paper/references.bib: 44 entries, brace balanced, duplicate key none
-ΓåÆ app.js / qc_review.js / research_3d.js / results_review.js: node --check OK
+→ data/datasets.json OK
+→ configs/label_schemas/ctspine1k_verse.json OK
+→ configs/task_specs/vertebra_task_template.json OK
+→ paper/references.bib: 44 entries, brace balanced, duplicate key none
+→ app.js / qc_review.js / research_3d.js / results_review.js: node --check OK
 
 PowerShell parser
-ΓåÆ σ╜ôσëì CI/µ£¼σ£░τ║│σàÑµúÇµƒÑτÜä PowerShell ΦäÜµ£¼Φ»¡µ│òσ¥çΘÇÜΦ┐ç
+→ 当前 CI/本地纳入检查的 PowerShell 脚本语法均通过
 ```
 
-µ╡ïΦ»òΦªåτ¢û∩╝Ü
+测试覆盖：
 
-- HU clip / normalize∩╝¢
-- bone window∩╝¢
-- DICOM µîëτë⌐τÉåσçáΣ╜òΣ╜ìτ╜«µÄÆσ║Å∩╝¢
-- NIfTI image/label τë⌐τÉåτ⌐║Θù┤Σ╕ÇΦç┤µÇºπÇünearest-neighbor µáçτ¡╛ΘçìΘççµá╖Σ╕ÄµáçσçåΦ╛ôσç║∩╝¢
-- VerSe CT/mask Φç¬σè¿Θàìσ»╣Σ╕Äσ«ÿµû╣ split Φ»åσê½∩╝¢
-- joint loss forward/backward∩╝¢
-- SegFormer3D adapter∩╝¢
-- Dice/IoU/HD95/ASSD∩╝¢
-- predictive entropy / uncertainty ROI / error AUROC/AUPRC / Top-percent σ«ÜΘçÅµîçµáç∩╝¢
-- calibration ECE/MCE/Brier/NLL/mean confidence/accuracy/confidence gap Σ╕Äσ¢║σ«Ü seed Σ╜ôτ┤áΘççµá╖∩╝¢
-- ROI-only refinement training / coarse freeze / error delta∩╝¢
-- formal/engineering preflight Σ╕Ä train/evaluate Θ╗ÿΦ«ñΣ┐¥µèñ∩╝¢
-- multiclass per-class Φ╛ôσç║Σ╕Äτ⌐║τ▒╗σê½σ«Åσ╣│σ¥çΘÿ▓ΦÖÜΘ½ÿ∩╝¢
-- Web health/index/MPR/QC reviewer/τ£ƒσÇ╝ overlay/τ£ƒσÇ╝ 3D/µ╡ïΘçÅ∩╝¢
-- Σ╕ëΦºåσ¢╛ / Θ¬¿τ¬ù / label overlay QC contact sheet∩╝¢
-- QC Σ║║σ╖Ñσ«íµá╕ CSV µ¿íµ¥┐∩╝¢
-- CTSpine1K σ«ÿµû╣ split Φºúµ₧ÉπÇüimage/label Θàìσ»╣πÇüµáçσçåσîûΣ╕ÄσÅ»ΘÇë QC∩╝¢
-- VerSe µë╣σñäτÉå `--qc` Θ¢åµêÉ∩╝¢
-- σÉêµêÉµáçσçåτùàΣ╛ï DatasetΓåÆSegFormer3DΓåÆlossΓåÆbackwardΓåÆAdamW.step∩╝¢
-- τ£ƒσ«₧ CTSpine1K σÅîΘÇÜΘüôσëìµÖ» patchΓåÆSegFormer3DΓåÆjoint lossΓåÆbackwardΓåÆAdamW.step∩╝¢
-- µò░µì«σó₧σ╝║πÇüschedulerπÇüτï¼τ½ï checkpoint evaluation∩╝¢
-- connected component/false merge/false break∩╝¢
-- maskΓåÆphysical-space meshπÇüNIfTIΓåÆPLYπÇüvertex-clustering τ«Çσîû∩╝¢
-- 10 Σ╛ï rawΓåÆ1 mm label ΘçìΘççµá╖ physical-surface σçáΣ╜òΦ»»σ╖«∩╝¢
-- SimpleITK Windows Σ╕¡µûçΘí╣τ¢«Φ╖»σ╛äσà╝σ«╣∩╝¢
-- CTSpine1K/VerSe µñÄΣ╜ôµáçτ¡╛ schema Σ╕Äτ£ƒσ«₧ Web/QC σÅ»Φ»╗µÿ╛τñ║πÇé
+- HU clip / normalize；
+- bone window；
+- DICOM 按物理几何位置排序；
+- NIfTI image/label 物理空间一致性、nearest-neighbor 标签重采样与标准输出；
+- VerSe CT/mask 自动配对与官方 split 识别；
+- joint loss forward/backward；
+- SegFormer3D adapter；
+- Dice/IoU/HD95/ASSD；
+- predictive entropy / uncertainty ROI / error AUROC/AUPRC / Top-percent 定量指标；
+- calibration ECE/MCE/Brier/NLL/mean confidence/accuracy/confidence gap 与固定 seed 体素采样；
+- ROI-only refinement training / coarse freeze / error delta；
+- formal/engineering preflight 与 train/evaluate 默认保护；
+- multiclass per-class 输出与空类别宏平均防虚高；
+- Web health/index/MPR/QC reviewer/真值 overlay/真值 3D/测量；
+- 三视图 / 骨窗 / label overlay QC contact sheet；
+- QC 人工审核 CSV 模板；
+- CTSpine1K 官方 split 解析、image/label 配对、标准化与可选 QC；
+- VerSe 批处理 `--qc` 集成；
+- 合成标准病例 Dataset→SegFormer3D→loss→backward→AdamW.step；
+- 真实 CTSpine1K 双通道前景 patch→SegFormer3D→joint loss→backward→AdamW.step；
+- 数据增强、scheduler、独立 checkpoint evaluation；
+- connected component/false merge/false break；
+- mask→physical-space mesh、NIfTI→PLY、vertex-clustering 简化；
+- 10 例 raw→1 mm label 重采样 physical-surface 几何误差；
+- SimpleITK Windows 中文项目路径兼容；
+- CTSpine1K/VerSe 椎体标签 schema 与真实 Web/QC 可读显示。
 
 ### 3.6 DICOM smoke test
 
-Σ╜┐τö¿ pydicom Φç¬σ╕ª `CT_small.dcm` σüÜσìòσêçτëçσñäτÉå∩╝îµêÉσèƒΦ╛ôσç║∩╝Ü
+使用 pydicom 自带 `CT_small.dcm` 做单切片处理，成功输出：
 
 ```text
 image_normalized.nii.gz
@@ -295,18 +295,18 @@ metadata.json
 qc.json
 ```
 
-Φ»Ñµá╖µ£¼Σ╗àµ£ë 1 Σ╕¬σêçτëç∩╝îpipeline µ¡úτí«τ╗Öσç║ warning∩╝¢σ¢áµ¡ñΦ┐ÖσÅ¬Φâ╜Θ¬îΦ»üΦ»╗σÅû/Φ╛ôσç║Θô╛Φ╖»∩╝î**Σ╕ìΦâ╜µ¢┐Σ╗úτ£ƒσ«₧σñÜσ▒é DICOM series τÜäσçáΣ╜òµÄÆσ║ÅσÆî spacing Θ¬îΦ»ü**πÇé
+该样本仅有 1 个切片，pipeline 正确给出 warning；因此这只能验证读取/输出链路，**不能替代真实多层 DICOM series 的几何排序和 spacing 验证**。
 
 ### 3.7 Web smoke test
 
-FastAPI `TestClient`∩╝Ü
+FastAPI `TestClient`：
 
 ```text
-GET /api/health ΓåÆ 200
-GET /            ΓåÆ 200 text/html
+GET /api/health → 200
+GET /            → 200 text/html
 ```
 
-σüÑσ║╖µÄÑσÅúσ╜ôσëìΦ┐öσ¢₧∩╝Ü
+健康接口当前返回：
 
 ```text
 research_only = true
@@ -314,11 +314,11 @@ inference_ready = false
 model_checkpoint_count = 0
 ```
 
-`/infer` σ£¿µ▓íµ£ëτ£ƒσ«₧ checkpoint µù╢µòàµäÅΦ┐öσ¢₧ `501 not_ready`∩╝îΘü┐σàìτö¿ΘÜÅµ£║µ¥âΘçìΣ╝¬ΘÇáΓÇ£Φ»èµû¡/σêåσë▓τ╗ôµ₧£ΓÇ¥πÇé
+`/infer` 在没有真实 checkpoint 时故意返回 `501 not_ready`，避免用随机权重伪造“诊断/分割结果”。
 
-### 3.8 σà¼σ╝Ç NIfTI / VerSe µÄÑσàÑΘ¬îΦ»ü
+### 3.8 公开 NIfTI / VerSe 接入验证
 
-2026-08-16 µû░σó₧∩╝Ü
+2026-08-16 新增：
 
 ```text
 src/preprocessing/nifti_pipeline.py
@@ -328,22 +328,22 @@ env/download_verse.ps1
 docs/06_public_dataset_onboarding.md
 ```
 
-σ╖▓Θ¬îΦ»ü∩╝Ü
+已验证：
 
-- σÉêµêÉ 3D CT + σñÜτ▒╗σê½ label σÅ»σ«îµêÉ 1 mm ΘçìΘççµá╖∩╝¢
-- image τö¿ linearπÇülabel τö¿ nearest-neighbor∩╝¢
-- σÄƒσºï image/label τÜä size/spacing/origin/direction Σ╕ìΣ╕ÇΦç┤µù╢τ¢┤µÄÑµïÆτ╗¥∩╝¢
-- label ΘçìΘççµá╖σÉÄΣ╕ìΣ╝ÜτöƒµêÉσÄƒµ£¼Σ╕ìσ¡ÿσ£¿τÜäτ▒╗σê½∩╝¢
-- VerSe σæ╜σÉìτÜä CT Σ╕Ä `seg-vert` mask Φâ╜Φç¬σè¿Σ╕ÇΣ╕ÇΘàìσ»╣∩╝¢
-- split Φ»åσê½σÅ¬µîëτ¢«σ╜òµ«╡τ▓╛τí«σî╣Θàì∩╝îΘü┐σàìΦ╖»σ╛äΣ╕¡σü╢τä╢σîàσÉ½ `test` τ¡ëσ¡ùτ¼ªΣ╕▓ΘÇáµêÉΦ»»σêñ∩╝¢
-- σÉî patient group Φ╖¿ source split µù╢Σ╝ÜµïÆτ╗¥τ╗ºτ╗¡∩╝¢
-- `download_verse.ps1` Θ╗ÿΦ«ñΣ╗àσ▒òτñ║Σ╕ïΦ╜╜Φ«íσêÆ∩╝îσ┐àΘí╗µÿ╛σ╝Åσèá `-Download` µëìΣ╝ÜΣ╕ïΦ╜╜σñºσ₧ïσ╜ÆµíúπÇé
+- 合成 3D CT + 多类别 label 可完成 1 mm 重采样；
+- image 用 linear、label 用 nearest-neighbor；
+- 原始 image/label 的 size/spacing/origin/direction 不一致时直接拒绝；
+- label 重采样后不会生成原本不存在的类别；
+- VerSe 命名的 CT 与 `seg-vert` mask 能自动一一配对；
+- split 识别只按目录段精确匹配，避免路径中偶然包含 `test` 等字符串造成误判；
+- 同 patient group 跨 source split 时会拒绝继续；
+- `download_verse.ps1` 默认仅展示下载计划，必须显式加 `-Download` 才会下载大型归档。
 
-VerSe/TotalSegmentator Σ╗ìσ▒₧Σ║Äσ╖Ñτ¿ïΘô╛Φ╖»Θ¬îΦ»ü∩╝¢CTSpine1K σ╖▓Σ║Ä 2026-08-16 σ«₧ΘÖàΦÉ╜τ¢ÿ `MSD-T10` 10 Σ╕¬ CT+label∩╝Ü`liver_0`ΓÇö`liver_8`πÇü`liver_169`πÇéσ«ÿµû╣ split Σ╕║ 9 Σ╛ï `trainset` + 1 Σ╛ï `test_private`∩╝¢10 Σ╛ïσ╖▓σ«îµêÉ pipeline 0.3.0 µáçσçåσîûπÇücontact sheet σÆîΦç¬σè¿σ«íΦ«íπÇéΦ»Ñµû╣Σ╛┐σ¡ÉΘ¢åτö¿Σ║Äτ£ƒσ«₧σ╖Ñτ¿ï/QC∩╝îΣ╕ìτ¡ëσÉîΣ║Äµ¡úσ╝ÅΦ«║µûç splitπÇé
+VerSe/TotalSegmentator 仍属于工程链路验证；CTSpine1K 已于 2026-08-16 实际落盘 `MSD-T10` 10 个 CT+label：`liver_0`—`liver_8`、`liver_169`。官方 split 为 9 例 `trainset` + 1 例 `test_private`；10 例已完成 pipeline 0.3.0 标准化、contact sheet 和自动审计。该方便子集用于真实工程/QC，不等同于正式论文 split。
 
-### 3.9 CTSpine1K σñçτö¿µÄÑσàÑΣ╕ÄΣ║║σ╖Ñ QC σ╖Ñσà╖
+### 3.9 CTSpine1K 备用接入与人工 QC 工具
 
-2026-08-16 Φ┐¢Σ╕Çµ¡ÑΦíÑΘ╜Éσ╜ôσëìτ╜æτ╗£Θÿ╗σí₧Σ╕ïτÜäσñçτö¿Θô╛Φ╖»∩╝Ü
+2026-08-16 进一步补齐当前网络阻塞下的备用链路：
 
 ```text
 env/download_ctspine1k_sample.ps1
@@ -351,126 +351,126 @@ src/preprocessing/prepare_ctspine1k.py
 src/preprocessing/qc_visualization.py
 ```
 
-σ╖▓Θ¬îΦ»ü∩╝Ü
+已验证：
 
-- CTSpine1K Hugging Face Θò£σâÅτÜä `raw_data/volumes/<sub-dataset>` Σ╕Ä `raw_data/labels/<sub-dataset>` τ╗ôµ₧äσÅ»τö¿Σ║ÄµîëτùàΣ╛ïΘàìσ»╣∩╝¢
-- Θ╗ÿΦ«ñΣ╕ïΦ╜╜Φ«íσêÆΣ╗àσêùσç║ `MSD-T10` τÜä `liver_169`πÇü`liver_0`πÇü`liver_1` Σ╕ëΣ╕¬σ░Åµá╖µ£¼σÅèσ»╣σ║ö label∩╝îΣ╕ìµÿ╛σ╝Å `-Download` Σ╕ìΣ╝ÜΣ╕ïΦ╜╜∩╝¢
-- `prepare_ctspine1k` Φâ╜Φºúµ₧Éσ«ÿµû╣ `data_split.txt` Σ╕¡ `trainset / test_public / test_private` µáçΦ«░∩╝îΣ╜åΣ╕ìΣ╝ÜµôàΦç¬ΘçìΦºúΘçèΣ╕║ validation/test∩╝¢
-- VerSe Σ╕Ä CTSpine1K µë╣σñäτÉåσ¥çσÅ»Σ╜┐τö¿ `--qc` τöƒµêÉΘÇÉΣ╛ï `qc_contact_sheet.png`∩╝¢
-- `qc_visualization` σÅ»µë╣ΘçÅτöƒµêÉ/σê╖µû░ QC σ¢╛∩╝îσ╣╢Φ╛ôσç║ `manual_qc_review.csv` Σ╕Ä `qc_visualization_summary.json`∩╝¢
-- σÉêµêÉ NIfTI σ╖▓Θ¬îΦ»üσëìµÖ»µáçτ¡╛Θ⌐▒σè¿τÜäΣ╕ëΦºåσ¢╛ΘÇëσ▒éπÇüΘ¬¿τ¬ùµÿ╛τñ║πÇülabel overlay Σ╕Äµë╣ΘçÅσ«íµá╕µ╕àσìòτöƒµêÉ∩╝¢
-- τ£ƒσ«₧ 10 Σ╛ïσ╖▓τöƒµêÉ contact sheet∩╝¢2026-08-26 σ╖▓σñìµá╕ `manual_qc_review.csv`∩╝î10/10 orientation/spacing/label alignment/bone-window σ¥çΣ╕║ `yes`∩╝î10/10 `review_status=pass`∩╝îreviewer σ╖▓σí½σåÖ∩╝¢
-- `audit_processed` σ»╣ 10 Σ╛ï pipeline/spacing/geometry/label/normalization Φç¬σè¿σ«íΦ«í∩╝Ü10/10 pass∩╝¢
-- τ£ƒσ«₧τùàΣ╛ïσÄƒσºï z-spacing Φªåτ¢ûτ║ª 0.8 / 1.0 / 5.0 mm∩╝îΘçìΘççµá╖σÉÄσ¥çΣ╕║ 1 mmπÇé
+- CTSpine1K Hugging Face 镜像的 `raw_data/volumes/<sub-dataset>` 与 `raw_data/labels/<sub-dataset>` 结构可用于按病例配对；
+- 默认下载计划仅列出 `MSD-T10` 的 `liver_169`、`liver_0`、`liver_1` 三个小样本及对应 label，不显式 `-Download` 不会下载；
+- `prepare_ctspine1k` 能解析官方 `data_split.txt` 中 `trainset / test_public / test_private` 标记，但不会擅自重解释为 validation/test；
+- VerSe 与 CTSpine1K 批处理均可使用 `--qc` 生成逐例 `qc_contact_sheet.png`；
+- `qc_visualization` 可批量生成/刷新 QC 图，并输出 `manual_qc_review.csv` 与 `qc_visualization_summary.json`；
+- 合成 NIfTI 已验证前景标签驱动的三视图选层、骨窗显示、label overlay 与批量审核清单生成；
+- 真实 10 例已生成 contact sheet；2026-08-26 已复核 `manual_qc_review.csv`，10/10 orientation/spacing/label alignment/bone-window 均为 `yes`，10/10 `review_status=pass`，reviewer 已填写；
+- `audit_processed` 对 10 例 pipeline/spacing/geometry/label/normalization 自动审计：10/10 pass；
+- 真实病例原始 z-spacing 覆盖约 0.8 / 1.0 / 5.0 mm，重采样后均为 1 mm。
 
-τ╜æτ╗£τè╢µÇüσ╖▓σÅæτöƒσÅÿσîû∩╝ÜVerSe S3 Σ╗ìµ£¬Θ¬îΦ»üµüóσñì∩╝¢CTSpine1K Hugging Face σêÖΘÇÜΦ┐çµ╡ÅΦºêσÖ¿**σìòµûçΣ╗╢Θí║σ║ÅΣ╕ïΦ╜╜**µêÉσèƒσ«îµêÉ 10 Σ╛ïπÇéσ╣╢ΦíîΦ»╖µ▒éµ¢╛Σ║ºτöƒ `µùáµ│òΣ╕ïΦ╜╜`∩╝î`liver_3/5/8` Θí║σ║ÅΘçìΦ»òσÉÄµêÉσèƒπÇéµÄÑτ«íσê░Θí╣τ¢«τÜäµûçΣ╗╢µëºΦíî SHA-256 µ║É/τ¢«µáçΣ╕ÇΦç┤µÇºµúÇµƒÑπÇéσ╜ôσëì 10 Σ╛ï pilot τÜäΣ╗╗σèíΘöüσ«ÜπÇüΣ║║σ╖Ñ QCπÇü7/2/1 splitπÇüvalidation µ╢êΦ₧ìπÇüσÅéµò░Θöüσ«ÜΣ╕Äσö»Σ╕ÇΣ╕Çµ¼í independent test σ¥çσ╖▓σ«îµêÉ∩╝¢τ£ƒµ¡úσë⌐Σ╜ÖτÜäτºæτáöτ╝║σÅúµÿ»µë⌐σñºτùàΣ╛ïΦºäµ¿íπÇüσ╝║ baselineπÇüσ¢░ΘÜ╛τùàΣ╛ïµ¡úσ╝Åσêåσ▒éπÇüσÉêµ│òΣ╕┤σ║è/σñÜΣ╕¡σ┐âΘ¬îΦ»üτ¡ëσñûΘâ¿µêûµû░σó₧σ«₧Θ¬îµ¥íΣ╗╢πÇé
+网络状态已发生变化：VerSe S3 仍未验证恢复；CTSpine1K Hugging Face 则通过浏览器**单文件顺序下载**成功完成 10 例。并行请求曾产生 `无法下载`，`liver_3/5/8` 顺序重试后成功。接管到项目的文件执行 SHA-256 源/目标一致性检查。当前 10 例 pilot 的任务锁定、人工 QC、7/2/1 split、validation 消融、参数锁定与唯一一次 independent test 均已完成；真正剩余的科研缺口是扩大病例规模、强 baseline、困难病例正式分层、合法临床/多中心验证等外部或新增实验条件。
 
 ---
 
-## 4. τ¼¼Σ╕ÇτëêµèÇµ£»µû╣µíê∩╝êσ╜ôσëìµëºΦíîσƒ║τ║┐∩╝ë
+## 4. 第一版技术方案（当前执行基线）
 
-### 4.1 µò░µì«µ╡üτ¿ï
+### 4.1 数据流程
 
 ```text
 DICOM/NIfTI
-ΓåÆ µò░µì«µÄêµ¥â/Φä▒µòÅµúÇµƒÑ
-ΓåÆ Study/Series Φ»åσê½
-ΓåÆ IOP/IPP σçáΣ╜òµÄÆσ║ÅΣ╕Ä QC
-ΓåÆ HU µüóσñì/σ╝║σ║ªτ╗ƒΦ«í
-ΓåÆ orientation τ╗ƒΣ╕Ç
-ΓåÆ spacing ΘçìΘççµá╖
-ΓåÆ HU clip + normalize
-ΓåÆ bone-window ΘÇÜΘüô
-ΓåÆ label σÉîµ¡Ñ nearest-neighbor ΘçìΘççµá╖
-ΓåÆ metadata.json + qc.json + NIfTI cache
-ΓåÆ patient-level split
+→ 数据授权/脱敏检查
+→ Study/Series 识别
+→ IOP/IPP 几何排序与 QC
+→ HU 恢复/强度统计
+→ orientation 统一
+→ spacing 重采样
+→ HU clip + normalize
+→ bone-window 通道
+→ label 同步 nearest-neighbor 重采样
+→ metadata.json + qc.json + NIfTI cache
+→ patient-level split
 ```
 
-σ╜ôσëìΘçìΘççµá╖ `1.0├ù1.0├ù1.0 mm`πÇüHU clip `[-1000, 2000]`πÇübone window center/width `500/2000` Σ╗àΣ╕║**σ«₧Θ¬îσê¥σºïΘàìτ╜«**∩╝îΣ╕ìµÿ»ΘóäσàêΦ«ñσ«ÜτÜäµ£ÇΣ╜│Σ╕┤σ║èσÅéµò░∩╝îσ┐àΘí╗ΘÇÜΦ┐çσà╖Σ╜ôΘâ¿Σ╜ìµò░µì«τ╗ƒΦ«íσÆîµ╢êΦ₧ìτí«σ«ÜπÇé
+当前重采样 `1.0×1.0×1.0 mm`、HU clip `[-1000, 2000]`、bone window center/width `500/2000` 仅为**实验初始配置**，不是预先认定的最佳临床参数，必须通过具体部位数据统计和消融确定。
 
-### 4.2 µ¿íσ₧ïσ«₧Θ¬îΘí║σ║Å
+### 4.2 模型实验顺序
 
-σ┐àΘí╗ΘÇÉΘí╣Θ¬îΦ»ü∩╝îτªüµ¡óΣ╕Çµ¼íσáåµ╗íµ¿íσ¥ùσÉÄµùáµ│òΦºúΘçèµö╢τ¢è∩╝Ü
+必须逐项验证，禁止一次堆满模块后无法解释收益：
 
-1. `B1`∩╝ÜSegFormer3D + σìòµáçσçåσîû CT + Region loss∩╝¢
-2. `B2`∩╝ÜCT + bone-window σÅîΘÇÜΘüô∩╝¢
-3. `L1`∩╝ÜRegion + Boundary∩╝¢
-4. `L2`∩╝ÜRegion + Topology∩╝¢
-5. `L3`∩╝ÜRegion + Boundary + Topology∩╝¢
-6. `H`∩╝ÜσèáσàÑσ¢░ΘÜ╛µá╖µ£¼σó₧σ╝║/hard sampling∩╝¢
-7. `U`∩╝ÜσèáσàÑ uncertainty map Σ╕Ä ROI refinement∩╝¢
-8. σñûΘâ¿µò░µì«/µ¥Ñµ║Éµ│¢σîû∩╝¢
-9. σñ▒Φ┤ÑτùàΣ╛ïσÆîσ¢░ΘÜ╛σ¡ÉΘ¢åσêåµ₧ÉπÇé
+1. `B1`：SegFormer3D + 单标准化 CT + Region loss；
+2. `B2`：CT + bone-window 双通道；
+3. `L1`：Region + Boundary；
+4. `L2`：Region + Topology；
+5. `L3`：Region + Boundary + Topology；
+6. `H`：加入困难样本增强/hard sampling；
+7. `U`：加入 uncertainty map 与 ROI refinement；
+8. 外部数据/来源泛化；
+9. 失败病例和困难子集分析。
 
-ΦüöσÉêµìƒσñ▒∩╝Ü
+联合损失：
 
 ```text
-L_total = ╬╗_region┬╖L_DiceCE
-        + ╬╗_boundary┬╖L_boundary
-        + ╬╗_topology┬╖L_topology
+L_total = λ_region·L_DiceCE
+        + λ_boundary·L_boundary
+        + λ_topology·L_topology
 ```
 
-µ¥âΘçìσÅ¬σ£¿ validation Σ╕èΘÇëµï⌐∩╝îΣ╕ìτö¿ test σÅìσñìΦ░âσÅéπÇé
+权重只在 validation 上选择，不用 test 反复调参。
 
-### 4.3 µïôµëæτ║ªµ¥ƒτÜäσî╗σ¡ªΣ╛ïσñû
+### 4.3 拓扑约束的医学例外
 
-soft-clDice σÅ¬µÿ»ΘªûΣ╕¬σÇÖΘÇë∩╝îσ╣╢Θ¥₧ΓÇ£Θ¬¿τ╗ôµ₧äσ┐àτä╢µ£ëµòêΓÇ¥πÇéσ░ñσà╢σ»╣Σ║ÄΘ¬¿µèÿ∩╝Ü
+soft-clDice 只是首个候选，并非“骨结构必然有效”。尤其对于骨折：
 
-- τ£ƒσÇ╝Σ╕¡τÜäµû¡ΦúéσÅ»Φâ╜µÿ»τ£ƒσ«₧τùàτÉåτè╢µÇü∩╝¢
-- σªéµ₧£ topology loss σ╝║Φíîµèèµû¡τ½»Φ┐₧µÄÑ∩╝îσÅìΦÇîΣ╝ÜΣ║ºτöƒΣ╕┤σ║èΘöÖΦ»»∩╝¢
-- σ¢áµ¡ñΘ£ÇΦªüµÖ«ΘÇÜτùàΣ╛ï/Θ¬¿µèÿτùàΣ╛ïσêåσ▒éΦ»äΣ╗╖∩╝¢
-- σªéσ╝Çσ▒òσñÜµñÄΣ╜ô/σñÜΘ¬¿Σ╗╗σèí∩╝îσÅ»Φ┐¢Σ╕Çµ¡ÑΦ»äΣ╝░ Betti matching / persistent-homology τ▒╗µû╣µ│òπÇé
+- 真值中的断裂可能是真实病理状态；
+- 如果 topology loss 强行把断端连接，反而会产生临床错误；
+- 因此需要普通病例/骨折病例分层评价；
+- 如开展多椎体/多骨任务，可进一步评估 Betti matching / persistent-homology 类方法。
 
-### 4.4 Web Θÿ╢µ«╡Φ╖»τ║┐
+### 4.4 Web 阶段路线
 
-σ╜ôσëìσ╖▓σ«îµêÉτºæτáöσñìµá╕Σ╕╗Θô╛∩╝Ü
+当前已完成科研复核主链：
 
 ```text
-Σ╕èΣ╝á / τ£ƒσ«₧τùàΣ╛ï QC
-ΓåÆ axial/coronal/sagittal MPR + label/prediction overlay
-ΓåÆ predictive-entropy / uncertainty overlay
-ΓåÆ evaluation results-review
-ΓåÆ prediction / GT physical-space mesh
-ΓåÆ 2.0 mm feature-weighted simplification / 0.4 mm SDF
-ΓåÆ WebGL2 3D σêçµìóΣ╕ÄΦ╖¥τª╗/ΦºÆσ║ªµ╡ïΘçÅ
+上传 / 真实病例 QC
+→ axial/coronal/sagittal MPR + label/prediction overlay
+→ predictive-entropy / uncertainty overlay
+→ evaluation results-review
+→ prediction / GT physical-space mesh
+→ 2.0 mm feature-weighted simplification / 0.4 mm SDF
+→ WebGL2 3D 切换与距离/角度测量
 ```
 
-validation Σ╕Äµ¡úσ╝Å independent evaluation τÜäσ╖▓Σ┐¥σ¡ÿ prediction / entropy / mesh / SDF σ¥çσ╖▓Φó½ Web σ«₧µ£║Φ»╗σÅû∩╝¢τºæτáöσ▒òτñ║Σ╕ìΘÇÜΦ┐çΣ╕┤µù╢ `/infer` ΘçìΦ╖æµ£Çτ╗êµ¿íσ₧ïπÇéσÉÄτ╗¡ Web σ╖ÑΣ╜£σÅ¬σ▒₧Σ║Äµÿôτö¿µÇºπÇüµ¢┤σñÜτùàΣ╛ïΣ╕ÄσñûΘâ¿Θ¬îΦ»üσ£║µÖ»τÜäµë⌐σ▒ò∩╝îΣ╕ìσåìµèèσ╖▓σ«îµêÉτÜä prediction/uncertainty/3D µÄÑσàÑσêùΣ╕║σ╜ôσëìτ╝║Θí╣πÇé
+validation 与正式 independent evaluation 的已保存 prediction / entropy / mesh / SDF 均已被 Web 实机读取；科研展示不通过临时 `/infer` 重跑最终模型。后续 Web 工作只属于易用性、更多病例与外部验证场景的扩展，不再把已完成的 prediction/uncertainty/3D 接入列为当前缺项。
 
-τ╜æτ½Öσ«ÜΣ╜ìσºïτ╗êΣ╕║**τºæτáö/Φ╛àσè⌐σêåµ₧ÉσÄƒσ₧ï**∩╝îσ£¿µ▓íµ£ëσî╗τûùσÖ¿µó░σÉêΦºäΣ╕ÄΣ╕┤σ║èΘ¬îΦ»üσëì∩╝îΣ╕ìσåÖΓÇ£Φç¬σè¿Φ»èµû¡τû╛τùàΓÇ¥µêûµ¢┐Σ╗úσî╗τöƒτ╗ôΦ«║πÇé
+网站定位始终为**科研/辅助分析原型**，在没有医疗器械合规与临床验证前，不写“自动诊断疾病”或替代医生结论。
 
 ---
 
-## 5. µûçτî«Φ░âτáöσ╜ôσëìτ╗ôΦ«║
+## 5. 文献调研当前结论
 
-`docs/02_literature_survey.md` σ╖▓µò┤τÉåΘªûµë╣σ¢╜σåàσñûσ╖ÑΣ╜£∩╝îΣ╕╗Φªüσîàµï¼∩╝Ü
+`docs/02_literature_survey.md` 已整理首批国内外工作，主要包括：
 
-- SegFormer / SegFormer3D∩╝¢
-- UNETR / nnFormer / Swin UNETR∩╝¢
-- CTSpine1K∩╝¢
-- VerSe 2019/2020∩╝¢
-- TotalSegmentator∩╝¢
-- VerFormer 2024∩╝¢
-- Boundary Loss∩╝¢
-- clDice∩╝¢
-- 2024 σñÜτ▒╗σê½ Betti matching∩╝¢
-- TEDS-Net 2024∩╝¢
-- EDUE 2024∩╝¢
-- UCTNet 2024∩╝¢
-- σ¢╜σåàΦéïΘ¬¿ CT Σ╕ëτ╗┤σêåσë▓Σ╕ÄΣ╕ëτ╗┤Θçìτ╗äτáöτ⌐╢∩╝¢
-- σ¢╜σåàµñÄΣ╜ôΦ╜¼τº╗τÿñ CT 2D/3D U-Net/ResUNet σ»╣µ»öτáöτ⌐╢πÇé
+- SegFormer / SegFormer3D；
+- UNETR / nnFormer / Swin UNETR；
+- CTSpine1K；
+- VerSe 2019/2020；
+- TotalSegmentator；
+- VerFormer 2024；
+- Boundary Loss；
+- clDice；
+- 2024 多类别 Betti matching；
+- TEDS-Net 2024；
+- EDUE 2024；
+- UCTNet 2024；
+- 国内肋骨 CT 三维分割与三维重组研究；
+- 国内椎体转移瘤 CT 2D/3D U-Net/ResUNet 对比研究。
 
-σ╜ôσëìΦ«║µûçσêçσàÑτé╣σ╗║Φ««Σ┐¥µîüΣ╕║∩╝Ü
+当前论文切入点建议保持为：
 
-**ΓÇ£Θ¥óσÉæΘ¬¿τºæ CT τÜäΦ╜╗ΘçÅ 3D SegFormer∩╝Üµáçσçåσîû/Θ¬¿τ¬ùσñÜσ░║σ║ªΦ╛ôσàÑ + σî║σƒƒΓÇöΦ╛╣τòîΓÇöµïôµëæΦüöσÉêτ║ªµ¥ƒ + σ¢░ΘÜ╛µá╖µ£¼σ¡ªΣ╣á + Σ╕ìτí«σ«ÜµÇºΘ⌐▒σè¿σ▒ÇΘâ¿τ▓╛Σ┐«∩╝îσ╣╢Θ¬îΦ»üσà╢σ»╣Σ╕ëτ╗┤Θçìσ╗║µëÇσà│σ┐âτÜäΦí¿Θ¥óΦ┤¿ΘçÅσÆîτ╗ôµ₧äΘöÖΦ»»τÜäσ╜▒σôìπÇéΓÇ¥**
+**“面向骨科 CT 的轻量 3D SegFormer：标准化/骨窗多尺度输入 + 区域—边界—拓扑联合约束 + 困难样本学习 + 不确定性驱动局部精修，并验证其对三维重建所关心的表面质量和结构错误的影响。”**
 
-Σ╕ìΦâ╜µèèΓÇ£Θªûµ¼íΣ╜┐τö¿µ╖▒σ║ªσ¡ªΣ╣á/Θªûµ¼íΣ╜┐τö¿ Transformer σüÜΘ¬¿σêåσë▓ΓÇ¥Σ╜£Σ╕║σê¢µû░Φí¿Φ┐░∩╝¢τÄ░µ£ëµûçτî«σ╖▓τ╗Åσ¡ÿσ£¿σñºΘçÅτ¢╕σà│σ╖ÑΣ╜£πÇé
+不能把“首次使用深度学习/首次使用 Transformer 做骨分割”作为创新表述；现有文献已经存在大量相关工作。
 
 ---
 
-## 6. Φ«║µûçσ╜ôσëìτè╢µÇü
+## 6. 论文当前状态
 
-Φ«║µûçµûçΣ╗╢∩╝Ü
+论文文件：
 
 ```text
 paper/outline.md
@@ -478,891 +478,891 @@ paper/manuscript_zh_v0.1.md
 paper/references.bib
 ```
 
-σ╖▓σ«îµêÉ∩╝Ü
+已完成：
 
-- τáöτ⌐╢Θù«ΘóÿπÇüIntroductionπÇüRelated WorkπÇüMethods Σ╕Ä Experiment Design Σ╕╗Σ╜ô∩╝¢
-- µò░µì«µáçσçåσîûπÇüSegFormer3DπÇüΦüöσÉêµìƒσñ▒πÇüσ¢░ΘÜ╛µá╖µ£¼πÇüuncertainty/calibrationπÇüROI refinementπÇüphysical-space mesh / SDF Σ╕Ä Web τºæτáöσñìµá╕µû╣µ│òµÅÅΦ┐░∩╝¢
-- 44 µ¥íτ╗ôµ₧äσîûµûçτî«τƒ⌐Θÿ╡ + 44 µ¥íµ£║σÖ¿σÅ»τö¿ BibTeX∩╝ê42 µ¥íΦï▒µûçµá╕σ┐â + 2 µ¥íσ╖▓µá╕Θ¬îΣ╕¡µûçµûçτî«∩╝ë∩╝¢
-- v11∩╜₧v23 validation µ╢êΦ₧ìτÜäτ£ƒσ«₧τ╗ôµ₧£µò┤τÉå∩╝¢
-- v13 µ£Çτ╗ê validation Σ╕╗τ╗ôµ₧£πÇüuncertainty/calibrationπÇü`REFINEMENT=FAIL`πÇü3D/SDF/Web σ╖Ñτ¿ïτ╗ôµ₧£∩╝¢
-- µ£Çτ╗êΘöüσ«ÜσìÅΦ««Σ╕ïσö»Σ╕ÇΣ╕Çµ¼í `liver_169` independent test τÜä Results∩╝¢
-- DiscussionπÇüFailure CasesπÇüLimitations Σ╕Ä Conclusion∩╝¢
-- µ¡úµûçΘí║σ║Åσ╝òτö¿σ╖▓σ╝Çσºïτ╗ƒΣ╕Ç∩╝îσ╣╢Σ╕Äσ╜ôσëìσÅéΦÇâµûçτî«τ╝ûσÅ╖σ»╣σ║öπÇé
+- 研究问题、Introduction、Related Work、Methods 与 Experiment Design 主体；
+- 数据标准化、SegFormer3D、联合损失、困难样本、uncertainty/calibration、ROI refinement、physical-space mesh / SDF 与 Web 科研复核方法描述；
+- 44 条结构化文献矩阵 + 44 条机器可用 BibTeX（42 条英文核心 + 2 条已核验中文文献）；
+- v11～v23 validation 消融的真实结果整理；
+- v13 最终 validation 主结果、uncertainty/calibration、`REFINEMENT=FAIL`、3D/SDF/Web 工程结果；
+- 最终锁定协议下唯一一次 `liver_169` independent test 的 Results；
+- Discussion、Failure Cases、Limitations 与 Conclusion；
+- 正文顺序引用已开始统一，并与当前参考文献编号对应。
 
-σ╜ôσëì Results σ╖▓µ£ëσÅ»Φ┐╜µ║»τ£ƒσ«₧µò░σ¡ù∩╝îΣ╕ìσåìµÿ» TBDπÇéσ¢╜σåàΣ╕¡µûçΘóÿσ╜òσ╖▓σ«îµêÉσ╜ôσëìΘÿ╢µ«╡Σ╕Çµëïµò░µì«σ║ô/µ£ƒσêèΘí╡µá╕Θ¬î∩╝¢Σ╗ìµ£¬σ«îµêÉΣ╕öΣ╕ìσ╛ùΣ╝¬ΘÇáτÜäΘâ¿σêåσîàµï¼∩╝Üµë⌐σñºµá╖µ£¼σÉÄτÜäΣ╕╗σ«₧Θ¬îπÇüτ£ƒσ«₧Φ╖¿µ₧╢µ₧äσ╝║ baselineπÇümetal/fracture/low-density µ¡úσ╝Å subgroupπÇüσÉêµ│òΣ╕┤σ║è/σñÜΣ╕¡σ┐âΘ¬îΦ»üπÇüτ╗ƒΦ«íµÿ╛ΦæùµÇº∩╝îΣ╗ÑσÅèτ¢«µáçµ£ƒσêè/σ¡ªµáíµ¿íµ¥┐τí«σ«ÜσÉÄτÜäµ£Çτ╗êµá╝σ╝Åσ«Üτ¿┐πÇé
+当前 Results 已有可追溯真实数字，不再是 TBD。国内中文题录已完成当前阶段一手数据库/期刊页核验；仍未完成且不得伪造的部分包括：扩大样本后的主实验、真实跨架构强 baseline、metal/fracture/low-density 正式 subgroup、合法临床/多中心验证、统计显著性，以及目标期刊/学校模板确定后的最终格式定稿。
 
 ---
 
-## 7. σà│Θö«µûçΣ╗╢τ┤óσ╝ò
+## 7. 关键文件索引
 
-| µûçΣ╗╢/τ¢«σ╜ò | τö¿ΘÇö | σ╜ôσëìτè╢µÇü |
+| 文件/目录 | 用途 | 当前状态 |
 |---|---|---|
-| `PROJECT_STATUS.md` | σö»Σ╕ÇΣ╕╗Φ┐¢σ║ªσÅ░Φ┤ª/Σ║ñµÄÑσàÑσÅú | Γ£à |
-| `README.md` | Θí╣τ¢«σàÑσÅúπÇüτ¢«σ╜òπÇüτÄ»σóâπÇüσìÅΣ╜£Σ╕Äσà¼σ╝ÇΣ╗ôσ║ôΦ┐ÉΦíîσÄƒσêÖ | Γ£à |
-| `TASKS.md` | σñÜΣ║║σìÅΣ╜£µÇ╗Σ╗╗σèíτ£ïµ¥┐∩╝Üσ╖▓σ«îµêÉ/σ╛àσ«îµêÉ/Θÿ╗σí₧/µÄ¿ΦìÉσêåσ╖Ñ/DoD | Γ£à µû░σó₧ |
-| `CONTRIBUTING.md` | σêåµö»πÇüµÅÉΣ║ñπÇüPRπÇüµ╡ïΦ»òπÇüµ¡úσ╝Åσ«₧Θ¬îΣ╕Äσî╗σ¡ªµò░µì«σìÅΣ╜£ΦºäΦîâ | Γ£à µû░σó₧ |
-| `SECURITY.md` | σà¼σ╝ÇΣ╗ôσ║ôΘÜÉτºüπÇüσ«ëσà¿πÇüτºæτáöτ╗ôµ₧£Φ╛╣τòîΣ╕Äτ¼¼Σ╕ëµû╣Σ╛¥Φ╡ûΦ»┤µÿÄ | Γ£à µû░σó₧ |
-| `.github/` | Task/Bug Issue µ¿íµ¥┐Σ╕Ä Pull Request µúÇµƒÑµ¿íµ¥┐ | Γ£à µû░σó₧ |
-| `docs/01_overall_design.md` | µÇ╗Σ╜ôµ₧╢µ₧äπÇüµ¿íσ¥ùπÇüµÄÑσÅúΣ╕ÄΦ┤¿ΘçÅΣ┐¥Φ»ü | Γ£à |
-| `docs/02_literature_survey.md` | σ¢╜σåàσñûµûçτî«πÇüµò░µì«Θ¢åπÇüτáöτ⌐╢τ⌐║τÖ╜ | ≡ƒƒí v0.2∩╝îσ╖▓Σ╕Äτ╗ôµ₧äσîûτƒ⌐Θÿ╡/BibTeX σÉîµ¡Ñ |
-| `docs/08_literature_matrix.md` | 44 µ¥í 3D σêåσë▓/Φäèµƒ▒/σ¢░ΘÜ╛τùàΣ╛ï/µìƒσñ▒/uncertainty/Θçìσ╗║τ╗ôµ₧äσîûµûçτî«τƒ⌐Θÿ╡ | Γ£à σ╖▓µ¢┤µû░σ╝║ baseline/Θ¬¿µèÿ/Θçæσ▒₧µñìσàÑτë⌐/Σ╜ÄΘ¬¿σ»åσ║ªσ╖ÑΣ╜£ |
-| `docs/03_data_pipeline_spec.md` | DICOM/HU/spacing/bone-window/QC SOP | Γ£à Θªûτëê |
-| `docs/04_experiment_plan.md` | baselineπÇüΦüöσÉêµìƒσñ▒πÇüσ¢░ΘÜ╛µá╖µ£¼πÇüuncertainty µ╢êΦ₧ìτƒ⌐Θÿ╡ | Γ£à Θªûτëê |
-| `docs/05_midterm_materials.md` | Σ╕¡µ£ƒτáöτ⌐╢µ¥ÉµûÖπÇüτ£ƒσ«₧τ╗ôµ₧£πÇüΦ╛╣τòîΣ╕Äσ▒òτñ║σ╗║Φ«« | Γ£à v0.3 σ╖▓σÉîµ¡Ñµ£Çτ╗ê validation/independent τè╢µÇü |
-| `docs/06_public_dataset_onboarding.md` | VerSe/CTSpine1K/TotalSegmentator τÖ╗Φ«░πÇüΣ╕ïΦ╜╜πÇü10 Σ╛ï QC Σ╕Ä baseline µÄÑσàÑ SOP | Γ£à σ╖▓µ¢┤µû░τ£ƒσ«₧τè╢µÇü |
-| `docs/07_real_data_validation_20260816.md` | CTSpine1K 10 Σ╛ïτ£ƒσ«₧ΦÉ╜τ¢ÿπÇüpipeline 0.3.0πÇüσ«íΦ«íπÇüpatch smokeπÇüτ£ƒσ«₧ mesh Φ»üµì« | Γ£à |
-| `docs/09_public_repository_manifest.md` | σà¼σ╝Ç GitHub Σ╗ôσ║ôτ║│σàÑ/µÄÆΘÖñµûçΣ╗╢πÇüσî╗σ¡ªµò░µì«ΘÜÉτºüΣ╕ÄµÅÉΣ║ñσëìµúÇµƒÑµ╕àσìò | Γ£à |
-| `docs/10_final_parameter_lock.md` | µ£Çτ╗ê v13 σÅéµò░Θöüσ«ÜπÇüτï¼τ½ïµ╡ïΦ»òΦ«┐Θù«τ║¬σ╛ï | Γ£à σ╖▓σå╗τ╗ô |
-| `docs/11_final_independent_test.md` | σö»Σ╕ÇΣ╕Çµ¼í FINAL FORMAL INDEPENDENT TEST Σ╕Ä 3D/Web Φ«░σ╜ò | Γ£à σ╖▓σ«îµêÉ |
-| `docs/12_final_presentation_outline.md` | v0.3.0 Σ╕¡µ£ƒ/τ╗ôΘóÿσ▒òτñ║τ╗ƒΣ╕Çµ║Éµ¥ÉµûÖ | Γ£à 2026-08-29 µ¢┤µû░ |
-| `paper/outline.md` | Φ«║µûçµîüτ╗¡σåÖΣ╜£µíåµ₧╢ | Γ£à |
-| `paper/manuscript_zh_v0.1.md` | Σ╕¡µûçΦ«║µûçµèÇµ£»τ¿┐∩╝¢validation/independent ResultsπÇüDiscussionπÇüFailure CasesπÇüLimitationsπÇüConclusion σ╖▓σÉîµ¡Ñ∩╝îτ╗ºτ╗¡σüÜσ╝òτö¿/µá╝σ╝Å/Φ»¡Φ¿Çµö╢σ░╛ | ≡ƒƒí |
-| `paper/references.bib` | 44 µ¥íµ£║σÖ¿σÅ»τö¿ BibTeX∩╝ê42 Φï▒µûçµá╕σ┐â + 2 σ╖▓µá╕Θ¬îΣ╕¡µûç∩╝ë∩╝¢µÅÉΣ║ñσëìµëºΦíî key/µï¼σÅ╖τ╗ôµ₧äµúÇµƒÑ | Γ£à |
-| `env/requirements.txt` | σ¢║σ«ÜΘí╣τ¢«Σ╛¥Φ╡û | Γ£à |
-| `env/setup_env.ps1` | Θí╣τ¢«σåà Python 3.11/.venv τÄ»σóâµÉ¡σ╗║∩╝¢Σ╝ÿσàê uv | Γ£à |
-| `env/fetch_segformer3d.ps1` | ΦÄ╖σÅûσ«ÿµû╣ SegFormer3D | Γ£à |
-| `env/download_verse.ps1` | VerSe 2019/2020 Σ╕ïΦ╜╜Φ«íσêÆΣ╕Äµÿ╛σ╝ÅΣ╕ïΦ╜╜Φ╛àσè⌐∩╝¢Θ╗ÿΦ«ñΣ╕ìΣ╕ïΦ╜╜ | Γ£à |
-| `env/download_ctspine1k_sample.ps1` | CTSpine1K MSD-T10 σ░Åµá╖µ£¼ CT+label Σ╕ïΦ╜╜Φ«íσêÆΣ╕Äµÿ╛σ╝ÅΣ╕ïΦ╜╜∩╝¢Θ╗ÿΦ«ñΣ╕ìΣ╕ïΦ╜╜ | Γ£à |
-| `env/check_gpu.ps1` | Θí╣τ¢« GPU/CUDA/PyTorch σÅ¬Φ»╗Θ¬îµö╢σàÑσÅú | Γ£à µ£¼µ£║µ¡úτí«µèÑσæè CPU/no CUDA |
-| `env/check_formal_readiness.ps1` | task + τ«ùσè¢ + formal preflight Σ╕Çτ½Öσ╝ÅΘ¬îµö╢σàÑσÅú | Γ£à Σ╕ìσÉêµá╝Θàìτ╜«σÅ»Θÿ╗µû¡∩╝¢Θöüσ«Ü pilot `--allow-cpu` σ╖▓ ready=true |
-| `third_party/README.md` | Σ╕èµ╕╕Φ«╕σÅ»Φ»üΦ╛╣τòîσÆîµ£¼σ£░σà╝σ«╣ΦíÑΣ╕üΦ»┤µÿÄ | Γ£à |
-| `third_party/SegFormer3D/` | σ«ÿµû╣Σ╕èµ╕╕Σ╗úτáü∩╝îσƒ║τ║┐ `e314242` + 1 Σ╕¬µ£¼σ£░σà╝σ«╣ΦíÑΣ╕ü | Γ£à |
-| `configs/orthopedic_ct_baseline.yaml` | σìò CT + Region baseline | Γ£à Θàìτ╜«σ«îµêÉ |
-| `configs/orthopedic_ct_joint.yaml` | CT+bone-window + joint loss + uncertainty σ«₧Θ¬îΘàìτ╜« | Γ£à Θàìτ╜«Θªûτëê |
-| `configs/label_schemas/ctspine1k_verse.json` | CTSpine1K/VerSe `1ΓÇô25 ΓåÆ C1ΓÇôL6` σ╖Ñτ¿ïµÿ╛τñ║ schema∩╝¢Σ╕ìΘöüσ«Üµ¡úσ╝ÅΣ╗╗σèí | Γ£à |
-| `configs/task_specs/vertebra_task_template.json` | µ¡úσ╝ÅΣ╗╗σèíΘöüσ«Üµ¿íµ¥┐∩╝¢Θ╗ÿΦ«ñ `task_locked=false` | Γ£à Σ┐¥µèñµ¿íµ¥┐ |
-| `src/label_schema.py` | µáçτ¡╛ schema Φ»╗σÅûπÇüΣ║║τ▒╗σÅ»Φ»╗σÉìτº░Σ╕Ä Web/QC Φ╛ôσç║ | Γ£à real display pass |
-| `src/sitk_compat.py` | SimpleITK Θí╣τ¢«σåàτ¢╕σ»╣Φ╖»σ╛äσà╝σ«╣σ▒é∩╝îΦºäΘü┐ Windows Σ╕¡µûçτ╗¥σ»╣Φ╖»σ╛ä I/O Θù«Θóÿ | Γ£à real pass |
-| `src/preprocessing/dicom_pipeline.py` | DICOM series/QC/µÿ╛σ╝ÅσçáΣ╜òµÄÆσ║Å/ΘçìΘççµá╖/µáçσçåσîû/Θ¬¿τ¬ù/Φ╛ôσç║ | ≡ƒƒá σ╛àτ£ƒσ«₧ series |
-| `src/preprocessing/nifti_pipeline.py` | σà¼σ╝Ç NIfTI image/label σçáΣ╜òµáíΘ¬îπÇüΘçìΘççµá╖πÇüµáçσçåσîûΣ╕ÄΦ«¡τ╗âµáçσçåΦ╛ôσç║ | Γ£à 10 Σ╛ïτ£ƒσ«₧ CTSpine1K Θ¬îΦ»ü |
-| `src/preprocessing/prepare_verse.py` | VerSe CT/mask Θàìσ»╣πÇüsource splitπÇüΘÿ▓µéúΦÇàµ│äµ╝ÅπÇüµë╣ΘçÅΘóäσñäτÉå∩╝îσÅ»ΘÇë `--qc` | Γ£à σ╖Ñτ¿ïΘ¬îΦ»ü∩╝î≡ƒƒá σ╛àτ£ƒσ«₧µò░µì« |
-| `src/preprocessing/prepare_ctspine1k.py` | CTSpine1K CT/mask Θàìσ»╣πÇüσ«ÿµû╣ split µáçΦ«░πÇüµë╣ΘçÅµáçσçåσîû∩╝îσÅ»ΘÇë `--qc` | Γ£à 10 Σ╛ïτ£ƒσ«₧σñäτÉåΘÇÜΦ┐ç |
-| `src/preprocessing/qc_visualization.py` | Σ╕ëΦºåσ¢╛ ├ù normalized/bone-window/label-overlay QC σ¢╛Σ╕ÄΣ║║σ╖Ñσ«íµá╕ CSV | Γ£à 10 Σ╛ïτ£ƒσ«₧µò░µì«σ╖▓τöƒµêÉσ╣╢σ«îµêÉΣ║║σ╖Ñσ«íµá╕∩╝î10/10 pass |
-| `src/preprocessing/audit_processed.py` | µáçσçåσîûτùàΣ╛ï pipeline/geometry/spacing/label/normalization Φç¬σè¿σ«íΦ«í | Γ£à 10/10 real pass |
-| `src/preprocessing/create_split.py` | patient-level splitπÇüΘÿ▓ΘçìσñìµéúΦÇàµ│äµ╝Å | Γ£à |
-| `src/modeling/segformer3d_adapter.py` | σ«ÿµû╣ SegFormer3D Σ╕Äµ£¼Θí╣τ¢«Θàìτ╜«ΘÇéΘàì | Γ£à |
-| `src/modeling/dataset.py` | µáçσçåσîû NIfTIπÇüσñÜΘÇÜΘüôπÇü3D patch dataset | Γ£à Θªûτëê |
-| `src/modeling/joint_loss.py` | Region + Boundary + soft-clDice | Γ£à v11/v13/v14/v15 validation µ╢êΦ₧ìσ╖▓σ«îµêÉ∩╝¢µ£Çτ╗ê v13 Σ╜┐τö¿ Region+Boundary |
-| `src/modeling/metrics.py` | Dice/IoU/Precision/Recall/HD95/ASSD | Γ£à |
-| `src/modeling/uncertainty.py` | entropyπÇüROIπÇüuncertainty-error overlap/AUROC/AUPRC/Top-percent Σ╕Ä calibration | Γ£à validation + independent test σ╖▓τ£ƒσ«₧Θ¬îΦ»ü |
-| `src/modeling/refinement.py` | uncertainty ROI σ▒ÇΘâ¿µ«ïσ╖« 3D τ▓╛Σ┐«τ╜æτ╗£Σ╕Ä ROI Φ₧ìσÉê | Γ£à validation 3├ù3 grid + full-volume σ»╣τàºσ╖▓σ«îµêÉ∩╝îµ£Çτ╗êσêñσ«Ü REFINEMENT=FAIL |
-| `src/modeling/refinement_training.py` | coarse σå╗τ╗ô + ROI-normalized Σ║îΘÿ╢µ«╡τ▓╛Σ┐« loss/step/error delta | Γ£à 7 Σ╕¬ train cases τ£ƒσ«₧ refinement Φ«¡τ╗âΣ╕ÄΣ╕ñΣ╛ï validation σ╖▓σ«îµêÉ |
-| `src/modeling/preflight.py` | formal/engineering σ«₧Θ¬îσëìτ╜«Θ¬îµö╢Σ╕Äµ│äµ╝Å/Σ║║σ╖ÑQC/GPU/µáçτ¡╛Θàìτ╜«Σ┐¥µèñ | Γ£à real engineering/formal µïªµê¬Θ¬îΦ»ü |
-| `src/modeling/task_lock.py` | Θöüσ«Ü binary/multiclass semantic Σ╗╗σèíσ╣╢τ╝ûΦ»æσ╕ª SHA-256 µîçτ║╣τÜäµ¡úσ╝Å config∩╝¢µïÆτ╗¥µ£¬σ«₧τÄ░ instance | Γ£à targeted + full regression pass |
-| `src/modeling/gpu_environment.py` | PyTorch CUDA/device/µÿ╛σ¡ÿ/`nvidia-smi` σÅ¬Φ»╗Θ¬îµö╢ | Γ£à µ£¼µ£║ CPU blocker σ╖▓σ«₧µ╡ï |
-| `src/modeling/formal_readiness.py` | µ▒çµÇ╗ task/GPU/formal preflight/config binding τÜäΣ╕Çτ½Öσ╝Åµ¡úσ╝Åσ«₧Θ¬îΘ¬îµö╢ | Γ£à Σ╕ìσÉêµá╝Θàìτ╜«σÅ»µ¡úτí«Θÿ╗µû¡∩╝¢σ╜ôσëìΘöüσ«Ü pilot σ£¿ `--allow-cpu` Σ╕ï ready=true / 0 blocker |
-| `src/modeling/train.py` | Φ«¡τ╗âπÇüΘ¬îΦ»üπÇüschedulerπÇücheckpointπÇüσ¢║σ«Ü split/config/τÄ»σóâ/train.log | Γ£à σ╜ôσëì CPU formal-pipeline validation Φ«¡τ╗âΘô╛σ╖▓σ«îµêÉ∩╝¢µë⌐µá╖µ£¼/GPU Φ«¡τ╗âσ▒₧σÉÄτ╗¡τáöτ⌐╢ |
-| `src/modeling/evaluate.py` | checkpoint sliding-window τï¼τ½ïΦ»äΣ╝░πÇüper-case/per-classπÇüuncertainty σ«ÜΘçÅµîçµáç/prediction/entropy Φ╛ôσç║ | Γ£à validation + locked formal independent test σ╖▓τ£ƒσ«₧Φ┐ÉΦíî |
-| `src/modeling/real_patch_smoke.py` | τ£ƒσ«₧µáçσçåσîûτùàΣ╛ïσÅîΘÇÜΘüô joint-loss σìò patch forward/backward σ╖Ñτ¿ïΘ¬îµö╢ | Γ£à real pass |
-| `src/reconstruction/mesh.py` | maskΓåÆτë⌐τÉåτ⌐║Θù┤ Marching Cubes + vertex-clustering + µ│òσÉæσÅÿσîûσèáµ¥âτë╣σ╛üΣ┐¥µèñ | Γ£à GT + validation/independent prediction engineering pass |
-| `src/reconstruction/export_mesh.py` | NIfTI label/predictionΓåÆσà¿σêåΦ╛¿τÄç/τ«Çσîû PLY+JSON σÅ»Φ┐╜µ║»σ»╝σç║ | Γ£à GT + validation/independent prediction pass |
-| `src/reconstruction/resampling_error.py` | σÄƒσºï label vs 1 mm label physical-surface ΘçìΘççµá╖σçáΣ╜òΦ»»σ╖« | Γ£à 10/10 real pass |
-| `src/reconstruction/sdf_surface.py` | physical-mm signed-distance smoothing + zero-level MC + Φ┐₧ΘÇÜσƒƒΣ┐¥µèñ | Γ£à GT sweep + validation/independent prediction + Web pass |
-| `src/reconstruction/measurement.py` | τë⌐τÉåσ¥ÉµáçΦ╖¥τª╗/Σ╕ëτé╣σñ╣ΦºÆΣ╕Ä voxelΓåÆphysical σ╖Ñσà╖ | Γ£à |
-| `web/backend/app.py` | FastAPI µ£¼σ£░τºæτáöµ£ìσèí∩╝ÜΣ╕èΣ╝á/MPR/QC/results-review/prediction+uncertainty/3D+SDF/µ╡ïΘçÅ | Γ£à σ╜ôσëìτºæτáöσÄƒσ₧ïΘù¡τÄ» |
-| `web/frontend/` | Σ╕èΣ╝á/QCπÇüΣ║ñΣ║Æ MPR+prediction/entropy overlayπÇüresults-reviewπÇüWebGL2 GT/prediction/SDFπÇüµ╡ïΘçÅσëìτ½» | Γ£à Edge σ«₧µ£║Θ¬îµö╢Θù¡τÄ» |
-| `web/run_web.ps1` | localhost Web σÉ»σè¿ΦäÜµ£¼ | Γ£à |
-| `tests/` | Φç¬σè¿σîûµ╡ïΦ»ò | Γ£à 138 passed |
-| `data/README.md` | µò░µì«µ▓╗τÉåΣ╕ÄΘÜÉτºüΦºäσêÖπÇüσ╜ôσëìτ£ƒσ«₧ CTSpine1K σ¡ÉΘ¢åΦ»┤µÿÄ | Γ£à |
-| `data/datasets.json` | σà¼σ╝Çµò░µì«Θ¢åµ¥Ñµ║É/τëêµ£¼/Φ«╕σÅ»/µ£¼σ£░τè╢µÇü∩╝¢σ╖▓τÖ╗Φ«░ 10 Σ╛ï CTSpine1K σ╖Ñτ¿ïσ¡ÉΘ¢å | Γ£à |
-| `data/splits/ctspine1k_msd_t10_engineering_smoke.json` | 1/1/1 τ£ƒσ«₧µò░µì«σ╖Ñτ¿ï smoke split∩╝îµÿÄτí« `formal_experiment=false` | Γ£à Θ¥₧µ¡úσ╝Åσ«₧Θ¬î |
-| `.gitignore` | µÄÆΘÖñσî╗σ¡ªµò░µì«πÇüσñäτÉåσÉÄµò░µì«πÇüτÄ»σóâπÇüµ¿íσ₧ïπÇüruntimeπÇüτ¼¼Σ╕ëµû╣ checkoutπÇüDevSpace τ╝ôσ¡ÿσÆîσñºσ₧ïτöƒµêÉ PPT | Γ£à σ╖▓σèáσ╝║σà¼σ╝Çσ«ëσà¿ΦºäσêÖ |
+| `PROJECT_STATUS.md` | 唯一主进度台账/交接入口 | ✅ |
+| `README.md` | 项目入口、目录、环境、协作与公开仓库运行原则 | ✅ |
+| `TASKS.md` | 多人协作总任务看板：已完成/待完成/阻塞/推荐分工/DoD | ✅ 新增 |
+| `CONTRIBUTING.md` | 分支、提交、PR、测试、正式实验与医学数据协作规范 | ✅ 新增 |
+| `SECURITY.md` | 公开仓库隐私、安全、科研结果边界与第三方依赖说明 | ✅ 新增 |
+| `.github/` | Task/Bug Issue 模板与 Pull Request 检查模板 | ✅ 新增 |
+| `docs/01_overall_design.md` | 总体架构、模块、接口与质量保证 | ✅ |
+| `docs/02_literature_survey.md` | 国内外文献、数据集、研究空白 | 🟡 v0.2，已与结构化矩阵/BibTeX 同步 |
+| `docs/08_literature_matrix.md` | 44 条 3D 分割/脊柱/困难病例/损失/uncertainty/重建结构化文献矩阵 | ✅ 已更新强 baseline/骨折/金属植入物/低骨密度工作 |
+| `docs/03_data_pipeline_spec.md` | DICOM/HU/spacing/bone-window/QC SOP | ✅ 首版 |
+| `docs/04_experiment_plan.md` | baseline、联合损失、困难样本、uncertainty 消融矩阵 | ✅ 首版 |
+| `docs/05_midterm_materials.md` | 中期研究材料、真实结果、边界与展示建议 | ✅ v0.3 已同步最终 validation/independent 状态 |
+| `docs/06_public_dataset_onboarding.md` | VerSe/CTSpine1K/TotalSegmentator 登记、下载、10 例 QC 与 baseline 接入 SOP | ✅ 已更新真实状态 |
+| `docs/07_real_data_validation_20260816.md` | CTSpine1K 10 例真实落盘、pipeline 0.3.0、审计、patch smoke、真实 mesh 证据 | ✅ |
+| `docs/09_public_repository_manifest.md` | 公开 GitHub 仓库纳入/排除文件、医学数据隐私与提交前检查清单 | ✅ |
+| `docs/10_final_parameter_lock.md` | 最终 v13 参数锁定、独立测试访问纪律 | ✅ 已冻结 |
+| `docs/11_final_independent_test.md` | 唯一一次 FINAL FORMAL INDEPENDENT TEST 与 3D/Web 记录 | ✅ 已完成 |
+| `docs/12_final_presentation_outline.md` | v0.3.0 中期/结题展示统一源材料 | ✅ 2026-08-29 更新 |
+| `paper/outline.md` | 论文持续写作框架 | ✅ |
+| `paper/manuscript_zh_v0.1.md` | 中文论文技术稿；validation/independent Results、Discussion、Failure Cases、Limitations、Conclusion 已同步，继续做引用/格式/语言收尾 | 🟡 |
+| `paper/references.bib` | 44 条机器可用 BibTeX（42 英文核心 + 2 已核验中文）；提交前执行 key/括号结构检查 | ✅ |
+| `env/requirements.txt` | 固定项目依赖 | ✅ |
+| `env/setup_env.ps1` | 项目内 Python 3.11/.venv 环境搭建；优先 uv | ✅ |
+| `env/fetch_segformer3d.ps1` | 获取官方 SegFormer3D | ✅ |
+| `env/download_verse.ps1` | VerSe 2019/2020 下载计划与显式下载辅助；默认不下载 | ✅ |
+| `env/download_ctspine1k_sample.ps1` | CTSpine1K MSD-T10 小样本 CT+label 下载计划与显式下载；默认不下载 | ✅ |
+| `env/check_gpu.ps1` | 项目 GPU/CUDA/PyTorch 只读验收入口 | ✅ 本机正确报告 CPU/no CUDA |
+| `env/check_formal_readiness.ps1` | task + 算力 + formal preflight 一站式验收入口 | ✅ 不合格配置可阻断；锁定 pilot `--allow-cpu` 已 ready=true |
+| `third_party/README.md` | 上游许可证边界和本地兼容补丁说明 | ✅ |
+| `third_party/SegFormer3D/` | 官方上游代码，基线 `e314242` + 1 个本地兼容补丁 | ✅ |
+| `configs/orthopedic_ct_baseline.yaml` | 单 CT + Region baseline | ✅ 配置完成 |
+| `configs/orthopedic_ct_joint.yaml` | CT+bone-window + joint loss + uncertainty 实验配置 | ✅ 配置首版 |
+| `configs/label_schemas/ctspine1k_verse.json` | CTSpine1K/VerSe `1–25 → C1–L6` 工程显示 schema；不锁定正式任务 | ✅ |
+| `configs/task_specs/vertebra_task_template.json` | 正式任务锁定模板；默认 `task_locked=false` | ✅ 保护模板 |
+| `src/label_schema.py` | 标签 schema 读取、人类可读名称与 Web/QC 输出 | ✅ real display pass |
+| `src/sitk_compat.py` | SimpleITK 项目内相对路径兼容层，规避 Windows 中文绝对路径 I/O 问题 | ✅ real pass |
+| `src/preprocessing/dicom_pipeline.py` | DICOM series/QC/显式几何排序/重采样/标准化/骨窗/输出 | 🟠 待真实 series |
+| `src/preprocessing/nifti_pipeline.py` | 公开 NIfTI image/label 几何校验、重采样、标准化与训练标准输出 | ✅ 10 例真实 CTSpine1K 验证 |
+| `src/preprocessing/prepare_verse.py` | VerSe CT/mask 配对、source split、防患者泄漏、批量预处理，可选 `--qc` | ✅ 工程验证，🟠 待真实数据 |
+| `src/preprocessing/prepare_ctspine1k.py` | CTSpine1K CT/mask 配对、官方 split 标记、批量标准化，可选 `--qc` | ✅ 10 例真实处理通过 |
+| `src/preprocessing/qc_visualization.py` | 三视图 × normalized/bone-window/label-overlay QC 图与人工审核 CSV | ✅ 10 例真实数据已生成并完成人工审核，10/10 pass |
+| `src/preprocessing/audit_processed.py` | 标准化病例 pipeline/geometry/spacing/label/normalization 自动审计 | ✅ 10/10 real pass |
+| `src/preprocessing/create_split.py` | patient-level split、防重复患者泄漏 | ✅ |
+| `src/modeling/segformer3d_adapter.py` | 官方 SegFormer3D 与本项目配置适配 | ✅ |
+| `src/modeling/dataset.py` | 标准化 NIfTI、多通道、3D patch dataset | ✅ 首版 |
+| `src/modeling/joint_loss.py` | Region + Boundary + soft-clDice | ✅ v11/v13/v14/v15 validation 消融已完成；最终 v13 使用 Region+Boundary |
+| `src/modeling/metrics.py` | Dice/IoU/Precision/Recall/HD95/ASSD | ✅ |
+| `src/modeling/uncertainty.py` | entropy、ROI、uncertainty-error overlap/AUROC/AUPRC/Top-percent 与 calibration | ✅ validation + independent test 已真实验证 |
+| `src/modeling/refinement.py` | uncertainty ROI 局部残差 3D 精修网络与 ROI 融合 | ✅ validation 3×3 grid + full-volume 对照已完成，最终判定 REFINEMENT=FAIL |
+| `src/modeling/refinement_training.py` | coarse 冻结 + ROI-normalized 二阶段精修 loss/step/error delta | ✅ 7 个 train cases 真实 refinement 训练与两例 validation 已完成 |
+| `src/modeling/preflight.py` | formal/engineering 实验前置验收与泄漏/人工QC/GPU/标签配置保护 | ✅ real engineering/formal 拦截验证 |
+| `src/modeling/task_lock.py` | 锁定 binary/multiclass semantic 任务并编译带 SHA-256 指纹的正式 config；拒绝未实现 instance | ✅ targeted + full regression pass |
+| `src/modeling/gpu_environment.py` | PyTorch CUDA/device/显存/`nvidia-smi` 只读验收 | ✅ 本机 CPU blocker 已实测 |
+| `src/modeling/formal_readiness.py` | 汇总 task/GPU/formal preflight/config binding 的一站式正式实验验收 | ✅ 不合格配置可正确阻断；当前锁定 pilot 在 `--allow-cpu` 下 ready=true / 0 blocker |
+| `src/modeling/train.py` | 训练、验证、scheduler、checkpoint、固定 split/config/环境/train.log | ✅ 当前 CPU formal-pipeline validation 训练链已完成；扩样本/GPU 训练属后续研究 |
+| `src/modeling/evaluate.py` | checkpoint sliding-window 独立评估、per-case/per-class、uncertainty 定量指标/prediction/entropy 输出 | ✅ validation + locked formal independent test 已真实运行 |
+| `src/modeling/real_patch_smoke.py` | 真实标准化病例双通道 joint-loss 单 patch forward/backward 工程验收 | ✅ real pass |
+| `src/reconstruction/mesh.py` | mask→物理空间 Marching Cubes + vertex-clustering + 法向变化加权特征保护 | ✅ GT + validation/independent prediction engineering pass |
+| `src/reconstruction/export_mesh.py` | NIfTI label/prediction→全分辨率/简化 PLY+JSON 可追溯导出 | ✅ GT + validation/independent prediction pass |
+| `src/reconstruction/resampling_error.py` | 原始 label vs 1 mm label physical-surface 重采样几何误差 | ✅ 10/10 real pass |
+| `src/reconstruction/sdf_surface.py` | physical-mm signed-distance smoothing + zero-level MC + 连通域保护 | ✅ GT sweep + validation/independent prediction + Web pass |
+| `src/reconstruction/measurement.py` | 物理坐标距离/三点夹角与 voxel→physical 工具 | ✅ |
+| `web/backend/app.py` | FastAPI 本地科研服务：上传/MPR/QC/results-review/prediction+uncertainty/3D+SDF/测量 | ✅ 当前科研原型闭环 |
+| `web/frontend/` | 上传/QC、交互 MPR+prediction/entropy overlay、results-review、WebGL2 GT/prediction/SDF、测量前端 | ✅ Edge 实机验收闭环 |
+| `web/run_web.ps1` | localhost Web 启动脚本 | ✅ |
+| `tests/` | 自动化测试 | ✅ 138 passed |
+| `data/README.md` | 数据治理与隐私规则、当前真实 CTSpine1K 子集说明 | ✅ |
+| `data/datasets.json` | 公开数据集来源/版本/许可/本地状态；已登记 10 例 CTSpine1K 工程子集 | ✅ |
+| `data/splits/ctspine1k_msd_t10_engineering_smoke.json` | 1/1/1 真实数据工程 smoke split，明确 `formal_experiment=false` | ✅ 非正式实验 |
+| `.gitignore` | 排除医学数据、处理后数据、环境、模型、runtime、第三方 checkout、DevSpace 缓存和大型生成 PPT | ✅ 已加强公开安全规则 |
 
 ---
 
-## 8. σ╜ôσëìΘÿ╗σí₧Σ╕ÄΘúÄΘÖ⌐
+## 8. 当前阻塞与风险
 
-### R1∩╜£σ╜ôσëì pilot σ╖▓Θù¡τÄ»∩╝îΣ╜åµ£Çτ╗êΦ«║µûçµá╖µ£¼Φºäµ¿íΣ╕ìΦ╢│
+### R1｜当前 pilot 已闭环，但最终论文样本规模不足
 
-CTSpine1K `MSD-T10` 10 Σ╛ïτ£ƒσ«₧ CT+label σ╖▓σ«îµêÉ pipeline 0.3.0 µáçσçåσîûπÇü10/10 Φç¬σè¿σ«íΦ«íΣ╕ÄΣ║║σ╖Ñ QC∩╝¢σ╜ôσëì pilot σ╖▓Θöüσ«Ü `vertebra_binary_ctspine1k_msd_t10_v1`∩╝îσ¢║σ«Ü 7 train / 2 validation / 1 `test_private` patient-level split∩╝îσ╣╢σ«îµêÉ validation µ╢êΦ₧ìπÇüµ£Çτ╗êσÅéµò░Θöüσ«ÜσÆîσö»Σ╕ÇΣ╕Çµ¼í independent testπÇéΦ»Ñ 10 Σ╛ïτ╗ôµ₧£σÅ»Σ╗ÑΣ╜£Σ╕║**µ¡úσ╝Åµ╡üτ¿ï pilot**σåÖσàÑσ╜ôσëìµèÇµ£»τ¿┐∩╝îΣ╜åµá╖µ£¼ΘçÅΦ┐çσ░Å∩╝îΣ╕ìΦâ╜Σ╗úΦí¿µ£Çτ╗êΦ«║µûçµêûΣ╕┤σ║èµ│¢σîûτ╗ôΦ«║πÇéσÉÄτ╗¡τ£ƒµ¡úΘ£ÇΦªüτÜäµÿ»∩╝Ü
+CTSpine1K `MSD-T10` 10 例真实 CT+label 已完成 pipeline 0.3.0 标准化、10/10 自动审计与人工 QC；当前 pilot 已锁定 `vertebra_binary_ctspine1k_msd_t10_v1`，固定 7 train / 2 validation / 1 `test_private` patient-level split，并完成 validation 消融、最终参数锁定和唯一一次 independent test。该 10 例结果可以作为**正式流程 pilot**写入当前技术稿，但样本量过小，不能代表最终论文或临床泛化结论。后续真正需要的是：
 
-- µë⌐σñºτùàΣ╛ïΦºäµ¿íσ╣╢σ╗║τ½ïµû░τÜäΘóäµ│¿σåî patient-level split∩╝¢
-- σ£¿µû░ split Σ╕èΦ┐ÉΦíîσ╝║Φ╖¿µ₧╢µ₧ä baseline∩╝îσ╣╢Θçìµû░σ╜óµêÉΣ╕╗σ«₧Θ¬îτ╗ôµ₧£∩╝¢
-- µ£ëσÅ»Θ¥á metadata σÉÄσåìσüÜ metal/fracture/low-density/thick-slice µ¡úσ╝Å subgroup∩╝¢
-- σ╝òσàÑσñûΘâ¿/σñÜΣ╕¡σ┐âµêûσÉêµ│òΣ╕┤σ║èµò░µì«σÉÄσåìΦ«¿Φ«║µ│¢σîûΣ╕Äτ╗ƒΦ«íτ╗ôΦ«║πÇé
+- 扩大病例规模并建立新的预注册 patient-level split；
+- 在新 split 上运行强跨架构 baseline，并重新形成主实验结果；
+- 有可靠 metadata 后再做 metal/fracture/low-density/thick-slice 正式 subgroup；
+- 引入外部/多中心或合法临床数据后再讨论泛化与统计结论。
 
-µ£¼µ¼í `liver_169` τ╗ôµ₧£σ╖▓τ╗Åσå╗τ╗ô∩╝îΣ╕ìσ╛ùσ¢áµë⌐µá╖µ£¼σëìτÜäΣ╗╗Σ╜òµûçµíúσ╖ÑΣ╜£Θçìµû░τö¿Σ║ÄΦ░âσÅéπÇé
+本次 `liver_169` 结果已经冻结，不得因扩样本前的任何文档工作重新用于调参。
 
-### R2∩╜£Σ╕┤σ║èµò░µì«µÄêµ¥â/Σ╝ªτÉå
+### R2｜临床数据授权/伦理
 
-Σ╕┤σ║èµò░µì«σ┐àΘí╗µ╗íΦ╢│∩╝Ü
+临床数据必须满足：
 
-- σ╖▓Φä▒µòÅ∩╝¢
-- σÉêµ│òµÄêµ¥â∩╝¢
-- τáöτ⌐╢Φîâσ¢┤µÿÄτí«∩╝¢
-- Σ╕ìµèèµéúΦÇàσºôσÉìπÇüΦ║½Σ╗╜Φ»üσÅ╖πÇüΦüöτ│╗µû╣σ╝ÅσåÖσàÑµùÑσ┐ù/µûçΣ╗╢σÉì/µê¬σ¢╛∩╝¢
-- σªéσ¡ªµáí/σî╗ΘÖóΦªüµ▒éΣ╝ªτÉåσ«íµë╣∩╝îσàêσ«îµêÉσ«íµë╣σåìτö¿Σ║Äτáöτ⌐╢πÇé
+- 已脱敏；
+- 合法授权；
+- 研究范围明确；
+- 不把患者姓名、身份证号、联系方式写入日志/文件名/截图；
+- 如学校/医院要求伦理审批，先完成审批再用于研究。
 
-### R3∩╜£GPU/τ«ùσè¢Σ╗àµÿ»σÉÄτ╗¡Φºäµ¿íσîûµòêτÄçΘúÄΘÖ⌐
+### R3｜GPU/算力仅是后续规模化效率风险
 
-σ╜ôσëìΘí╣τ¢«τÄ»σóâΣ╕║ PyTorch `2.1.0+cpu`∩╝¢`src.modeling.gpu_environment` σ«₧µ╡ï `torch.version.cuda=None`πÇü`cuda_available=false`πÇü0 Σ╕¬ CUDA deviceπÇüµùá `nvidia-smi`πÇéτÄ░µ£ë 10 Σ╛ï formal-pipeline pilot σ╖▓σ£¿µÿ╛σ╝Å `--allow-cpu` Σ╕ïσ«îµêÉ∩╝îσ¢áµ¡ñ GPU Σ╕ìσåìµÿ»σ╜ôσëìΘÿ╢µ«╡τÜäσ«îµêÉΘÿ╗σí₧πÇé
+当前项目环境为 PyTorch `2.1.0+cpu`；`src.modeling.gpu_environment` 实测 `torch.version.cuda=None`、`cuda_available=false`、0 个 CUDA device、无 `nvidia-smi`。现有 10 例 formal-pipeline pilot 已在显式 `--allow-cpu` 下完成，因此 GPU 不再是当前阶段的完成阻塞。
 
-ΦïÑµë⌐σñºτùàΣ╛ïπÇüΦ┐ÉΦíî nnU-Net / Residual-Encoder nnU-Net τ¡ëσ╝║ baseline µêûσ╝Çσ▒òµ¢┤σñº ROI/µ¢┤Θò┐Φ«¡τ╗â∩╝îσ╗║Φ««σåìτí«Φ«ñ NVIDIA GPUπÇüΘ⌐▒σè¿πÇüCUDA/PyTorchπÇüµÿ╛σ¡ÿΣ╕Äσ¡ÿσé¿τ⌐║Θù┤πÇéµ▓íµ£ëτ£ƒσ«₧ GPU Φ«╛σñçσëìΣ╕ìσí½σåÖσ│░σÇ╝µÿ╛σ¡ÿµêû GPU σèáΘÇƒµò░σ¡ùπÇéσ╜ôσëìµ£¼µ£║µùá `nvidia-smi` Σ╣ƒΣ╕ìΦâ╜µÄ¿µû¡σ¡ªµáíµ£ìσèíσÖ¿µêûσà╢Σ╗ûΦ«╛σñçµ▓íµ£ë GPUπÇé
+若扩大病例、运行 nnU-Net / Residual-Encoder nnU-Net 等强 baseline 或开展更大 ROI/更长训练，建议再确认 NVIDIA GPU、驱动、CUDA/PyTorch、显存与存储空间。没有真实 GPU 设备前不填写峰值显存或 GPU 加速数字。当前本机无 `nvidia-smi` 也不能推断学校服务器或其他设备没有 GPU。
 
-### R4∩╜£σ╜ôσëì pilot Σ╗╗σèíσ╖▓Θöüσ«Ü∩╝¢µ£¬µ¥Ñµë⌐Σ╗╗σèíσ┐àΘí╗Θçìµû░Θóäµ│¿σåî
+### R4｜当前 pilot 任务已锁定；未来扩任务必须重新预注册
 
-σ╜ôσëì formal-pipeline pilot τÜäΣ╗╗σèíσ╖▓τ╗ÅΘöüσ«ÜΣ╕║ `vertebra_binary_ctspine1k_msd_t10_v1`∩╝Übinary semantic∩╝î2 τ▒╗∩╝îσÄƒσºïσëìµÖ»µáçτ¡╛ `1..25` σ£¿Φ«¡τ╗â/Φ»äΣ╗╖Σ╕¡τ╗ƒΣ╕Çµÿáσ░äΣ╕║σëìµÖ» 1πÇé`configs/label_schemas/ctspine1k_verse.json` τÜä `1ΓÇô25 ΓåÆ C1ΓÇôL6` Σ╗ìσÅ¬τö¿Σ║Ä QC/Web σÅ»Φ»╗µÿ╛τñ║∩╝îΣ╕ìµö╣σÅÿµ║Éµáçτ¡╛πÇé
+当前 formal-pipeline pilot 的任务已经锁定为 `vertebra_binary_ctspine1k_msd_t10_v1`：binary semantic，2 类，原始前景标签 `1..25` 在训练/评价中统一映射为前景 1。`configs/label_schemas/ctspine1k_verse.json` 的 `1–25 → C1–L6` 仍只用于 QC/Web 可读显示，不改变源标签。
 
-ΦïÑµ£¬µ¥Ñµë⌐σñºτáöτ⌐╢σê░ multi-class semanticπÇüvertebra instance µêûσà╢Σ╗ûΘ¬¿τºæΘâ¿Σ╜ì∩╝îσ┐àΘí╗µû░σ╗║ task specπÇüµû░ splitπÇüµû░ config σÆîµû░τÜä validation/test µû╣µíê∩╝îΣ╕ìΦâ╜µèèσ╜ôσëì v13 / `liver_169` τÜäΘöüσ«Üτ╗ôµ₧£σÅìσÉæµö╣σåÖΣ╕║σÅªΣ╕ÇΣ╗╗σèíπÇéσ╜ôσëì instance Φ«¡τ╗â/Φ»äΣ╗╖Θô╛Σ╗ìµ£¬σ«₧τÄ░∩╝îσ¢áµ¡ñΣ╕ìΦâ╜τö¿ semantic segmentation σåÆσàà instance τ╗ôµ₧£πÇé
+若未来扩大研究到 multi-class semantic、vertebra instance 或其他骨科部位，必须新建 task spec、新 split、新 config 和新的 validation/test 方案，不能把当前 v13 / `liver_169` 的锁定结果反向改写为另一任务。当前 instance 训练/评价链仍未实现，因此不能用 semantic segmentation 冒充 instance 结果。
 
-### R5∩╜£Topology Σ╕Äτ£ƒσ«₧Θ¬¿µèÿτÜäσå▓τ¬ü
+### R5｜Topology 与真实骨折的冲突
 
-Σ╕ìΦâ╜ΘóäΦ«╛ΓÇ£Φ┐₧ΘÇÜΦ╢èσÑ╜Φ╢èµ¡úτí«ΓÇ¥πÇéΘ¬¿µèÿσÅ»Φâ╜τ£ƒσ«₧µû¡ΦúéπÇéσ┐àΘí╗∩╝Ü
+不能预设“连通越好越正确”。骨折可能真实断裂。必须：
 
-- σêåσ▒éτùàΣ╛ï∩╝¢
-- Σ┐¥τòÖτùàτÉåσ╜óµÇü∩╝¢
-- Σ╕ìΦ«⌐ topology loss µèèµû¡τ½»ΘöÖΦ»»τ▓ÿΦ┐₧∩╝¢
-- τö¿τ£ƒσ«₧µáçτ¡╛Σ╕Äσñ▒Φ┤ÑµíêΣ╛ïΘ¬îΦ»üπÇé
+- 分层病例；
+- 保留病理形态；
+- 不让 topology loss 把断端错误粘连；
+- 用真实标签与失败案例验证。
 
-### R6∩╜£σ╝Çµ║ÉΣ╗úτáüΣ╕ÄΦ╜»ΦæùσÄƒσê¢µÇº
+### R6｜开源代码与软著原创性
 
-SegFormer3D Σ╕║ GPL-3.0 Σ╕èµ╕╕πÇéΣ╕ìΦâ╜∩╝Ü
+SegFormer3D 为 GPL-3.0 上游。不能：
 
-- µë╣ΘçÅσñìσê╢σÉÄµìóσÅÿΘçÅσÉìσåÆσààσÄƒσê¢∩╝¢
-- σ£¿Φ╜»Φæùµ¥ÉµûÖΣ╕¡ΘÜÉτ₧Æµ¥Ñµ║É∩╝¢
-- µèèΣ╕èµ╕╕ backbone σåÖµêÉΓÇ£µ£¼Θí╣τ¢«Φç¬Σ╕╗µÅÉσç║ΓÇ¥πÇé
+- 批量复制后换变量名冒充原创；
+- 在软著材料中隐瞒来源；
+- 把上游 backbone 写成“本项目自主提出”。
 
-µ£¼Θí╣τ¢«σÅ»µÿÄτí«Φç¬τáöτÜäΘâ¿σêåσîàµï¼∩╝ÜΘ¬¿τºæ DICOM/CT µò░µì«µ╡üτ¿ïπÇüQCπÇüΘ¬¿τ¬ù/σñÜΘÇÜΘüôΘÇéΘàìπÇüΦüöσÉêµìƒσñ▒σ«₧τÄ░Σ╕ÄΘ¬îΦ»üπÇüuncertainty/refinementπÇüσ¢░ΘÜ╛µá╖µ£¼τ¡ûτòÑπÇüΣ╕ëτ╗┤/Web τ│╗τ╗ƒσÅèσ╖Ñτ¿ïΘ¢åµêÉπÇé
+本项目可明确自研的部分包括：骨科 DICOM/CT 数据流程、QC、骨窗/多通道适配、联合损失实现与验证、uncertainty/refinement、困难样本策略、三维/Web 系统及工程集成。
 
-### R7∩╜£ΓÇ£Φ»èµû¡τ╜æτ½ÖΓÇ¥Φí¿Φ┐░ΘúÄΘÖ⌐
+### R7｜“诊断网站”表述风险
 
-σ╜ôσëìτ│╗τ╗ƒσ║öτº░∩╝Ü
+当前系统应称：
 
-**Θ¬¿τºæ CT µÖ║Φâ╜Φ╛àσè⌐σêåµ₧Éτáöτ⌐╢σ╣│σÅ░ / τºæτáöσÄƒσ₧ï**πÇé
+**骨科 CT 智能辅助分析研究平台 / 科研原型**。
 
-σ£¿µùáσÉêΦºäΘ¬îΦ»üσëì∩╝îΣ╕ìσ║öσ«úΣ╝áΣ╕║Φâ╜σñƒτï¼τ½ïτ╗Öσç║τû╛τùàΦ»èµû¡τ╗ôΦ«║τÜäΣ╕┤σ║èΦ»èµû¡Σ║ºσôüπÇé
+在无合规验证前，不应宣传为能够独立给出疾病诊断结论的临床诊断产品。
 
-### R8∩╜£σà¼σ╝Çµò░µì«Σ╕ïΦ╜╜τ╜æτ╗£/σ«óµê╖τ½»τ¿│σ«ÜµÇº
+### R8｜公开数据下载网络/客户端稳定性
 
-2026-08-16 σ╜ôσëìµ£¼µ£║Φ«┐Θù« VerSe 2020 σ«ÿµû╣ S3 σ╜ÆµíúΣ╗ìσ¡ÿσ£¿Φ┐₧µÄÑΦ╢àµù╢∩╝îσ¢áµ¡ñ VerSe σ░Üµ£¬σ«₧ΘÖàΦÉ╜τ¢ÿπÇé
+2026-08-16 当前本机访问 VerSe 2020 官方 S3 归档仍存在连接超时，因此 VerSe 尚未实际落盘。
 
-CTSpine1K Hugging Face σ£¿µù⌐µ£ƒΣ╣ƒσç║τÄ░Φ╢àµù╢σÆîσ╣╢ΦíîΣ╕ïΦ╜╜σñ▒Φ┤Ñ∩╝¢Σ╜åµö╣Σ╕║ Edge µ╡ÅΦºêσÖ¿**σìòµûçΣ╗╢Θí║σ║ÅΣ╕ïΦ╜╜**σÉÄ∩╝îσ╖▓µêÉσèƒσÅûσ╛ù `MSD-T10` 10 Σ╕¬ CT+labelπÇé`liver_3/5/8` τ¡ëσñ▒Φ┤ÑτùàΣ╛ïΘí║σ║ÅΘçìΦ»òσÉÄµêÉσèƒ∩╝îσñìσê╢σê░Θí╣τ¢«µù╢µëºΦíî SHA-256 µ║É/τ¢«µáçΣ╕ÇΦç┤µÇºµúÇµƒÑπÇéτ╗ôΦ«║µÿ»∩╝ÜCTSpine1K σ╜ôσëìσÅ»ΘÇÜΦ┐çµ╡ÅΦºêσÖ¿Θí║σ║Åµû╣σ╝Åτ╗ºτ╗¡µë⌐ΘçÅ∩╝îΣ╜åσæ╜Σ╗ñΦíî/σ╣╢ΦíîΣ╕ïΦ╜╜τ¿│σ«ÜµÇºΣ╗ìΣ╕ìσÅ»σüçσ«Ü∩╝¢σÉÄτ╗¡σñºΦºäµ¿íΣ╕ïΦ╜╜σ┐àΘí╗Σ┐¥τòÖ provenanceπÇüµáíΘ¬îσÆîΣ╕Äµû¡τé╣µüóσñìτ¡ûτòÑπÇé
-
----
-
-## 9. validation Θÿ╢µ«╡σÄåσÅ▓Σ╗╗σèíµ╕àσìò∩╝êσ╜Æµíú∩╝ë
-
-> µ£¼ΦèéΣ┐¥τòÖ v3∩╜₧v15 τ¡ëΘÿ╢µ«╡σ╜ôµù╢τÜäσï╛ΘÇëτè╢µÇüΣ╕Äσ╛àσè₧∩╝îτö¿Σ║ÄΦ┐╜µ║»σ«₧Θ¬îσå│τ¡û∩╝îΣ╕ìσåìΣ╗úΦí¿ 2026-08-29 v0.3.0 µö╢σ░╛σÉÄτÜäσ╜ôσëìΣ╗╗σèíπÇé**σ╜ôσëìτ£ƒσ«₧σ╛àσè₧Σ╗Ñµ£¼Φèéµ£½σ░╛ΓÇ£9.1 σ╜ôσëìΣ╕ïΣ╕Çµ¡ÑΓÇ¥Σ╕║σçåπÇé**
-
-### P0∩╜£σÄåσÅ▓∩╝ÜΣ┐«σñì full-volume checkpoint selection Σ╕Ä baseline
-
-- [x] ΘªûΣ╕¬µ¡úσ╝ÅΣ╗╗σèíσ╖▓Θöüσ«Ü∩╝Ü`vertebra_binary_ctspine1k_msd_t10_v1`∩╝îbinary semantic∩╝î2 τ▒╗∩╝¢
-- [x] 10/10 Σ║║σ╖Ñ QC σ╖▓σ«îµêÉ∩╝î7 train / 2 validation / 1 test patient-level split σ╖▓σ¢║σ«Ü∩╝¢`liver_169` Σ╗àσàüΦ«╕µ£Çτ╗êτï¼τ½ï test∩╝¢
-- [x] 64┬│ CT-only long-v2 σ╖▓σ«îµêÉσ╣╢ early-stop∩╝Ü`best.pt=epoch 1`πÇü`last.pt=epoch 9`∩╝¢
-- [x] σ╖▓σ»╣ `liver_7/liver_8` σ«îµêÉ `best.pt` Σ╕Ä `last.pt` σ¢¢µ¼í full-volume validation∩╝îΦ╛ôσç║ `metrics_per_case.csv` / `summary.json` σ¥çσ╖▓µá╕σ»╣∩╝¢
-- [x] `best.pt` Σ╕ñΣ╛ïσ╣│σ¥ç DiceΓëê0.03698∩╝¢`last.pt`Γëê0.04953πÇé`last.pt` σ╣│σ¥ç ASSDΓëê50.78 mmπÇücomponent count errorΓëê1084∩╝îΣ╝ÿΣ║Ä `best.pt` τÜäΓëê56.77 mm / 1617∩╝¢
-- [x] σ╖▓τí«Φ«ñσ¢║σ«Üσìò patch validation Σ╕ÑΘçìΘ½ÿΣ╝░/Φ»»σêñ full-volume µ│¢σîû∩╝Üepoch 1 patch-valΓëê0.3613∩╝îΣ╜å full-volume σ╣│σ¥çΣ╗àΓëê0.037∩╝¢
-- [x] σ╖▓τí«Φ«ñΘªûΦªüµá╣σ¢áµÿ» foreground/background sampling prior Σ╕ÑΘçìσñ▒Θàì∩╝Ülong-v2 τ£ƒσ«₧Φ«¡τ╗â patch σ╣│σ¥çσëìµÖ»Γëê21.2%∩╝î7 Σ╕¬ train σà¿σì╖σ╣│σ¥çΓëê0.68%∩╝¢Σ╕ñΣ╛ï validation prediction σëìµÖ»Γëê14.5%ΓÇô17.1%∩╝îµÿ»τ£ƒσÇ╝Γëê0.57%ΓÇô0.70% τÜäτ║ª 24ΓÇô27 σÇì∩╝¢
-- [x] σ╖▓σ«₧τÄ░ `training.patches_per_case`∩╝ÜσìòτùàΣ╛ïµ»Å epoch σÅ»µè╜σñÜΣ╕¬τï¼τ½ïσÅ»σñìτÄ░ patch∩╝¢σ╣╢σ£¿ evaluation CSV/summary σó₧σèá prediction/target foreground fraction Σ╕Ä ratio∩╝¢
-- [x] σ╖▓µû░σ╗║ `configs/orthopedic_ct_cpu_binary_balanced_fullval_v3.yaml`∩╝Üforeground_probability=0.25πÇüpatches_per_case=4πÇü64┬│ CT-onlyπÇüRegion Dice+CE Σ┐¥µîüΣ╕ìσÅÿ∩╝î`validation.patch_mode=false`∩╝¢`formal_readiness --allow-cpu` σ«₧µ╡ï ready=true / blocker_count=0∩╝¢
-- [x] balanced v3 σ╖▓τ£ƒσ«₧σ«îµêÉ epoch 1/2∩╝Üepoch 1 full-volume val DiceΓëê0.05407πÇüepoch 2Γëê0.04084∩╝îσ╜ôσëì `best.pt=epoch 1`∩╝¢
-- [x] σ╖▓σ»╣ v3 `best.pt` σêåτùàΣ╛ï detailed validation∩╝Ü`liver_7/liver_8` DiceΓëê0.04323/0.06491∩╝îPrecisionΓëê0.02753/0.04267∩╝îprediction/target foreground ratioΓëê3.65/3.18∩╝¢τ¢╕σ»╣ long-v2 τ║ª 24ΓÇô27 σÇìσ╖▓µÿ╛Φæùµö╣σûä∩╝¢
-- [x] v3 epoch 3 σ╖▓τ╗¡Φ«¡σ╣╢µÿÄτí«σñ▒Φ┤Ñ∩╝Ütrain lossΓëê1.63162∩╝îΣ╜åΣ╕ñΣ╛ï full-volume val DiceΓëê1.3e-11∩╝¢detailed validation Σ╕ñΣ╛ï Dice/Precision/Recall=0∩╝îprediction/GT foreground ratioΓëê0.47/0.26∩╝îσ╖▓σü£µ¡óτ╗ºτ╗¡ epoch 4∩╝¢
-- [x] µá╣σ¢áµúÇµƒÑσÅæτÄ░ RegionDiceCELoss3D σ╜ôσëìΣ╕║ foreground Dice + µ£¬σèáµ¥âσà¿Σ╜ôτ┤á CE Θ╗ÿΦ«ñ 1:1∩╝îΣ╕ö `train.build_criterion()` µ£¬Φ»╗σÅû YAML τÜäσåàΘâ¿ `dice_weight/ce_weight`∩╝¢Φ»Ñσ╖Ñτ¿ïτ╝║σÅúσ╖▓Σ┐«σñìσ╣╢σ╜óµêÉ v4 σìòσÅÿΘçÅσ«₧Θ¬î∩╝¢
-- [x] v4 σ░å CE µ¥âΘçìΘÖìΦç│ 0.25 σÉÄΣ╕ñΣ╛ïσ╣│σ¥ç DiceΓëê0.04762πÇüforeground ratioΓëê5.97πÇücomponent errorΓëê1993∩╝îµò┤Σ╜ôσèúΣ║Ä v3 epoch 1∩╝îσ╖▓σÉªσ«ÜΓÇ£τ╗ºτ╗¡ΘÖìΣ╜Ä CE µ¥âΘçìΓÇ¥µû╣σÉæ∩╝¢
-- [x] v5 σ░å peak lr ΘÖìΦç│ 5e-5 Σ╜åΣ┐¥τòÖ 2-epoch warmup∩╝îepoch 1/2 σêåσê½ DiceΓëê0.03185/0.03269∩╝îdetailed validation τ║ª 55├ù foreground explosion∩╝îσ╖▓σü£µ¡ó∩╝¢
-- [x] v6 Σ╗àσ░å warmup 2ΓåÆ1∩╝Üepoch 1 train loss=`2.5537127597`πÇüval Dice=`0.0540700072`πÇülr=`5e-5`∩╝îσçáΣ╣Äτ▓╛τí«σñìτÄ░ v3 epoch 1∩╝¢epoch 2 train loss=`1.9332212380`πÇüval Dice=`0.0323937293`πÇülrΓëê`4.8923e-5`∩╝îσì│Σ╜┐µ£¬σìçσê░ 1e-4 Σ╗ìµÿÄµÿ╛µü╢σîû∩╝¢
-- [x] v6 epoch 2 Σ╕ñΣ╛ï detailed validation∩╝Ü`liver_7/liver_8` DiceΓëê0.03210/0.03268πÇüPrecisionΓëê0.01632/0.01661πÇüRecallΓëê0.98562/0.99919πÇüprediction/GT foreground ratioΓëê60.40/60.14πÇücomponent error=87/65∩╝¢Φ┐Öµÿ»σñºΦîâσ¢┤ΦâîµÖ»Φó½Θóäµ╡ïµêÉσëìµÖ»ΘÇáµêÉτÜäΣ╕ÑΘçì foreground explosion∩╝îΣ╕ìµÿ» component µò░Σ╕ïΘÖìσ╕ªµ¥ÑτÜäµ¡úτí«µö╣σûä∩╝¢
-- [x] σ╖▓Σ╜┐τö¿ Dataset τ£ƒσ«₧ sampling ΘÇ╗Φ╛æΣ╕Äσ¢║σ«Ü seed=42 σñìτÄ░ v3/v6 epoch 1/2πÇüv3 epoch 3 τÜä 28 Σ╕¬ training patch∩╝Üepoch 1/2/3 mean foreground fractionΓëê7.91%/8.84%/5.68%∩╝îmedian σ¥çΣ╕║ 0∩╝îτ║»ΦâîµÖ» patch=18/18/20∩╝¢τùàΣ╛ïτ║ºµÜ┤Θ£▓µÿÄµÿ╛Σ╕ìτ¿│σ«Ü∩╝îΣ╛ïσªé epoch 1 `liver_2/liver_6` σ¥ç 4/4 patch τ║»ΦâîµÖ»∩╝îepoch 2 σÉäτùàΣ╛ïσÅêΘçìµû░σêåΘàìπÇéΦ»┤µÿÄσ╜ôσëìτï¼τ½ï Bernoulli sampling σ¡ÿσ£¿τ£ƒσ«₧ epoch/case µ│óσè¿∩╝îΣ╜å v6 epoch 1ΓåÆ2 τÜäµÇ╗Σ╜ôσ╖«σ╝éσ╣╢Σ╕ìΦ╢│Σ╗Ñσìòτï¼ΦºúΘçèτ║ª 3.4├ùΓåÆ60├ù foreground explosion∩╝îσ¢áµ¡ñ sampling σÅ¬Φâ╜ΦºåΣ╕║σ╖▓Φ»üσ«₧τÜäτ¿│σ«ÜµÇºΘù«Θóÿ/σÇÖΘÇëΦ»▒σ¢á∩╝îΣ╕ìµÿ»σ╖▓Φ»üσ«₧σö»Σ╕Çµá╣σ¢á∩╝¢
-- [x] `train.py` σ╖▓µû░σó₧ `sampling_stats.csv`∩╝îτ¢┤µÄÑΣ╗Äµ¿íσ₧ïσ«₧ΘÖàµö╢σê░τÜä training label µ»Å epoch Φ«░σ╜ò patch_countπÇüforeground fraction mean/median/std/min/maxπÇüq10/q25/q75/q90πÇüforeground/background patch count∩╝îσ╣╢µû░σó₧σ¢₧σ╜Æµ╡ïΦ»ò∩╝¢
-- [x] v7/v8/v9/v10 σ╖▓µîëσìòσÅÿΘçÅτ¿│σ«ÜµÇºΦ╖»τ║┐σ«îµêÉσ╣╢σ╜óµêÉµ£║σê╢Φ»üµì«∩╝¢σà╢Σ╕¡ v9 Φ»üµÿÄ BN running-stat drift µÿ» foreground explosion τÜäΘçìΦªüµö╛σñºµ£║σê╢Σ╜åΣ╕ìµÿ»σö»Σ╕Çµá╣σ¢á∩╝îv10 Φ»üµÿÄ encoder parameter update Σ╕ìµÿ» epoch2 degradation τÜäσ┐àΦªüµ¥íΣ╗╢∩╝¢
-- [x] v11 σ╖Ñτ¿ïσ╖▓σ«îµêÉ∩╝Üµû░σó₧ `training.freeze_decoder_feature_parameters_from_epoch=2`∩╝¢epoch2 Φ╡╖σå╗τ╗ô decoder `linear_c1..c4` + `linear_fuse`∩╝îΣ╗àΣ┐¥τòÖ `linear_pred` head σÅ»Φ«¡τ╗â∩╝¢τ¢╕σ»╣ v10 ΘÖñ experiment name Σ╕ÄΦ┐ÖΣ╕Çµû░σó₧ freeze Θàìτ╜«σñûσ«îσà¿Σ╕ÇΦç┤∩╝¢focused freeze tests=`15 passed`πÇüσà¿ΘçÅ `pytest=133 passed`πÇüRuff cleanπÇüformal readiness=`ready=true / blocker_count=0`∩╝¢
-- [x] v11 epoch1 σ╖▓σ«îµêÉσ╣╢Σ╕Ä v10 epoch1 exact equal∩╝Ürun=`experiments/20260827_180730_cpu_binary_decoder_feature_freeze_after_e1_v11_roi64`∩╝îtrain loss=`2.5537127597`πÇümean val Dice=`0.0540700072`πÇüstd=`0.0108403799`πÇülr=`5e-5`∩╝îsampling 28 patchπÇüforeground/background=`10/18`∩╝¢v10e1Γåöv11e1 τÜä 232 Σ╕¬ model-state tensor ΘÇÉΘí╣ `torch.equal`πÇüdiff=`0`∩╝îσ¢áµ¡ñτí«Φ«ñσ╖Ñτ¿ïµ£¬µ▒íµƒô epoch1πÇéΣ╕║Θü┐σàìΘçìσñìµÿéΦ┤╡ CPU evaluation∩╝îΣ╕ìσñìΦ╖æΣ╕Ä exact-equal checkpoint τ¡ëΣ╗╖τÜä detailed validation/diagnostics∩╝îµ▓┐τö¿ v10e1 ΘöÜτé╣∩╝¢
-- [x] v11 σ╖▓Σ╗ÄσÉîΣ╕Ç run resume σê░µÇ╗ epoch2∩╝Ütrain loss=`2.3053811001`πÇümean val Dice=`0.0543761681`πÇüstd=`0.0101640915`πÇülrΓëê`4.8923e-5`∩╝¢sampling 28 patchπÇüforeground/background=`10/18`πÇüforeground fraction meanΓëê`0.08840765`∩╝¢checkpoint Φ»üµÿÄ encoder delta=`0`πÇüBN running buffer delta=`0`πÇüdecoder feature delta=`0`∩╝îΣ╗à `linear_pred` weight+bias σÅæτöƒµ¢┤µû░∩╝¢
-- [x] v11 epoch2 `liver_7/liver_8` detailed validationπÇüdiagnostics Σ╕Ä v11e1ΓåÆv11e2 dynamics σ╖▓σ«îµêÉ∩╝ÜΣ╕ñΣ╛ï DiceΓëê`0.04421/0.06454`πÇüforeground ratioΓëê`3.96/3.50`∩╝¢GT foreground mean P(fg)Γëê`0.13263/0.16114`∩╝îGT background mean P(fg)Γëê`0.03482/0.02670`∩╝¢σ¢║σ«Ü `liver_7` Σ╕è encoderπÇüdecoder fuse Σ╕Ä final-head input activation τ╗ƒΦ«íσ«îσà¿Σ╕ÇΦç┤∩╝îΣ╗à final logits ΘÜÅ final head µ¢┤µû░ΦÇîσÅÿσîûπÇéσ╜ôσëìσàüΦ«╕τ╗ºτ╗¡ epoch3∩╝¢
-- [x] v11 epoch3 σ╖▓τ£ƒσ«₧σ«îµêÉΣ╕öΣ╕ìΘçìΦ╖æ∩╝Ütrain loss=`1.8300107228`πÇümean full-volume val Dice=`0.0546575740`πÇüstd=`0.0095167619`∩╝îΣ╕ëΦ╜« Dice=`0.05407001 ΓåÆ 0.05437617 ΓåÆ 0.05465757`∩╝¢`liver_7/liver_8` detailed DiceΓëê`0.04514/0.06417`πÇüforeground ratioΓëê`4.22/3.78`πÇéΣ╜┐τö¿ v11e1 exact anchorΓåÆv11e3 µû░ dynamics + σ╖▓Σ┐¥σ¡ÿ v11e1ΓåÆv11e2 dynamics Σ║ñσÅëΘ¬îΦ»ü∩╝îencoder/BN/decoder-feature µîüτ╗¡σå╗τ╗ô∩╝îΣ╗à final head µ¢┤µû░∩╝¢stable baseline=`YES`∩╝êengineering/validation∩╝ë∩╝îlock parameters=`NO`πÇüformal independent test ready=`NO`∩╝¢
-- [ ] τ╗ºτ╗¡µá╕σ»╣ Region Dice+CE ΦâîµÖ»µèæσê╢πÇülabel mappingπÇünormalizationπÇüsliding-window stitching/logits resize/threshold∩╝¢σ╜ôσëìµ▓íµ£ëσÅæτÄ░ label mapping µêû resize τÜäτ¢┤µÄÑΘöÖΦ»»Φ»üµì«∩╝¢
-- [x] stable CT-only baseline σ╖▓Θöüσ«ÜΣ╕║ v11 µ£║σê╢σƒ║τ║┐∩╝¢µ£Çσ░ÅσÅ»Σ┐í reproducibilityπÇüCT-only vs CT+bone-window Φ╛ôσàÑµ╢êΦ₧ìσÅè v11/v13/v14/v15 loss ablation σ¥çσ╖▓σ«îµêÉ∩╝¢loss Θÿ╢µ«╡ΘÇëµï⌐ v13 Region+Boundary Σ╜£Σ╕║σÉÄτ╗¡ sampling baseline∩╝îµëÇµ£ëΘÇëµï⌐Σ╗ìσÅ¬Σ╜┐τö¿ train+validation∩╝¢
-- [ ] σ£¿ ROI/epoch/lr/scheduler/sampling/augmentation/input/loss/checkpoint σà¿Θâ¿σÅ¬Σ╛¥µì« train+validation Θöüσ«Üσëì∩╝îτªüµ¡óΘçìµû░Φ┐ÉΦíî test `liver_169`∩╝¢
-- [ ] µ¢┤σÅ»Θ¥á baseline Θöüσ«ÜσÉÄσåìτöƒµêÉ prediction mesh / SDF / Web overlay / entropy overlay∩╝îσ╣╢τ╗ºτ╗¡Φ«║µûçσ╖Ñτ¿ïΘ¬îΦ»üµ¥ÉµûÖπÇé
-
-### P1∩╜£ΦüöσÉêµìƒσñ▒Σ╕Äσ¢░ΘÜ╛µá╖µ£¼µ╢êΦ₧ì
-
-- [x] Region∩╝Üv11∩╝¢
-- [x] Region + Boundary∩╝Üv13∩╝¢
-- [x] Region + Topology∩╝Üv14∩╝¢
-- [x] Region + Boundary + Topology∩╝Üv15∩╝¢
-- [ ] loss µ¥âΘçì validation grid∩╝êσ╜ôσëìµ£Çσ░Åσ¢¢τ╗äµ╢êΦ₧ìσ╖▓σ«îµêÉ∩╝îσÉÄτ╗¡µÿ»σÉªτ╗ºτ╗¡ grid Σ╗Ñ validation Φ»üµì«Σ╕Ä CPU µêÉµ£¼σå│σ«Ü∩╝ë∩╝¢
-- [ ] normal vs difficult subset∩╝¢
-- [ ] fracture/metal/low-density/thick-slice σ¡ÉΘ¢å∩╝êµò░µì«σ¡ÿσ£¿µù╢∩╝ë∩╝¢
-- [ ] Φ«░σ╜ò false merge / false breakπÇé
-
-### P2∩╜£Σ╕ìτí«σ«ÜµÇºτ▓╛Σ┐«
-
-- [x] σ╖▓σ«₧τÄ░ entropyΓåÆerror AUROC/AUPRCπÇüΘöÖΦ»»/µ¡úτí«σ╣│σ¥ç entropyπÇüTop-percent error recallπÇüROI error rate/fraction τÜäσ«ÜΘçÅΦ»äΣ╗╖Σ╗úτáü∩╝¢
-- [x] σ╖▓σ£¿ v13 `liver_7/liver_8` τ£ƒσ«₧ baseline checkpoint Σ╕èΘ¬îΦ»ü entropy Σ╕Äτ£ƒσ«₧ΘöÖΦ»»τ⌐║Θù┤τ¢╕σà│µÇº∩╝¢
-- [x] σ╖▓σ«îµêÉ validation Top-percent/threshold σ░Åτ╜æµá╝∩╝ÜTop-5/10/20% ├ù dilation 0/1/2∩╝¢Σ╕ìτ╗ºτ╗¡µùáΘÖÉµë½σÅé∩╝¢
-- [x] σ╖▓σ«₧τÄ░ `UncertaintyRefinementNet3D` σ▒ÇΘâ¿µ«ïσ╖« refinement head/network∩╝êσ╖Ñτ¿ïΣ╗úτáü∩╝ë∩╝¢
-- [x] σ╖▓σ«₧τÄ░ coarse σå╗τ╗ôπÇüROI-normalized lossπÇüROI/global error delta τÜäΣ║îΘÿ╢µ«╡ refinement Φ«¡τ╗âσƒ║τ║┐∩╝¢
-- [x] σ╖▓σ«îµêÉ coarse vs ROI-only vs full-volume second-pass Σ╕ñΣ╛ïσ»╣τàº∩╝¢
-- [x] σ╖▓µèÑσæèΘó¥σñûµù╢Θù┤Σ╕Ä ROI µ»öΣ╛ï∩╝¢σ╜ôσëì CPU validation Σ╕ìµèÑσæè/Σ╝¬ΘÇá GPU µÿ╛σ¡ÿτ╗ôµ₧£∩╝¢
-- [x] ROI-only σñûΘâ¿ prediction ΘÇÉΣ╜ôτ┤áΣ┐¥µîüΣ╕ìσÅÿ∩╝Üσà¿Θâ¿ candidate `outside_roi_changed_fraction=0`∩╝¢
-- [x] canonical prediction+entropy reconstruction Σ╕ñΣ╛ï mismatch=`0`∩╝îentropy max abs errorΓëê`9.86e-7`∩╝¢
-- [x] µ£Çτ╗êτ╗╝σÉêσêñσ«Ü∩╝Ü**REFINEMENT=FAIL**πÇéΦÖ╜τä╢ mean Dice/IoU/PrecisionπÇüforeground ratioπÇüglobal error Σ╕ÄΘâ¿σêå surface µîçµáçµö╣σûä∩╝îΣ╜å mean RecallΓëê`0.13649ΓåÆ0.06965`∩╝îcomponent errorΓëê`1543.5ΓåÆ2397.5`∩╝îfalse breakΓëê`64.5ΓåÆ138`∩╝î`liver_7` surface ΘÇÇσîûΣ╕öΦÇùµù╢σó₧σèá∩╝îΣ╕ìµ╗íΦ╢│Σ╕ñΣ╛ïτ¿│σ«Üτ╗╝σÉêµö╣σûä∩╝¢µ£Çτ╗ê validation pipeline Σ┐¥τòÖ v13 coarse∩╝¢
-- [x] uncertainty σÅ»τö¿Σ║Äσ╜ôσëì validation τÜä QC Θ½ÿΘúÄΘÖ⌐σî║σƒƒµÅÉτñ║∩╝îΣ╜åΣ╗à 2 Σ╛ï∩╝îΣ╗ìΘ£Çµë⌐σñºτùàΣ╛ïΘ¬îΦ»üπÇé
-
-### P3∩╜£Σ╕ëτ╗┤Θçìσ╗║Σ╕Ä Web
-
-- [x] mask ΓåÆ physical-space surface∩╝¢
-- [x] Marching Cubes baseline + PLY/JSON σ»╝σç║∩╝¢τ£ƒσ«₧ `liver_0` label σ╖▓Θ¬îΦ»ü∩╝¢
-- [x] SDF physical-surface engineering baseline∩╝Üτ£ƒσ«₧ `liver_0` 0.3/0.4/0.5/0.8 mm sweep∩╝¢0.4 mm σ╜ôσëìΘ╗ÿΦ«ñσÇÖΘÇë∩╝î0.8 mm σ¢áµö╣σÅÿΦ┐₧ΘÇÜσƒƒΦó½µïÆτ╗¥∩╝¢
-- [x] σ╖▓σ«îµêÉ 10 Σ╛ïσÄƒσºï labelΓåÆ1 mm label τÜäΘçìΘççµá╖/σÉäσÉæσ╝éµÇº physical-surface σ╖Ñτ¿ïΦ»»σ╖«Φ»äΣ╝░∩╝¢
-- [x] µ¢▓τÄç/σà│Θö«Φ╛╣τ╝ÿΣ┐¥µèñσÇÖΘÇë∩╝Üτ¢╕Θé╗Θí╢τé╣µ│òσÉæσÅÿσîûσèáµ¥â vertex-clustering∩╝¢τ£ƒσ«₧ `liver_0` τ£ƒσÇ╝τ╜æµá╝σ╖Ñτ¿ïΘ¬îΦ»üµÿ╛τñ║Θ½ÿτë╣σ╛üσî║σƒƒΦ»»σ╖«Σ╕ïΘÖì∩╝îΣ╗ìσ╛à prediction Θ¬îΦ»ü∩╝¢
-- [x] vertex-clustering mesh τ«Çσîû∩╝¢τ£ƒσ«₧ `liver_0` 1.5 mm µíúτ║ªσçÅ 60% Θí╢τé╣/Θ¥ó∩╝îΣ┐¥τòÖσà¿σêåΦ╛¿τÄçσƒ║σçå∩╝¢
-- [x] MPR Σ╕ëΦºåσ¢╛∩╝êaxial/coronal/sagittal + σêçτëçΣ╜ìτ╜«/τ¬ùσ«╜τ¬ùΣ╜ì∩╝ë∩╝¢
-- [x] WebGL2 τ£ƒσÇ╝ label 3D µ╕▓µƒôΣ╕Äσà¿σêåΦ╛¿τÄç/1.5/2.0 mm ΘÇëµï⌐∩╝¢
-- [x] µñÄΣ╜ôτ▒╗σê½µÿ╛τñ║∩╝Ü`1ΓÇô25 ΓåÆ C1ΓÇôL6` σ╖Ñτ¿ï schema∩╝îΣ╕ìµö╣σÄƒµáçτ¡╛σÇ╝∩╝¢
-- [x] τë⌐τÉå XYZ Φ╖¥τª╗/Σ╕ëτé╣σñ╣ΦºÆΦ«íτ«ù API∩╝¢
-- [x] 10 Σ╛ïΣ║║σ╖Ñ QC reviewer + Σ║ñΣ║Æ MPR/τ£ƒσÇ╝ overlay µÄÑσÅú∩╝¢τùàΣ╛ïσêùΦí¿µö»µîüΘÇëµï⌐σÉÄΦç¬σè¿µö╢Φ╡╖πÇüΘÜÅµù╢σ▒òσ╝ÇπÇüΦç¬σè¿Φ┐¢σàÑΣ╕╗σ«íµá╕σî║∩╝îΣ╕èΣ╕ÇΣ╛ï/Σ╕ïΣ╕ÇΣ╛ïΣ┐¥µîüσ«íµá╕σî║∩╝îσ«╜σ▒Å/τ¬äτ¬ùσÅúσ¥çµ£ëσ»╣σ║öσ╕âσ▒Ç∩╝¢
-- [x] evaluation results-review Θí╡Θ¥óΣ╕Ä prediction/entropy MPR µÄÑσÅúσ╖▓σçåσñç∩╝¢v13 σ╖▓σ¡ÿσ£¿τ£ƒσ«₧ validation prediction + entropy∩╝îΣ╕ïΣ╕Çµ¡ÑΦ┐¢Φíî Web σ«₧µ£║µÄÑσàÑΘ¬îµö╢∩╝¢
-- [ ] Σ╜┐τö¿µ£Çτ╗ê v13 validation prediction σ«îµêÉ prediction mesh / SDF / simplification τ£ƒσ«₧Θ¬îΦ»üσ╣╢µÄÑσàÑ Web∩╝¢
-- [ ] Edge σ«₧µ£║σ«îµêÉ prediction overlay / entropy overlay / results-review / prediction 3D Θ¬îµö╢πÇé
-
-### P4∩╜£Φ«║µûç/Σ╕¡µ£ƒ/Φ╜»Φæù
-
-- [x] σ╖▓σ╗║τ½ï 44 µ¥íτ╗ôµ₧äσîûµûçτî«τƒ⌐Θÿ╡∩╝¢σ╖▓ΦíÑ SpineMambaπÇü2025 ΦºúσëûσÅÿσ╝é TransformerπÇü2026 VertebraFormerπÇü2026 Residual-Encoder nnU-NetπÇü2025 Θ¬¿µèÿ pipelineπÇüτ£ƒσ«₧Θçæσ▒₧µñìσàÑτë⌐ deep-MAR Σ╕Ä 2024 Σ╜ÄΘ¬¿σ»åσ║ª fusion/split τ¢┤µÄÑσêåσë▓Φ»üµì«∩╝¢
-- [x] σ╖▓σ╗║τ½ï 44 µ¥íµ£║σÖ¿σÅ»τö¿ `paper/references.bib`∩╝ê42 µ¥íΦï▒µûçµá╕σ┐â + 2 µ¥íσ╖▓µá╕Θ¬îΣ╕¡µûçµûçτî«∩╝ë∩╝îσ╣╢τ║áµ¡úσñÜµ¥íµÿôΘöÖΘóÿσ╜ò∩╝¢
-- [ ] τö¿τ£ƒσ«₧σ«₧Θ¬îµ¢┤µû░Φ«║µûç Results∩╝¢
-- [ ] τöƒµêÉΣ╕╗τ╗ôµ₧£Φí¿σÆîµ╢êΦ₧ìΦí¿∩╝¢
-- [ ] σüÜσñ▒Φ┤ÑµíêΣ╛ïσ¢╛∩╝¢
-- [ ] σüÜ Web/Σ╕ëτ╗┤τ£ƒσ«₧µê¬σ¢╛∩╝¢
-- [ ] Σ╕¡µ£ƒ PPT Σ╜┐τö¿ `docs/05_midterm_materials.md`∩╝¢
-- [ ] Φ╜»Φæùµ¥ÉµûÖΣ╕Ñµá╝σî║σêåΣ╕èµ╕╕σÆîΦç¬τáöΣ╗úτáü∩╝¢
-- [ ] µ»Åµ¼íµ¥ÉµûÖµ¢┤µû░σÉîµ¡Ñσ¢₧σåÖµ£¼σÅ░Φ┤ªπÇé
-
-### 9.1 σ╜ôσëìΣ╕ïΣ╕Çµ¡Ñ∩╝êv0.3.0 µö╢σ░╛σÉÄ∩╝ë
-
-**µ£¼µ£║σÅ»τ╗ºτ╗¡σ«îµêÉ∩╝Ü**
-
-- [x] σ»╣ README / PROJECT_STATUS / TASKS / Σ╕¡µ£ƒµ¥ÉµûÖ / Σ╕¡µûçΦ«║µûçσüÜσ╜ôσëìτè╢µÇüΣ╕ÇΦç┤µÇºσñìµá╕∩╝¢
-- [x] Φ«║µûçσ╖▓σåÖσàÑ validation Σ╕Äσö»Σ╕ÇΣ╕Çµ¼í independent test τ£ƒσ«₧τ╗ôµ₧£∩╝îσ╣╢Σ┐¥τòÖΣ╜ÄµÇºΦâ╜πÇüΘ¥₧Σ╕┤σ║èσ«ÜΣ╜ì∩╝¢
-- [x] Φ«║µûçµ¡úµûçΘí║σ║Åσ╝òτö¿σ╝Çσºïτ╗ƒΣ╕Ç∩╝îσ╖▓ΦíÑΣ╕╗Φªüµû╣µ│ò/µò░µì«Θ¢å/τ¢╕σà│σ╖ÑΣ╜£τÜäσ╝òτö¿τ╝ûσÅ╖∩╝¢
-- [x] GitHub ΘªûΘí╡Σ┐¥µîüτ«Çµ┤ü∩╝îΦ»ªτ╗å v11∩╜₧v23 Φ┐çτ¿ïσÅ¬µö╛ `PROJECT_STATUS.md`∩╝¢
-- [x] v0.3.0 Release σ╖▓σ¡ÿσ£¿Σ╕öσåàσ«╣Σ╕Äµ¡úσ╝Åµö╢σ░╛τè╢µÇüΣ╕ÇΦç┤∩╝îΣ╕ìσ¢áτ║»µûçµíúσÉîµ¡ÑΘçìσñìσÅæτëêµ£¼∩╝¢
-- [x] σ¢╜σåàΣ╕¡µûçΘóÿσ╜òµ£Çτ╗êµá╕Θ¬î∩╝ÜΣ╝ìσ┐ùσÅæτ¡ë 2022 σ╖▓τö▒Σ╕çµû╣σî╗σ¡ªτ╜æΣ╕ÇµëïΘí╡Θ¥óµá╕Θ¬î∩╝¢Φë╛σ┐╡τ¡ë 2026 σ╖▓τö▒πÇèΣ╕¡σ¢╜σî╗σ¡ªΦúàσñçπÇïµ£ƒσêèσ«ÿτ╜æ/CNKI µ£ƒσêèΘí╡µá╕Θ¬î∩╝¢µ£¬µÅÉΣ╛¢σÅ»τí«Φ«ñ DOI τÜäµ¥íτ¢«Σ┐¥µîüτ⌐║τ╝║∩╝îΣ╕ìΦíÑΘÇá∩╝¢
-- [ ] τ¢«µáçµ£ƒσêè/σ¡ªµáíµ£Çτ╗êµá╝σ╝Åµ¿íµ¥┐τí«σ«ÜσÉÄ∩╝îσåìσüÜµ£ÇσÉÄΣ╕ÇΦ╜«µá╝σ╝Åσ«Üτ¿┐∩╝¢
-- [ ] GitHub `LICENSE` Θ£ÇΘí╣τ¢«Φ┤ƒΦ┤úΣ║║τ╗ôσÉêΦç¬τáöΣ╗úτáüΣ╕Ä SegFormer3D GPL-3.0 Φ╛╣τòîµÿÄτí«ΘÇëµï⌐∩╝¢σ╜ôσëìΣ╗ôσ║ôµ£¬σú░µÿÄΦ«╕σÅ»Φ»ü∩╝îΣ╕ìΦç¬σè¿Σ╗úΘÇëπÇé
-
-**Θ£ÇΦªüµû░σó₧µò░µì«/τ«ùσè¢/σñûΘâ¿µ¥íΣ╗╢σÉÄσåìσüÜ∩╝Ü**
-
-- [ ] µë⌐σñºτ£ƒσ«₧τùàΣ╛ïΦºäµ¿í∩╝îσ╣╢σ╗║τ½ïµû░τÜäΘóäµ│¿σåî patient-level split∩╝¢
-- [ ] σ£¿µû░ split Σ╕èτ£ƒσ«₧Φ┐ÉΦíî nnU-Net / Residual-Encoder nnU-Net τ¡ëσ╝║ baseline∩╝¢
-- [ ] µ£ëσÅ»Θ¥áτùàΣ╛ïµáçΦ«░σÉÄµèÑσæè metal / fracture / low-density / thick-slice µ¡úσ╝Å subgroup∩╝¢
-- [ ] µ£ëτ£ƒσ«₧ NVIDIA Φ«╛σñçσÉÄσåìµèÑσæè GPU µÿ╛σ¡ÿ/σèáΘÇƒµò░µì«∩╝¢
-- [ ] ΦÄ╖σ╛ùσÉêµ│òµÄêµ¥âΣ╕┤σ║èΦä▒µòÅµò░µì«σÉÄσ╝Çσ▒òσñûΘâ¿/σñÜΣ╕¡σ┐âΘ¬îΦ»ü∩╝¢
-- [ ] µá╖µ£¼ΘçÅΦ╢│σñƒσÉÄσåìΦ┐¢Φíîτ╜«Σ┐íσî║Θù┤πÇüµòêσ║öΘçÅσÆîτ╗ƒΦ«íµÿ╛ΦæùµÇºσêåµ₧ÉπÇé
-
-**µ░╕Σ╣àτ║ªµ¥ƒ∩╝Ü**µ£Çτ╗ê `liver_169` µ¡úσ╝Å test σ╖▓σå╗τ╗ô∩╝îτªüµ¡óσåìµ¼íΦ┐ÉΦíî `evaluate.py` σ»╣σà╢σüÜµ£Çτ╗êµ¿íσ₧ïµÄ¿τÉå∩╝îΣ╣ƒτªüµ¡óΣ╛¥µì«σà╢τ╗ôµ₧£Θçìµû░ΘÇëµï⌐ thresholdπÇülossπÇüsamplingπÇüaugmentationπÇürefinementπÇücheckpoint µêûµ¿íσ₧ïσÅéµò░πÇé
+CTSpine1K Hugging Face 在早期也出现超时和并行下载失败；但改为 Edge 浏览器**单文件顺序下载**后，已成功取得 `MSD-T10` 10 个 CT+label。`liver_3/5/8` 等失败病例顺序重试后成功，复制到项目时执行 SHA-256 源/目标一致性检查。结论是：CTSpine1K 当前可通过浏览器顺序方式继续扩量，但命令行/并行下载稳定性仍不可假定；后续大规模下载必须保留 provenance、校验和与断点恢复策略。
 
 ---
 
-## 10. τ╗ºτ╗¡Θí╣τ¢«µù╢τÜäµÄ¿ΦìÉµúÇµƒÑσæ╜Σ╗ñ
+## 9. validation 阶段历史任务清单（归档）
 
-### 10.1 µ┐Çµ┤╗τÄ»σóâ
+> 本节保留 v3～v15 等阶段当时的勾选状态与待办，用于追溯实验决策，不再代表 2026-08-29 v0.3.0 收尾后的当前任务。**当前真实待办以本节末尾“9.1 当前下一步”为准。**
+
+### P0｜历史：修复 full-volume checkpoint selection 与 baseline
+
+- [x] 首个正式任务已锁定：`vertebra_binary_ctspine1k_msd_t10_v1`，binary semantic，2 类；
+- [x] 10/10 人工 QC 已完成，7 train / 2 validation / 1 test patient-level split 已固定；`liver_169` 仅允许最终独立 test；
+- [x] 64³ CT-only long-v2 已完成并 early-stop：`best.pt=epoch 1`、`last.pt=epoch 9`；
+- [x] 已对 `liver_7/liver_8` 完成 `best.pt` 与 `last.pt` 四次 full-volume validation，输出 `metrics_per_case.csv` / `summary.json` 均已核对；
+- [x] `best.pt` 两例平均 Dice≈0.03698；`last.pt`≈0.04953。`last.pt` 平均 ASSD≈50.78 mm、component count error≈1084，优于 `best.pt` 的≈56.77 mm / 1617；
+- [x] 已确认固定单 patch validation 严重高估/误判 full-volume 泛化：epoch 1 patch-val≈0.3613，但 full-volume 平均仅≈0.037；
+- [x] 已确认首要根因是 foreground/background sampling prior 严重失配：long-v2 真实训练 patch 平均前景≈21.2%，7 个 train 全卷平均≈0.68%；两例 validation prediction 前景≈14.5%–17.1%，是真值≈0.57%–0.70% 的约 24–27 倍；
+- [x] 已实现 `training.patches_per_case`：单病例每 epoch 可抽多个独立可复现 patch；并在 evaluation CSV/summary 增加 prediction/target foreground fraction 与 ratio；
+- [x] 已新建 `configs/orthopedic_ct_cpu_binary_balanced_fullval_v3.yaml`：foreground_probability=0.25、patches_per_case=4、64³ CT-only、Region Dice+CE 保持不变，`validation.patch_mode=false`；`formal_readiness --allow-cpu` 实测 ready=true / blocker_count=0；
+- [x] balanced v3 已真实完成 epoch 1/2：epoch 1 full-volume val Dice≈0.05407、epoch 2≈0.04084，当前 `best.pt=epoch 1`；
+- [x] 已对 v3 `best.pt` 分病例 detailed validation：`liver_7/liver_8` Dice≈0.04323/0.06491，Precision≈0.02753/0.04267，prediction/target foreground ratio≈3.65/3.18；相对 long-v2 约 24–27 倍已显著改善；
+- [x] v3 epoch 3 已续训并明确失败：train loss≈1.63162，但两例 full-volume val Dice≈1.3e-11；detailed validation 两例 Dice/Precision/Recall=0，prediction/GT foreground ratio≈0.47/0.26，已停止继续 epoch 4；
+- [x] 根因检查发现 RegionDiceCELoss3D 当前为 foreground Dice + 未加权全体素 CE 默认 1:1，且 `train.build_criterion()` 未读取 YAML 的内部 `dice_weight/ce_weight`；该工程缺口已修复并形成 v4 单变量实验；
+- [x] v4 将 CE 权重降至 0.25 后两例平均 Dice≈0.04762、foreground ratio≈5.97、component error≈1993，整体劣于 v3 epoch 1，已否定“继续降低 CE 权重”方向；
+- [x] v5 将 peak lr 降至 5e-5 但保留 2-epoch warmup，epoch 1/2 分别 Dice≈0.03185/0.03269，detailed validation 约 55× foreground explosion，已停止；
+- [x] v6 仅将 warmup 2→1：epoch 1 train loss=`2.5537127597`、val Dice=`0.0540700072`、lr=`5e-5`，几乎精确复现 v3 epoch 1；epoch 2 train loss=`1.9332212380`、val Dice=`0.0323937293`、lr≈`4.8923e-5`，即使未升到 1e-4 仍明显恶化；
+- [x] v6 epoch 2 两例 detailed validation：`liver_7/liver_8` Dice≈0.03210/0.03268、Precision≈0.01632/0.01661、Recall≈0.98562/0.99919、prediction/GT foreground ratio≈60.40/60.14、component error=87/65；这是大范围背景被预测成前景造成的严重 foreground explosion，不是 component 数下降带来的正确改善；
+- [x] 已使用 Dataset 真实 sampling 逻辑与固定 seed=42 复现 v3/v6 epoch 1/2、v3 epoch 3 的 28 个 training patch：epoch 1/2/3 mean foreground fraction≈7.91%/8.84%/5.68%，median 均为 0，纯背景 patch=18/18/20；病例级暴露明显不稳定，例如 epoch 1 `liver_2/liver_6` 均 4/4 patch 纯背景，epoch 2 各病例又重新分配。说明当前独立 Bernoulli sampling 存在真实 epoch/case 波动，但 v6 epoch 1→2 的总体差异并不足以单独解释约 3.4×→60× foreground explosion，因此 sampling 只能视为已证实的稳定性问题/候选诱因，不是已证实唯一根因；
+- [x] `train.py` 已新增 `sampling_stats.csv`，直接从模型实际收到的 training label 每 epoch 记录 patch_count、foreground fraction mean/median/std/min/max、q10/q25/q75/q90、foreground/background patch count，并新增回归测试；
+- [x] v7/v8/v9/v10 已按单变量稳定性路线完成并形成机制证据；其中 v9 证明 BN running-stat drift 是 foreground explosion 的重要放大机制但不是唯一根因，v10 证明 encoder parameter update 不是 epoch2 degradation 的必要条件；
+- [x] v11 工程已完成：新增 `training.freeze_decoder_feature_parameters_from_epoch=2`；epoch2 起冻结 decoder `linear_c1..c4` + `linear_fuse`，仅保留 `linear_pred` head 可训练；相对 v10 除 experiment name 与这一新增 freeze 配置外完全一致；focused freeze tests=`15 passed`、全量 `pytest=133 passed`、Ruff clean、formal readiness=`ready=true / blocker_count=0`；
+- [x] v11 epoch1 已完成并与 v10 epoch1 exact equal：run=`experiments/20260827_180730_cpu_binary_decoder_feature_freeze_after_e1_v11_roi64`，train loss=`2.5537127597`、mean val Dice=`0.0540700072`、std=`0.0108403799`、lr=`5e-5`，sampling 28 patch、foreground/background=`10/18`；v10e1↔v11e1 的 232 个 model-state tensor 逐项 `torch.equal`、diff=`0`，因此确认工程未污染 epoch1。为避免重复昂贵 CPU evaluation，不复跑与 exact-equal checkpoint 等价的 detailed validation/diagnostics，沿用 v10e1 锚点；
+- [x] v11 已从同一 run resume 到总 epoch2：train loss=`2.3053811001`、mean val Dice=`0.0543761681`、std=`0.0101640915`、lr≈`4.8923e-5`；sampling 28 patch、foreground/background=`10/18`、foreground fraction mean≈`0.08840765`；checkpoint 证明 encoder delta=`0`、BN running buffer delta=`0`、decoder feature delta=`0`，仅 `linear_pred` weight+bias 发生更新；
+- [x] v11 epoch2 `liver_7/liver_8` detailed validation、diagnostics 与 v11e1→v11e2 dynamics 已完成：两例 Dice≈`0.04421/0.06454`、foreground ratio≈`3.96/3.50`；GT foreground mean P(fg)≈`0.13263/0.16114`，GT background mean P(fg)≈`0.03482/0.02670`；固定 `liver_7` 上 encoder、decoder fuse 与 final-head input activation 统计完全一致，仅 final logits 随 final head 更新而变化。当前允许继续 epoch3；
+- [x] v11 epoch3 已真实完成且不重跑：train loss=`1.8300107228`、mean full-volume val Dice=`0.0546575740`、std=`0.0095167619`，三轮 Dice=`0.05407001 → 0.05437617 → 0.05465757`；`liver_7/liver_8` detailed Dice≈`0.04514/0.06417`、foreground ratio≈`4.22/3.78`。使用 v11e1 exact anchor→v11e3 新 dynamics + 已保存 v11e1→v11e2 dynamics 交叉验证，encoder/BN/decoder-feature 持续冻结，仅 final head 更新；stable baseline=`YES`（engineering/validation），lock parameters=`NO`、formal independent test ready=`NO`；
+- [ ] 继续核对 Region Dice+CE 背景抑制、label mapping、normalization、sliding-window stitching/logits resize/threshold；当前没有发现 label mapping 或 resize 的直接错误证据；
+- [x] stable CT-only baseline 已锁定为 v11 机制基线；最小可信 reproducibility、CT-only vs CT+bone-window 输入消融及 v11/v13/v14/v15 loss ablation 均已完成；loss 阶段选择 v13 Region+Boundary 作为后续 sampling baseline，所有选择仍只使用 train+validation；
+- [ ] 在 ROI/epoch/lr/scheduler/sampling/augmentation/input/loss/checkpoint 全部只依据 train+validation 锁定前，禁止重新运行 test `liver_169`；
+- [ ] 更可靠 baseline 锁定后再生成 prediction mesh / SDF / Web overlay / entropy overlay，并继续论文工程验证材料。
+
+### P1｜联合损失与困难样本消融
+
+- [x] Region：v11；
+- [x] Region + Boundary：v13；
+- [x] Region + Topology：v14；
+- [x] Region + Boundary + Topology：v15；
+- [ ] loss 权重 validation grid（当前最小四组消融已完成，后续是否继续 grid 以 validation 证据与 CPU 成本决定）；
+- [ ] normal vs difficult subset；
+- [ ] fracture/metal/low-density/thick-slice 子集（数据存在时）；
+- [ ] 记录 false merge / false break。
+
+### P2｜不确定性精修
+
+- [x] 已实现 entropy→error AUROC/AUPRC、错误/正确平均 entropy、Top-percent error recall、ROI error rate/fraction 的定量评价代码；
+- [x] 已在 v13 `liver_7/liver_8` 真实 baseline checkpoint 上验证 entropy 与真实错误空间相关性；
+- [x] 已完成 validation Top-percent/threshold 小网格：Top-5/10/20% × dilation 0/1/2；不继续无限扫参；
+- [x] 已实现 `UncertaintyRefinementNet3D` 局部残差 refinement head/network（工程代码）；
+- [x] 已实现 coarse 冻结、ROI-normalized loss、ROI/global error delta 的二阶段 refinement 训练基线；
+- [x] 已完成 coarse vs ROI-only vs full-volume second-pass 两例对照；
+- [x] 已报告额外时间与 ROI 比例；当前 CPU validation 不报告/伪造 GPU 显存结果；
+- [x] ROI-only 外部 prediction 逐体素保持不变：全部 candidate `outside_roi_changed_fraction=0`；
+- [x] canonical prediction+entropy reconstruction 两例 mismatch=`0`，entropy max abs error≈`9.86e-7`；
+- [x] 最终综合判定：**REFINEMENT=FAIL**。虽然 mean Dice/IoU/Precision、foreground ratio、global error 与部分 surface 指标改善，但 mean Recall≈`0.13649→0.06965`，component error≈`1543.5→2397.5`，false break≈`64.5→138`，`liver_7` surface 退化且耗时增加，不满足两例稳定综合改善；最终 validation pipeline 保留 v13 coarse；
+- [x] uncertainty 可用于当前 validation 的 QC 高风险区域提示，但仅 2 例，仍需扩大病例验证。
+
+### P3｜三维重建与 Web
+
+- [x] mask → physical-space surface；
+- [x] Marching Cubes baseline + PLY/JSON 导出；真实 `liver_0` label 已验证；
+- [x] SDF physical-surface engineering baseline：真实 `liver_0` 0.3/0.4/0.5/0.8 mm sweep；0.4 mm 当前默认候选，0.8 mm 因改变连通域被拒绝；
+- [x] 已完成 10 例原始 label→1 mm label 的重采样/各向异性 physical-surface 工程误差评估；
+- [x] 曲率/关键边缘保护候选：相邻顶点法向变化加权 vertex-clustering；真实 `liver_0` 真值网格工程验证显示高特征区域误差下降，仍待 prediction 验证；
+- [x] vertex-clustering mesh 简化；真实 `liver_0` 1.5 mm 档约减 60% 顶点/面，保留全分辨率基准；
+- [x] MPR 三视图（axial/coronal/sagittal + 切片位置/窗宽窗位）；
+- [x] WebGL2 真值 label 3D 渲染与全分辨率/1.5/2.0 mm 选择；
+- [x] 椎体类别显示：`1–25 → C1–L6` 工程 schema，不改原标签值；
+- [x] 物理 XYZ 距离/三点夹角计算 API；
+- [x] 10 例人工 QC reviewer + 交互 MPR/真值 overlay 接口；病例列表支持选择后自动收起、随时展开、自动进入主审核区，上一例/下一例保持审核区，宽屏/窄窗口均有对应布局；
+- [x] evaluation results-review 页面与 prediction/entropy MPR 接口已准备；v13 已存在真实 validation prediction + entropy，下一步进行 Web 实机接入验收；
+- [ ] 使用最终 v13 validation prediction 完成 prediction mesh / SDF / simplification 真实验证并接入 Web；
+- [ ] Edge 实机完成 prediction overlay / entropy overlay / results-review / prediction 3D 验收。
+
+### P4｜论文/中期/软著
+
+- [x] 已建立 44 条结构化文献矩阵；已补 SpineMamba、2025 解剖变异 Transformer、2026 VertebraFormer、2026 Residual-Encoder nnU-Net、2025 骨折 pipeline、真实金属植入物 deep-MAR 与 2024 低骨密度 fusion/split 直接分割证据；
+- [x] 已建立 44 条机器可用 `paper/references.bib`（42 条英文核心 + 2 条已核验中文文献），并纠正多条易错题录；
+- [ ] 用真实实验更新论文 Results；
+- [ ] 生成主结果表和消融表；
+- [ ] 做失败案例图；
+- [ ] 做 Web/三维真实截图；
+- [ ] 中期 PPT 使用 `docs/05_midterm_materials.md`；
+- [ ] 软著材料严格区分上游和自研代码；
+- [ ] 每次材料更新同步回写本台账。
+
+### 9.1 当前下一步（v0.3.0 收尾后）
+
+**本机可继续完成：**
+
+- [x] 对 README / PROJECT_STATUS / TASKS / 中期材料 / 中文论文做当前状态一致性复核；
+- [x] 论文已写入 validation 与唯一一次 independent test 真实结果，并保留低性能、非临床定位；
+- [x] 论文正文顺序引用开始统一，已补主要方法/数据集/相关工作的引用编号；
+- [x] GitHub 首页保持简洁，详细 v11～v23 过程只放 `PROJECT_STATUS.md`；
+- [x] v0.3.0 Release 已存在且内容与正式收尾状态一致，不因纯文档同步重复发版本；
+- [x] 国内中文题录最终核验：伍志发等 2022 已由万方医学网一手页面核验；艾念等 2026 已由《中国医学装备》期刊官网/CNKI 期刊页核验；未提供可确认 DOI 的条目保持空缺，不补造；
+- [ ] 目标期刊/学校最终格式模板确定后，再做最后一轮格式定稿；
+- [ ] GitHub `LICENSE` 需项目负责人结合自研代码与 SegFormer3D GPL-3.0 边界明确选择；当前仓库未声明许可证，不自动代选。
+
+**需要新增数据/算力/外部条件后再做：**
+
+- [ ] 扩大真实病例规模，并建立新的预注册 patient-level split；
+- [ ] 在新 split 上真实运行 nnU-Net / Residual-Encoder nnU-Net 等强 baseline；
+- [ ] 有可靠病例标记后报告 metal / fracture / low-density / thick-slice 正式 subgroup；
+- [ ] 有真实 NVIDIA 设备后再报告 GPU 显存/加速数据；
+- [ ] 获得合法授权临床脱敏数据后开展外部/多中心验证；
+- [ ] 样本量足够后再进行置信区间、效应量和统计显著性分析。
+
+**永久约束：**最终 `liver_169` 正式 test 已冻结，禁止再次运行 `evaluate.py` 对其做最终模型推理，也禁止依据其结果重新选择 threshold、loss、sampling、augmentation、refinement、checkpoint 或模型参数。
+
+---
+
+## 10. 继续项目时的推荐检查命令
+
+### 10.1 激活环境
 
 ```powershell
-cd D:\σ¢╜σê¢Θí╣τ¢«
+cd D:\国创项目
 .\.venv\Scripts\Activate.ps1
 ```
 
-σªéτÄ»σóâµìƒσ¥Å/Θ£ÇΘçìσ╗║∩╝Ü
+如环境损坏/需重建：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\env\setup_env.ps1
 ```
 
-### 10.2 µ╡ïΦ»ò
+### 10.2 测试
 
 ```powershell
 python -m pytest tests -q
 python -m ruff check src web tests
 ```
 
-σ╜ôσëìσƒ║σçåσ║öΣ╕║∩╝Ü
+当前基准应为：
 
 ```text
 138 passed
 All checks passed!
 ```
 
-ΘÖäσèáτ╗ôµ₧äµúÇµƒÑ∩╝Ü`data/datasets.json`πÇü`configs/label_schemas/ctspine1k_verse.json`πÇü`configs/task_specs/vertebra_task_template.json` σÅ»Φºúµ₧É∩╝¢`paper/references.bib` σ╜ôσëì 44 entriesπÇüµï¼σÅ╖σ╣│ΦííΣ╕öµùáΘçìσñì key∩╝¢σëìτ½» `app.js / qc_review.js / research_3d.js / results_review.js` σ¥çΘÇÜΦ┐ç `node --check`∩╝¢σ╜ôσëìτ║│σàÑµúÇµƒÑτÜä PowerShell ΦäÜµ£¼Φ»¡µ│ò parser ΘÇÜΦ┐çπÇé
+附加结构检查：`data/datasets.json`、`configs/label_schemas/ctspine1k_verse.json`、`configs/task_specs/vertebra_task_template.json` 可解析；`paper/references.bib` 当前 44 entries、括号平衡且无重复 key；前端 `app.js / qc_review.js / research_3d.js / results_review.js` 均通过 `node --check`；当前纳入检查的 PowerShell 脚本语法 parser 通过。
 
-### 10.3 ΦÄ╖σÅûΣ╕èµ╕╕∩╝êΣ╗àσ╜ôτ¢«σ╜òΣ╕ìσ¡ÿσ£¿∩╝ë
+### 10.3 获取上游（仅当目录不存在）
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\env\fetch_segformer3d.ps1
 ```
 
-### 10.4 σÉ»σè¿ Web
+### 10.4 启动 Web
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\web\run_web.ps1
 ```
 
-µ╡ÅΦºêσÖ¿∩╝Ü
+浏览器：
 
 ```text
 http://127.0.0.1:8000
 ```
 
-### 10.5 σÉÄτ╗¡µû░σó₧µ¡úσ╝Åσ«₧Θ¬îσëì
+### 10.5 后续新增正式实验前
 
-σ╜ôσëì v13 / `liver_169` formal-pipeline σ╖▓σå╗τ╗ô∩╝îΣ╕ìσåìΘçìσñìΦ«¡τ╗âµêûµ£Çτ╗êµ╡ïΦ»òπÇéµ£¬µ¥Ñ**µû░σó₧µò░µì«Φºäµ¿íµêûµû░Σ╗╗σèí**τÜäµ¡úσ╝Åσ«₧Θ¬îσ┐àΘí╗Σ╜┐τö¿µû░τÜä task spec / split / config∩╝îσ╣╢Φç│σ░æµ╗íΦ╢│∩╝Ü
+当前 v13 / `liver_169` formal-pipeline 已冻结，不再重复训练或最终测试。未来**新增数据规模或新任务**的正式实验必须使用新的 task spec / split / config，并至少满足：
 
 ```text
-τ£ƒσ«₧σñäτÉåσÉÄµò░µì«σ¡ÿσ£¿
-+ µû░τÜäΘóäµ│¿σåî patient-level split σ¡ÿσ£¿Σ╕ö formal_experiment σàüΦ«╕
-+ µáçτ¡╛σ«ÜΣ╣ëσ¢║σ«Ü
-+ σ»╣σ║öτùàΣ╛ïΣ║║σ╖Ñ QC Φ╛╛σê░µ¡úσ╝Å run Φªüµ▒é
-+ Σ╕èµ╕╕ SegFormer3D / baseline σ«₧τÄ░σÅ»σèáΦ╜╜
+真实处理后数据存在
++ 新的预注册 patient-level split 存在且 formal_experiment 允许
++ 标签定义固定
++ 对应病例人工 QC 达到正式 run 要求
++ 上游 SegFormer3D / baseline 实现可加载
 + formal preflight ready=true
-+ ΦïÑΣ╜┐τö¿ CPU∩╝îσ┐àΘí╗µÿ╛σ╝Å --allow-cpu∩╝¢ΦïÑµèÑσæè GPU µîçµáç∩╝îσ┐àΘí╗µ£ëτ£ƒσ«₧ GPU Φ»üµì«
++ 若使用 CPU，必须显式 --allow-cpu；若报告 GPU 指标，必须有真实 GPU 证据
 ```
 
-Σ╕ìσ╛ùµèèµùº `liver_169` Θçìµû░τ║│σàÑµû░τÜä validation/Φ░âσÅéΦ┐çτ¿ïπÇé
+不得把旧 `liver_169` 重新纳入新的 validation/调参过程。
 
 ---
 
-## 11. µ£ÇΦ┐æσ╖ÑΣ╜£Φ«░σ╜ò
+## 11. 最近工作记录
 
-### 2026-08-15∩╜£Θÿ╢µ«╡ A∩╝ÜΦ╡äµûÖπÇüµû╣µíêΣ╕ÄΣ║ñµÄÑµ£║σê╢σê¥σºïσîû
+### 2026-08-15｜阶段 A：资料、方案与交接机制初始化
 
-σ«îµêÉ∩╝Ü
+完成：
 
-- µëôσ╝Çσ╣╢µúÇµƒÑ `D:\σ¢╜σê¢Θí╣τ¢«`∩╝îτí«Φ«ñσ╝Çσºïµù╢Σ╕║τ⌐║∩╝¢
-- ΘÿàΦ»╗Σ╗╗σèíΣ╣ªΣ╕Ä 7.21 τ╗äΣ╝Üµ¥ÉµûÖ∩╝¢
-- ΘÿàΦ»╗ SegFormer3D σ«ÿµû╣ READMEπÇüµ₧╢µ₧äσàÑσÅúπÇülossπÇürequirements/config∩╝¢
-- σ╗║τ½ïΘí╣τ¢«τ¢«σ╜ò∩╝¢
-- σ╗║τ½ï `PROJECT_STATUS.md` Σ╕╗σÅ░Φ┤ª∩╝¢
-- σ╗║τ½ïµÇ╗Σ╜ôµû╣µíêπÇüµûçτî«πÇüµò░µì« SOPπÇüσ«₧Θ¬îΦ«íσêÆσÆîΦ«║µûç outline∩╝¢
-- µÿÄτí« DiceΓëÑ0.93 Σ╕║τ¢«µáçΦÇîΘ¥₧σ╜ôσëìτ╗ôµ₧£∩╝¢
-- µÿÄτí«τ│╗τ╗ƒΣ╕║τºæτáö/Φ╛àσè⌐σêåµ₧ÉσÄƒσ₧ïπÇé
+- 打开并检查 `D:\国创项目`，确认开始时为空；
+- 阅读任务书与 7.21 组会材料；
+- 阅读 SegFormer3D 官方 README、架构入口、loss、requirements/config；
+- 建立项目目录；
+- 建立 `PROJECT_STATUS.md` 主台账；
+- 建立总体方案、文献、数据 SOP、实验计划和论文 outline；
+- 明确 Dice≥0.93 为目标而非当前结果；
+- 明确系统为科研/辅助分析原型。
 
-### 2026-08-15∩╜£Θÿ╢µ«╡ B∩╝Üτ¼¼Σ╕ÇΦ╜«σ╖Ñτ¿ïΦÉ╜σ£░
+### 2026-08-15｜阶段 B：第一轮工程落地
 
-σ«îµêÉ∩╝Ü
+完成：
 
-- Σ╜┐τö¿ `uv` σ£¿Θí╣τ¢«σåàσ«ëΦúà Python 3.11.7∩╝¢
-- σ╗║τ½ïτï¼τ½ï `.venv`∩╝¢
-- σ¢║σ«Ü PyTorch 2.1.0 CPU Σ╕Äσî╗σ¡ªσ╜▒σâÅ/Web/Lightning Σ╛¥Φ╡û∩╝¢
-- σÅæτÄ░σ╣╢Φºúσå│ `lightning 2.0.9` Σ╕Äµû░ setuptools τº╗ΘÖñ `pkg_resources` τÜäσà╝σ«╣Θù«Θóÿ∩╝îσ¢║σ«Ü `setuptools==80.9.0`∩╝¢
-- σàïΘÜåσ«ÿµû╣ SegFormer3D∩╝îσƒ║τ║┐µÅÉΣ║ñ `e314242`∩╝¢
-- σÅæτÄ░ PyTorch 2.1 TorchScript τÜä `cube_root()` Φ┐öσ¢₧τ▒╗σ₧ïΘù«Θóÿ∩╝îσüÜ `int(round(...))` µ£Çσ░Åσà╝σ«╣ΦíÑΣ╕üσ╣╢Φ«░σ╜ò provenance∩╝¢
-- SegFormer3D σ«îµêÉ `(1,1,64,64,64) ΓåÆ (1,2,64,64,64)` CPU σëìσÉæΘ¬îΦ»ü∩╝îσÅéµò░ΘçÅ 4,492,066∩╝¢
-- σ╗║τ½ï DICOM series/QC/HU/ΘçìΘççµá╖/Θ¬¿τ¬ù/metadata σñäτÉåΣ╗úτáü∩╝¢
-- Σ╜┐τö¿ pydicom `CT_small.dcm` σ«îµêÉΘóäσñäτÉå smoke test∩╝¢
-- σ╗║τ½ï patient-level split σ╖Ñσà╖∩╝¢
-- σ╗║τ½ï Region / Boundary / soft-clDice ΦüöσÉêµìƒσñ▒∩╝¢
-- σ╗║τ½ï segmentation metrics∩╝¢
-- σ╗║τ½ï predictive entropy Σ╕Ä uncertainty ROI∩╝¢
-- σ╗║τ½ïσñäτÉåσÉÄ NIfTI dataset∩╝¢
-- σ╗║τ½ï baseline/joint YAML∩╝¢
-- σ╗║τ½ïΦ«¡τ╗â/validation/checkpoint/history µíåµ₧╢∩╝¢
-- σ╗║τ½ï FastAPI + σëìτ½»τºæτáö Web σÄƒσ₧ï∩╝îσüÑσ║╖µúÇµƒÑΘÇÜΦ┐ç∩╝¢
-- σ╗║τ½ïΣ╕¡µûçΦ«║µûçµèÇµ£»σê¥τ¿┐∩╝¢
-- µë⌐σ▒òµûçτî«Φ░âτáöΦç│σ¢╜σåàΘ¬¿ CTπÇüVerFormerπÇüUCTNetπÇüBetti matchingπÇüTEDS-Net τ¡ë∩╝¢
-- σ╗║τ½ï `docs/05_midterm_materials.md`∩╝¢
-- σó₧σèáΦç¬σè¿σîûµ╡ïΦ»òσÆîΣ╗úτáüΦ┤¿ΘçÅµúÇµƒÑ∩╝¢
-- µ£Çτ╗êΘ¬îΦ»ü∩╝Ü`12 passed`∩╝îRuff σà¿Θâ¿ΘÇÜΦ┐ç∩╝îPowerShell ΦäÜµ£¼Φºúµ₧ÉΘÇÜΦ┐ç∩╝îΣ╛¥Φ╡û dry-run µùáσÅÿµ¢┤πÇé
+- 使用 `uv` 在项目内安装 Python 3.11.7；
+- 建立独立 `.venv`；
+- 固定 PyTorch 2.1.0 CPU 与医学影像/Web/Lightning 依赖；
+- 发现并解决 `lightning 2.0.9` 与新 setuptools 移除 `pkg_resources` 的兼容问题，固定 `setuptools==80.9.0`；
+- 克隆官方 SegFormer3D，基线提交 `e314242`；
+- 发现 PyTorch 2.1 TorchScript 的 `cube_root()` 返回类型问题，做 `int(round(...))` 最小兼容补丁并记录 provenance；
+- SegFormer3D 完成 `(1,1,64,64,64) → (1,2,64,64,64)` CPU 前向验证，参数量 4,492,066；
+- 建立 DICOM series/QC/HU/重采样/骨窗/metadata 处理代码；
+- 使用 pydicom `CT_small.dcm` 完成预处理 smoke test；
+- 建立 patient-level split 工具；
+- 建立 Region / Boundary / soft-clDice 联合损失；
+- 建立 segmentation metrics；
+- 建立 predictive entropy 与 uncertainty ROI；
+- 建立处理后 NIfTI dataset；
+- 建立 baseline/joint YAML；
+- 建立训练/validation/checkpoint/history 框架；
+- 建立 FastAPI + 前端科研 Web 原型，健康检查通过；
+- 建立中文论文技术初稿；
+- 扩展文献调研至国内骨 CT、VerFormer、UCTNet、Betti matching、TEDS-Net 等；
+- 建立 `docs/05_midterm_materials.md`；
+- 增加自动化测试和代码质量检查；
+- 最终验证：`12 passed`，Ruff 全部通过，PowerShell 脚本解析通过，依赖 dry-run 无变更。
 
-**µ£¼Θÿ╢µ«╡Σ╗ìµ£¬σ«îµêÉ∩╝Ü**
+**本阶段仍未完成：**
 
-- τ£ƒσ«₧σà¼σ╝ÇΣ╕╗µò░µì«Σ╕ïΦ╜╜/σà¿ΘçÅΘóäσñäτÉå∩╝¢
-- Σ╕┤σ║èµò░µì«∩╝¢
-- GPU µ¡úσ╝ÅΦ«¡τ╗â∩╝¢
-- baseline µ╡ïΦ»òµîçµáç∩╝¢
-- ΦüöσÉêµìƒσñ▒τ£ƒσ«₧µ╢êΦ₧ì∩╝¢
-- uncertainty refinement network∩╝¢
-- Σ╕ëτ╗┤Θçìσ╗║∩╝¢
-- Web τ£ƒσ«₧σêåσë▓/MPR/3D/µ╡ïΘçÅ∩╝¢
-- Φ«║µûç ResultsπÇé
+- 真实公开主数据下载/全量预处理；
+- 临床数据；
+- GPU 正式训练；
+- baseline 测试指标；
+- 联合损失真实消融；
+- uncertainty refinement network；
+- 三维重建；
+- Web 真实分割/MPR/3D/测量；
+- 论文 Results。
 
-### 2026-08-16∩╜£Θÿ╢µ«╡ C∩╝ÜP0 σà¼σ╝Çµò░µì«µÄÑσàÑΘô╛ΦíÑσ╝║
+### 2026-08-16｜阶段 C：P0 公开数据接入链补强
 
-σ«îµêÉ∩╝Ü
+完成：
 
-- σñìµá╕Σ╕╗σÅ░Φ┤ªπÇüREADMEπÇüµò░µì« SOP σÆîτÄ░µ£ëµ╡ïΦ»ò∩╝îτí«Φ«ñτ£ƒσ«₧µò░µì«Σ╗ìµÿ»σ╜ôσëìΘªûΦªüΘÿ╗σí₧∩╝¢
-- σÅæτÄ░σ╣╢Σ┐«σñì DICOM Φ»╗σÅûΘô╛µ▓íµ£ëµÿ╛σ╝ÅΣ┐¥Φ»üτë⌐τÉåσêçτëçΘí║σ║ÅτÜäΘù«Θóÿ∩╝Üµû░σó₧ `sort_dicom_files_by_geometry()`∩╝îΣ╝ÿσàêµîë IOP/IPP Σ╜ìτ╜«µÄÆσ║Å∩╝îσ┐àΦªüµù╢σÅ¬σàüΦ«╕σö»Σ╕Ç `InstanceNumber` σ¢₧ΘÇÇ∩╝¢
-- σ░å DICOM pipeline version µ¢┤µû░Σ╕║ `0.2.0`∩╝¢
-- µû░σó₧ `src/preprocessing/nifti_pipeline.py`∩╝îΦíÑΘ╜ÉσÄƒΦ«╛Φ«íµë┐Φ»║Σ╜åµ¡ñσëìτ╝║σñ▒τÜä NIfTI µáçσçåσîûσàÑσÅú∩╝¢
-- NIfTI σàÑσÅúσ«₧τÄ░ image/label sizeπÇüspacingπÇüoriginπÇüdirection Σ╕ÇΦç┤µÇºµúÇµƒÑ∩╝îΘöÖΣ╜ìµáçτ¡╛τ¢┤µÄÑµïÆτ╗¥∩╝¢
-- image Σ╜┐τö¿ linear ΘçìΘççµá╖∩╝îlabel Σ╜┐τö¿ nearest-neighbor∩╝îσ╣╢Θ¬îΦ»üΦ╛ôσç║µáçτ¡╛τ▒╗σê½Σ╕ìΦó½µÅÆσÇ╝µ▒íµƒô∩╝¢
-- µû░σó₧ `src/preprocessing/prepare_verse.py`∩╝ÜΦç¬σè¿σÅæτÄ░ VerSe CT/maskπÇüΦ»åσê½ source splitπÇüµúÇµƒÑ patient group Θÿ▓µ│äµ╝ÅπÇüτöƒµêÉ manifest/split/batch QC∩╝¢
-- Φç¬σè¿σîûµ╡ïΦ»òµ£ƒΘù┤σÅæτÄ░ split Φ»åσê½Σ╝ÜΦó½ pytest Σ╕┤µù╢Φ╖»σ╛äΣ╕¡τÜä `test` σ¡ùτ¼ªΣ╕▓σ╣▓µë░∩╝îσ╖▓µö╣Σ╕║µîëΦ╖»σ╛äτ¢«σ╜òµ«╡τ▓╛τí«σî╣Θàìσ╣╢σèáσàÑσ¢₧σ╜Æµ╡ïΦ»ò∩╝¢
-- σ╗║τ½ï `data/datasets.json`∩╝îΣ║Ä 2026-08-16 µá╕σ»╣σ╣╢τÖ╗Φ«░ VerSe completeπÇüCTSpine1KπÇüTotalSegmentator CT v2.0.1 τÜäµ¥Ñµ║É/Φºäµ¿í/Φ«╕σÅ»µ│¿µäÅΣ║ïΘí╣∩╝¢
-- σ╖Ñτ¿ï baseline µÜéσ«ÜΣ╝ÿσàê VerSe complete∩╝¢Φ»Ñσå│σ«ÜΣ╗àτö¿Σ║ÄσàêΦ╖æΘÇÜσ╖Ñτ¿ïΘô╛∩╝îΣ╕ìΣ╗úµ¢┐τ╗äσåàµ£Çτ╗êΦ«║µûçΣ╕╗Σ╗╗σèíτí«Φ«ñ∩╝¢
-- µû░σó₧ `env/download_verse.ps1`∩╝îΘ╗ÿΦ«ñ dry-plan∩╝îσÅ¬µ£ëµÿ╛σ╝Å `-Download` µëìΣ╕ïΦ╜╜σñºσ₧ïµò░µì«∩╝¢
-- µû░σó₧ `docs/06_public_dataset_onboarding.md`∩╝îτ╗Öσç║Σ╕ïΦ╜╜πÇüdry-runπÇü10 Σ╛ï QCπÇüσà¿ΘçÅσñäτÉåσÆî baseline σëìΘ¬îµö╢µ╡üτ¿ï∩╝¢
-- READMEπÇüµò░µì« READMEπÇüµò░µì« SOP σ╖▓σÉîµ¡Ñµû░σàÑσÅúσÆîΦ╛ôσç║ΦºäΦîâ∩╝¢
-- µ£Çτ╗êΘ¬îΦ»ü∩╝Ü`16 passed`πÇüRuff σà¿Θâ¿ΘÇÜΦ┐çπÇü`datasets.json` σÅ»Φºúµ₧É∩╝î`setup_env.ps1` / `fetch_segformer3d.ps1` / `download_verse.ps1` / `run_web.ps1` PowerShell parser σà¿ΘÇÜΦ┐ç∩╝¢
-- Θ¬îΦ»ü `download_verse.ps1 -Edition 2020` Θ╗ÿΦ«ñσÅ¬σ▒òτñ║ 3 Σ╕¬ 2020 µò░µì«σîàΣ╕ïΦ╜╜Φ«íσêÆ∩╝îµ▓íµ£ëΦºªσÅæτ£ƒσ«₧Σ╕ïΦ╜╜∩╝¢
-- τ╗ºτ╗¡µúÇµƒÑτ£ƒσ«₧Σ╕ïΦ╜╜σÅ»Φ╛╛µÇº∩╝Üσ╜ôσëìµ£¼µ£║Φ«┐Θù« VerSe 2020 training/validation/test Σ╕ëΣ╕¬ S3 σ╜Æµíúσ¥çτ║ª 20 τºÆΦ╢àµù╢∩╝¢
-- σÉîµ¡Ñτí«Φ«ñ CTSpine1K Hugging Face Θò£σâÅσÅ»µ¡úσ╕╕µ╡ÅΦºê∩╝îσ«îµò┤µò░µì«τ║ª 162 GB∩╝îΣ╜åµö»µîüµîëσìòτùàΣ╛ï NIfTI µ╡ÅΦºê∩╝¢MSD-T10 τ¢«σ╜òσ¡ÿσ£¿σçáσìü MB τ║º CT µûçΣ╗╢σÅèσ»╣σ║öΦ╛âσ░Å label∩╝îσÅ»Σ╜£Σ╕║σ╜ôσëìτ╜æτ╗£µ¥íΣ╗╢Σ╕ïτÜäτ£ƒσ«₧ NIfTI σ░Åµá╖µ£¼σñçτö¿σàÑσÅúπÇé
+- 复核主台账、README、数据 SOP 和现有测试，确认真实数据仍是当前首要阻塞；
+- 发现并修复 DICOM 读取链没有显式保证物理切片顺序的问题：新增 `sort_dicom_files_by_geometry()`，优先按 IOP/IPP 位置排序，必要时只允许唯一 `InstanceNumber` 回退；
+- 将 DICOM pipeline version 更新为 `0.2.0`；
+- 新增 `src/preprocessing/nifti_pipeline.py`，补齐原设计承诺但此前缺失的 NIfTI 标准化入口；
+- NIfTI 入口实现 image/label size、spacing、origin、direction 一致性检查，错位标签直接拒绝；
+- image 使用 linear 重采样，label 使用 nearest-neighbor，并验证输出标签类别不被插值污染；
+- 新增 `src/preprocessing/prepare_verse.py`：自动发现 VerSe CT/mask、识别 source split、检查 patient group 防泄漏、生成 manifest/split/batch QC；
+- 自动化测试期间发现 split 识别会被 pytest 临时路径中的 `test` 字符串干扰，已改为按路径目录段精确匹配并加入回归测试；
+- 建立 `data/datasets.json`，于 2026-08-16 核对并登记 VerSe complete、CTSpine1K、TotalSegmentator CT v2.0.1 的来源/规模/许可注意事项；
+- 工程 baseline 暂定优先 VerSe complete；该决定仅用于先跑通工程链，不代替组内最终论文主任务确认；
+- 新增 `env/download_verse.ps1`，默认 dry-plan，只有显式 `-Download` 才下载大型数据；
+- 新增 `docs/06_public_dataset_onboarding.md`，给出下载、dry-run、10 例 QC、全量处理和 baseline 前验收流程；
+- README、数据 README、数据 SOP 已同步新入口和输出规范；
+- 最终验证：`16 passed`、Ruff 全部通过、`datasets.json` 可解析，`setup_env.ps1` / `fetch_segformer3d.ps1` / `download_verse.ps1` / `run_web.ps1` PowerShell parser 全通过；
+- 验证 `download_verse.ps1 -Edition 2020` 默认只展示 3 个 2020 数据包下载计划，没有触发真实下载；
+- 继续检查真实下载可达性：当前本机访问 VerSe 2020 training/validation/test 三个 S3 归档均约 20 秒超时；
+- 同步确认 CTSpine1K Hugging Face 镜像可正常浏览，完整数据约 162 GB，但支持按单病例 NIfTI 浏览；MSD-T10 目录存在几十 MB 级 CT 文件及对应较小 label，可作为当前网络条件下的真实 NIfTI 小样本备用入口。
 
-**µ£¼Θÿ╢µ«╡µÿÄτí«µ£¬σ«îµêÉ∩╝Ü**
+**本阶段明确未完成：**
 
-- VerSe/CTSpine1K/TotalSegmentator σ░Üµ£¬σ«₧ΘÖàΣ╕ïΦ╜╜∩╝¢
-- µ▓íµ£ëτ£ƒσ«₧ 10 Σ╛ï 3D CT τÜäΣ╕ëΦºåσ¢╛/overlay Σ║║σ╖Ñ QC∩╝¢
-- µ▓íµ£ëτ£ƒσ«₧σà¼σ╝Çµò░µì« split τÜäµ£Çτ╗êµ£¼σ£░σ«₧Σ╛ï∩╝¢
-- GPU baselineπÇüτ£ƒσ«₧ DSC/HD95/ASSD Σ╗ìµ£¬Σ║ºτöƒ∩╝¢
-- σ¢áµ¡ñΦ«║µûç Results Σ╗ìσ┐àΘí╗Σ┐¥µîü TBDπÇé
+- VerSe/CTSpine1K/TotalSegmentator 尚未实际下载；
+- 没有真实 10 例 3D CT 的三视图/overlay 人工 QC；
+- 没有真实公开数据 split 的最终本地实例；
+- GPU baseline、真实 DSC/HD95/ASSD 仍未产生；
+- 因此论文 Results 仍必须保持 TBD。
 
-**Σ╕ïΣ╕Çµ¼íτ╗ºτ╗¡µù╢τ¼¼Σ╕ÇΣ╝ÿσàêτ║º∩╝Ü**
-
-```text
-Σ╝ÿσàêΘçìΦ»ò VerSe σÅ»τö¿Σ╕ïΦ╜╜µ║É
-ΓåÆ ΦïÑ S3 Σ╗ìΦ╢àµù╢∩╝îσêÖτö¿ CTSpine1K Hugging Face Θò£σâÅµîëτùàΣ╛ïΦÄ╖σÅûσ░æΘçÅτ£ƒσ«₧ CT + label
-ΓåÆ σàêσ«îµêÉ 1 Σ╛ïτ£ƒσ«₧ NIfTI pipeline smoke test
-ΓåÆ µë⌐σ▒òσê░ ΓëÑ10 Σ╛ïµáçσçåσîû
-ΓåÆ Σ║║σ╖ÑµúÇµƒÑΣ╕ëΦºåσ¢╛ + bone window + label overlay
-ΓåÆ QC ΘÇÜΦ┐çσÉÄσåìσà¿ΘçÅσñäτÉåΣ╕ÄΦ«¡τ╗â
-```
-
-### 2026-08-16∩╜£Θÿ╢µ«╡ D∩╝Üτ£ƒσ«₧µò░µì«σñçτö¿σàÑσÅúΣ╕Ä QC Φç¬σè¿σîû
-
-σ«îµêÉ∩╝Ü
-
-- σ£¿τ╗ºτ╗¡ P0 σëìΘçìµû░µëºΦíîσà¿Θí╣τ¢«σƒ║τ║┐µúÇµƒÑ∩╝îσÄƒµ£ë `16 passed` Σ╕Ä Ruff clean σ¥çτí«Φ«ñµùáσ¢₧σ╜Æ∩╝¢
-- ΘÇÜΦ┐çσà¼σ╝ÇΦ╡äµûÖσåìµ¼íµá╕σ»╣ CTSpine1K σ«ÿµû╣τ╗┤µèñΣ╗ôσ║ôπÇüHugging Face Θò£σâÅτ╗ôµ₧äσÅèσ«ÿµû╣ `data_split.txt`∩╝¢
-- µ£¼µ£║σ»╣ Hugging Face Θò£σâÅµëºΦíîσ«₧ΘÖàΦ┐₧µÄÑµúÇµƒÑ∩╝îτ║ª 20 τºÆΦ╢àµù╢∩╝îτí«Φ«ñτ£ƒσ«₧µò░µì«Σ╕ïΦ╜╜Σ╗ìµÿ»σ╜ôσëìσ╖ÑΣ╜£τ½ÖσñûΘâ¿τ╜æτ╗£Θÿ╗σí₧∩╝îΦÇîΣ╕ìµÿ»Σ╗úτáüΘô╛Θù«Θóÿ∩╝¢
-- µû░σó₧ `env/download_ctspine1k_sample.ps1`∩╝ÜΘ╗ÿΦ«ñσÅ¬σ▒òτñ║ `MSD-T10` τÜä `liver_169`πÇü`liver_0`πÇü`liver_1` CT+label Σ╕ïΦ╜╜Φ«íσêÆ∩╝îσÅ¬µ£ëµÿ╛σ╝Å `-Download` µëìΦÉ╜τ¢ÿ∩╝îσÉîµù╢σçåσñçσ«ÿµû╣ split σàâµò░µì«Σ╕ïΦ╜╜Σ╕Ä provenance manifest∩╝¢
-- µû░σó₧ `src/preprocessing/prepare_ctspine1k.py`∩╝Üµö»µîü Hugging Face σÄƒσºïσ╕âσ▒ÇσÆîΘí╣τ¢«σ░Åµá╖µ£¼σ╕âσ▒Ç∩╝îΣ╕Ñµá╝Θàìσ»╣ image/`*_seg` label∩╝îΦºúµ₧É `trainset / test_public / test_private`∩╝îΣ╕ìµôàΦç¬ΘçìΦºúΘçè benchmark split∩╝¢
-- µû░σó₧ `src/preprocessing/qc_visualization.py`∩╝Üτ╗ƒΣ╕ÇτöƒµêÉ axial/coronal/sagittal ├ù normalized CT/bone window/label overlay τÜä 3├ù3 QC contact sheet∩╝¢σ¡ÿσ£¿σëìµÖ»µù╢µîëσëìµÖ»Σ╕¡Σ╜ìΣ╜ìτ╜«ΘÇëσ▒é∩╝îΘÖìΣ╜ÄΓÇ£Σ╜ôτº»Σ╕¡σ┐âµ▓íµ£ëτ¢«µáçΓÇ¥τÜäµùáµòêσ«íµá╕µªéτÄç∩╝¢
-- µû░σó₧µë╣ΘçÅ `manual_qc_review.csv` Σ╕Ä `qc_visualization_summary.json`∩╝îσ¢║σ«Ü orientationπÇüspacingπÇülabel alignmentπÇübone windowπÇüreview statusπÇüreviewerπÇünotes τ¡ëΣ║║σ╖Ñσ«íµá╕σ¡ùµ«╡∩╝¢
-- σ░åτ╗ƒΣ╕Ç QC µÄÑσàÑ `prepare_verse --qc` Σ╕Ä `prepare_ctspine1k --qc`∩╝îΣ╕ñµ¥íτ£ƒσ«₧µò░µì«Φ╖»σ╛äΣ╜┐τö¿σÉîΣ╕Çσ«íµá╕µáçσçå∩╝¢
-- µ¢┤µû░ `README.md`πÇü`docs/06_public_dataset_onboarding.md`πÇü`data/datasets.json`∩╝îΦ«░σ╜òσ╜ôσëìτ╜æτ╗£Θÿ╗σí₧πÇüσñçτö¿µò░µì«σàÑσÅúσÆîσ«₧ΘÖàσæ╜Σ╗ñ∩╝¢
-- µû░σó₧ `tests/test_qc_visualization.py`πÇü`tests/test_prepare_ctspine1k.py`∩╝îσ╣╢µë⌐σ▒ò `tests/test_prepare_verse.py` τÜä `--qc` Θ¢åµêÉµ╡ïΦ»ò∩╝¢
-- µû░σó₧ `tests/test_training_smoke.py`∩╝îτö¿σÉêµêÉµáçσçåτùàΣ╛ïΘ¬îΦ»ü Dataset ΓåÆ SegFormer3D ΓåÆ DiceCE ΓåÆ backward ΓåÆ AdamW.step σ«îµò┤σìòµ¡ÑΦ«¡τ╗âΘô╛∩╝¢Θªûµ¼íΣ╜┐τö¿ `32┬│` ROI µù╢σÅæτÄ░Σ╕èµ╕╕µ£ÇσÉÄΣ╕Çσ▒éΦó½σÄïσê░ `1├ù1├ù1`∩╝îbatch size=1 τÜä BatchNorm µùáµ│òΦ«¡τ╗â∩╝îΦ┐Öµÿ»Φ┐çσ░Å smoke-test ROI τÜäτ╗ôµ₧äτ║ªµ¥ƒΦÇîΘ¥₧µ¡úσ╝Å `128┬│` baseline σ¢₧σ╜Æ∩╝¢σ░åµ╡ïΦ»ò ROI Φ░âµò┤Σ╕║ `36┬│` σÉÄτ½»σê░τ½»Φ«¡τ╗âµ¢┤µû░ΘÇÜΦ┐ç∩╝¢
-- µ£Çτ╗êΘ¬îΦ»ü∩╝Ü`pytest tests -q ΓåÆ 22 passed`∩╝¢Ruff σà¿Θâ¿ΘÇÜΦ┐ç∩╝¢`datasets.json` Φºúµ₧ÉΘÇÜΦ┐ç∩╝¢`setup_env.ps1`πÇü`fetch_segformer3d.ps1`πÇü`download_verse.ps1`πÇü`download_ctspine1k_sample.ps1`πÇü`run_web.ps1` σà▒ 5 Σ╕¬ PowerShell ΦäÜµ£¼Φ»¡µ│òµúÇµƒÑΘÇÜΦ┐ç∩╝¢
-- `download_ctspine1k_sample.ps1` Θ╗ÿΦ«ñ dry-plan σ╖▓σ«₧Φ╖æ∩╝îµ£¬ΦºªσÅæτ£ƒσ«₧µò░µì«Σ╕ïΦ╜╜πÇé
-
-**µ£¼Θÿ╢µ«╡Σ╗ìµ£¬σ«îµêÉ∩╝Ü**
-
-- τ£ƒσ«₧σà¼σ╝Ç CT/label Σ╗ìµ£¬ΦÉ╜τ¢ÿ∩╝¢
-- ΓëÑ10 Σ╛ïτ£ƒσ«₧Σ║║σ╖Ñ QC σ░Üµ£¬σ«îµêÉ∩╝¢
-- GPU τÄ»σóâπÇübaseline Φ«¡τ╗âπÇüτ£ƒσ«₧ DSC/HD95/ASSD σ░Üµ£¬Σ║ºτöƒ∩╝¢
-- Web Σ╗ìµ▓íµ£ëτ£ƒσ«₧ checkpoint µÄ¿τÉå∩╝¢
-- Φ«║µûç Results Σ╗ìσ┐àΘí╗Σ┐¥µîü TBDπÇé
-
-**Σ╕ïΣ╕Çµ¼íτ╗ºτ╗¡µù╢τ¼¼Σ╕ÇΣ╝ÿσàêτ║ºµ¢┤µû░Σ╕║∩╝Ü**
+**下一次继续时第一优先级：**
 
 ```text
-σêçµìóσê░Φâ╜σñƒΦ«┐Θù« VerSe S3 / CTSpine1K τ╗┤µèñΘò£σâÅτÜäτ╜æτ╗£τÄ»σóâ
-ΓåÆ σ«₧ΘÖàΣ╕ïΦ╜╜ 1 Σ╕¬ CTSpine1K σ░Åµá╖µ£¼µêû 1 Σ╕¬ VerSe τùàΣ╛ï
-ΓåÆ Σ╜┐τö¿ prepare_* --qc σ«îµêÉΘªûΣ╕¬τ£ƒσ«₧τùàΣ╛ïµáçσçåσîû + qc_contact_sheet.png
-ΓåÆ µá╕Θ¬î metadata/qc/label alignment
-ΓåÆ µë⌐σ▒òσê░ ΓëÑ10 Σ╛ïσ╣╢σí½σåÖ manual_qc_review.csv
-ΓåÆ τ£ƒσ«₧ QC ΘÇÜΦ┐çσÉÄσ¢║σ«ÜΦ«¡τ╗â split Σ╕Ä GPU baseline
+优先重试 VerSe 可用下载源
+→ 若 S3 仍超时，则用 CTSpine1K Hugging Face 镜像按病例获取少量真实 CT + label
+→ 先完成 1 例真实 NIfTI pipeline smoke test
+→ 扩展到 ≥10 例标准化
+→ 人工检查三视图 + bone window + label overlay
+→ QC 通过后再全量处理与训练
 ```
 
-### 2026-08-16∩╜£Θÿ╢µ«╡ E∩╝Üτ£ƒσ«₧ 10 Σ╛ïµò░µì«Θ¬îµö╢ + µ¿íσ₧ï/Φ»äΣ╝░/Web/Σ╕ëτ╗┤σ╖Ñτ¿ïΦíÑσà¿
+### 2026-08-16｜阶段 D：真实数据备用入口与 QC 自动化
 
-µ£¼Θÿ╢µ«╡τ¢«µáçµÿ»**µ£Çσñºτ¿ïσ║ªΦºúΘÖñΓÇ£µùáτ£ƒσ«₧µò░µì«ΓÇ¥σÆîΓÇ£Θàìτ╜«µ£ëΣ╜åΣ╗úτáüµ£¬σàæτÄ░ΓÇ¥τÜäΘÿ╗σí₧**∩╝îσÉîµù╢τ╗ºτ╗¡Σ╕Ñµá╝σî║σêåσ╖Ñτ¿ï smoke Σ╕Äµ¡úσ╝Åτºæτáöτ╗ôµ₧£πÇé
+完成：
 
-σ«îµêÉ∩╝Ü
+- 在继续 P0 前重新执行全项目基线检查，原有 `16 passed` 与 Ruff clean 均确认无回归；
+- 通过公开资料再次核对 CTSpine1K 官方维护仓库、Hugging Face 镜像结构及官方 `data_split.txt`；
+- 本机对 Hugging Face 镜像执行实际连接检查，约 20 秒超时，确认真实数据下载仍是当前工作站外部网络阻塞，而不是代码链问题；
+- 新增 `env/download_ctspine1k_sample.ps1`：默认只展示 `MSD-T10` 的 `liver_169`、`liver_0`、`liver_1` CT+label 下载计划，只有显式 `-Download` 才落盘，同时准备官方 split 元数据下载与 provenance manifest；
+- 新增 `src/preprocessing/prepare_ctspine1k.py`：支持 Hugging Face 原始布局和项目小样本布局，严格配对 image/`*_seg` label，解析 `trainset / test_public / test_private`，不擅自重解释 benchmark split；
+- 新增 `src/preprocessing/qc_visualization.py`：统一生成 axial/coronal/sagittal × normalized CT/bone window/label overlay 的 3×3 QC contact sheet；存在前景时按前景中位位置选层，降低“体积中心没有目标”的无效审核概率；
+- 新增批量 `manual_qc_review.csv` 与 `qc_visualization_summary.json`，固定 orientation、spacing、label alignment、bone window、review status、reviewer、notes 等人工审核字段；
+- 将统一 QC 接入 `prepare_verse --qc` 与 `prepare_ctspine1k --qc`，两条真实数据路径使用同一审核标准；
+- 更新 `README.md`、`docs/06_public_dataset_onboarding.md`、`data/datasets.json`，记录当前网络阻塞、备用数据入口和实际命令；
+- 新增 `tests/test_qc_visualization.py`、`tests/test_prepare_ctspine1k.py`，并扩展 `tests/test_prepare_verse.py` 的 `--qc` 集成测试；
+- 新增 `tests/test_training_smoke.py`，用合成标准病例验证 Dataset → SegFormer3D → DiceCE → backward → AdamW.step 完整单步训练链；首次使用 `32³` ROI 时发现上游最后一层被压到 `1×1×1`，batch size=1 的 BatchNorm 无法训练，这是过小 smoke-test ROI 的结构约束而非正式 `128³` baseline 回归；将测试 ROI 调整为 `36³` 后端到端训练更新通过；
+- 最终验证：`pytest tests -q → 22 passed`；Ruff 全部通过；`datasets.json` 解析通过；`setup_env.ps1`、`fetch_segformer3d.ps1`、`download_verse.ps1`、`download_ctspine1k_sample.ps1`、`run_web.ps1` 共 5 个 PowerShell 脚本语法检查通过；
+- `download_ctspine1k_sample.ps1` 默认 dry-plan 已实跑，未触发真实数据下载。
 
-- σàêΘçìµû░Φ╖æσƒ║τ║┐∩╝ÜσÄƒτè╢µÇü `22 passed` + Ruff clean∩╝îµùáσ¢₧σ╜Æ∩╝¢
-- σ░å `configs/orthopedic_ct_joint.yaml` Σ╕¡µ¡ñσëìσÅ¬σåÖσ£¿Θàìτ╜«ΘçîτÜäσó₧σ╝║τ£ƒµ¡úµÄÑσàÑ Dataset∩╝Ü3D flipπÇüσ░ÅΦºÆσ║ª rotateπÇüσÉäσÉæσÉîµÇº scaleπÇügammaπÇüGaussian noiseπÇüHU shift∩╝¢
-- µû░σó₧ `boundary_proxy` hard patch sampling∩╝îΣ╜£Σ╕║ baseline σëìσ¢░ΘÜ╛σî║σƒƒΣ╗úτÉå∩╝¢τ£ƒσ«₧µ¿íσ₧ïσ╗║τ½ïσÉÄσåìµ¢┐µìó/ΦíÑσàà high-loss/high-HD95/high-uncertainty mining∩╝¢
-- τ£ƒσ«₧µò░µì«σÅæτÄ░ `ct_normalized` Σ╕║ case-wise z-score ΦÇîΘ¥₧ `[0,1]`∩╝îΣ┐«σñìσÄƒσ╝║σ║ªσó₧σ╝║Φ»¡Σ╣ë∩╝Üpipeline σìçτ║ºσê░ `0.3.0`∩╝îmetadata Σ┐¥σ¡ÿ clipped HU mean/std∩╝îgamma/HU shift σÅ»σ¢₧ HU σƒƒµëºΦíî∩╝¢
-- µû░σó₧ `src/modeling/refinement.py`∩╝Ü`UncertaintyRefinementNet3D` Θóäµ╡ïσ▒ÇΘâ¿ residual logits∩╝îσÅ¬σ£¿ uncertainty ROI σåàΣ┐«µ¡ú coarse logits∩╝¢
-- Web preview Σ╗ÄΣ╕¡σñ«Φ╜┤Σ╜ìσìçτ║ºΣ╕║ axial/coronal/sagittal MPR∩╝îσÅ»Φ«╛τ╜«σ╜ÆΣ╕ÇσîûσêçτëçΣ╜ìτ╜«πÇüτ¬ùσ«╜τ¬ùΣ╜ì∩╝¢
-- µû░σó₧τë⌐τÉåτ⌐║Θù┤ mesh σƒ║τíÇ∩╝Ü`src/reconstruction/mesh.py` + `export_mesh.py`∩╝îµÿ╛σ╝Åσ║öτö¿ spacing/origin/direction∩╝îσ╣╢µö»µîü PLY + JSON∩╝¢
-- µû░σó₧ `src/modeling/evaluate.py`∩╝Ücheckpoint τï¼τ½ï sliding-window evaluation∩╝îΦ╛ôσç║ Dice/IoU/Precision/Recall/HD95/ASSDπÇücomponent countπÇüfalse merge/false breakπÇüΘÇÉτùàΣ╛ïµÄ¿τÉåµù╢Θù┤∩╝îσÅ»Σ┐¥σ¡ÿ prediction/entropy NIfTI∩╝¢
-- Φ«¡τ╗âµíåµ₧╢ΦíÑΘ╜É linear warmup + cosine warm restarts∩╝îcheckpoint Σ┐¥σ¡ÿ scheduler state∩╝¢run σ¢║σ«ÜΣ┐¥σ¡ÿ `config.yaml`πÇü`split.json`πÇü`run_metadata.json`πÇü`history.csv`πÇü`train.log`∩╝¢
-- µû░σó₧ `src/preprocessing/audit_processed.py`∩╝îτö¿Σ║Äσ«íΦ«í pipeline versionπÇüspacingπÇüimage/label geometryπÇülabel valuesπÇübone-windowπÇünormalization metadata∩╝¢
-- µû░σó₧ `src/modeling/real_patch_smoke.py`∩╝îµÿÄτí« `formal_metric=false`∩╝îτö¿Σ║Äτ£ƒσ«₧τùàΣ╛ï forward/backward σ╖Ñτ¿ïΘ¬îµö╢∩╝¢
-- Σ┐«σñì CTSpine1K σ░Åµá╖µ£¼σ╕âσ▒Çτ£ƒσ«₧µò░µì«ΦºªσÅæτÜä image/label Θàìσ»╣ bug∩╝îσ╣╢ΦíÑσ¢₧σ╜Æµ╡ïΦ»ò∩╝¢
-- Σ┐«σñì `prepare_ctspine1k`πÇü`qc_visualization` τ¡ë Windows cp1252 Σ╕¡µûç CLI Φ╛ôσç║Θù«Θóÿ∩╝¢
-- Hugging Face µù⌐µ£ƒσ╣╢ΦíîΣ╕ïΦ╜╜σñ▒Φ┤ÑσÉÄ∩╝îµö╣Σ╕║ Edge µ╡ÅΦºêσÖ¿**σìòµûçΣ╗╢Θí║σ║ÅΣ╕ïΦ╜╜**∩╝îµ£Çτ╗êσ«₧ΘÖàσÅûσ╛ù `MSD-T10`∩╝Ü`liver_0`ΓÇö`liver_8` + `liver_169` σà▒ 10 Σ╕¬ CT+label∩╝¢
-- σ«ÿµû╣ `data_split.txt`∩╝Ü9 Σ╛ï `trainset` + `liver_169` 1 Σ╛ï `test_private`∩╝¢`test_private` µÿÄτí«τªüµ¡óΦ┐¢σàÑΦ«¡τ╗âΦ░âσÅé∩╝¢
-- σÄƒσºïµò░µì«Σ╜ìτ╜«∩╝Ü`data/raw_public/CTSpine1K/MSD-T10`∩╝¢µáçσçåσîûΣ╜ìτ╜«∩╝Ü`data/processed_ctspine1k_real`∩╝¢σ╜ôσëìτ║ª 1.4 GiB raw + 3.3 GiB processed∩╝¢
-- µ╡ÅΦºêσÖ¿Σ╕ïΦ╜╜ΓåÆΘí╣τ¢«µÄÑτ«íµëºΦíî SHA-256 µáíΘ¬î∩╝¢`liver_3/5/8` τ¡ëΘí║σ║ÅΘçìΦ»òτùàΣ╛ïσ╖▓τí«Φ«ñµ║É/τ¢«µáçσôêσ╕îΣ╕ÇΦç┤∩╝¢
-- 10 Σ╛ïσ¥çµîë pipeline 0.3.0 σ«îµêÉ 1 mm ΘçìΘççµá╖πÇüHU clipπÇücase-wise z-scoreπÇübone windowπÇünearest-neighbor labelπÇücontact sheet∩╝¢σñäτÉåσñ▒Φ┤Ñ 0∩╝¢
-- σÄƒσºï z-spacing σ«₧ΘÖàΦªåτ¢ûτ║ª `0.8 / 1.0 / 5.0 mm`∩╝îσ¢áµ¡ñτ£ƒσ«₧σ╖Ñτ¿ïσ¡ÉΘ¢åΦªåτ¢ûσÄÜσ▒éΣ╕ÄΦ┐æσÉäσÉæσÉîµÇº CT∩╝¢
-- `audit_processed` µ£Çτ╗ê∩╝Ü`10/10 pass`πÇüσà¿Θâ¿ pipeline `0.3.0`∩╝¢
-- µë╣ΘçÅτöƒµêÉ `manual_qc_review.csv` 10 Φíî∩╝¢**orientation/spacing/label alignment/bone window/reviewer/review_status Σ║║σ╖Ñσ¡ùµ«╡Σ┐¥µîüτ⌐║τÖ╜∩╝îσ╛àΘí╣τ¢«µêÉσæÿτ£ƒµ¡úΘÇÉΣ╛ïτ¡╛σ¡ù**∩╝¢
-- τ£ƒσ«₧ `liver_0` σëìµÖ» patch smoke∩╝ÜΦ╛ôσàÑ `(1,2,36,36,36)`∩╝îσëìµÖ»µ»öΣ╛ïτ║ª `0.5313`∩╝îjoint lossΓåÆbackwardΓåÆAdamW.step µêÉσèƒ∩╝î205 τ╗äµó»σ║ªµ£ëΘÖÉ∩╝¢Φ»Ñ loss/µó»σ║ªµÿ»ΘÜÅµ£║µ¥âΘçìσ╖Ñτ¿ïΦ╛ôσç║∩╝îτªüµ¡óΣ╜£Σ╕║µÇºΦâ╜∩╝¢
-- τ£ƒσ«₧ `liver_0` label σ»╝σç║ PLY∩╝Üτ║ª 9.5 MiB∩╝î131,983 Θí╢τé╣πÇü264,362 Θ¥ó∩╝îΦ»üµÿÄτ£ƒσ«₧ maskΓåÆphysical-space mesh Θô╛σÅ»Φ┐ÉΦíî∩╝¢Φí¿Θ¥óτº»/σîàσ¢┤τ¢ÆΣ╕ìΣ╜£Σ╕┤σ║èµ╡ïΘçÅτ╗ôΦ«║∩╝¢
-- σ╗║τ½ï `docs/07_real_data_validation_20260816.md`∩╝îΘ¢åΣ╕¡Φ«░σ╜òτ£ƒσ«₧µò░µì«Φ»üµì«πÇüΘÖÉσê╢σÆîΣ╕ïΣ╕Çµ¡Ñ∩╝¢
-- µ¢┤µû░ READMEπÇüµò░µì«τÖ╗Φ«░πÇüσà¼σ╝Çµò░µì« SOPπÇüΣ╕¡µ£ƒµ¥ÉµûÖσÆîΦ«║µûç Methods∩╝¢Φ«║µûç Results τ╗ºτ╗¡Σ┐¥µîü TBD∩╝¢
-- **µ£Çτ╗êσ¢₧σ╜Æ∩╝Ü`pytest tests -q ΓåÆ 38 passed`∩╝¢`ruff check src web tests ΓåÆ All checks passed!`∩╝¢`data/datasets.json` JSON Φºúµ₧ÉΘÇÜΦ┐çπÇé**
+**本阶段仍未完成：**
 
-**µ£¼Θÿ╢µ«╡µÿÄτí«Σ╗ìµ£¬σ«îµêÉ∩╝Ü**
+- 真实公开 CT/label 仍未落盘；
+- ≥10 例真实人工 QC 尚未完成；
+- GPU 环境、baseline 训练、真实 DSC/HD95/ASSD 尚未产生；
+- Web 仍没有真实 checkpoint 推理；
+- 论文 Results 仍必须保持 TBD。
 
-- 10 Σ╛ï contact sheet τÜäΣ║║σ╖ÑΘÇÉΣ╛ïτ¡╛σ¡ùσ«íµá╕∩╝¢
-- Θªûτ»çΦ«║µûçµ£Çτ╗ê binary/multiclass/instance µáçτ¡╛σ«ÜΣ╣ë∩╝¢
-- µ¡úσ╝ÅΦ«║µûç train/validation/test split∩╝¢
-- NVIDIA GPU/µ£ìσèíσÖ¿τí«Φ«ñσÆîµ¡úσ╝Å baseline Φ«¡τ╗â∩╝¢
-- σÅ»σåÖσàÑΦ«║µûçτÜäτ£ƒσ«₧ DSC/HD95/ASSD∩╝¢
-- Boundary/Topology/hard augmentation/uncertainty refinement τ£ƒσ«₧µ╢êΦ₧ì∩╝¢
-- τ£ƒσ«₧ prediction mask τÜäΣ╕ëτ╗┤Φí¿Θ¥óΦ»»σ╖«/τ«Çσîû/Θ½ÿΣ┐¥τ£ƒΘçìσ╗║∩╝¢
-- Web τ£ƒσ«₧ checkpoint overlayπÇüuncertaintyπÇü3D µ╕▓µƒôσÆîµ╡ïΘçÅ∩╝¢- Σ╕┤σ║èΦä▒µòÅµò░µì«Σ╕ÄΣ╝ªτÉå/µÄêµ¥âπÇé
-
-**Σ╕ïΣ╕Çµ¼íτ╗ºτ╗¡µù╢τ¼¼Σ╕ÇΣ╝ÿσàêτ║º∩╝Ü**
+**下一次继续时第一优先级更新为：**
 
 ```text
-Θí╣τ¢«µêÉσæÿσ«îµêÉ 10 Σ╛ï manual_qc_review.csv Σ║║σ╖Ñσ«íµá╕τ¡╛σ¡ù
-ΓåÆ τ╗äσåàσ¢║σ«ÜΘªûΣ╕¬Σ╗╗σèí/µáçτ¡╛σ«ÜΣ╣ëΣ╕Äµ¡úσ╝Åµò░µì« split
-ΓåÆ τí«Φ«ñ NVIDIA GPU/CUDA/PyTorch Φ«¡τ╗âτÄ»σóâ
-ΓåÆ Φ╖æ SegFormer3D CT-only baseline
-ΓåÆ Σ╜┐τö¿ src.modeling.evaluate τöƒµêÉτ¼¼Σ╕ÇΣ╗╜µ¡úσ╝Å metrics_per_case.csv
-ΓåÆ σåìµîë CT+bone-window / Boundary / Topology / hard augmentation / uncertainty refinement Θí║σ║ÅσüÜµ╢êΦ₧ì
-ΓåÆ σ░åτ£ƒσ«₧ checkpoint prediction/uncertainty/mesh µÄÑσàÑ Web
+切换到能够访问 VerSe S3 / CTSpine1K 维护镜像的网络环境
+→ 实际下载 1 个 CTSpine1K 小样本或 1 个 VerSe 病例
+→ 使用 prepare_* --qc 完成首个真实病例标准化 + qc_contact_sheet.png
+→ 核验 metadata/qc/label alignment
+→ 扩展到 ≥10 例并填写 manual_qc_review.csv
+→ 真实 QC 通过后固定训练 split 与 GPU baseline
 ```
 
-### 2026-08-16∩╜£Θÿ╢µ«╡ F∩╝Üτ╗äΣ╝ÜΘÿ╢µ«╡Φ┐¢σ▒ò PPT
+### 2026-08-16｜阶段 E：真实 10 例数据验收 + 模型/评估/Web/三维工程补全
 
-σ«îµêÉ∩╝Ü
+本阶段目标是**最大程度解除“无真实数据”和“配置有但代码未兑现”的阻塞**，同时继续严格区分工程 smoke 与正式科研结果。
 
-- Σ╗ÑτÄ░µ£ë `7.19τ╗äΣ╝Ü.pptx` τÜäτÖ╜σ║òπÇüµ╖▒Φô¥Σ╕╗Φë▓πÇüµ╡àΦô¥Σ┐íµü»σìíΣ╕Äσ║òΘâ¿Φô¥Φë▓µ¥íσ╕ªΣ╕║ΦºåΦºëσÅéΦÇâ∩╝îτöƒµêÉ 4 Θí╡τ╗äΣ╝Üµ▒çµèÑµ¥ÉµûÖ∩╝Ü`8.16τ╗äΣ╝Ü_Θí╣τ¢«Θÿ╢µ«╡Φ┐¢σ▒òµ▒çµèÑ.pptx`∩╝¢
-- PPT ΦüÜτäªσ╜ôσëìτ£ƒσ«₧τè╢µÇü∩╝Ü10 Σ╛ï CTSpine1K τ£ƒσ«₧ CT+labelπÇü10/10 Φç¬σè¿σ«íΦ«íπÇüτ£ƒσ«₧σìò patch train-stepπÇü38 passedπÇüWeb MPR Σ╕Äτ£ƒσ«₧ label τë⌐τÉåτ⌐║Θù┤ mesh∩╝¢
-- σìòτï¼σêùσç║σ░Üµ£¬σ«îµêÉΣ║ïΘí╣∩╝ÜΣ║║σ╖Ñ QC τ¡╛σ¡ùπÇüµ¡úσ╝ÅΣ╗╗σèí/µáçτ¡╛πÇüpatient-level splitπÇüNVIDIA GPU baselineπÇüDSC/HD95/ASSDπÇüΣ╕┤σ║èΦä▒µòÅµò░µì«∩╝¢
-- µÿÄτí« PPT Σ╕¡µ£¬µèèΘÜÅµ£║µ¥âΘçìσ╖Ñτ¿ïΦ╛ôσç║πÇüτ£ƒσÇ╝µáçτ¡╛τ╜æµá╝µêûΣ╗╗σèíΣ╣ªτ¢«µáçσÇ╝σåÖµêÉµ¿íσ₧ïµÇºΦâ╜∩╝îΦ«║µûç Results τ╗ºτ╗¡Σ┐¥µîü TBD∩╝¢
-- σÉîµ¡ÑΣ┐¥τòÖ `make_group_meeting_ppt_20260816.ps1` Σ╕Ä `group_meeting_ppt_content_20260816.json`∩╝îΣ╛┐Σ║ÄσÉÄτ╗¡τ╗äΣ╝Üσ┐½ΘÇƒµ¢┤µû░σÉîΘúÄµá╝µ¥ÉµûÖ∩╝¢
-- µû░σó₧Σ╕Ä 4 Θí╡ PPT Σ╕ÇΣ╕Çσ»╣σ║öτÜäσÅúΦ»¡σîûτàºσ┐╡τ¿┐ `8.16τ╗äΣ╝Ü_τàºσ┐╡τ¿┐.md`∩╝îµîëσ░üΘ¥ó/µÇ╗Σ╜ôΦ┐¢σ║ª/σ╖Ñτ¿ïΦ»üµì«/Σ╕ïΣ╕Çµ¡Ñσ¢¢µ«╡τ╗äτ╗ç∩╝îσ╗║Φ««µ▒çµèÑµù╢Θò┐τ║ª 4ΓÇô6 σêåΘÆƒ∩╝îσ╣╢Σ┐¥µîüΓÇ£σ╖Ñτ¿ï smoke Γëá µ¡úσ╝ÅµÇºΦâ╜ΓÇ¥τÜäτ£ƒσ«₧σÅúσ╛äπÇé
+完成：
 
-### 2026-08-16∩╜£Θÿ╢µ«╡ G∩╝Üµ¡úσ╝Åσ«₧Θ¬îΣ┐¥µèñ + Σ║ñΣ║Æ QC/3D + σçáΣ╜òΦ»»σ╖« + uncertainty/refinement + µûçτî«σ║ôΦíÑσà¿
+- 先重新跑基线：原状态 `22 passed` + Ruff clean，无回归；
+- 将 `configs/orthopedic_ct_joint.yaml` 中此前只写在配置里的增强真正接入 Dataset：3D flip、小角度 rotate、各向同性 scale、gamma、Gaussian noise、HU shift；
+- 新增 `boundary_proxy` hard patch sampling，作为 baseline 前困难区域代理；真实模型建立后再替换/补充 high-loss/high-HD95/high-uncertainty mining；
+- 真实数据发现 `ct_normalized` 为 case-wise z-score 而非 `[0,1]`，修复原强度增强语义：pipeline 升级到 `0.3.0`，metadata 保存 clipped HU mean/std，gamma/HU shift 可回 HU 域执行；
+- 新增 `src/modeling/refinement.py`：`UncertaintyRefinementNet3D` 预测局部 residual logits，只在 uncertainty ROI 内修正 coarse logits；
+- Web preview 从中央轴位升级为 axial/coronal/sagittal MPR，可设置归一化切片位置、窗宽窗位；
+- 新增物理空间 mesh 基础：`src/reconstruction/mesh.py` + `export_mesh.py`，显式应用 spacing/origin/direction，并支持 PLY + JSON；
+- 新增 `src/modeling/evaluate.py`：checkpoint 独立 sliding-window evaluation，输出 Dice/IoU/Precision/Recall/HD95/ASSD、component count、false merge/false break、逐病例推理时间，可保存 prediction/entropy NIfTI；
+- 训练框架补齐 linear warmup + cosine warm restarts，checkpoint 保存 scheduler state；run 固定保存 `config.yaml`、`split.json`、`run_metadata.json`、`history.csv`、`train.log`；
+- 新增 `src/preprocessing/audit_processed.py`，用于审计 pipeline version、spacing、image/label geometry、label values、bone-window、normalization metadata；
+- 新增 `src/modeling/real_patch_smoke.py`，明确 `formal_metric=false`，用于真实病例 forward/backward 工程验收；
+- 修复 CTSpine1K 小样本布局真实数据触发的 image/label 配对 bug，并补回归测试；
+- 修复 `prepare_ctspine1k`、`qc_visualization` 等 Windows cp1252 中文 CLI 输出问题；
+- Hugging Face 早期并行下载失败后，改为 Edge 浏览器**单文件顺序下载**，最终实际取得 `MSD-T10`：`liver_0`—`liver_8` + `liver_169` 共 10 个 CT+label；
+- 官方 `data_split.txt`：9 例 `trainset` + `liver_169` 1 例 `test_private`；`test_private` 明确禁止进入训练调参；
+- 原始数据位置：`data/raw_public/CTSpine1K/MSD-T10`；标准化位置：`data/processed_ctspine1k_real`；当前约 1.4 GiB raw + 3.3 GiB processed；
+- 浏览器下载→项目接管执行 SHA-256 校验；`liver_3/5/8` 等顺序重试病例已确认源/目标哈希一致；
+- 10 例均按 pipeline 0.3.0 完成 1 mm 重采样、HU clip、case-wise z-score、bone window、nearest-neighbor label、contact sheet；处理失败 0；
+- 原始 z-spacing 实际覆盖约 `0.8 / 1.0 / 5.0 mm`，因此真实工程子集覆盖厚层与近各向同性 CT；
+- `audit_processed` 最终：`10/10 pass`、全部 pipeline `0.3.0`；
+- 批量生成 `manual_qc_review.csv` 10 行；**orientation/spacing/label alignment/bone window/reviewer/review_status 人工字段保持空白，待项目成员真正逐例签字**；
+- 真实 `liver_0` 前景 patch smoke：输入 `(1,2,36,36,36)`，前景比例约 `0.5313`，joint loss→backward→AdamW.step 成功，205 组梯度有限；该 loss/梯度是随机权重工程输出，禁止作为性能；
+- 真实 `liver_0` label 导出 PLY：约 9.5 MiB，131,983 顶点、264,362 面，证明真实 mask→physical-space mesh 链可运行；表面积/包围盒不作临床测量结论；
+- 建立 `docs/07_real_data_validation_20260816.md`，集中记录真实数据证据、限制和下一步；
+- 更新 README、数据登记、公开数据 SOP、中期材料和论文 Methods；论文 Results 继续保持 TBD；
+- **最终回归：`pytest tests -q → 38 passed`；`ruff check src web tests → All checks passed!`；`data/datasets.json` JSON 解析通过。**
 
-µ£¼Θÿ╢µ«╡τ╗ºτ╗¡σ£¿**Σ╕ìσà╖σñçµ¡úσ╝Å GPU baseline τÜäσëìµÅÉΣ╕ï∩╝îµ£Çσñºσîûσ«îµêÉµëÇµ£ëσÅ»σàêΘ¬îΘ¬îµö╢τÜäσ╖Ñτ¿ïΣ╕ÄΦ«║µûçσçåσñçσ╖ÑΣ╜£**πÇé
+**本阶段明确仍未完成：**
 
-σ«îµêÉ∩╝Ü
+- 10 例 contact sheet 的人工逐例签字审核；
+- 首篇论文最终 binary/multiclass/instance 标签定义；
+- 正式论文 train/validation/test split；
+- NVIDIA GPU/服务器确认和正式 baseline 训练；
+- 可写入论文的真实 DSC/HD95/ASSD；
+- Boundary/Topology/hard augmentation/uncertainty refinement 真实消融；
+- 真实 prediction mask 的三维表面误差/简化/高保真重建；
+- Web 真实 checkpoint overlay、uncertainty、3D 渲染和测量；- 临床脱敏数据与伦理/授权。
 
-- µû░σó₧ `src/modeling/preflight.py`∩╝îσ╣╢µÄÑσàÑ `train.py` / `evaluate.py`∩╝Üformal µ¿íσ╝ÅΘ╗ÿΦ«ñµúÇµƒÑ `formal_experiment`πÇüτùàΣ╛ïτ║º split Σ║ÆµûÑπÇü`test_private` µ│äµ╝ÅπÇüΣ║║σ╖Ñ QCπÇüpipeline/Φ╛ôσàÑπÇüµáçτ¡╛Φîâσ¢┤/`num_classes`∩╝îµ¡úσ╝ÅΦ«¡τ╗âΘó¥σñûΦªüµ▒é CUDA∩╝¢σ╖Ñτ¿ï smoke σ┐àΘí╗µÿ╛σ╝ÅΘÇëµï⌐ engineering µ¿íσ╝Å∩╝¢
-- τ£ƒσ«₧ engineering split preflight∩╝Ü`ready=true`πÇü0 error/0 warning∩╝¢τ¢╕σÉî split τÜä formal preflight µ¡úτí«Φ┐öσ¢₧ `ready=false`∩╝îµÿÄτí«µïªµê¬ engineering splitπÇüµ£¬τ¡╛σ¡ùΣ║║σ╖Ñ QC Σ╕Äµ£¼µ£║µùá CUDA∩╝¢
-- Σ┐«σñì multiclass evaluation τÜäτ⌐║τ▒╗σê½ΦÖÜΘ½ÿΘúÄΘÖ⌐∩╝ÜΘÇÉτùàΣ╛ï macro σÅ¬τ╗ƒΦ«íτ£ƒσÇ╝µêûΘóäµ╡ïσ«₧ΘÖàσç║τÄ░τÜäσëìµÖ»τ▒╗σê½∩╝îσ╣╢Φ╛ôσç║ `metrics_per_class.csv`∩╝¢
-- µë⌐σ▒ò uncertainty σ«ÜΘçÅΦ»äΣ╗╖∩╝Üerror AUROC/AUPRCπÇüerror/correct σ╣│σ¥ç entropyπÇüTop-percent error recallπÇüROI error rate/fraction∩╝¢σñºΣ╜ôτº»Σ╜┐τö¿σ¢║σ«Ü seed µè╜µá╖Θü┐σàìΦ»äΣ╗╖σåàσ¡ÿσñ▒µÄº∩╝¢
-- µû░σó₧ `src/modeling/refinement_training.py`∩╝îσ╜óµêÉ coarse Θ╗ÿΦ«ñσå╗τ╗ôπÇüROI-normalized lossπÇüROI/global error delta τÜäΣ║îΘÿ╢µ«╡τ▓╛Σ┐«Φ«¡τ╗âσƒ║τ║┐∩╝¢ROI σñû prediction Σ┐¥µîüΣ╕ìσÅÿ∩╝¢
-- σÅæτÄ░σ╣╢Φºúσå│ SimpleITK 2.3.1 σ£¿σ╜ôσëì Windows Σ╕¡µûçΘí╣τ¢«τ╗¥σ»╣Φ╖»σ╛äΣ╕ïτÜäτ£ƒσ«₧ I/O σà╝σ«╣Θù«Θóÿ∩╝îσ╗║τ½ï `src/sitk_compat.py`∩╝îµÄÑσàÑ NIfTI/DICOM/QC/σ«íΦ«í/mesh τ¡ëσà│Θö«Φ╖»σ╛ä∩╝¢τ£ƒσ«₧ Web `liver_0 class 24` mesh τöƒµêÉΘ¬îΦ»üΘÇÜΦ┐ç∩╝¢
-- σ╗║τ½ïτ£ƒσ«₧Σ║║σ╖Ñ QC Web reviewer∩╝Ü10 Σ╛ï contact sheet + axial/coronal/sagittal Σ║ñΣ║Æ MPR + τ£ƒσÇ╝ label overlay + orientation/spacing/alignment/bone-window σ¢¢Θí╣Σ║║σ╖ÑµúÇµƒÑ + reviewer/status/notes∩╝¢τ│╗τ╗ƒΣ╕ìΦç¬σè¿Σ╗úτ¡╛∩╝î`manual_qc_review.csv` σ╜ôσëìΣ║║σ╖Ñσ¡ùµ«╡Σ╗ìΣ┐¥µîüτ⌐║τÖ╜∩╝¢
-- µû░σó₧τ£ƒσÇ╝ 3D τáöτ⌐╢Θí╡Σ╕Ä WebGL2 PLY viewer∩╝¢τ£ƒσ«₧ `liver_0` σà¿σëìµÖ» PLY HTTP τ║ª 9.95 MBπÇü131,983 Θí╢τé╣/264,362 Θ¥ó∩╝¢τ£ƒσ«₧ `class 24` Web API τÄ░σ£║τöƒµêÉ 23,088 Θí╢τé╣/46,196 Θ¥ó PLY∩╝¢
-- µû░σó₧ physical-space Φ╖¥τª╗/Σ╕ëτé╣σñ╣ΦºÆ API Σ╕Ä voxelΓåÆphysical σ╖Ñσà╖∩╝¢Φ┐ÖΣ║¢σÅ¬µÿ»σçáΣ╜òµ╡ïΘçÅσƒ║τíÇ∩╝îΣ╕ìµ₧äµêÉΣ╕┤σ║èτ╗ôΦ«║∩╝¢
-- µû░σó₧ vertex-clustering mesh τ«Çσîû∩╝Üτ£ƒσ«₧ `liver_0` 1.5 mm µíú 52,726 Θí╢τé╣/106,329 Θ¥ó∩╝îτ║ªσçÅ 60%∩╝îvertex-nearest HD95 τ║ª 0.707 mm∩╝¢2.0 mm µ¢┤Φ╜╗Σ╜åΦ»»σ╖«µ¢┤σñº∩╝îσ¢áµ¡ñ Web Θ╗ÿΦ«ñΣ╝ÿσàê 1.5 mm∩╝îΣ╕öσà¿σêåΦ╛¿τÄçτ╜æµá╝Σ╕ìΦªåτ¢û∩╝¢
-- µû░σó₧ `src/reconstruction/resampling_error.py` σ╣╢σ£¿ 10 Σ╛ïτ£ƒσ«₧ label Σ╕èσ«îµêÉ rawΓåÆ1 mm nearest-neighbor physical-surface Φ»»σ╖«Φ»äΣ╝░∩╝Ü10/10 µêÉσèƒ∩╝îµò┤Σ╜ô vertex-nearest ASSD τ║ª 0.403 mmπÇüHD95 τ║ª 0.734 mm∩╝¢5 mm σÄƒσºïσ▒éσÄÜτ╗äτ║ª ASSD 0.514 mm / HD95 1.069 mmπÇéΣ╕èΦ┐░µò░σ¡ùσÅ¬Φí¿τñ║ΘóäσñäτÉåτª╗µòúσîû∩╝îΣ╕ìµÿ»µ¿íσ₧ïµêûΣ╕┤σ║èτ▓╛σ║ª∩╝¢
-- σ╗║τ½ï `configs/label_schemas/ctspine1k_verse.json` + `src/label_schema.py`∩╝îµîë VerSe-compatible `1ΓÇô25 ΓåÆ C1ΓÇôL6` Σ╗àσüÜσ╖Ñτ¿ïµÿ╛τñ║∩╝¢τ£ƒσ«₧ `liver_0` σ╖▓µÿ╛τñ║Σ╕║ `T11/T12/L1ΓÇôL5`∩╝îσÄƒσºï 18ΓÇô24 Σ╕ìΘçìτ╝ûτáü∩╝î`formal_task_locked=false`∩╝¢
-- µûçτî«σ╖ÑΣ╜£Σ╗ÄΘªûµë╣σêùΦí¿µë⌐σ▒òΣ╕║ `docs/08_literature_matrix.md` τÜä 37 µ¥íτ╗ôµ₧äσîûτƒ⌐Θÿ╡∩╝îσ╣╢σ╗║τ½ï `paper/references.bib` 35 µ¥íΦï▒µûçµá╕σ┐âµ¥íτ¢«∩╝¢µ£¼Φ╜«τ║áµ¡ú CTSpine1KπÇüVerSeπÇüVerFormerπÇünnFormerπÇüSegFormer3DπÇüTEDS-NetπÇüEDUE τ¡ëµÿôΘöÖΘóÿσ╜ò∩╝î`docs/02_literature_survey.md` µ¢┤µû░σê░ v0.2∩╝¢
-- Φ«║µûç Methods/Experiment Design σ╖▓σÉîµ¡Ñ formal preflightπÇüuncertainty σ«ÜΘçÅΦ»äΣ╗╖πÇüROI-only refinementπÇüphysical-space surface/ΘçìΘççµá╖σçáΣ╜òµÄºσê╢∩╝¢Results τ╗ºτ╗¡Σ┐¥µîü TBD∩╝¢
-- READMEπÇüΣ╕¡µ£ƒµ¥ÉµûÖπÇüτ£ƒσ«₧µò░µì«Θ¬îΦ»üµûçµíúΣ╕Äσ«₧Θ¬îΦ«íσêÆσ¥çσ╖▓σÉîµ¡Ñσ╜ôσëìΦ»üµì«∩╝îΣ╗ìµÿÄτí«σî║σêåτ£ƒσÇ╝τ╜æµá╝/ΘóäσñäτÉåσçáΣ╜òµò░σ¡ùΣ╕Äµ¿íσ₧ïµÇºΦâ╜∩╝¢
-- **µ£Çτ╗êσà¿ΘçÅσ¢₧σ╜Æ∩╝Ü`pytest tests -q ΓåÆ 71 passed`∩╝¢`ruff check src web tests ΓåÆ All checks passed!`∩╝¢`data/datasets.json` Σ╕Äµáçτ¡╛ schema JSON σÅ»Φºúµ₧É∩╝¢`paper/references.bib` 35 entriesπÇüµï¼σÅ╖σ╣│ΦííπÇüµùáΘçìσñì key∩╝¢3 Σ╕¬σëìτ½» JS σ¥çΘÇÜΦ┐ç `node --check`πÇé**
-
-**σ╜ôσëìΣ╗ìΣ╕ìΦâ╜σ«îµêÉ/Σ╕ìΦâ╜Σ╝¬σåÖσ«îµêÉ∩╝Ü**
-
-- 10 Σ╛ïΣ║║σ╖Ñ QC τÜäτ£ƒσ«₧ΘÇÉΣ╛ïτ¡╛σ¡ù∩╝¢
-- binary / multi-class semantic / instance τÜäµ¡úσ╝ÅΣ╗╗σèíΘöüσ«Ü∩╝¢
-- µ¡úσ╝Å patient-level train/validation/test split∩╝¢
-- NVIDIA GPU/CUDA µ¡úσ╝ÅΦ«¡τ╗âτÄ»σóâ∩╝¢
-- SegFormer3D baseline checkpoint Σ╕Äτï¼τ½ïµ╡ïΦ»ò DSC/HD95/ASSD∩╝¢
-- Boundary/Topology/hard augmentation/uncertainty refinement τÜäτ£ƒσ«₧µ╢êΦ₧ìµö╢τ¢è∩╝¢
-- prediction/uncertainty/prediction-mesh τÜä Web µÄÑσàÑ∩╝¢
-- SDF/µ¢▓τÄçΣ┐¥µèñτ¡ëΘ½ÿΣ┐¥τ£ƒΦí¿Θ¥óΘçìσ╗║∩╝¢
-- Σ╕┤σ║èΦä▒µòÅµò░µì«πÇüµÄêµ¥âΣ╕ÄΣ╝ªτÉåπÇé
-
-**Σ╕ïΣ╕Çµ¼íτ╗ºτ╗¡µù╢Σ╕Ñµá╝µîëΣ╗ÑΣ╕ïΣ╝ÿσàêτ║º∩╝Ü**
+**下一次继续时第一优先级：**
 
 ```text
-1. Θí╣τ¢«µêÉσæÿσ£¿ /qc-review ΘÇÉΣ╛ïσ«îµêÉΣ║║σ╖Ñ QC σ╣╢τ¡╛σ¡ù
-2. τ╗äσåàΘöüσ«Üµ¡úσ╝ÅΣ╗╗σèí/µáçτ¡╛σ«ÜΣ╣ë∩╝îσí½σåÖ task spec∩╝îσ╣╢τöƒµêÉµ¡úσ╝Å patient-level split/config
-3. σ£¿τ¢«µáç GPU µ£║σÖ¿Φ┐ÉΦíî formal_readiness∩╝îσ┐àΘí╗τí«Φ«ñ ready=true
-4. σàêΦ╖æ CT-only SegFormer3D baseline∩╝îσ¢║σ«Üτ¼¼Σ╕ÇΣ╗╜ checkpoint
-5. τö¿ evaluate τöƒµêÉµ¡úσ╝Å metrics_per_case.csv / metrics_per_class.csv∩╝êσªéΘÇéτö¿∩╝ë
-6. Σ╛¥µ¼íσüÜ bone-window ΓåÆ Boundary ΓåÆ Topology ΓåÆ hard augmentation ΓåÆ uncertainty/refinement µ╢êΦ₧ì
-7. τö¿τÄ░µ£ë results-review σñìµá╕τ£ƒσ«₧ prediction/entropy∩╝îσåìτöƒµêÉ prediction mesh σ╣╢µ¢┤µû░Φ«║µûç Results
+项目成员完成 10 例 manual_qc_review.csv 人工审核签字
+→ 组内固定首个任务/标签定义与正式数据 split
+→ 确认 NVIDIA GPU/CUDA/PyTorch 训练环境
+→ 跑 SegFormer3D CT-only baseline
+→ 使用 src.modeling.evaluate 生成第一份正式 metrics_per_case.csv
+→ 再按 CT+bone-window / Boundary / Topology / hard augmentation / uncertainty refinement 顺序做消融
+→ 将真实 checkpoint prediction/uncertainty/mesh 接入 Web
 ```
 
-### 2026-08-16∩╜£Θÿ╢µ«╡ H∩╝Üµ¡úσ╝Å readiness µ▒çµÇ╗ + results-review + SDF Θ½ÿΣ┐¥τ£ƒΦí¿Θ¥ó + 2025ΓÇô2026 µûçτî«ΦíÑσ╝║
+### 2026-08-16｜阶段 F：组会阶段进展 PPT
 
-µ£¼Θÿ╢µ«╡τ¢«µáçµÿ»σ£¿Σ╗ìτ╝║µ¡úσ╝Å GPU checkpoint τÜäσëìµÅÉΣ╕ï∩╝îµèèΓÇ£Φâ╜σÉªσÉ»σè¿µ¡úσ╝Åσ«₧Θ¬îΓÇ¥ΓÇ£µ¡úσ╝Åτ╗ôµ₧£σªéΣ╜òσñìµá╕ΓÇ¥ΓÇ£Σ╕ëτ╗┤Φí¿Θ¥óσªéΣ╜òσüÜµïôµëæΣ┐¥µèñΓÇ¥Σ╕ëµ¥íΘô╛ΦíÑΘ╜É∩╝îσ╣╢σ«îµêÉσà¿Θí╣τ¢«σ¢₧σ╜ÆπÇé
+完成：
 
-σ«îµêÉ∩╝Ü
+- 以现有 `7.19组会.pptx` 的白底、深蓝主色、浅蓝信息卡与底部蓝色条带为视觉参考，生成 4 页组会汇报材料：`8.16组会_项目阶段进展汇报.pptx`；
+- PPT 聚焦当前真实状态：10 例 CTSpine1K 真实 CT+label、10/10 自动审计、真实单 patch train-step、38 passed、Web MPR 与真实 label 物理空间 mesh；
+- 单独列出尚未完成事项：人工 QC 签字、正式任务/标签、patient-level split、NVIDIA GPU baseline、DSC/HD95/ASSD、临床脱敏数据；
+- 明确 PPT 中未把随机权重工程输出、真值标签网格或任务书目标值写成模型性能，论文 Results 继续保持 TBD；
+- 同步保留 `make_group_meeting_ppt_20260816.ps1` 与 `group_meeting_ppt_content_20260816.json`，便于后续组会快速更新同风格材料；
+- 新增与 4 页 PPT 一一对应的口语化照念稿 `8.16组会_照念稿.md`，按封面/总体进度/工程证据/下一步四段组织，建议汇报时长约 4–6 分钟，并保持“工程 smoke ≠ 正式性能”的真实口径。
 
-- Web µû░σó₧ evaluation results-review∩╝ÜσÅ»σÅæτÄ░ `experiments` Σ╕ïΦºäΦîâ evaluationπÇüΦ»╗σÅûΘÇÉτùàΣ╛ïµîçµáç∩╝îσ╣╢µèè prediction/entropy Σ╕Äµáçσçåσîû CT σüÜ MPR overlay∩╝¢τ£ƒσ«₧Θí╣τ¢«µÄÑσÅú `/api/research/evaluations` σ«₧µ╡ï `200`πÇü`total=0`∩╝îµ¡úτí«Φí¿τñ║**σ╜ôσëìµ▓íµ£ëτ£ƒσ«₧µ¡úσ╝Å evaluation**∩╝¢
-- µû░σó₧ `configs/task_specs/vertebra_task_template.json` Σ╕Ä `src/modeling/task_lock.py`∩╝ÜσÅ¬µ£ë `task_locked=true` Σ╕ö task id/type/labels/num_classes/data/split σ«îµò┤µù╢µëìΦâ╜τ╝ûΦ»æµ¡úσ╝Å config∩╝îσ╣╢Σ┐¥σ¡ÿ task-spec SHA-256∩╝¢σ╜ôσëìσÅ¬µö»µîü binary/multiclass semantic∩╝îinstance σ¢áΦ«¡τ╗â/Φ»äΣ╗╖Θô╛µ£¬σ«₧τÄ░ΦÇîµÿÄτí«µïÆτ╗¥∩╝¢
-- µû░σó₧ `src/modeling/gpu_environment.py` + `env/check_gpu.ps1`∩╝ÜσÅ¬Φ»╗µúÇµƒÑΘí╣τ¢« venvπÇüPyTorch CUDA buildπÇüσÅ»ΦºüΦ«╛σñçπÇüµÿ╛σ¡ÿσÆî `nvidia-smi`∩╝¢µ£¼µ£║σ«₧µ╡ï Python 3.11.7πÇütorch `2.1.0+cpu`πÇüCUDA=falseπÇü0 deviceπÇüµùá `nvidia-smi`∩╝îσ¢áµ¡ñΣ╕ìΦâ╜σÉ»σè¿µ¡úσ╝Å 3D baseline∩╝¢
-- µû░σó₧ `src/modeling/formal_readiness.py` + `env/check_formal_readiness.ps1`∩╝Üτ╗ƒΣ╕Çµ▒çµÇ╗ task lockπÇüGPUπÇüformal preflight Σ╗ÑσÅèµ¡úσ╝Å config/task µîçτ║╣τ╗æσ«Ü∩╝¢σ£¿σ╜ôσëìτ£ƒσ«₧ processed root + 1/1/1 engineering smoke split Σ╕èσ«₧µ╡ï `ready=false`πÇüexit 2πÇü9 Σ╕¬ blocker∩╝îσîàσÉ½Σ╗╗σèíµ£¬Θöüσ«ÜπÇüsplit Θ¥₧ formalπÇü3 Σ╛ïΣ║║σ╖Ñ QC µ£¬µë╣σçåσÆî GPU τÄ»σóâµ£¬σ░▒τ╗¬∩╝¢Φ»Ñσñ▒Φ┤Ñµÿ»Σ┐¥µèñµ£║σê╢µ¡úτí«σ╖ÑΣ╜£∩╝îΣ╕ìµÿ»τ¿ïσ║ÅµòàΘÜ£∩╝¢
-- µû░σó₧ `src/reconstruction/sdf_surface.py`∩╝Übinary maskΓåÆphysical-mm signed distance fieldΓåÆσÅ»ΘÇë Gaussian smoothingΓåÆΘ¢╢τ¡ëσÇ╝Θ¥ó Marching Cubes∩╝îσ╣╢Θ╗ÿΦ«ñΦªüµ▒é smoothing σëìσÉÄ connected-component count Σ╕ÇΦç┤∩╝¢
-- τ£ƒσ«₧ `liver_0` SDF sweep∩╝Ü0.3/0.4/0.5 mm σ¥çΣ┐¥µîü 2ΓåÆ2 Φ┐₧ΘÇÜσƒƒ∩╝¢0.4 mm σ╜ôσëìΣ╜£Σ╕║σ╖Ñτ¿ïΘ╗ÿΦ«ñσÇÖΘÇë∩╝îΘí╢τé╣ 131,950πÇüΘ¥ó 264,056πÇüτ¢╕σ»╣σÄƒσºï MC Θ¥óτº»σÅÿσîûτ║ª -1.81%πÇüvertex-nearest ASSD τ║ª 0.0209 mmπÇüHD95 τ║ª 0.0644 mm∩╝¢0.8 mm ΘÇáµêÉ 2ΓåÆ3 Φ┐₧ΘÇÜσƒƒσÅÿσîû∩╝îσ¢áµ¡ñµáçΦ«░µïÆτ╗¥πÇéΣ╕èΦ┐░σ¥çΣ╕║**τ£ƒσÇ╝ mask Φí¿Θ¥óσ╖Ñτ¿ïσ╖«σ╝é∩╝îΣ╕ìµÿ»µ¿íσ₧ïµêûΣ╕┤σ║èτ▓╛σ║ª**∩╝¢
-- SDF σ╖▓µÄÑσàÑτáöτ⌐╢ 3D Web∩╝Üτ£ƒσ«₧ `ctspine1k-msd-t10-liver_0` τÜä 0.4 mm summary/PLY Φ╖»τö▒σ¥ç `200`∩╝¢0.8 mm summary Φ┐öσ¢₧ `422`∩╝îΦ»üµÿÄσ╖▓τöƒµêÉΣ╜åµïôµëæΣ╕ìσÉêµá╝τÜäΦí¿Θ¥óΣ╣ƒΣ╕ìΣ╝ÜΦó½σëìτ½»σèáΦ╜╜∩╝¢
-- µûçτî«τƒ⌐Θÿ╡Σ╗Ä 37ΓåÆ40 µ¥í∩╝îΦï▒µûç BibTeX Σ╗Ä 35ΓåÆ38 µ¥í∩╝¢µ¡úσ╝ÅσèáσàÑ SpineMamba∩╝ê2025∩╝ëπÇüTransformer-enhanced vertebrae segmentation/anatomical variation∩╝ê2025∩╝ëσÆî VertebraFormer∩╝ê2026∩╝ë∩╝îσ╣╢σÉîµ¡Ñ `docs/02_literature_survey.md`πÇüΦ«║µûçτ¢╕σà│σ╖ÑΣ╜£πÇüREADME Σ╕ÄΣ╕¡µ£ƒµ¥ÉµûÖ∩╝¢
-- µû░σó₧ `tests/test_formal_readiness.py`∩╝îσ╣╢Σ┐¥τòÖ task lock/GPU/results-review/SDF Web τ¡ëΣ╕ôΘí╣µ╡ïΦ»ò∩╝¢
-- **µ£Çτ╗êσà¿ΘçÅσ¢₧σ╜Æ∩╝Ü`pytest tests -q ΓåÆ 88 passed`∩╝¢`ruff check src web tests ΓåÆ All checks passed!`∩╝¢4 Σ╕¬σëìτ½» JS `node --check` ΘÇÜΦ┐ç∩╝¢3 Σ╕¬σà│Θö« JSON σÅ»Φºúµ₧É∩╝¢`paper/references.bib` 38 entriesπÇüµï¼σÅ╖σ╣│ΦííπÇüµùáΘçìσñì key∩╝¢7 Σ╕¬ PowerShell ΦäÜµ£¼Φ»¡µ│ò parser σà¿Θâ¿ΘÇÜΦ┐çπÇé**
+### 2026-08-16｜阶段 G：正式实验保护 + 交互 QC/3D + 几何误差 + uncertainty/refinement + 文献库补全
 
-**σ╜ôσëìΣ╗ìΣ╕ìΦâ╜σ«îµêÉ/Σ╕ìΦâ╜Σ╝¬σåÖσ«îµêÉ∩╝Ü**
+本阶段继续在**不具备正式 GPU baseline 的前提下，最大化完成所有可先验验收的工程与论文准备工作**。
 
-- 10 Σ╛ïΣ║║σ╖Ñ QC τÜäτ£ƒσ«₧ΘÇÉΣ╛ïτ¡╛σ¡ù∩╝¢
-- µ¡úσ╝Å binary/multiclass Σ╗╗σèíΘöüσ«ÜσÆîµ¡úσ╝Å patient-level split∩╝¢
-- NVIDIA GPU/CUDA µ¡úσ╝ÅΦ«¡τ╗âτÄ»σóâΣ╕Ä `formal_readiness ready=true`∩╝¢
-- SegFormer3D baseline checkpoint Σ╕Äτï¼τ½ïµ╡ïΦ»ò DSC/HD95/ASSD∩╝¢
-- Boundary/Topology/hard augmentation/uncertainty refinement τÜäτ£ƒσ«₧µ╢êΦ₧ìµö╢τ¢è∩╝¢
-- τ£ƒσ«₧ prediction/entropy/prediction mesh τ╗ôµ₧£∩╝¢σ╜ôσëì results-review Σ╕║τ⌐║µÿ»µ¡úτí«τè╢µÇü∩╝¢
-- Σ╕┤σ║èΦä▒µòÅµò░µì«πÇüµÄêµ¥âΣ╕ÄΣ╝ªτÉåπÇé
+完成：
 
-**Σ╕ïΣ╕ÇΦ╜«Σ╝ÿσàêτ║ºΣ╕ìσÅÿ∩╝îΣ╜åσàÑσÅúµ¢┤µÿÄτí«∩╝Ü**Σ║║σ╖Ñ QC τ¡╛σ¡ù ΓåÆ task spec Θöüσ«Ü + formal split/config ΓåÆ τ¢«µáç GPU `formal_readiness` ΘÇÜΦ┐ç ΓåÆ baseline ΓåÆ evaluate/results-review ΓåÆ µ╢êΦ₧ì ΓåÆ prediction mesh/Φ«║µûç ResultsπÇé
+- 新增 `src/modeling/preflight.py`，并接入 `train.py` / `evaluate.py`：formal 模式默认检查 `formal_experiment`、病例级 split 互斥、`test_private` 泄漏、人工 QC、pipeline/输入、标签范围/`num_classes`，正式训练额外要求 CUDA；工程 smoke 必须显式选择 engineering 模式；
+- 真实 engineering split preflight：`ready=true`、0 error/0 warning；相同 split 的 formal preflight 正确返回 `ready=false`，明确拦截 engineering split、未签字人工 QC 与本机无 CUDA；
+- 修复 multiclass evaluation 的空类别虚高风险：逐病例 macro 只统计真值或预测实际出现的前景类别，并输出 `metrics_per_class.csv`；
+- 扩展 uncertainty 定量评价：error AUROC/AUPRC、error/correct 平均 entropy、Top-percent error recall、ROI error rate/fraction；大体积使用固定 seed 抽样避免评价内存失控；
+- 新增 `src/modeling/refinement_training.py`，形成 coarse 默认冻结、ROI-normalized loss、ROI/global error delta 的二阶段精修训练基线；ROI 外 prediction 保持不变；
+- 发现并解决 SimpleITK 2.3.1 在当前 Windows 中文项目绝对路径下的真实 I/O 兼容问题，建立 `src/sitk_compat.py`，接入 NIfTI/DICOM/QC/审计/mesh 等关键路径；真实 Web `liver_0 class 24` mesh 生成验证通过；
+- 建立真实人工 QC Web reviewer：10 例 contact sheet + axial/coronal/sagittal 交互 MPR + 真值 label overlay + orientation/spacing/alignment/bone-window 四项人工检查 + reviewer/status/notes；系统不自动代签，`manual_qc_review.csv` 当前人工字段仍保持空白；
+- 新增真值 3D 研究页与 WebGL2 PLY viewer；真实 `liver_0` 全前景 PLY HTTP 约 9.95 MB、131,983 顶点/264,362 面；真实 `class 24` Web API 现场生成 23,088 顶点/46,196 面 PLY；
+- 新增 physical-space 距离/三点夹角 API 与 voxel→physical 工具；这些只是几何测量基础，不构成临床结论；
+- 新增 vertex-clustering mesh 简化：真实 `liver_0` 1.5 mm 档 52,726 顶点/106,329 面，约减 60%，vertex-nearest HD95 约 0.707 mm；2.0 mm 更轻但误差更大，因此 Web 默认优先 1.5 mm，且全分辨率网格不覆盖；
+- 新增 `src/reconstruction/resampling_error.py` 并在 10 例真实 label 上完成 raw→1 mm nearest-neighbor physical-surface 误差评估：10/10 成功，整体 vertex-nearest ASSD 约 0.403 mm、HD95 约 0.734 mm；5 mm 原始层厚组约 ASSD 0.514 mm / HD95 1.069 mm。上述数字只表示预处理离散化，不是模型或临床精度；
+- 建立 `configs/label_schemas/ctspine1k_verse.json` + `src/label_schema.py`，按 VerSe-compatible `1–25 → C1–L6` 仅做工程显示；真实 `liver_0` 已显示为 `T11/T12/L1–L5`，原始 18–24 不重编码，`formal_task_locked=false`；
+- 文献工作从首批列表扩展为 `docs/08_literature_matrix.md` 的 37 条结构化矩阵，并建立 `paper/references.bib` 35 条英文核心条目；本轮纠正 CTSpine1K、VerSe、VerFormer、nnFormer、SegFormer3D、TEDS-Net、EDUE 等易错题录，`docs/02_literature_survey.md` 更新到 v0.2；
+- 论文 Methods/Experiment Design 已同步 formal preflight、uncertainty 定量评价、ROI-only refinement、physical-space surface/重采样几何控制；Results 继续保持 TBD；
+- README、中期材料、真实数据验证文档与实验计划均已同步当前证据，仍明确区分真值网格/预处理几何数字与模型性能；
+- **最终全量回归：`pytest tests -q → 71 passed`；`ruff check src web tests → All checks passed!`；`data/datasets.json` 与标签 schema JSON 可解析；`paper/references.bib` 35 entries、括号平衡、无重复 key；3 个前端 JS 均通过 `node --check`。**
 
-### 2026-08-25∩╜£Θÿ╢µ«╡ I∩╝Üσà¼σ╝Ç GitHub σñÜΣ║║σìÅΣ╜£Σ╗ôσ║ôµò┤τÉå
+**当前仍不能完成/不能伪写完成：**
 
-µ£¼Θÿ╢µ«╡τ¢«µáçµÿ»µèèσ╜ôσëìσ╖Ñτ¿ïΣ╗ÄΓÇ£µ£¼µ£║τºæτáöΘí╣τ¢«τ¢«σ╜òΓÇ¥µò┤τÉåΣ╕║σÅ»Σ╗Ñσ«ëσà¿σà¼σ╝ÇπÇüΣ╛¢σñÜΣ║║σêåσ╖ÑσìÅΣ╜£τÜä Git Σ╗ôσ║ô∩╝îσÉîµù╢Θü┐σàìµèèσî╗σ¡ªσ╜▒σâÅπÇüΣ╕┤σ║èµò░µì«πÇüµ¿íσ₧ïµ¥âΘçìπÇüΦ┐ÉΦíîτ╝ôσ¡ÿσÆîτ¼¼Σ╕ëµû╣ checkout Φ»»σà¼σ╝ÇπÇé
+- 10 例人工 QC 的真实逐例签字；
+- binary / multi-class semantic / instance 的正式任务锁定；
+- 正式 patient-level train/validation/test split；
+- NVIDIA GPU/CUDA 正式训练环境；
+- SegFormer3D baseline checkpoint 与独立测试 DSC/HD95/ASSD；
+- Boundary/Topology/hard augmentation/uncertainty refinement 的真实消融收益；
+- prediction/uncertainty/prediction-mesh 的 Web 接入；
+- SDF/曲率保护等高保真表面重建；
+- 临床脱敏数据、授权与伦理。
 
-σ«îµêÉ∩╝Ü
+**下一次继续时严格按以下优先级：**
 
-- σ£¿ `D:\σ¢╜σê¢Θí╣τ¢«` σê¥σºïσîûµ£¼σ£░ Git Σ╗ôσ║ô∩╝îΘ╗ÿΦ«ñσêåµö»Σ╕║ `main`∩╝¢
-- µû░σó₧ `TASKS.md`∩╝ÜµèèΘí╣τ¢«µïåµêÉµÇ╗Σ╜ôµû╣µíêπÇüµò░µì«/QCπÇüµ¿íσ₧ïπÇüΦüöσÉêµìƒσñ▒πÇüσ¢░ΘÜ╛µá╖µ£¼πÇüΣ╕ìτí«σ«ÜµÇºπÇüΣ╕ëτ╗┤/WebπÇüµ¡úσ╝Åσ«₧Θ¬îπÇüΣ╕┤σ║èΘ¬îΦ»üσÆîΦ«║µûçτ╗ôΘóÿτ¡ëµ¿íσ¥ù∩╝îσ╣╢µÿÄτí« P0ΓÇôP5 Σ╝ÿσàêτ║ºπÇüµÄ¿ΦìÉΦ┤ƒΦ┤úΣ║║σÆîσ«îµêÉσ«ÜΣ╣ë∩╝¢
-- µû░σó₧ `CONTRIBUTING.md`∩╝ÜΦºäσ«Ü feature/docs σêåµö»πÇüΣ╕¡µûç commitπÇüPull RequestπÇüpytest/Ruff/JS µúÇµƒÑπÇüµ¡úσ╝Åσ«₧Θ¬îΣ║ºτë⌐Φ┐╜Φ╕¬σÆî `PROJECT_STATUS.md` σ╝║σê╢σ¢₧σåÖ∩╝¢
-- µû░σó₧ `SECURITY.md`∩╝ÜµÿÄτí«τªüµ¡óσà¼σ╝ÇµéúΦÇà DICOM/NIfTIπÇüµ£¬Φä▒µòÅΣ╕┤σ║èµò░µì«πÇüΦ║½Σ╗╜Σ┐íµü»πÇütoken/keyπÇücheckpoint∩╝îσ╣╢σåìµ¼íσî║σêå random-weight smoke / GT mesh / preprocessing geometry Σ╕Äµ¡úσ╝Åµ¿íσ₧ïµÇºΦâ╜∩╝¢
-- µû░σó₧ `.github/ISSUE_TEMPLATE/task.md`πÇü`bug.md` Σ╕Ä `.github/PULL_REQUEST_TEMPLATE.md`∩╝îµû╣Σ╛┐σ¢óΘÿƒτ¢┤µÄÑµîëΣ╗╗σèí/bug/PR µ╡üτ¿ïσìÅΣ╜£∩╝¢
-- µû░σó₧ `docs/09_public_repository_manifest.md`∩╝Üσêùσç║σà¼σ╝ÇΣ╗ôσ║ôσ║öσîàσÉ½τÜäΣ╗úτáüπÇüΘàìτ╜«πÇüµ╡ïΦ»òπÇüΦ«║µûçπÇüµò░µì«σàâΣ┐íµü»Σ╕ÄΦäÜµ£¼∩╝îΣ╗ÑσÅèσ┐àΘí╗µÄÆΘÖñτÜäσî╗σ¡ªµò░µì«πÇüσñäτÉåσÉÄµò░µì«πÇüµ¿íσ₧ïµ¥âΘçìπÇüruntimeπÇüΦÖÜµïƒτÄ»σóâπÇüτ¼¼Σ╕ëµû╣ checkout σÆîσñºσ₧ï PPT∩╝¢
-- σèáσ╝║ `.gitignore`∩╝Üµû░σó₧ `data/processed_*/`πÇü`.devspace-computer/`πÇü`*.pptx`πÇü`*.log` τ¡ëσà¼σ╝Çσ«ëσà¿ΦºäσêÖ∩╝îσÉîµù╢Σ┐¥τòÖ `data/README.md`πÇü`data/datasets.json` σÆîσî┐σÉì split JSON∩╝¢
-- τö¿ `git check-ignore` σ«₧ΘÖàτí«Φ«ñτ£ƒσ«₧ `label.nii.gz`πÇüQC σ¢╛τëçπÇüDevSpace µê¬σ¢╛πÇüσñºσ₧ïτ╗äΣ╝Ü PPTπÇüSegFormer3D checkoutπÇüWeb runtime σ¥çΦó½µÄÆΘÖñ∩╝¢Θªûµë╣σÅ»µÅÉΣ║ñµûçΣ╗╢σÅ¬σîàσÉ½µ║Éτáü/Θàìτ╜«/µ╡ïΦ»ò/Φ«║µûç/µûçµíú/σî┐σÉìµò░µì«σàâΣ┐íµü»∩╝¢
-- σà¼σ╝Çσëìµë½µÅÅµ£¬σÅæτÄ░ GitHub token/private key τ¡ëτ£ƒσ«₧σç¡µì«∩╝¢σæ╜Σ╕¡τÜä `token` Σ╗àΣ╕║Σ╗úτáüσÅÿΘçÅ∩╝îσñäτÉåσÉÄµò░µì«Σ╕¡τÜäµò░σ¡ùµ¿íσ╝Åσ¥çσñäΣ║Äσ╖▓σ┐╜τòÑτ¢«σ╜ò∩╝¢
-- σåìµ¼íσà¿ΘçÅσ¢₧σ╜Æ∩╝Ü`pytest tests -q ΓåÆ 88 passed`∩╝¢`ruff check src web tests ΓåÆ All checks passed!`∩╝¢
-- σ╖▓σ«îµêÉµ£¼σ£░ΘªûΣ╕¬σà¼σ╝ÇσìÅΣ╜£µÅÉΣ║ñ `5576a82b1025a0c3060d461f0d84cef0efdfea24`∩╝ê`chore: initialize public collaboration repository`∩╝ë∩╝¢Σ╗ôσ║ôτ║º Git Θé«τ«▒Σ╜┐τö¿ `noreply@users.noreply.github.com`∩╝îΘü┐σàìµèèτö╡Φäæσà¿σ▒ÇΣ╕¬Σ║║Θé«τ«▒σåÖσàÑσà¼σ╝Ç commit∩╝¢
-- σ╖▓σ£¿ GitHub Φ┤ªσÅ╖ `927242768-dotcom` Σ╕ïσê¢σ╗║ **Public** Σ╗ôσ║ô `orthopedic-ct-segformer3d`∩╝îµ£¬Φ«⌐ GitHubΘó¥σñûσê¥σºïσîû README/.gitignore/license∩╝îΘü┐σàìΣ╕Äµ£¼σ£░σÄåσÅ▓σå▓τ¬ü∩╝¢
-- σ╖▓µ╖╗σèáΦ┐£τ¿ï `origin=https://github.com/927242768-dotcom/orthopedic-ct-segformer3d.git`∩╝îσ╣╢µêÉσèƒµëºΦíî `main ΓåÆ origin/main` Θªûµ¼í push∩╝îσ╜ôσëìµ£¼σ£░ `main` σ╖▓Φ╖ƒΦ╕¬ `origin/main`∩╝¢
-- GitHub Θí╡Θ¥óσ╖▓σ«₧µ£║τí«Φ«ñΣ╗ôσ║ôΣ╕║ Public∩╝îΘªûΣ╕¬ commitπÇüµ║ÉτáüπÇüΘàìτ╜«πÇüµ╡ïΦ»òπÇüΦ«║µûçπÇüµûçτî«πÇüΣ╗╗σèíµ╕àσìòπÇüσìÅΣ╜£µûçµíúσÆî Issue/PR µ¿íµ¥┐σ¥çσ╖▓σÅ»Φºü∩╝¢τ£ƒσ«₧ CT/σñäτÉåσÉÄµò░µì«/checkpoint/runtime/τ¼¼Σ╕ëµû╣ checkout/σñºσ₧ï PPT µ£¬Φ┐¢σàÑσà¼σ╝ÇσÄåσÅ▓πÇé
+```text
+1. 项目成员在 /qc-review 逐例完成人工 QC 并签字
+2. 组内锁定正式任务/标签定义，填写 task spec，并生成正式 patient-level split/config
+3. 在目标 GPU 机器运行 formal_readiness，必须确认 ready=true
+4. 先跑 CT-only SegFormer3D baseline，固定第一份 checkpoint
+5. 用 evaluate 生成正式 metrics_per_case.csv / metrics_per_class.csv（如适用）
+6. 依次做 bone-window → Boundary → Topology → hard augmentation → uncertainty/refinement 消融
+7. 用现有 results-review 复核真实 prediction/entropy，再生成 prediction mesh 并更新论文 Results
+```
 
-**σ╜ôσëì GitHub σÅæσ╕âτè╢µÇü∩╝ÜΓ£à σ╖▓σ«îµêÉπÇé** σà¼σ╝ÇΣ╗ôσ║ô∩╝Ü`https://github.com/927242768-dotcom/orthopedic-ct-segformer3d`πÇéσ¢óΘÿƒµêÉσæÿσÅ»Σ╗Ñτ¢┤µÄÑµ╡ÅΦºê/clone/fork/µÅÉ Issue/PR∩╝¢σªéΘ£ÇΦªüµ£ïσÅïτ¢┤µÄÑ push σê░Σ╕╗Σ╗ôσ║ô∩╝îΘ£Çσåìµîëσà╢ GitHub τö¿µê╖σÉìµ╖╗σèá collaboratorπÇéσÉÄτ╗¡µëÇµ£ëσìÅΣ╜£Σ╗Ñ `TASKS.md` + Issues/PR + `PROJECT_STATUS.md` Σ╕║Σ╕╗τ║┐πÇé
+### 2026-08-16｜阶段 H：正式 readiness 汇总 + results-review + SDF 高保真表面 + 2025–2026 文献补强
+
+本阶段目标是在仍缺正式 GPU checkpoint 的前提下，把“能否启动正式实验”“正式结果如何复核”“三维表面如何做拓扑保护”三条链补齐，并完成全项目回归。
+
+完成：
+
+- Web 新增 evaluation results-review：可发现 `experiments` 下规范 evaluation、读取逐病例指标，并把 prediction/entropy 与标准化 CT 做 MPR overlay；真实项目接口 `/api/research/evaluations` 实测 `200`、`total=0`，正确表示**当前没有真实正式 evaluation**；
+- 新增 `configs/task_specs/vertebra_task_template.json` 与 `src/modeling/task_lock.py`：只有 `task_locked=true` 且 task id/type/labels/num_classes/data/split 完整时才能编译正式 config，并保存 task-spec SHA-256；当前只支持 binary/multiclass semantic，instance 因训练/评价链未实现而明确拒绝；
+- 新增 `src/modeling/gpu_environment.py` + `env/check_gpu.ps1`：只读检查项目 venv、PyTorch CUDA build、可见设备、显存和 `nvidia-smi`；本机实测 Python 3.11.7、torch `2.1.0+cpu`、CUDA=false、0 device、无 `nvidia-smi`，因此不能启动正式 3D baseline；
+- 新增 `src/modeling/formal_readiness.py` + `env/check_formal_readiness.ps1`：统一汇总 task lock、GPU、formal preflight 以及正式 config/task 指纹绑定；在当前真实 processed root + 1/1/1 engineering smoke split 上实测 `ready=false`、exit 2、9 个 blocker，包含任务未锁定、split 非 formal、3 例人工 QC 未批准和 GPU 环境未就绪；该失败是保护机制正确工作，不是程序故障；
+- 新增 `src/reconstruction/sdf_surface.py`：binary mask→physical-mm signed distance field→可选 Gaussian smoothing→零等值面 Marching Cubes，并默认要求 smoothing 前后 connected-component count 一致；
+- 真实 `liver_0` SDF sweep：0.3/0.4/0.5 mm 均保持 2→2 连通域；0.4 mm 当前作为工程默认候选，顶点 131,950、面 264,056、相对原始 MC 面积变化约 -1.81%、vertex-nearest ASSD 约 0.0209 mm、HD95 约 0.0644 mm；0.8 mm 造成 2→3 连通域变化，因此标记拒绝。上述均为**真值 mask 表面工程差异，不是模型或临床精度**；
+- SDF 已接入研究 3D Web：真实 `ctspine1k-msd-t10-liver_0` 的 0.4 mm summary/PLY 路由均 `200`；0.8 mm summary 返回 `422`，证明已生成但拓扑不合格的表面也不会被前端加载；
+- 文献矩阵从 37→40 条，英文 BibTeX 从 35→38 条；正式加入 SpineMamba（2025）、Transformer-enhanced vertebrae segmentation/anatomical variation（2025）和 VertebraFormer（2026），并同步 `docs/02_literature_survey.md`、论文相关工作、README 与中期材料；
+- 新增 `tests/test_formal_readiness.py`，并保留 task lock/GPU/results-review/SDF Web 等专项测试；
+- **最终全量回归：`pytest tests -q → 88 passed`；`ruff check src web tests → All checks passed!`；4 个前端 JS `node --check` 通过；3 个关键 JSON 可解析；`paper/references.bib` 38 entries、括号平衡、无重复 key；7 个 PowerShell 脚本语法 parser 全部通过。**
+
+**当前仍不能完成/不能伪写完成：**
+
+- 10 例人工 QC 的真实逐例签字；
+- 正式 binary/multiclass 任务锁定和正式 patient-level split；
+- NVIDIA GPU/CUDA 正式训练环境与 `formal_readiness ready=true`；
+- SegFormer3D baseline checkpoint 与独立测试 DSC/HD95/ASSD；
+- Boundary/Topology/hard augmentation/uncertainty refinement 的真实消融收益；
+- 真实 prediction/entropy/prediction mesh 结果；当前 results-review 为空是正确状态；
+- 临床脱敏数据、授权与伦理。
+
+**下一轮优先级不变，但入口更明确：**人工 QC 签字 → task spec 锁定 + formal split/config → 目标 GPU `formal_readiness` 通过 → baseline → evaluate/results-review → 消融 → prediction mesh/论文 Results。
+
+### 2026-08-25｜阶段 I：公开 GitHub 多人协作仓库整理
+
+本阶段目标是把当前工程从“本机科研项目目录”整理为可以安全公开、供多人分工协作的 Git 仓库，同时避免把医学影像、临床数据、模型权重、运行缓存和第三方 checkout 误公开。
+
+完成：
+
+- 在 `D:\国创项目` 初始化本地 Git 仓库，默认分支为 `main`；
+- 新增 `TASKS.md`：把项目拆成总体方案、数据/QC、模型、联合损失、困难样本、不确定性、三维/Web、正式实验、临床验证和论文结题等模块，并明确 P0–P5 优先级、推荐负责人和完成定义；
+- 新增 `CONTRIBUTING.md`：规定 feature/docs 分支、中文 commit、Pull Request、pytest/Ruff/JS 检查、正式实验产物追踪和 `PROJECT_STATUS.md` 强制回写；
+- 新增 `SECURITY.md`：明确禁止公开患者 DICOM/NIfTI、未脱敏临床数据、身份信息、token/key、checkpoint，并再次区分 random-weight smoke / GT mesh / preprocessing geometry 与正式模型性能；
+- 新增 `.github/ISSUE_TEMPLATE/task.md`、`bug.md` 与 `.github/PULL_REQUEST_TEMPLATE.md`，方便团队直接按任务/bug/PR 流程协作；
+- 新增 `docs/09_public_repository_manifest.md`：列出公开仓库应包含的代码、配置、测试、论文、数据元信息与脚本，以及必须排除的医学数据、处理后数据、模型权重、runtime、虚拟环境、第三方 checkout 和大型 PPT；
+- 加强 `.gitignore`：新增 `data/processed_*/`、`.devspace-computer/`、`*.pptx`、`*.log` 等公开安全规则，同时保留 `data/README.md`、`data/datasets.json` 和匿名 split JSON；
+- 用 `git check-ignore` 实际确认真实 `label.nii.gz`、QC 图片、DevSpace 截图、大型组会 PPT、SegFormer3D checkout、Web runtime 均被排除；首批可提交文件只包含源码/配置/测试/论文/文档/匿名数据元信息；
+- 公开前扫描未发现 GitHub token/private key 等真实凭据；命中的 `token` 仅为代码变量，处理后数据中的数字模式均处于已忽略目录；
+- 再次全量回归：`pytest tests -q → 88 passed`；`ruff check src web tests → All checks passed!`；
+- 已完成本地首个公开协作提交 `5576a82b1025a0c3060d461f0d84cef0efdfea24`（`chore: initialize public collaboration repository`）；仓库级 Git 邮箱使用 `noreply@users.noreply.github.com`，避免把电脑全局个人邮箱写入公开 commit；
+- 已在 GitHub 账号 `927242768-dotcom` 下创建 **Public** 仓库 `orthopedic-ct-segformer3d`，未让 GitHub额外初始化 README/.gitignore/license，避免与本地历史冲突；
+- 已添加远程 `origin=https://github.com/927242768-dotcom/orthopedic-ct-segformer3d.git`，并成功执行 `main → origin/main` 首次 push，当前本地 `main` 已跟踪 `origin/main`；
+- GitHub 页面已实机确认仓库为 Public，首个 commit、源码、配置、测试、论文、文献、任务清单、协作文档和 Issue/PR 模板均已可见；真实 CT/处理后数据/checkpoint/runtime/第三方 checkout/大型 PPT 未进入公开历史。
+
+**当前 GitHub 发布状态：✅ 已完成。** 公开仓库：`https://github.com/927242768-dotcom/orthopedic-ct-segformer3d`。团队成员可以直接浏览/clone/fork/提 Issue/PR；如需要朋友直接 push 到主仓库，需再按其 GitHub 用户名添加 collaborator。后续所有协作以 `TASKS.md` + Issues/PR + `PROJECT_STATUS.md` 为主线。
 
 ---
 
-## 12. Σ║ñµÄÑΦºäσêÖ
+## 12. 交接规则
 
-Σ╕ïΣ╕ÇΣ╜ìµêÉσæÿµêûΣ╕ïΣ╕Çµ¼í AI Σ╝ÜΦ»¥τ╗ºτ╗¡µù╢∩╝îσ┐àΘí╗µîëΣ╗ÑΣ╕ïΘí║σ║Å∩╝Ü
+下一位成员或下一次 AI 会话继续时，必须按以下顺序：
 
-1. **σàêΦ»╗µ£¼µûçΣ╗╢ `PROJECT_STATUS.md`∩╝¢**
-2. σåìΦ»╗ `README.md`∩╝¢
-3. µá╣µì«Σ╗╗σèíΦ»╗ `docs/01_overall_design.md`πÇü`docs/03_data_pipeline_spec.md`πÇü`docs/04_experiment_plan.md`∩╝¢
-4. σªéσçåσñçΣ╕¡µ£ƒ∩╝îΦ»╗ `docs/05_midterm_materials.md`∩╝¢
-5. σªéσåÖΦ«║µûç∩╝îΦ»╗ `paper/manuscript_zh_v0.1.md`∩╝¢
-6. Φ┐ÉΦíî `pytest` σÆî `ruff` τí«Φ«ñσ╖Ñτ¿ïτè╢µÇü∩╝¢
-7. σÅ¬σñäτÉåΓÇ£Σ╕ïΣ╕Çµ¡ÑΣ╗╗σèíΓÇ¥µ£ÇΘ½ÿΣ╝ÿσàêτ║ºµ£¬σ«îµêÉΣ║ïΘí╣∩╝¢
-8. Σ╕ìΦªåτ¢ûτ¼¼Σ╕ëµû╣Σ╗ôσ║ôµ£¼σ£░ΦíÑΣ╕ü∩╝¢
-9. Σ╕ìµèèΣ╕┤σ║èµò░µì«µÅÉΣ║ñσê░ Git∩╝¢
-10. **σ«îµêÉΣ╗╗Σ╜òσ«₧Φ┤¿Σ┐«µö╣σÉÄ∩╝îµ£ÇσÉÄΣ╕ÇΣ╕¬Θí╣τ¢«µûçµíúσè¿Σ╜£σ┐àΘí╗µÿ»µ¢┤µû░µ£¼ `PROJECT_STATUS.md`πÇé**
-
-
-### 2026-08-25∩╜£Θÿ╢µ«╡ J∩╝ÜGitHub CI Σ╕ÄσìÅΣ╜£Φ┤¿ΘçÅΘù¿τªüΦíÑσ╝║
-
-µ£¼Θÿ╢µ«╡τ¢«µáçµÿ»ΦíÑΘ╜Éσà¼σ╝ÇσìÅΣ╜£Σ╗ôσ║ôτ╝║σñ▒τÜäΦç¬σè¿σîûΦ┤¿ΘçÅΘù¿τªü∩╝îΦ«⌐σÉÄτ╗¡σñÜΣ║║µÅÉΣ║ñ Pull Request µù╢Φâ╜Φç¬σè¿σÅæτÄ░σƒ║τíÇσ╖Ñτ¿ïσ¢₧σ╜Æ∩╝îσÉîµù╢Σ╕ìµèè CI Φ»»σ╜ôΣ╜£µ¡úσ╝Åσî╗σ¡ªσ«₧Θ¬îΘ¬îµö╢πÇé
-
-σ«îµêÉ∩╝Ü
-
-- µû░σó₧ `.github/workflows/ci.yml`∩╝îσ»╣ `main` τÜä push Σ╕Ä Pull Request Φç¬σè¿ΦºªσÅæ∩╝¢
-- Python CI σ¢║σ«Ü Python 3.11∩╝îσ╣╢µÿ╛σ╝Åσ«ëΦúà PyTorch 2.1.0 CPU µáêΣ╕Ä `env/requirements.txt`∩╝îΦç¬σè¿µëºΦíî `ruff check src web tests` Σ╕Ä `pytest tests -q`∩╝¢
-- µû░σó₧σëìτ½» JavaScript Φ»¡µ│òµúÇµƒÑ∩╝îΦªåτ¢û `app.js / qc_review.js / research_3d.js / results_review.js`∩╝¢
-- µû░σó₧σà│Θö« JSON σÅ»Φºúµ₧ÉµÇºµúÇµƒÑ∩╝îΦªåτ¢ûµò░µì«Θ¢åτÖ╗Φ«░πÇüµáçτ¡╛ schema Σ╕Ä task spec µ¿íµ¥┐∩╝¢
-- µû░σó₧ PowerShell Φ»¡µ│ò parser µúÇµƒÑ∩╝îΦªåτ¢û `env/`πÇü`web/` Σ╕ÄΣ╗ôσ║ôµá╣τ¢«σ╜òΣ╕¡σ╖▓Φ╖ƒΦ╕¬τÜä `.ps1`∩╝¢
-- Σ╕║ CI σó₧σèáµ£Çσ░Å `contents: read` µ¥âΘÖÉπÇüσ╣╢σÅæσÅûµ╢êΣ╕Ä job timeout∩╝îΘÖìΣ╜ÄΘçìσñìΦ┐ÉΦíîσÆîµ¥âΘÖÉΦ┐çσ«╜ΘúÄΘÖ⌐∩╝¢
-- µ¢┤µû░ `CONTRIBUTING.md`∩╝îµÿÄτí«Φç¬σè¿ CI τÜäΦªåτ¢ûΦîâσ¢┤Σ╗ÑσÅèσ«âΣ╕ìΦâ╜µ¢┐Σ╗úΣ║║σ╖Ñ QCπÇütask/split Θöüσ«ÜπÇüGPU readiness σÆîτ£ƒσ«₧µ¿íσ₧ïσ«₧Θ¬î∩╝¢
-- µ¢┤µû░ `TASKS.md`∩╝îµèè GitHub Actions CI τ║│σàÑΓÇ£µûçµíúΣ╕ÄΦ┤¿ΘçÅΓÇ¥σ╖▓σ«îµêÉΘí╣∩╝¢
-- Σ┐«µ¡úµ£¼σÅ░Φ┤ªµùºµúÇµƒÑσæ╜Σ╗ñσî║Σ╗ìσåÖµêÉ `71 passed / 35 BibTeX / 3 JS` τÜäσÄåσÅ▓µ«ïτòÖ∩╝îτ╗ƒΣ╕ÇΣ╕║σ╜ôσëì `88 passed / 38 BibTeX / 4 JS / 3 Σ╕¬σà│Θö« JSON / 7 Σ╕¬ PowerShell ΦäÜµ£¼`∩╝¢
-- µ£¼σ£░Θçìµû░Θ¬îΦ»ü∩╝Ü`pytest tests -q ΓåÆ 88 passed`πÇü`ruff check src web tests ΓåÆ All checks passed!`∩╝¢workflow YAML σÅ»τö▒ PyYAML µ¡úσ╕╕Φºúµ₧É∩╝¢4 Σ╕¬σëìτ½» JS `node --check` ΘÇÜΦ┐ç∩╝¢σ╜ôσëì PowerShell ΦäÜµ£¼Φ»¡µ│ò parser ΘÇÜΦ┐çπÇé
-
-σ╜ôσëìΦ╛╣τòî∩╝Ü
-
-- GitHub Actions τÜäΓÇ£Σ║æτ½»Θªûµ¼íτ£ƒσ«₧Φ┐ÉΦíîΓÇ¥σÅ¬Φâ╜σ£¿ workflow µÄ¿ΘÇüσê░ GitHub σÉÄτö▒ Actions runner ΦºªσÅæ∩╝îσ¢áµ¡ñσ£¿Θªûµ¼í CI run µêÉσèƒσëì∩╝îµ£¼Θÿ╢µ«╡σÅ¬Φâ╜σú░µÿÄΓÇ£CI Θàìτ╜«Σ╕Äµ£¼σ£░τ¡ëΣ╗╖µúÇµƒÑσ╖▓σ«îµêÉΓÇ¥∩╝îΣ╕ìΦâ╜σú░µÿÄΓÇ£Σ║æτ½» CI σ╖▓ΘÇÜΦ┐çΓÇ¥∩╝¢
-- µ¡úσ╝Åσ«₧Θ¬î P0 Θÿ╗σí₧Σ╗ìΣ╕ìσÅÿ∩╝ÜΣ║║σ╖Ñ QCπÇüµ¡úσ╝ÅΣ╗╗σèíΘöüσ«ÜπÇüµ¡úσ╝Å patient-level splitπÇüNVIDIA GPU/CUDA τÄ»σóâ∩╝¢
-- µ£¼µ¼íµ▓íµ£ëτöƒµêÉΣ╗╗Σ╜òµ¿íσ₧ïµÇºΦâ╜µò░σ¡ù∩╝îΣ╣ƒµ▓íµ£ëµö╣σè¿τ£ƒσ«₧σî╗σ¡ªµò░µì«πÇüµ¡úσ╝Å split µêûΦ«║µûç ResultsπÇé
+1. **先读本文件 `PROJECT_STATUS.md`；**
+2. 再读 `README.md`；
+3. 根据任务读 `docs/01_overall_design.md`、`docs/03_data_pipeline_spec.md`、`docs/04_experiment_plan.md`；
+4. 如准备中期，读 `docs/05_midterm_materials.md`；
+5. 如写论文，读 `paper/manuscript_zh_v0.1.md`；
+6. 运行 `pytest` 和 `ruff` 确认工程状态；
+7. 只处理“下一步任务”最高优先级未完成事项；
+8. 不覆盖第三方仓库本地补丁；
+9. 不把临床数据提交到 Git；
+10. **完成任何实质修改后，最后一个项目文档动作必须是更新本 `PROJECT_STATUS.md`。**
 
 
-### 2026-08-25∩╜£Θÿ╢µ«╡ K∩╝ÜΣ║║σ╖Ñ QC τùàΣ╛ïµáÅΘü«µîí/µèÿσÅáΣ║ñΣ║ÆΣ┐«σñì
+### 2026-08-25｜阶段 J：GitHub CI 与协作质量门禁补强
 
-µ£¼Θÿ╢µ«╡τ¢┤µÄÑΣ┐«σñì `/qc-review` σ£¿Σ║║σ╖ÑΘÇÉΣ╛ïσ«íµá╕µù╢τùàΣ╛ïΣ╛ºµáÅµîüτ╗¡σìáµì«Θí╡Θ¥óπÇüτ¬äτ¬ùσÅúΣ╕ïΘü«µîí/µîñσÄïΣ╕╗σ«íµá╕σî║τÜäΘù«Θóÿ∩╝îΣ╕ìµö╣σÅÿΣ║║σ╖Ñσ«íµá╕σêñσ«ÜΦºäσêÖπÇüCSV Σ┐¥σ¡ÿΘÇ╗Φ╛æπÇüσî╗σ¡ªµò░µì«µêûµ¿íσ₧ïτ╗ôµ₧£πÇé
+本阶段目标是补齐公开协作仓库缺失的自动化质量门禁，让后续多人提交 Pull Request 时能自动发现基础工程回归，同时不把 CI 误当作正式医学实验验收。
 
-σ«îµêÉ∩╝Ü
+完成：
 
-- `web/frontend/qc_review.html`∩╝ÜΣ╕║ QC Σ╕╗σ╕âσ▒ÇπÇüτùàΣ╛ïΣ╛ºµáÅσÆîΣ╕╗σ«íµá╕σî║ΦíÑσààτ¿│σ«Ü DOM id∩╝¢µû░σó₧ΓÇ£µÿ╛τñ║τùàΣ╛ïσêùΦí¿ / µö╢Φ╡╖τùàΣ╛ïσêùΦí¿ΓÇ¥σêçµìóµîëΘÆ«σÅè ARIA σà│Φüö∩╝¢
-- `web/frontend/qc_review.js`∩╝Üµû░σó₧τùàΣ╛ïµáÅµèÿσÅáτè╢µÇüπÇü`setCaseListCollapsed()`πÇü`showCaseList()`πÇü`enterReviewArea()` Σ╕Äτ╗ƒΣ╕Ç `selectCase()`∩╝¢τé╣σç╗Σ╗╗µäÅτùàΣ╛ïσÉÄΦç¬σè¿µö╢Φ╡╖σêùΦí¿σ╣╢µ╗Üσè¿Φ┐¢σàÑΣ╕╗σ«íµá╕σî║∩╝¢ΓÇ£Σ╕èΣ╕ÇΣ╛ï / Σ╕ïΣ╕ÇΣ╛ïΓÇ¥σñìτö¿σÉîΣ╕ÇΘÇëµï⌐ΘÇ╗Φ╛æ∩╝îτ╗ºτ╗¡Σ┐¥µîüσ«íµá╕σî║∩╝¢Θçìµû░σ▒òσ╝ÇσêùΦí¿µù╢Φç¬σè¿σ¢₧σê░τùàΣ╛ïσêùΦí¿Σ╜ìτ╜«∩╝¢
-- `web/frontend/qc_review.css`∩╝ÜµèÿσÅáσÉÄΣ╕╗σ«íµá╕σî║Φç¬σè¿σìáµ╗íσÅ»τö¿σ«╜σ║ª∩╝¢Σ╕║ sticky Θí╢µáÅΦ«╛τ╜«σ«íµá╕σî║µ╗Üσè¿τòÖτÖ╜∩╝¢τ¬äτ¬ùσÅúΣ╕ïτùàΣ╛ïµáÅσêçµìóµîëΘÆ«σ¢║σ«Üσ£¿σÅ│Σ╕ïΦºÆ∩╝îτí«Σ┐¥Θò┐Θí╡Θ¥óσ«íµá╕Φ┐çτ¿ïΣ╕¡Σ╗ìΦâ╜ΘÜÅµù╢Θçìµû░σ▒òσ╝Ç∩╝¢Σ┐¥τòÖ 980 px / 900 px / 650 px σôìσ║öσ╝ÅΘÇéΘàì∩╝¢
-- `tests/test_web_qc_review.py`∩╝Üµû░σó₧σëìτ½»σ¢₧σ╜Æµ╡ïΦ»ò∩╝îΘ¬îΦ»üµèÿσÅáτ¢╕σà│ DOMπÇüσêçµìóµîëΘÆ«πÇü`scrollIntoView` Φ┐¢σàÑσ«íµá╕σî║ΘÇ╗Φ╛æπÇüτùàΣ╛ïτé╣σç╗τ╗ƒΣ╕ÇΘÇëµï⌐ΘÇ╗Φ╛æΣ╗ÑσÅèΣ╕èΣ╕ÇΣ╛ï/Σ╕ïΣ╕ÇΣ╛ïΣ┐¥µîüσ«íµá╕σî║ΘÇ╗Φ╛æσ¡ÿσ£¿∩╝¢
-- µ£¬Σ┐«µö╣Σ║║σ╖Ñσ«íµá╕σ¢¢Θí╣ΦºäσêÖπÇü`pass` µáíΘ¬îµ¥íΣ╗╢πÇü`manual_qc_review.csv` σåÖσàÑµ╡üτ¿ïπÇüQC σî╗σ¡ªµò░µì«πÇüµáçτ¡╛πÇüµ¿íσ₧ïΦ╛ôσç║µêûµÄ¿τÉåτ╗ôµ₧£πÇé
+- 新增 `.github/workflows/ci.yml`，对 `main` 的 push 与 Pull Request 自动触发；
+- Python CI 固定 Python 3.11，并显式安装 PyTorch 2.1.0 CPU 栈与 `env/requirements.txt`，自动执行 `ruff check src web tests` 与 `pytest tests -q`；
+- 新增前端 JavaScript 语法检查，覆盖 `app.js / qc_review.js / research_3d.js / results_review.js`；
+- 新增关键 JSON 可解析性检查，覆盖数据集登记、标签 schema 与 task spec 模板；
+- 新增 PowerShell 语法 parser 检查，覆盖 `env/`、`web/` 与仓库根目录中已跟踪的 `.ps1`；
+- 为 CI 增加最小 `contents: read` 权限、并发取消与 job timeout，降低重复运行和权限过宽风险；
+- 更新 `CONTRIBUTING.md`，明确自动 CI 的覆盖范围以及它不能替代人工 QC、task/split 锁定、GPU readiness 和真实模型实验；
+- 更新 `TASKS.md`，把 GitHub Actions CI 纳入“文档与质量”已完成项；
+- 修正本台账旧检查命令区仍写成 `71 passed / 35 BibTeX / 3 JS` 的历史残留，统一为当前 `88 passed / 38 BibTeX / 4 JS / 3 个关键 JSON / 7 个 PowerShell 脚本`；
+- 本地重新验证：`pytest tests -q → 88 passed`、`ruff check src web tests → All checks passed!`；workflow YAML 可由 PyYAML 正常解析；4 个前端 JS `node --check` 通过；当前 PowerShell 脚本语法 parser 通过。
 
-µ£¼σ£░Θ¬îΦ»ü∩╝Ü
+当前边界：
 
-```text
-node --check web/frontend/qc_review.js
-ΓåÆ ΘÇÜΦ┐ç∩╝êµùáΦ»¡µ│òΘöÖΦ»»∩╝ë
-
-.\.venv\Scripts\python.exe -m pytest tests/test_web_qc_review.py -q
-ΓåÆ 3 passed
-
-.\.venv\Scripts\python.exe -m ruff check web tests/test_web_qc_review.py
-ΓåÆ All checks passed!
-
-.\.venv\Scripts\python.exe -m pytest tests -q
-ΓåÆ 89 passed, 153 warnings
-```
-
-σà╢Σ╕¡ 153 µ¥í warning µ¥ÑΦç¬τÄ░µ£ë MONAI / pkg_resources / Matplotlib / SciPy τ¡ëτ¼¼Σ╕ëµû╣Σ╛¥Φ╡ûσ╝âτö¿µÅÉτñ║∩╝îµ£¼µ¼íµ▓íµ£ëµû░σó₧µ╡ïΦ»òσñ▒Φ┤ÑµêûσèƒΦâ╜σ¢₧σ╜ÆπÇé
-
-σ╜ôσëìτè╢µÇü∩╝ÜQC σëìτ½»τùàΣ╛ïµáÅΘü«µîíΘù«Θóÿσ╖▓σ«îµêÉΣ╗úτáüΣ┐«σñìσ╣╢ΘÇÜΦ┐çσ«ÜσÉæΣ╕Äσà¿ΘçÅΦç¬σè¿σîûσ¢₧σ╜Æ∩╝¢Σ║║σ╖Ñσ«íµá╕µò░µì«σÆîµ¡úσ╝Åσ«₧Θ¬îΘÿ╗σí₧τè╢µÇüΣ╕ìσÅÿπÇé
+- GitHub Actions 的“云端首次真实运行”只能在 workflow 推送到 GitHub 后由 Actions runner 触发，因此在首次 CI run 成功前，本阶段只能声明“CI 配置与本地等价检查已完成”，不能声明“云端 CI 已通过”；
+- 正式实验 P0 阻塞仍不变：人工 QC、正式任务锁定、正式 patient-level split、NVIDIA GPU/CUDA 环境；
+- 本次没有生成任何模型性能数字，也没有改动真实医学数据、正式 split 或论文 Results。
 
 
-### 2026-08-25∩╜£Θÿ╢µ«╡ L∩╝ÜΣ║║σ╖Ñ QC τùàΣ╛ïσ▒éτ¼¼Σ║îµ¼íΣ┐«σñìΣ╕Ä Edge σ«₧µ£║Θ¬îµö╢
+### 2026-08-25｜阶段 K：人工 QC 病例栏遮挡/折叠交互修复
 
-Θÿ╢µ«╡ K τÜä DOM/µèÿσÅáΘÇ╗Φ╛æΦÖ╜τä╢ΘÇÜΦ┐çΦç¬σè¿σîûµ╡ïΦ»ò∩╝îΣ╜åτö¿µê╖σ«₧µ£║µê¬σ¢╛Σ╗ìµÿ╛τñ║τùàΣ╛ïΣ╗╗σèíσ▒éΘô║µ╗íσ╣╢τ¢ûΣ╜Åσ«íµá╕ CT∩╝îΦ»┤µÿÄΣ╗àΘ¬îΦ»üΓÇ£µèÿσÅáΣ╗úτáüσ¡ÿσ£¿ΓÇ¥Σ╕ìΦ╢│Σ╗ÑΦ»üµÿÄµ╡ÅΦºêσÖ¿σ«₧ΘÖàΣ║ñΣ║ÆσÅ»τö¿πÇéµ£¼Θÿ╢µ«╡µá╣µì«σ«₧µ£║τÄ░Φ▒íτ╗ºτ╗¡σ«ÜΣ╜ìσ╣╢σ«îµêÉτ╗ôµ₧äτ║ºΣ┐«σñìπÇé
+本阶段直接修复 `/qc-review` 在人工逐例审核时病例侧栏持续占据页面、窄窗口下遮挡/挤压主审核区的问题，不改变人工审核判定规则、CSV 保存逻辑、医学数据或模型结果。
 
-µá╣σ¢áΣ╕ÄΣ┐«σñì∩╝Ü
+完成：
 
-- µá╣σ¢á 1∩╝Üσà¿τ½Ö `styles.css` Σ╕¡ `.card { grid-column: span 6; }`∩╝êτ¬äσ▒ÅΦ┐ÿΣ╝ÜσÅÿΣ╕║ span 12∩╝ëτ╗ºτ╗¡Σ╜£τö¿Σ║Ä `qc-layout` σåàτÜä `.qc-sidebar/.qc-main`∩╝îΣ╕Ä QC Φç¬σ╖▒τÜä 1∩╜₧2 σêù Grid σå▓τ¬ü∩╝îσ»╝Φç┤τë╣σ«Üτ¬ùσÅúσ«╜σ║ª/τ╝⌐µö╛µ»öΣ╛ïΣ╕ïτùàΣ╛ïσî║σƒƒσ╝éσ╕╕Φ╖¿σêùΘô║µ╗íσ╣╢Φªåτ¢û/µîñσÄïσ«íµá╕σî║σƒƒ∩╝¢
-- `web/frontend/qc_review.css` µû░σó₧ `.qc-layout > .card { grid-column: auto; }`∩╝îσ╣╢µÿÄτí«τùàΣ╛ïµáÅΣ╜ìΣ║Äτ¼¼ 1 σêùπÇüσ«íµá╕σî║Σ╜ìΣ║Äτ¼¼ 2 σêù∩╝¢µèÿσÅáσÉÄσ«íµá╕σî║ `grid-column: 1 / -1` τï¼σìáσÅ»τö¿σ«╜σ║ª∩╝¢τ¬äτ¬ùσÅúτ╗ƒΣ╕Çσ¢₧σê░σìòσêù∩╝¢
-- τùàΣ╛ïΘÇëµï⌐Σ╕ìσåìσÅ¬Σ╛¥Φ╡û CSS class∩╝Ü`setCaseListCollapsed()` σÉîµù╢Φ«╛τ╜« `caseSidebar.hidden = true`∩╝îσ╣╢ΘàìσÑù `.qc-sidebar[hidden] { display: none !important; }`∩╝îτí«Σ┐¥τùàΣ╛ïΣ╗╗σèíσ▒éτ£ƒµ¡úΘÇÇσç║σ╕âσ▒ÇσÆîτé╣σç╗σ▒é∩╝îΣ╕ìσåìΘÇÅµÿÄΦªåτ¢ûσ«íµá╕σåàσ«╣∩╝¢
-- `selectCase()` Φ░âµò┤Σ╕║σàêσà│Θù¡τùàΣ╛ïσ▒é∩╝îσåìσèáΦ╜╜σ╜ôσëìτùàΣ╛ïσ╣╢ `scrollIntoView()` Φ┐¢σàÑσ«íµá╕σî║∩╝¢Σ╕èΣ╕ÇΣ╛ï/Σ╕ïΣ╕ÇΣ╛ïτ╗ºτ╗¡σñìτö¿ `selectCase()`∩╝¢
-- ΓÇ£µÿ╛τñ║τùàΣ╛ïσêùΦí¿ / µö╢Φ╡╖τùàΣ╛ïσêùΦí¿ΓÇ¥µîëΘÆ«µö╣Σ╕║σ¢║σ«Üµé¼µ╡«µîëΘÆ«∩╝îΘü┐σàìΘí╢Θâ¿µôìΣ╜£σî║σ£¿Θ½ÿτ╝⌐µö╛/τë╣µ«èτ¬ùσÅúσ«╜σ║ªΣ╕ïΦó½µîñσç║σÅ»Φºåσî║∩╝¢
-- `web/backend/app.py` τÜä `/qc-review` σó₧σèá `Cache-Control: no-store, max-age=0`∩╝¢QC Θí╡Θ¥ó CSS/JS Σ╜┐τö¿ `?v=20260825-3` τëêµ£¼σÅéµò░∩╝îΘü┐σàì Edge τ╗ºτ╗¡σèáΦ╜╜µùºσëìτ½»Φ╡äµ║É∩╝¢
-- `tests/test_web_qc_review.py` σ¢₧σ╜Æµ╡ïΦ»òσÉîµ¡ÑΘ¬îΦ»ü no-storeπÇüτëêµ£¼σîûΘ¥ÖµÇüΦ╡äµ║ÉπÇü`hidden` σ╝║σê╢µèÿσÅáπÇüQC Grid Φªåτ¢ûΦºäσêÖπÇüτùàΣ╛ïτé╣σç╗Σ╕ÄΣ╕èΣ╕ÇΣ╛ï/Σ╕ïΣ╕ÇΣ╛ïτ╗ƒΣ╕ÇΘÇëµï⌐ΘÇ╗Φ╛æπÇé
+- `web/frontend/qc_review.html`：为 QC 主布局、病例侧栏和主审核区补充稳定 DOM id；新增“显示病例列表 / 收起病例列表”切换按钮及 ARIA 关联；
+- `web/frontend/qc_review.js`：新增病例栏折叠状态、`setCaseListCollapsed()`、`showCaseList()`、`enterReviewArea()` 与统一 `selectCase()`；点击任意病例后自动收起列表并滚动进入主审核区；“上一例 / 下一例”复用同一选择逻辑，继续保持审核区；重新展开列表时自动回到病例列表位置；
+- `web/frontend/qc_review.css`：折叠后主审核区自动占满可用宽度；为 sticky 顶栏设置审核区滚动留白；窄窗口下病例栏切换按钮固定在右下角，确保长页面审核过程中仍能随时重新展开；保留 980 px / 900 px / 650 px 响应式适配；
+- `tests/test_web_qc_review.py`：新增前端回归测试，验证折叠相关 DOM、切换按钮、`scrollIntoView` 进入审核区逻辑、病例点击统一选择逻辑以及上一例/下一例保持审核区逻辑存在；
+- 未修改人工审核四项规则、`pass` 校验条件、`manual_qc_review.csv` 写入流程、QC 医学数据、标签、模型输出或推理结果。
 
-µ£Çτ╗êΦç¬σè¿σîûΘ¬îΦ»ü∩╝Ü
+本地验证：
 
 ```text
 node --check web/frontend/qc_review.js
-ΓåÆ ΘÇÜΦ┐ç
+→ 通过（无语法错误）
 
 .\.venv\Scripts\python.exe -m pytest tests/test_web_qc_review.py -q
-ΓåÆ 3 passed
+→ 3 passed
 
 .\.venv\Scripts\python.exe -m ruff check web tests/test_web_qc_review.py
-ΓåÆ All checks passed!
+→ All checks passed!
 
 .\.venv\Scripts\python.exe -m pytest tests -q
-ΓåÆ 89 passed, 153 warnings
+→ 89 passed, 153 warnings
 ```
 
-σ«₧µ£║ Edge Θ¬îµö╢∩╝Ü
+其中 153 条 warning 来自现有 MONAI / pkg_resources / Matplotlib / SciPy 等第三方依赖弃用提示，本次没有新增测试失败或功能回归。
 
-- σ»╣ `http://127.0.0.1:8000/qc-review` µëºΦíî `Ctrl+F5` σÉÄτí«Φ«ñµû░τëêσ╕âσ▒Çτöƒµòê∩╝¢
-- σ«₧ΘÖàΦüÜτäªσ╣╢ΘÇëµï⌐ `ctspine1k-msd-t10-liver_0`∩╝îτùàΣ╛ïσêùΦí¿σî║σƒƒσ«îσà¿µ╢êσñ▒∩╝îσÅ¬Σ┐¥τòÖσÅ»µôìΣ╜£τÜäσ«íµá╕ CT σî║σƒƒ∩╝¢
-- UI Automation σÅ»µë╛σê░τè╢µÇüσ╖▓σêçµìóΣ╕║ΓÇ£µÿ╛τñ║τùàΣ╛ïσêùΦí¿ΓÇ¥τÜä `caseListToggleBtn`∩╝¢σ«₧ΘÖàΦºªσÅæΦ»ÑµîëΘÆ«σÉÄτùàΣ╛ïσêùΦí¿µêÉσèƒΘçìµû░σ▒òσ╝Ç∩╝¢
-- σ¢áµ¡ñµ£¼µ¼íσ╖▓Σ╕ìΣ╗àΘÇÜΦ┐çτ╗ôµ₧äµ╡ïΦ»ò∩╝îΦ┐ÿσ«îµêÉΣ║åσ╜ôσëìµ£║σÖ¿/σ╜ôσëì Edge τÜäτ£ƒσ«₧τé╣σç╗Σ║ñΣ║ÆΘ¬îµö╢πÇé
-
-Φ╛╣τòîΣ┐¥µîüΣ╕ìσÅÿ∩╝Üµ£¬Σ┐«µö╣Σ║║σ╖Ñσ«íµá╕σ¢¢Θí╣ΦºäσêÖπÇü`pass` µáíΘ¬îπÇü`manual_qc_review.csv` Σ┐¥σ¡ÿσ¡ùµ«╡/σåÖσàÑΘÇ╗Φ╛æπÇüΣ╗╗Σ╜òσî╗σ¡ªµò░µì«πÇüµáçτ¡╛σÇ╝πÇüµ¿íσ₧ïΦ╛ôσç║µêûΦ«║µûçτ╗ôµ₧£πÇé
+当前状态：QC 前端病例栏遮挡问题已完成代码修复并通过定向与全量自动化回归；人工审核数据和正式实验阻塞状态不变。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ M∩╝ÜµªéτÄçµáíσçåµîçµáçσ╖Ñτ¿ïΘô╛ΦíÑσà¿
+### 2026-08-25｜阶段 L：人工 QC 病例层第二次修复与 Edge 实机验收
 
-µ£¼Θÿ╢µ«╡σ£¿Σ╕ìΣ╛¥Φ╡û NVIDIA GPUπÇüµ¡úσ╝Å checkpoint µêûΣ║║σ╖Ñ QC τ¡╛σ¡ùτÜäσëìµÅÉΣ╕ï∩╝îΦíÑΘ╜Éµ¡ñσëìΣ╗╗σèíΦí¿Σ╕¡σ░Üµ£¬σ«₧τÄ░τÜä segmentation calibration σ╖Ñτ¿ïΘô╛∩╝îΣ╜┐σÉÄτ╗¡τ£ƒσ«₧ baseline/µ╢êΦ₧ìΦâ╜σñƒτ¢┤µÄÑΦ╛ôσç║µªéτÄçσÅ»Σ┐íσ║ªµîçµáç∩╝¢µ£¼Θÿ╢µ«╡σÅ¬σ«îµêÉΣ╗úτáüΣ╕ÄσÉêµêÉ/σ╖Ñτ¿ïµ╡ïΦ»ò∩╝îΣ╕ìΣ║ºτöƒΣ╗╗Σ╜òΦ«║µûçµ¿íσ₧ïµêÉτ╗⌐πÇé
+阶段 K 的 DOM/折叠逻辑虽然通过自动化测试，但用户实机截图仍显示病例任务层铺满并盖住审核 CT，说明仅验证“折叠代码存在”不足以证明浏览器实际交互可用。本阶段根据实机现象继续定位并完成结构级修复。
 
-σ«îµêÉ∩╝Ü
+根因与修复：
 
-- `src/modeling/uncertainty.py` µû░σó₧ `SegmentationCalibrationMetrics` Σ╕Ä `segmentation_calibration_metrics()`∩╝¢
-- µö»µîü binary/multiclass logits∩╝îτ╗ƒΣ╕ÇµèÑσæè Expected Calibration Error∩╝êECE∩╝ëπÇüMaximum Calibration Error∩╝êMCE∩╝ëπÇümulticlass Brier scoreπÇünegative log-likelihood∩╝êNLL∩╝ëπÇümean confidenceπÇüΣ╜ôτ┤á accuracy Σ╕Ä confidence gap∩╝¢
-- σ»╣σñºΣ╜ôτº»Θççτö¿σ¢║σ«ÜΘÜÅµ£║τºìσ¡ÉτÜäΣ╜ôτ┤áΣ╕ïΘççµá╖∩╝îΦ«░σ╜ò total/sample voxel Σ╕Ä sampling fraction∩╝îΘü┐σàìσà¿ΘçÅµªéτÄçσñìσê╢ΘÇáµêÉΘó¥σñûσåàσ¡ÿσÄïσè¢∩╝îσ╣╢Σ┐¥Φ»üΣ╕ìσÉîσ«₧Θ¬îσ£¿σ¢║σ«ÜσÅéµò░Σ╕ïσÅ»σñìτÄ░µ»öΦ╛â∩╝¢
-- σó₧σèáτ▒╗σê½Φîâσ¢┤πÇüshapeπÇüτ⌐║Φ╛ôσàÑπÇüΘççµá╖σÅéµò░τ¡ëΣ┐¥µèñ∩╝îΘü┐σàìµùáµòêµáçτ¡╛Θ¥ÖΘ╗ÿΦ┐¢σàÑµáíσçåτ╗ôµ₧£∩╝¢
-- `src/modeling/evaluate.py` µÄÑσàÑ calibration Θàìτ╜«∩╝îσÅ»σ░åΘÇÉτùàΣ╛ï calibration µîçµáçσåÖσàÑ `metrics_per_case.csv`∩╝îσ╣╢σ£¿ `summary.json` Σ╕¡ΦüÜσÉê∩╝¢
-- `configs/orthopedic_ct_baseline.yaml` Σ╕Ä `configs/orthopedic_ct_joint.yaml` Θ╗ÿΦ«ñσÉ»τö¿ calibration∩╝îσ¢║σ«Ü `n_bins=15`πÇü`metric_max_samples=500000`∩╝¢
-- `tests/test_metrics_uncertainty.py` µû░σó₧Θ½ÿτ╜«Σ┐íµ¡úτí«πÇüΦ┐çσ║ªΦç¬Σ┐íΘöÖΦ»»πÇüσ¢║σ«Ü seed Θççµá╖τí«σ«ÜµÇº 3 τ▒╗µáíσçåµ╡ïΦ»ò∩╝¢
-- `tests/test_evaluate_smoke.py` Θ¬îΦ»ü evaluation CSV/summary σ«₧ΘÖàσîàσÉ½ calibration σ¡ùµ«╡∩╝¢
-- `docs/04_experiment_plan.md`πÇü`docs/05_midterm_materials.md`πÇü`paper/manuscript_zh_v0.1.md` Σ╕Ä `TASKS.md` σÉîµ¡ÑσèáσàÑ calibration Φ»äΣ╗╖Φ«╛Φ«í∩╝îσ╣╢µÿÄτí«τ£ƒσ«₧ calibration τ╗ôΦ«║Σ╗ìσ┐àΘí╗τ¡ëσ╛à validation/test checkpoint∩╝¢
-- Σ┐¥τòÖ 2026-08-25 QC reviewer τÜäµëÇµ£ëµ£¬µÅÉΣ║ñΣ┐«µö╣∩╝îΣ╕ìΦªåτ¢ûσà╢σëìτ½»πÇüσÉÄτ½»πÇüµ╡ïΦ»òµêû CI σ╖ÑΣ╜£µáæσåàσ«╣πÇé
+- 根因 1：全站 `styles.css` 中 `.card { grid-column: span 6; }`（窄屏还会变为 span 12）继续作用于 `qc-layout` 内的 `.qc-sidebar/.qc-main`，与 QC 自己的 1～2 列 Grid 冲突，导致特定窗口宽度/缩放比例下病例区域异常跨列铺满并覆盖/挤压审核区域；
+- `web/frontend/qc_review.css` 新增 `.qc-layout > .card { grid-column: auto; }`，并明确病例栏位于第 1 列、审核区位于第 2 列；折叠后审核区 `grid-column: 1 / -1` 独占可用宽度；窄窗口统一回到单列；
+- 病例选择不再只依赖 CSS class：`setCaseListCollapsed()` 同时设置 `caseSidebar.hidden = true`，并配套 `.qc-sidebar[hidden] { display: none !important; }`，确保病例任务层真正退出布局和点击层，不再透明覆盖审核内容；
+- `selectCase()` 调整为先关闭病例层，再加载当前病例并 `scrollIntoView()` 进入审核区；上一例/下一例继续复用 `selectCase()`；
+- “显示病例列表 / 收起病例列表”按钮改为固定悬浮按钮，避免顶部操作区在高缩放/特殊窗口宽度下被挤出可视区；
+- `web/backend/app.py` 的 `/qc-review` 增加 `Cache-Control: no-store, max-age=0`；QC 页面 CSS/JS 使用 `?v=20260825-3` 版本参数，避免 Edge 继续加载旧前端资源；
+- `tests/test_web_qc_review.py` 回归测试同步验证 no-store、版本化静态资源、`hidden` 强制折叠、QC Grid 覆盖规则、病例点击与上一例/下一例统一选择逻辑。
 
-Θ¬îΦ»ü∩╝Ü
+最终自动化验证：
+
+```text
+node --check web/frontend/qc_review.js
+→ 通过
+
+.\.venv\Scripts\python.exe -m pytest tests/test_web_qc_review.py -q
+→ 3 passed
+
+.\.venv\Scripts\python.exe -m ruff check web tests/test_web_qc_review.py
+→ All checks passed!
+
+.\.venv\Scripts\python.exe -m pytest tests -q
+→ 89 passed, 153 warnings
+```
+
+实机 Edge 验收：
+
+- 对 `http://127.0.0.1:8000/qc-review` 执行 `Ctrl+F5` 后确认新版布局生效；
+- 实际聚焦并选择 `ctspine1k-msd-t10-liver_0`，病例列表区域完全消失，只保留可操作的审核 CT 区域；
+- UI Automation 可找到状态已切换为“显示病例列表”的 `caseListToggleBtn`；实际触发该按钮后病例列表成功重新展开；
+- 因此本次已不仅通过结构测试，还完成了当前机器/当前 Edge 的真实点击交互验收。
+
+边界保持不变：未修改人工审核四项规则、`pass` 校验、`manual_qc_review.csv` 保存字段/写入逻辑、任何医学数据、标签值、模型输出或论文结果。
+
+
+### 2026-08-26｜阶段 M：概率校准指标工程链补全
+
+本阶段在不依赖 NVIDIA GPU、正式 checkpoint 或人工 QC 签字的前提下，补齐此前任务表中尚未实现的 segmentation calibration 工程链，使后续真实 baseline/消融能够直接输出概率可信度指标；本阶段只完成代码与合成/工程测试，不产生任何论文模型成绩。
+
+完成：
+
+- `src/modeling/uncertainty.py` 新增 `SegmentationCalibrationMetrics` 与 `segmentation_calibration_metrics()`；
+- 支持 binary/multiclass logits，统一报告 Expected Calibration Error（ECE）、Maximum Calibration Error（MCE）、multiclass Brier score、negative log-likelihood（NLL）、mean confidence、体素 accuracy 与 confidence gap；
+- 对大体积采用固定随机种子的体素下采样，记录 total/sample voxel 与 sampling fraction，避免全量概率复制造成额外内存压力，并保证不同实验在固定参数下可复现比较；
+- 增加类别范围、shape、空输入、采样参数等保护，避免无效标签静默进入校准结果；
+- `src/modeling/evaluate.py` 接入 calibration 配置，可将逐病例 calibration 指标写入 `metrics_per_case.csv`，并在 `summary.json` 中聚合；
+- `configs/orthopedic_ct_baseline.yaml` 与 `configs/orthopedic_ct_joint.yaml` 默认启用 calibration，固定 `n_bins=15`、`metric_max_samples=500000`；
+- `tests/test_metrics_uncertainty.py` 新增高置信正确、过度自信错误、固定 seed 采样确定性 3 类校准测试；
+- `tests/test_evaluate_smoke.py` 验证 evaluation CSV/summary 实际包含 calibration 字段；
+- `docs/04_experiment_plan.md`、`docs/05_midterm_materials.md`、`paper/manuscript_zh_v0.1.md` 与 `TASKS.md` 同步加入 calibration 评价设计，并明确真实 calibration 结论仍必须等待 validation/test checkpoint；
+- 保留 2026-08-25 QC reviewer 的所有未提交修改，不覆盖其前端、后端、测试或 CI 工作树内容。
+
+验证：
 
 ```text
 ./.venv/Scripts/python.exe -m ruff check src/modeling/uncertainty.py src/modeling/evaluate.py tests/test_metrics_uncertainty.py tests/test_evaluate_smoke.py
-ΓåÆ All checks passed!
+→ All checks passed!
 
 ./.venv/Scripts/python.exe -m pytest tests/test_metrics_uncertainty.py tests/test_evaluate_smoke.py -q
-ΓåÆ 13 passed
+→ 13 passed
 
 ./.venv/Scripts/python.exe -m ruff check src web tests
-ΓåÆ All checks passed!
+→ All checks passed!
 
 ./.venv/Scripts/python.exe -m pytest tests -q
-ΓåÆ 92 passed, 153 warnings
+→ 92 passed, 153 warnings
 
 git diff --check
-ΓåÆ ΘÇÜΦ┐ç
+→ 通过
 
 baseline/joint YAML
-ΓåÆ PyYAML Φºúµ₧ÉΘÇÜΦ┐ç
+→ PyYAML 解析通过
 ```
 
-153 µ¥í warning Σ╗ìµ¥ÑΦç¬τÄ░µ£ë MONAI / pkg_resources / Matplotlib / SciPy τ¡ëτ¼¼Σ╕ëµû╣Σ╛¥Φ╡ûσ╝âτö¿µÅÉτñ║∩╝îµ£¼Θÿ╢µ«╡µ▓íµ£ëµû░σó₧µ╡ïΦ»òσñ▒Φ┤ÑπÇé
+153 条 warning 仍来自现有 MONAI / pkg_resources / Matplotlib / SciPy 等第三方依赖弃用提示，本阶段没有新增测试失败。
 
-σ╜ôσëìΦ╛╣τòîΣ╕ÄΣ╕ïΣ╕Çµ¡Ñ∩╝Ü
+当前边界与下一步：
 
-- calibration **Σ╗úτáüΣ╕ÄΦ»äΣ╝░Φ╛ôσç║Θô╛σ╖▓σ«îµêÉ**∩╝îΣ╜åµ▓íµ£ëτ£ƒσ«₧µ¿íσ₧ï checkpoint∩╝îσ¢áµ¡ñΣ╕ìΦâ╜µèÑσæèτ£ƒσ«₧ ECE/Brier/NLL µêûΣ╜£ΓÇ£µ¿íσ₧ïσ╖▓µáíσçåΓÇ¥τ╗ôΦ«║∩╝¢
-- P0 Θÿ╗σí₧Σ┐¥µîüΣ╕ìσÅÿ∩╝Ü10 Σ╛ïΣ║║σ╖Ñ QC τ¡╛σ¡ùπÇüµ¡úσ╝Å binary/multiclass semantic Σ╗╗σèíΘöüσ«ÜπÇüµ¡úσ╝Å patient-level splitπÇüNVIDIA GPU/CUDA τÄ»σóâ∩╝¢
-- Σ╕Çµùª baseline checkpoint Σ║ºτöƒ∩╝î`evaluate.py` σ░åτ¢┤µÄÑΦ╛ôσç║σî║σƒƒ/Φí¿Θ¥ó/τ╗ôµ₧äπÇüuncertainty Σ╕Ä calibration µîçµáç∩╝îσÅ»τö¿Σ║Äµ¡úσ╝ÅΣ╕╗τ╗ôµ₧£πÇüσÅ»Σ┐íσ║ªσêåµ₧ÉσÆîσÉÄτ╗¡ uncertainty ROI refinement µ╢êΦ₧ìπÇé
+- calibration **代码与评估输出链已完成**，但没有真实模型 checkpoint，因此不能报告真实 ECE/Brier/NLL 或作“模型已校准”结论；
+- P0 阻塞保持不变：10 例人工 QC 签字、正式 binary/multiclass semantic 任务锁定、正式 patient-level split、NVIDIA GPU/CUDA 环境；
+- 一旦 baseline checkpoint 产生，`evaluate.py` 将直接输出区域/表面/结构、uncertainty 与 calibration 指标，可用于正式主结果、可信度分析和后续 uncertainty ROI refinement 消融。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ N∩╝Üµ¢▓τÄç/σà│Θö«Φ╛╣τ╝ÿΣ┐¥µèñτ╜æµá╝τ«ÇσîûσÇÖΘÇë
+### 2026-08-26｜阶段 N：曲率/关键边缘保护网格简化候选
 
-µ£¼Θÿ╢µ«╡τ╗ºτ╗¡σñäτÉå P3 Σ╕¡Σ╕ìΣ╛¥Φ╡ûµ¡úσ╝Åµ¿íσ₧ï checkpoint τÜäΓÇ£Σ╕ëτ╗┤µ¢▓τÄç/σà│Θö«Φ╛╣τ╝ÿΣ┐¥µèñσÇÖΘÇëΓÇ¥πÇéτ¢«µáçΣ╕ìµÿ»σ«úτº░σ╖▓τ╗Åσ╛ùσê░Θ½ÿΣ┐¥τ£ƒΣ╕┤σ║èΘçìσ╗║∩╝îΦÇîµÿ»σ£¿τÄ░µ£ë vertex-clustering σƒ║τ║┐Σ╕èσó₧σèáΣ╕ÇΣ╕¬Θ╗ÿΦ«ñσà│Θù¡πÇüσÅ»ΘçÅσîûπÇüσÅ»σ¢₧ΘÇÇτÜäτë╣σ╛üΣ┐¥µèñσ╖Ñτ¿ïσÇÖΘÇëπÇé
+本阶段继续处理 P3 中不依赖正式模型 checkpoint 的“三维曲率/关键边缘保护候选”。目标不是宣称已经得到高保真临床重建，而是在现有 vertex-clustering 基线上增加一个默认关闭、可量化、可回退的特征保护工程候选。
 
-σ«îµêÉ∩╝Ü
+完成：
 
-- `src/reconstruction/mesh.py` µû░σó₧ `vertex_normal_variation_scores()`∩╝Üµá╣µì«Σ╕ëΦºÆτ╜æµá╝τ¢╕Θé╗Θí╢τé╣µ│òσÉæσñ╣ΦºÆσ╖«σ╝éµ₧äΘÇáΦ╜╗ΘçÅµ¢▓τÄç/σ░ûΘöÉτë╣σ╛üΣ╗úτÉå∩╝¢
-- `simplify_mesh_vertex_clustering()` µû░σó₧ `feature_preservation_strength`∩╝îΘ╗ÿΦ«ñ `0.0`∩╝îσ¢áµ¡ñσÄƒµ£ë Web/σ»╝σç║ΦíîΣ╕║Σ┐¥µîüΣ╕ìσÅÿ∩╝¢σñºΣ║Ä 0 µù╢∩╝îσ£¿µ»ÅΣ╕¬τ⌐║Θù┤ΦüÜτ▒╗Σ╗úΦí¿τé╣Φ«íτ«ùΣ╕¡µÅÉΘ½ÿΘ½ÿµ│òσÉæσÅÿσîûΘí╢τé╣τÜäµ¥âΘçì∩╝îσçÅσ░æΦüÜτ▒╗σ╣│σ¥çσ»╣σ░ûΘöÉτ╗ôµ₧äτÜäΦ┐çσ║ªσ╣│µ╗æ∩╝¢
-- `src/reconstruction/export_mesh.py` σó₧σèá `--feature-preservation-strength`∩╝îJSON summary Σ╝ÜΦ«░σ╜òτ«Çσîûµû╣µ│òσÆîσ╝║σ║ª∩╝îΣ╛┐Σ║Äσ«₧Θ¬îΦ┐╜Φ╕¬∩╝¢
-- `tests/test_reconstruction_mesh.py` σó₧σèáτë╣σ╛üσêåµò░µ£ëΘÖÉµÇºσÅèΓÇ£Θ½ÿτë╣σ╛üΘí╢τé╣Φ┐æΘé╗Φ»»σ╖«Σ╕ìσèúΣ║ÄµÖ«ΘÇÜΦüÜτ▒╗ΓÇ¥τÜäσ¢₧σ╜Æµ╡ïΦ»ò∩╝¢
-- `tests/test_export_mesh.py` Θ¬îΦ»üτë╣σ╛üΣ┐¥µèñσÇÖΘÇëτÜä CLI/summary Φ┐╜Φ╕¬σ¡ùµ«╡∩╝¢
-- `TASKS.md` σ░åΓÇ£µ¢▓τÄç/σà│Θö«Φ╛╣τ╝ÿΣ┐¥µèñσÇÖΘÇëΓÇ¥µáçΦ«░Σ╕║σ╖Ñτ¿ïΣ╗úτáüσ╖▓σ«îµêÉπÇüσ╛à prediction surface Θ¬îΦ»ü∩╝¢
-- `docs/05_midterm_materials.md` Σ╕ÄΦ«║µûç Methods σÉîµ¡ÑΦ«░σ╜òΦ»ÑσÇÖΘÇë∩╝îΣ╜åµÿÄτí«Σ╕ìσ╛ùµèèτ£ƒσÇ╝τ╜æµá╝σ╖Ñτ¿ïσ»╣τàºσåÖµêÉµ¿íσ₧ïµÇºΦâ╜πÇé
+- `src/reconstruction/mesh.py` 新增 `vertex_normal_variation_scores()`：根据三角网格相邻顶点法向夹角差异构造轻量曲率/尖锐特征代理；
+- `simplify_mesh_vertex_clustering()` 新增 `feature_preservation_strength`，默认 `0.0`，因此原有 Web/导出行为保持不变；大于 0 时，在每个空间聚类代表点计算中提高高法向变化顶点的权重，减少聚类平均对尖锐结构的过度平滑；
+- `src/reconstruction/export_mesh.py` 增加 `--feature-preservation-strength`，JSON summary 会记录简化方法和强度，便于实验追踪；
+- `tests/test_reconstruction_mesh.py` 增加特征分数有限性及“高特征顶点近邻误差不劣于普通聚类”的回归测试；
+- `tests/test_export_mesh.py` 验证特征保护候选的 CLI/summary 追踪字段；
+- `TASKS.md` 将“曲率/关键边缘保护候选”标记为工程代码已完成、待 prediction surface 验证；
+- `docs/05_midterm_materials.md` 与论文 Methods 同步记录该候选，但明确不得把真值网格工程对照写成模型性能。
 
-τ£ƒσ«₧ `liver_0` τ£ƒσÇ╝ label σ╖Ñτ¿ïσ»╣τàº∩╝ê2.0 mm vertex clustering∩╝ë∩╝Ü
+真实 `liver_0` 真值 label 工程对照（2.0 mm vertex clustering）：
 
 ```text
 full vertices                         131,983
 baseline simplified vertices          30,260
 feature-weighted simplified vertices  30,260
-Θ½ÿµ│òσÉæσÅÿσîûσî║σƒƒΘí╢τé╣µò░                  13,311
+高法向变化区域顶点数                  13,311
 
-Θ½ÿτë╣σ╛üσî║σƒƒ mean nearest-neighbor
-baseline                             Γëê 0.679 mm
-feature-weighted                     Γëê 0.620 mm
+高特征区域 mean nearest-neighbor
+baseline                             ≈ 0.679 mm
+feature-weighted                     ≈ 0.620 mm
 
-Θ½ÿτë╣σ╛üσî║σƒƒ HD95
-baseline                             Γëê 1.068 mm
+高特征区域 HD95
+baseline                             ≈ 1.068 mm
 feature-weighted                     = 1.000 mm
 
 surface area relative change
-baseline                             Γëê -6.47%
-feature-weighted                     Γëê -5.95%
+baseline                             ≈ -6.47%
+feature-weighted                     ≈ -5.95%
 ```
 
-Φ»Ñσ»╣τàºΦ»┤µÿÄ∩╝Üσ£¿Θí╢τé╣µò░/Θ¥óµïôµëæµÿáσ░äΦºäµ¿íτ¢╕σÉîτÜäµâàσå╡Σ╕ï∩╝îµ│òσÉæσÅÿσîûσèáµ¥âσÇÖΘÇëσ»╣σ╜ôσëìτ£ƒσÇ╝τ╜æµá╝τÜäσ░ûΘöÉσî║σƒƒσà╖µ£ëµ¡úσÉæσ╖Ñτ¿ïΣ┐íσÅ╖∩╝¢Σ╜åσ«âΣ╗ìτä╢σÅ¬µÿ»σìòΣ╕¬τ£ƒσ«₧ GT τùàΣ╛ïΣ╕èτÜäσÅéµò░τ¡¢ΘÇë∩╝îΣ╕ìΦâ╜µÄ¿µû¡σê░µ¿íσ₧ï predictionπÇüΣ╕┤σ║èµ╡ïΘçÅµêûµÇ╗Σ╜ôµò░µì«Θ¢åπÇé
+该对照说明：在顶点数/面拓扑映射规模相同的情况下，法向变化加权候选对当前真值网格的尖锐区域具有正向工程信号；但它仍然只是单个真实 GT 病例上的参数筛选，不能推断到模型 prediction、临床测量或总体数据集。
 
-Θ¬îΦ»ü∩╝Ü
+验证：
 
 ```text
 ./.venv/Scripts/python.exe -m ruff check src/reconstruction/mesh.py src/reconstruction/export_mesh.py tests/test_reconstruction_mesh.py tests/test_export_mesh.py
-ΓåÆ All checks passed!
+→ All checks passed!
 
 ./.venv/Scripts/python.exe -m pytest tests/test_reconstruction_mesh.py tests/test_export_mesh.py -q
-ΓåÆ 7 passed
+→ 7 passed
 
 ./.venv/Scripts/python.exe -m ruff check src web tests
-ΓåÆ All checks passed!
+→ All checks passed!
 
 ./.venv/Scripts/python.exe -m pytest tests -q
-ΓåÆ 94 passed, 153 warnings
+→ 94 passed, 153 warnings
 ```
 
-σ╜ôσëìΦ╛╣τòî∩╝Ü
+当前边界：
 
-- τë╣σ╛üΣ┐¥µèñΘ╗ÿΦ«ñσà│Θù¡∩╝îΣ╕ìµö╣σÅÿµùóµ£ë 1.5/2.0 mm Web τ«Çσîûτ╗ôµ₧£∩╝¢
-- σ░Üµùáτ£ƒσ«₧ prediction surface∩╝îσ¢áµ¡ñΣ╕ìΦâ╜σ«îµêÉ prediction mesh vs GTπÇüprediction SDF surface µêûµ¡úσ╝ÅΘ½ÿΣ┐¥τ£ƒΘçìσ╗║µ╢êΦ₧ì∩╝¢
-- Σ╕ïΣ╕ÇΘÿ╢µ«╡ P3 Σ╗ìΘ£Çτ¡ëσ╛àµ¡úσ╝Å checkpoint∩╝îσåìµ»öΦ╛âµÖ«ΘÇÜ vertex-clusteringπÇüfeature-weighted clusteringπÇüSDF surface Σ╕Äσà¿σêåΦ╛¿τÄç prediction mesh τÜä HD95/ASSDπÇüµïôµëæσÆîΦ«íτ«ùµêÉµ£¼πÇé
+- 特征保护默认关闭，不改变既有 1.5/2.0 mm Web 简化结果；
+- 尚无真实 prediction surface，因此不能完成 prediction mesh vs GT、prediction SDF surface 或正式高保真重建消融；
+- 下一阶段 P3 仍需等待正式 checkpoint，再比较普通 vertex-clustering、feature-weighted clustering、SDF surface 与全分辨率 prediction mesh 的 HD95/ASSD、拓扑和计算成本。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ O∩╝ÜτÄ░Σ╗úσ╝║ baseline Σ╕Äσ¢░ΘÜ╛τùàΣ╛ïµûçτî«Φ»üµì«ΦíÑσ╝║
+### 2026-08-26｜阶段 O：现代强 baseline 与困难病例文献证据补强
 
-µ£¼Θÿ╢µ«╡ΦíÑΘ╜Éµ¡ñσëìµûçτî«Σ╗╗σèíΣ╕¡µ£Çσ╜▒σôìµ¡úσ╝Åσ«₧Θ¬îΦ«╛Φ«íτÜäΣ╕ëΣ╕¬τ╝║σÅú∩╝ÜτÄ░Σ╗úµñÄΣ╜ô CT σ╝║ CNN baselineπÇüτ£ƒσ«₧Θ¬¿µèÿ/µû¡Φúéσ¢░ΘÜ╛τùàΣ╛ïπÇüτ£ƒσ«₧Φà░µñÄΘçæσ▒₧µñìσàÑτë⌐/Θçæσ▒₧Σ╝¬σ╜▒πÇéµëÇµ£ëµû░σó₧Θóÿσ╜òσ¥çΣ╝ÿσàêΣ╛¥µì«µ¡úσ╝Åσç║τëêΘí╡Θ¥óπÇüPubMed/µ£║µ₧äσç║τëêΦ«░σ╜òΣ╕Ä DOI µá╕Θ¬î∩╝îΣ╕ìΣ╗ÑΣ║îµëïσìÜσ«óΣ╜£Σ╕║Θóÿσ╜òµ¥Ñµ║ÉπÇé
+本阶段补齐此前文献任务中最影响正式实验设计的三个缺口：现代椎体 CT 强 CNN baseline、真实骨折/断裂困难病例、真实腰椎金属植入物/金属伪影。所有新增题录均优先依据正式出版页面、PubMed/机构出版记录与 DOI 核验，不以二手博客作为题录来源。
 
-µû░σó₧µá╕Θ¬î∩╝Ü
+新增核验：
 
-1. **Hofmann et al., 2026, European Journal of Radiology 204:113118**∩╝îDOI `10.1016/j.ejrad.2026.113118`∩╝Üσà¼σ╝Ç 1,460 Σ╛ï CT τÜäΦâ╕/Φà░µñÄΣ╜ôΘâ¿µáçτ¡╛∩╝¢Σ╕ñσÑù residual-encoder nnU-Net σ£¿ 1,216 Σ╛ïΣ╕èΦ«¡τ╗âπÇü244 Σ╛ïµ╡ïΦ»ò∩╝îσ╣╢σÅªτö¿ 300 Σ╛ïΦé┐τÿñ CT σüÜ L3 σñûΘâ¿σ«ÜΣ╜ìΘ¬îΦ»üπÇéΦ»Ñσ╖ÑΣ╜£σ░å Residual-Encoder nnU-Net µÿÄτí«µÅÉσìçΣ╕║µ£¼Θí╣τ¢«µ¡úσ╝ÅΦ«║µûçσ┐àΘí╗Φ«ñτ£ƒΦÇâΦÖæτÜäσ╝║ CNN baseline∩╝îΦÇîΣ╕ìΦâ╜σÅ¬σÆîΣ╝áτ╗ƒ 3D U-Net µ»öΦ╛âπÇé
-2. **Glessgen et al., 2025, Clinical Radiology 83:106827**∩╝îDOI `10.1016/j.crad.2025.106827`∩╝Ü452 Σ╛ïΦâ╕Φà░µñÄ CT τÜäΘ¬¿µèÿµèÑσæè pipeline∩╝îµ£Çτ╗êµñÄΣ╜ô segmentation Σ╜┐τö¿ nnU-Net∩╝îτï¼τ½ïµ╡ïΦ»òΣ╕¡µ¡úτí«σêåσë▓ 330/339 Σ╕¬µñÄΣ╜ôπÇéΦ»Ñσ╖ÑΣ╜£τ¢┤µÄÑµö»µÆæΓÇ£Θ¬¿µèÿ/τ£ƒσ«₧µû¡ΦúéτùàΣ╛ïσ┐àΘí╗σìòτï¼Φ»äΣ╗╖ΓÇ¥∩╝îσ░ñσà╢µÅÉΘåÆ topology loss Σ╕ìΦâ╜µèèτ£ƒσ«₧Θ¬¿µèÿµû¡τ½»µ£║µó░σ£░σ╜ôΣ╜£ false break Σ┐«σñìπÇé
-3. **Ye et al., 2025, Clinical Radiology 90:107076**∩╝îDOI `10.1016/j.crad.2025.107076`∩╝Ü93 Σ╛ïτ£ƒσ«₧Φà░µñÄµñìσàÑτë⌐µéúΦÇàτÜäσñÜΦâ╜ CT deep-MAR τáöτ⌐╢πÇéΦ»Ñσ╖ÑΣ╜£ΦíÑΦ╢│τ£ƒσ«₧Θçæσ▒₧µñìσàÑτë⌐σ¢░ΘÜ╛µêÉσâÅΦ»üµì«∩╝îµö»µîüµ£¼Θí╣τ¢«τ╗ºτ╗¡σ¥ÜµîüΓÇ£σàêµ£ëτ£ƒσ«₧ metal-artifact τùàΣ╛ïµáíΘ¬î∩╝îσåìσå│σ«Üµÿ»σÉªσÉ»τö¿Σ║║σ╖ÑΣ╝¬σ╜▒µ¿íµïƒ/MAR σëìσñäτÉåΓÇ¥πÇé
+1. **Hofmann et al., 2026, European Journal of Radiology 204:113118**，DOI `10.1016/j.ejrad.2026.113118`：公开 1,460 例 CT 的胸/腰椎体部标签；两套 residual-encoder nnU-Net 在 1,216 例上训练、244 例测试，并另用 300 例肿瘤 CT 做 L3 外部定位验证。该工作将 Residual-Encoder nnU-Net 明确提升为本项目正式论文必须认真考虑的强 CNN baseline，而不能只和传统 3D U-Net 比较。
+2. **Glessgen et al., 2025, Clinical Radiology 83:106827**，DOI `10.1016/j.crad.2025.106827`：452 例胸腰椎 CT 的骨折报告 pipeline，最终椎体 segmentation 使用 nnU-Net，独立测试中正确分割 330/339 个椎体。该工作直接支撑“骨折/真实断裂病例必须单独评价”，尤其提醒 topology loss 不能把真实骨折断端机械地当作 false break 修复。
+3. **Ye et al., 2025, Clinical Radiology 90:107076**，DOI `10.1016/j.crad.2025.107076`：93 例真实腰椎植入物患者的多能 CT deep-MAR 研究。该工作补足真实金属植入物困难成像证据，支持本项目继续坚持“先有真实 metal-artifact 病例校验，再决定是否启用人工伪影模拟/MAR 前处理”。
 
-σÉîµ¡ÑΣ┐«µö╣∩╝Ü
+同步修改：
 
-- `docs/08_literature_matrix.md`∩╝Ü40ΓåÆ43 µ¥í∩╝îµû░σó₧ S12ΓÇôS14∩╝îσ╣╢µ¢┤µû░σ╝║ baseline/σ¢░ΘÜ╛τùàΣ╛ïτ╗ôΦ«║∩╝¢
-- `paper/references.bib`∩╝Ü38ΓåÆ41 µ¥íΦï▒µûçµá╕σ┐â BibTeX∩╝îµû░σó₧ `hofmann2026_vertebral_bodies`πÇü`glessgen2025_vertebral_fracture`πÇü`ye2025_lumbar_metal_artifact`∩╝¢
-- `docs/02_literature_survey.md`∩╝Üµû░σó₧ 3.8ΓÇô3.10 Σ╕ëΣ╕¬Σ╕ôΘóÿσ░ÅΦèé∩╝îµò░µì«Θ¢åσ╗║Φ««Θí║σ╗╢Φç│ 3.11∩╝¢Θçæσ▒₧Σ╝¬σ╜▒µûçτî«Σ╗╗σèíΣ╗Äσ╛àΦíÑµö╣Σ╕║σ╖▓ΦíÑ∩╝îΣ╜ÄΘ¬¿σ»åσ║ª/Θ¬¿Φ┤¿τûÅµ¥╛τ¢┤µÄÑµûçτî«Σ╗ìΣ┐¥τòÖσ╛àσè₧∩╝¢
-- `paper/manuscript_zh_v0.1.md`∩╝ÜRelated Work σó₧σèá Residual-Encoder nnU-NetπÇüΘ¬¿µèÿ pipeline σÆîτ£ƒσ«₧Θçæσ▒₧µñìσàÑτë⌐Φ»üµì«∩╝îσ╣╢σ░åΘªûτëêσÅéΦÇâµûçτî«σêùΦí¿σÉîµ¡Ñ∩╝¢
-- `README.md`πÇü`TASKS.md`πÇü`docs/05_midterm_materials.md`∩╝Üτ╗ƒΣ╕Çµ¢┤µû░Σ╕║ 43 µ¥íτƒ⌐Θÿ╡ / 41 µ¥íΦï▒µûç BibTeXπÇé
+- `docs/08_literature_matrix.md`：40→43 条，新增 S12–S14，并更新强 baseline/困难病例结论；
+- `paper/references.bib`：38→41 条英文核心 BibTeX，新增 `hofmann2026_vertebral_bodies`、`glessgen2025_vertebral_fracture`、`ye2025_lumbar_metal_artifact`；
+- `docs/02_literature_survey.md`：新增 3.8–3.10 三个专题小节，数据集建议顺延至 3.11；金属伪影文献任务从待补改为已补，低骨密度/骨质疏松直接文献仍保留待办；
+- `paper/manuscript_zh_v0.1.md`：Related Work 增加 Residual-Encoder nnU-Net、骨折 pipeline 和真实金属植入物证据，并将首版参考文献列表同步；
+- `README.md`、`TASKS.md`、`docs/05_midterm_materials.md`：统一更新为 43 条矩阵 / 41 条英文 BibTeX。
 
-τ╗ôµ₧äΘ¬îΦ»ü∩╝Ü
+结构验证：
 
 ```text
 paper/references.bib
@@ -1372,640 +1372,640 @@ duplicate_keys = []
 brace_balance  = 0
 
 git diff --check
-ΓåÆ ΘÇÜΦ┐ç
+→ 通过
 ```
 
-Φ╛╣τòîΣ╕ÄΣ╕ïΣ╕Çµ¡Ñ∩╝Ü
+边界与下一步：
 
-- µû░σó₧Φ«║µûçΣ╕¡τÜäµÇºΦâ╜µò░σ¡ùσÅ¬τö¿Σ║ÄτÉåΦºúµûçτî«σÆîΘÇëµï⌐ baseline∩╝îΣ╕ìµÿ»µ£¼Θí╣τ¢«Φç¬Φ║½σ«₧Θ¬îτ╗ôµ₧£∩╝¢
-- σ╜ôσëìµûçτî«τ╝║σÅúΦ┐¢Σ╕Çµ¡Ñµö╢µò¢σê░∩╝ÜΣ╜ÄΘ¬¿σ»åσ║ª/Θ¬¿Φ┤¿τûÅµ¥╛ CT σêåσë▓τ¢┤µÄÑτáöτ⌐╢πÇüσ¢╜σåà CNKI/Σ╕çµû╣Θóÿσ╜òµ¡úσ╝Åσñìµá╕∩╝îΣ╗ÑσÅèµ£Çτ╗êµá╣µì« GPU/Σ╗╗σèíσ«ÜΣ╣ëτ¡¢ΘÇëσ«₧ΘÖàσÅ»Φ╖æτÜä baseline∩╝¢
-- µ¡úσ╝Åµ¿íσ₧ï Results Σ╗ìσ┐àΘí╗τ¡ëσ╛àΣ║║σ╖Ñ QCπÇütask lockπÇüformal split Σ╕Ä NVIDIA GPU baseline∩╝îΣ╕ìΦâ╜µèèµûçτî«τ╗ôµ₧£µêûτ£ƒσÇ╝τ╜æµá╝σ╖Ñτ¿ïµò░σ¡ùµ¢┐Σ╗úΣ╕║µ£¼Θí╣τ¢«µ¿íσ₧ïµîçµáçπÇé
-
-
-### 2026-08-26∩╜£Θÿ╢µ«╡ P∩╝ÜΣ╜ÄΘ¬¿σ»åσ║ªµñÄΣ╜ôσêåσë▓σ¢░ΘÜ╛τùàΣ╛ïτ¢┤µÄÑΦ»üµì«ΦíÑΘ╜É
-
-σ£¿Θÿ╢µ«╡ O σ╖▓ΦíÑτÄ░Σ╗úσ╝║ baselineπÇüΘ¬¿µèÿσÆîτ£ƒσ«₧Θçæσ▒₧µñìσàÑτë⌐σÉÄ∩╝îµ£¼Θÿ╢µ«╡τ╗ºτ╗¡µúÇτ┤óΓÇ£Σ╜ÄΘ¬¿σ»åσ║ª/Θ¬¿Φ┤¿τûÅµ¥╛µÿ»σÉªΣ╝Üτ¢┤µÄÑΘÇáµêÉµñÄΣ╜ô segmentation σñ▒Φ┤ÑΓÇ¥τÜäΦ»üµì«∩╝îΘü┐σàìσÅ¬σç¡τ╗ÅΘ¬îµèè low-density σåÖσàÑσ¢░ΘÜ╛τùàΣ╛ïΦ«╛Φ«íπÇé
-
-µû░σó₧µá╕Θ¬î∩╝Ü
-
-- **Xiong et al., 2024, Tomography 10(5):738ΓÇô760**∩╝îDOI `10.3390/tomography10050057`∩╝îΘóÿτ¢« *Lumbar and Thoracic Vertebrae Segmentation in CT Scans Using a 3D Multi-Object Localization and Segmentation CNN*∩╝¢
-- Φ»Ñτáöτ⌐╢Θççτö¿ 3D multi-object localization + segmentation∩╝îσ»╣µö╛τûù CT Σ╕Ä VerSe2020 Φ┐¢ΦíîΦà░/Φâ╕µñÄσêåσë▓∩╝îσ╣╢σ£¿σñ▒Φ┤ÑµíêΣ╛ïσêåµ₧ÉΣ╕¡µÿÄτí«µîçσç║∩╝Üσ╜ôΘ¬¿σ»åσ║ªΦ╛âΣ╜Äµù╢∩╝îτ¢╕Θé╗µñÄΣ╜ôσÅ»Φâ╜σÅæτöƒΘöÖΦ»»Φ₧ìσÉê∩╝îΣ╕ÇΣ╕¬µñÄΣ╜ôΣ╣ƒσÅ»Φâ╜Φó½ΘöÖΦ»»σêåΦúéΣ╕║σñÜΣ╕¬Θâ¿σêå∩╝¢
-- Φ»ÑτÄ░Φ▒íΣ╕Äµ£¼Θí╣τ¢«σ╖▓τ╗Åσ«₧τÄ░τÜä `false_merge_count`πÇü`false_break_count`πÇücomponent count/error τ¢┤µÄÑσ»╣σ║ö∩╝îσ¢áµ¡ñ low-density subset Σ╕ìσåìσÅ¬µÿ»τ╗ÅΘ¬îµÇºσüçΦ«╛∩╝îΦÇîµ£ëτ¢┤µÄÑ CT segmentation µûçτî«µö»µîü∩╝¢
-- Φ»Ñµûçτî«σÅ¬Φ»üµÿÄΓÇ£Σ╜ÄΘ¬¿σ»åσ║ªµÿ»σÇ╝σ╛ùσìòτï¼σêåµ₧ÉτÜäσñ▒Φ┤Ñµ¥íΣ╗╢ΓÇ¥∩╝îΣ╕ìΣ╗úΦí¿µ£¼Θí╣τ¢«σ╜ôσëìµ¿íσ₧ïσ╖▓τ╗Åσ£¿Σ╜ÄΘ¬¿σ»åσ║ªτùàΣ╛ïΣ╕èΘ¬îΦ»ü∩╝îΣ╣ƒΣ╕ìσ║öµèèσà╢Φ«║µûçµÇºΦâ╜µò░σ¡ùσ╜ôµêÉµ£¼Θí╣τ¢«τ╗ôµ₧£πÇé
-
-σÉîµ¡ÑΣ┐«µö╣∩╝Ü
-
-- `docs/08_literature_matrix.md`∩╝Ü43ΓåÆ44 µ¥í∩╝îµû░σó₧ S15∩╝¢
-- `paper/references.bib`∩╝Ü41ΓåÆ42 µ¥í∩╝îµû░σó₧ `xiong2024_low_density_vertebrae`∩╝¢
-- `docs/02_literature_survey.md`∩╝Üµû░σó₧ 3.11 Σ╜ÄΘ¬¿σ»åσ║ªΣ╕ôΘóÿ∩╝îσÄƒµò░µì«Θ¢åσ╗║Φ««Θí║σ╗╢σê░ 3.12∩╝îσ╣╢µèèΓÇ£ΦíÑΣ╜ÄΘ¬¿σ»åσ║ªτ¢┤µÄÑσêåσë▓µûçτî«ΓÇ¥µö╣Σ╕║σ╖▓σ«îµêÉ∩╝¢
-- `paper/manuscript_zh_v0.1.md`∩╝ÜRelated Work µÿÄτí« low-density fusion/split σñ▒Φ┤ÑΣ╕Äτ╗ôµ₧äµîçµáçτÜäσà│τ│╗∩╝¢
-- `README.md`πÇü`TASKS.md`πÇü`docs/05_midterm_materials.md`∩╝Üτ╗ƒΣ╕Çµ¢┤µû░Σ╕║ **44 µ¥íτ╗ôµ₧äσîûτƒ⌐Θÿ╡ / 42 µ¥íΦï▒µûçµá╕σ┐â BibTeX**πÇé
-
-σ╜ôσëìµûçτî«Σ╛ºσë⌐Σ╜Öσ╖ÑΣ╜£Σ╕╗Φªüµÿ»σ¢╜σåà CNKI/Σ╕çµû╣Θóÿσ╜òτÜäµ£Çτ╗êµò░µì«σ║ôτ║ºσñìµá╕πÇüµ¡úσ╝Åµèòτ¿┐µá╝σ╝Åτ╗ƒΣ╕Ç∩╝îΣ╗ÑσÅèσ£¿ΘªûΣ╕¬Σ╗╗σèí/split/GPU Φ╡äµ║Éτí«σ«ÜσÉÄΣ╗Äσ╖▓µ£ëσ╝║ baseline Σ╕¡ΘÇëµï⌐τ£ƒµ¡úσÅ»Φ┐ÉΦíîτÜäσ»╣τàº∩╝îΣ╕ìσåìΣ╗Ñµ£║µó░σó₧σèáµûçτî«µò░ΘçÅΣ╕║τ¢«µáçπÇé
+- 新增论文中的性能数字只用于理解文献和选择 baseline，不是本项目自身实验结果；
+- 当前文献缺口进一步收敛到：低骨密度/骨质疏松 CT 分割直接研究、国内 CNKI/万方题录正式复核，以及最终根据 GPU/任务定义筛选实际可跑的 baseline；
+- 正式模型 Results 仍必须等待人工 QC、task lock、formal split 与 NVIDIA GPU baseline，不能把文献结果或真值网格工程数字替代为本项目模型指标。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ Q∩╝ÜΣ║║σ╖Ñ QC ΦºúΘöü + τ¼öΦ«░µ£¼ CPU binary τ£ƒσ«₧Φ«¡τ╗âΦ╖æΘÇÜ
+### 2026-08-26｜阶段 P：低骨密度椎体分割困难病例直接证据补齐
 
-µ£¼Θÿ╢µ«╡µá╣µì«Θí╣τ¢«µêÉσæÿµ£Çµû░τí«Φ«ñ∩╝îΘçìµû░µá╕σ»╣τ£ƒσ«₧Σ║║σ╖Ñ QC τè╢µÇü∩╝îσ╣╢σ░åΓÇ£σ┐àΘí╗ NVIDIA GPUΓÇ¥Σ╗Äµû╣µ│òσ¡ªτí¼ΘÖÉσê╢Φ░âµò┤Σ╕║σÅ»ΘÇëµòêτÄçσìçτ║ºΘí╣∩╝¢ΘÜÅσÉÄτ¢┤µÄÑσ£¿σ╜ôσëìτ¼öΦ«░µ£¼ CPU Σ╕èσ«îµêÉτ£ƒσ«₧ CTSpine1K binary semantic σ╖Ñτ¿ïΦ«¡τ╗â pilotπÇé
+在阶段 O 已补现代强 baseline、骨折和真实金属植入物后，本阶段继续检索“低骨密度/骨质疏松是否会直接造成椎体 segmentation 失败”的证据，避免只凭经验把 low-density 写入困难病例设计。
 
-σ«îµêÉ∩╝Ü
+新增核验：
 
-- σñìµá╕ `data/processed_ctspine1k_real/manual_qc_review.csv`∩╝Ü10/10 τùàΣ╛ï `orientation_ok / spacing_ok / label_alignment_ok / bone_window_ok = yes`∩╝î10/10 `review_status=pass`∩╝îreviewer σ¥çσ╖▓σí½σåÖ∩╝îσ¢áµ¡ñΣ║║σ╖Ñ QC P0 µ¡úσ╝ÅΦºúΘÖñ∩╝¢
-- σ«₧µ╡ïσ╜ôσëìτö╡Φäæ∩╝ÜAMD Ryzen 7 8745H∩╝î8 µá╕ 16 τ║┐τ¿ï∩╝îτ║ª 19.8 GB RAM∩╝¢PyTorch Σ╗ìΣ╕║ `2.1.0+cpu`∩╝¢
-- τ£ƒσ«₧ `36┬│` CT-only patch σ£¿σ«îµò┤ SegFormer3D baseline Σ╕èµëºΦíî forward + backward + optimizer step µêÉσèƒ∩╝îµò┤µ¼íΦ┐¢τ¿ïτ║ª 12.43 s∩╝¢
-- µû░σ╗║ `data/splits/ctspine1k_msd_t10_cpu_binary_engineering.json`∩╝ÜΣ╗àΣ╜┐τö¿ 9 Σ╕¬σ«ÿµû╣ `trainset`∩╝îσ¢║σ«Ü 7 train / 2 validation∩╝¢`liver_169 test_private` σ«îσà¿Σ╕ìΦ┐¢σàÑΦ«¡τ╗âµêûΦ░âσÅé∩╝¢
-- µû░σ╗║ `configs/orthopedic_ct_cpu_binary_engineering.yaml`∩╝ÜCT-onlyπÇübinary semanticπÇü36┬│ ROIπÇübatch size 1πÇüCPUπÇüσ╖Ñτ¿ï patch-validation∩╝¢Φ»ÑΘàìτ╜«µÿÄτí« `formal_experiment=false`∩╝îΣ╕ìσ╛ùµèè pilot µîçµáçσåÖσàÑΦ«║µûç Results∩╝¢
-- σ╖Ñτ¿ï preflight σ«₧µ╡ï `ready=true`∩╝Üchecked=9πÇütrain=7πÇüvalidation=2πÇütest=0πÇüpipeline 0.3.0=9πÇü0 error / 0 warning∩╝¢
-- τ¼¼Σ╕Çµ¼íτ£ƒµ¡úΦ┐¢σàÑ `train.py` µù╢σÅæτÄ░ PyTorch 2.1 σà╝σ«╣Θù«Θóÿσ╣╢Σ┐«σñì∩╝Ü`torch.amp.GradScaler` Σ╕ìσ¡ÿσ£¿∩╝îµö╣Σ╕║σà╝σ«╣τÜä `torch.cuda.amp.GradScaler(enabled=...)`∩╝¢CPU Θ¥₧ AMP Φ╖»σ╛äµö╣τö¿ `nullcontext()`∩╝îΘü┐σàì CPU float16 autocast µèÑΘöÖ∩╝¢
-- `train.py` µû░σó₧σ╖Ñτ¿ï `validation.patch_mode`∩╝Üτ¼öΦ«░µ£¼Φ«¡τ╗âµù╢Θ¬îΦ»üΘ¢åσÅûσ¢║σ«Üσñºσ░ÅσëìµÖ» patch∩╝îΘü┐σàìµ»ÅΣ╕¬ epoch σ»╣ 300ΓÇô600 σ▒éµò┤σì╖ CT Φ┐ÉΦíîΘ½ÿµêÉµ£¼ sliding-window∩╝¢µ¡úσ╝ÅΦ«║µûçΘ¬îΦ»ü/µ╡ïΦ»òΣ╗ìσ┐àΘí╗Σ╜┐τö¿ full-volume evaluation∩╝¢
-- `train.py` µû░σó₧ `--allow-cpu`∩╝î`formal_readiness.py` σÉîµ¡Ñµû░σó₧ `--allow-cpu`∩╝¢µùá CUDA Σ╕ìσåìµÿ»µû╣µ│òσ¡ªτ╗¥σ»╣ blocker∩╝îΣ╜å CPU µ¿íσ╝ÅΣ╕ìΣ╝Üµö╛σ«╜ task/split/QC/config binding τ¡ëσà╢σ«â formal Σ┐¥µèñ∩╝¢
-- 1-epoch CPU τ£ƒσ«₧ run∩╝Üτ║ª 53.2 s∩╝î`train_loss=5.5221`∩╝îengineering patch `val_dice=0.1847`∩╝¢
-- 3-epoch CPU pilot∩╝ÜµÇ╗ΦÇùµù╢τ║ª 139.9 s∩╝îtrain loss `5.5221 ΓåÆ 4.7494 ΓåÆ 3.6347`∩╝îengineering patch val Dice `0.1847 ΓåÆ 0.1518 ΓåÆ 0.2480`∩╝¢checkpoint/run σ╖▓ΦÉ╜σ£¿ `experiments/20260826_115411_cpu_binary_engineering_ct_only`πÇéΦ┐ÖΣ║¢µò░σ¡ùσÅ¬Φ»üµÿÄ CPU σ╖Ñτ¿ïΦ«¡τ╗âΦâ╜σñƒσ¡ªΣ╣áσ╣╢µö╢µò¢Φ╡╖µ¡Ñ∩╝îΣ╕ìσ▒₧Σ║ÄΦ«║µûçµ¡úσ╝ÅµÇºΦâ╜∩╝¢
-- µû░σó₧ CPU Θ¥₧ AMP autocastπÇüdisabled GradScaler Σ╕Ä `allow_cpu` readiness σ¢₧σ╜Æµ╡ïΦ»ò∩╝¢
-- µ£Çτ╗êΘ¬îΦ»ü∩╝Ü`ruff check src tests ΓåÆ All checks passed!`∩╝¢σ«ÜσÉæ 6 passed∩╝¢σà¿Θí╣τ¢« `pytest tests -q ΓåÆ 97 passed, 153 warnings`πÇé
+- **Xiong et al., 2024, Tomography 10(5):738–760**，DOI `10.3390/tomography10050057`，题目 *Lumbar and Thoracic Vertebrae Segmentation in CT Scans Using a 3D Multi-Object Localization and Segmentation CNN*；
+- 该研究采用 3D multi-object localization + segmentation，对放疗 CT 与 VerSe2020 进行腰/胸椎分割，并在失败案例分析中明确指出：当骨密度较低时，相邻椎体可能发生错误融合，一个椎体也可能被错误分裂为多个部分；
+- 该现象与本项目已经实现的 `false_merge_count`、`false_break_count`、component count/error 直接对应，因此 low-density subset 不再只是经验性假设，而有直接 CT segmentation 文献支持；
+- 该文献只证明“低骨密度是值得单独分析的失败条件”，不代表本项目当前模型已经在低骨密度病例上验证，也不应把其论文性能数字当成本项目结果。
 
-σ╜ôσëìΣ╗╗σèíτ▒╗σ₧ïΦºúΘçèΣ╕Äσ╗║Φ««∩╝Ü
+同步修改：
 
-- `binary_semantic`∩╝ÜσÅ¬σî║σêåΓÇ£µñÄΘ¬¿σëìµÖ» vs ΦâîµÖ»ΓÇ¥∩╝îµëÇµ£ë C/T/L µñÄΣ╜ôµáçτ¡╛σÉêσ╣╢Σ╕║Σ╕ÇΣ╕¬σëìµÖ»τ▒╗σê½∩╝¢ΘÇéσÉêσ╜ôσëìµá╖µ£¼ΘçÅΦ╛âσ░ÅπÇüΘªûτ»çσàêΘ¬îΦ»üΘ¬¿τ╗ôµ₧äσêåσë▓/Φ╛╣τòî/Σ╕ëτ╗┤Θçìσ╗║τÜäΦ╖»τ║┐∩╝¢
-- `multiclass_semantic`∩╝ÜσÉîµù╢σî║σêåµ»ÅΦèéµñÄΣ╜ôτ▒╗σê½∩╝îΣ╛ïσªé T12πÇüL1πÇüL2 τ¡ë∩╝¢Σ┐íµü»µ¢┤Σ╕░σ»î∩╝îΣ╜åτ▒╗σê½µò░σñÜπÇüΣ╕ìσÉî CT Φªåτ¢ûΦîâσ¢┤Σ╕ìσÉîπÇüΦ«¡τ╗âΘÜ╛σ║ªσÆîµò░µì«Θ£Çµ▒éµÿÄµÿ╛µ¢┤Θ½ÿ∩╝¢
-- σ╜ôσëìσ╖Ñτ¿ï pilot ΘÇëµï⌐ binary semantic Σ╗àΣ╜£Σ╕║Σ╜ÄΘúÄΘÖ⌐ CPU baseline∩╝îΣ╕ìτ¡ëΣ║Äµ¢┐Θí╣τ¢«τ╗äΘöüσ«Üµ¡úσ╝Å task specπÇéµ¡úσ╝ÅΣ╗╗σèíΣ╗ìΘ£Çµ£Çτ╗êτí«Φ«ñσÉÄσåìµèè `task_locked=true` σ╣╢τöƒµêÉ formal split/configπÇé
+- `docs/08_literature_matrix.md`：43→44 条，新增 S15；
+- `paper/references.bib`：41→42 条，新增 `xiong2024_low_density_vertebrae`；
+- `docs/02_literature_survey.md`：新增 3.11 低骨密度专题，原数据集建议顺延到 3.12，并把“补低骨密度直接分割文献”改为已完成；
+- `paper/manuscript_zh_v0.1.md`：Related Work 明确 low-density fusion/split 失败与结构指标的关系；
+- `README.md`、`TASKS.md`、`docs/05_midterm_materials.md`：统一更新为 **44 条结构化矩阵 / 42 条英文核心 BibTeX**。
 
-σ╜ôσëìτ£ƒµ¡úσë⌐Σ╜ÖτÜä P0 σ╖▓Σ╗ÄΓÇ£Σ║║σ╖Ñ QC + GPU + task + splitΓÇ¥µö╢µò¢Σ╕║∩╝Ü**µ¡úσ╝Å task τ▒╗σ₧ïΘöüσ«Ü + µ¡úσ╝Å patient-level split**πÇéGPU Σ╗àσ£¿σÉÄτ╗¡σ╕îµ£¢σñºσ╣àτ╝⌐τƒ¡ full-volume Φ«¡τ╗â/Φ»äΣ╝░ΦÇùµù╢µù╢σåìΦÇâΦÖæπÇé
+当前文献侧剩余工作主要是国内 CNKI/万方题录的最终数据库级复核、正式投稿格式统一，以及在首个任务/split/GPU 资源确定后从已有强 baseline 中选择真正可运行的对照，不再以机械增加文献数量为目标。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ Q∩╝ÜΘöüσ«Ü binary semantic Σ╗╗σèíΣ╕Ä CPU formal-pilot split
+### 2026-08-26｜阶段 Q：人工 QC 解锁 + 笔记本 CPU binary 真实训练跑通
 
-µ£¼Θÿ╢µ«╡µá╣µì«Θí╣τ¢«Φ┤ƒΦ┤úΣ║║µÿÄτí«ΘÇëµï⌐∩╝îσ░åΘªûΣ╕¬µñÄΣ╜ôσêåσë▓Σ╗╗σèíµ¡úσ╝ÅΘöüσ«ÜΣ╕║ `binary_semantic`∩╝îσ╣╢µèèσ╖▓σ«îµêÉτÜä 10/10 Σ║║σ╖Ñ QCπÇüσ╜ôσëìτ¼öΦ«░µ£¼ CPU Φ«¡τ╗âΦâ╜σè¢σÆî 10 Σ╛ï CTSpine1K µò░µì«µò┤σÉêµêÉΣ╕Çµ¥íσÅ»ΘÇÜΦ┐çµ¡úσ╝ÅΣ┐¥µèñµúÇµƒÑτÜäµ╡üτ¿ï pilotπÇéσ╜ôσëì 10 Σ╛ïµá╖µ£¼ΘçÅΣ╗ìΣ╕ìΦ╢│Σ╗ÑΣ╗úΦí¿µ£Çτ╗êΦ«║µûçΣ╕╗σ«₧Θ¬îΦºäµ¿í∩╝îσ¢áµ¡ñµ£¼Θÿ╢µ«╡σÅ¬σú░µÿÄΓÇ£µ¡úσ╝Åµ╡üτ¿ïσ╖▓Θöüσ«Üσ╣╢σÅ»Φ┐ÉΦíîΓÇ¥∩╝îΣ╕ìµèèσÉÄτ╗¡ pilot µîçµáçτ¢┤µÄÑτ¡ëσÉîΣ║Äµ£Çτ╗êΦ«║µûçτ╗ôΦ«║πÇé
+本阶段根据项目成员最新确认，重新核对真实人工 QC 状态，并将“必须 NVIDIA GPU”从方法学硬限制调整为可选效率升级项；随后直接在当前笔记本 CPU 上完成真实 CTSpine1K binary semantic 工程训练 pilot。
 
-σ«îµêÉ∩╝Ü
+完成：
 
-- µû░σ╗║Θöüσ«ÜΣ╗╗σèíΦºäµá╝ `configs/task_specs/vertebra_binary_ctspine1k_msd_t10_v1.json`∩╝Ü`task_id=vertebra_binary_ctspine1k_msd_t10_v1`πÇü`task_type=binary_semantic`πÇü`task_locked=true`πÇü`num_classes=2`∩╝îCTSpine1K/VerSe σÄƒσºï `1..25` µñÄΣ╜ôµáçτ¡╛σ£¿Φ«¡τ╗âµù╢τ╗ƒΣ╕ÇΦºåΣ╕║σëìµÖ»∩╝¢
-- Σ┐¥τòÖ `configs/task_specs/vertebra_task_template.json` Σ╜£Σ╕║µ£¬Θöüσ«Üµ¿íµ¥┐∩╝îΣ╕ìΦªåτ¢ûµ¿íµ¥┐Φ»¡Σ╣ë∩╝¢
-- µû░σ╗║σ¢║σ«Ü patient-level split `data/splits/ctspine1k_msd_t10_binary_formal_pilot_v1.json`∩╝Ü7 train / 2 validation / 1 test∩╝î`formal_experiment=true`∩╝¢
-- σ«ÿµû╣ `test_private` τùàΣ╛ï `ctspine1k-msd-t10-liver_169` σÅ¬Φ┐¢σàÑ test∩╝îΣ╕Ñµá╝Σ╕ìσÅéΣ╕ÄΦ«¡τ╗âΣ╕ÄΦ░âσÅé∩╝¢
-- µû░σ╗║ `configs/orthopedic_ct_cpu_binary_formal_pilot_v1.yaml`∩╝îτ╗æσ«Ü locked task spec τÜä SHA-256 µîçτ║╣∩╝îσ╣╢Σ┐¥τòÖσ╜ôσëì Ryzen 7 8745H CPU σÅ»Φ┐ÉΦíîτÜä 36┬│ patch Θàìτ╜«∩╝¢
-- `src.modeling.task_lock` σ«₧µ╡ï∩╝Ü`ready=true`πÇü0 error / 0 warning∩╝¢
-- `src.modeling.formal_readiness --allow-cpu` σ«₧µ╡ï∩╝Ütask readyπÇüformal preflight readyπÇü7/2/1 splitπÇü10 Σ╛ï pipeline 0.3.0πÇü10/10 Σ║║σ╖Ñ QC σ¥çΘÇÜΦ┐ç∩╝îµ£Çτ╗ê `ready=true`πÇü`blocker_count=0`∩╝¢GPU report Σ╗ìσªéσ«₧µÿ╛τñ║ CPU-only∩╝îΣ╜åσ£¿Φ┤ƒΦ┤úΣ║║µÿÄτí«σàüΦ«╕ CPU µù╢Σ╕ìσåìµ₧äµêÉ blocker∩╝¢
-- σà¿Θí╣τ¢«σ¢₧σ╜Æ∩╝Ü`pytest tests -q ΓåÆ 97 passed, 153 warnings`∩╝¢`ruff check src web tests ΓåÆ All checks passed!`∩╝¢`git diff --check` ΘÇÜΦ┐çπÇé
+- 复核 `data/processed_ctspine1k_real/manual_qc_review.csv`：10/10 病例 `orientation_ok / spacing_ok / label_alignment_ok / bone_window_ok = yes`，10/10 `review_status=pass`，reviewer 均已填写，因此人工 QC P0 正式解除；
+- 实测当前电脑：AMD Ryzen 7 8745H，8 核 16 线程，约 19.8 GB RAM；PyTorch 仍为 `2.1.0+cpu`；
+- 真实 `36³` CT-only patch 在完整 SegFormer3D baseline 上执行 forward + backward + optimizer step 成功，整次进程约 12.43 s；
+- 新建 `data/splits/ctspine1k_msd_t10_cpu_binary_engineering.json`：仅使用 9 个官方 `trainset`，固定 7 train / 2 validation；`liver_169 test_private` 完全不进入训练或调参；
+- 新建 `configs/orthopedic_ct_cpu_binary_engineering.yaml`：CT-only、binary semantic、36³ ROI、batch size 1、CPU、工程 patch-validation；该配置明确 `formal_experiment=false`，不得把 pilot 指标写入论文 Results；
+- 工程 preflight 实测 `ready=true`：checked=9、train=7、validation=2、test=0、pipeline 0.3.0=9、0 error / 0 warning；
+- 第一次真正进入 `train.py` 时发现 PyTorch 2.1 兼容问题并修复：`torch.amp.GradScaler` 不存在，改为兼容的 `torch.cuda.amp.GradScaler(enabled=...)`；CPU 非 AMP 路径改用 `nullcontext()`，避免 CPU float16 autocast 报错；
+- `train.py` 新增工程 `validation.patch_mode`：笔记本训练时验证集取固定大小前景 patch，避免每个 epoch 对 300–600 层整卷 CT 运行高成本 sliding-window；正式论文验证/测试仍必须使用 full-volume evaluation；
+- `train.py` 新增 `--allow-cpu`，`formal_readiness.py` 同步新增 `--allow-cpu`；无 CUDA 不再是方法学绝对 blocker，但 CPU 模式不会放宽 task/split/QC/config binding 等其它 formal 保护；
+- 1-epoch CPU 真实 run：约 53.2 s，`train_loss=5.5221`，engineering patch `val_dice=0.1847`；
+- 3-epoch CPU pilot：总耗时约 139.9 s，train loss `5.5221 → 4.7494 → 3.6347`，engineering patch val Dice `0.1847 → 0.1518 → 0.2480`；checkpoint/run 已落在 `experiments/20260826_115411_cpu_binary_engineering_ct_only`。这些数字只证明 CPU 工程训练能够学习并收敛起步，不属于论文正式性能；
+- 新增 CPU 非 AMP autocast、disabled GradScaler 与 `allow_cpu` readiness 回归测试；
+- 最终验证：`ruff check src tests → All checks passed!`；定向 6 passed；全项目 `pytest tests -q → 97 passed, 153 warnings`。
 
-σ╜ôσëìΦ╛╣τòî∩╝Ü
+当前任务类型解释与建议：
 
-- σ╜ôσëì 10 Σ╛ïµÿ»µ¡úσ╝Åµ╡üτ¿ï pilot∩╝îΣ╕ìΦ╢│Σ╗Ñµö»µÆæµ£Çτ╗êΦ«║µûçΣ╕╗σ«₧Θ¬îτ╗ƒΦ«íσ╝║σ║ª∩╝¢σÉÄτ╗¡Σ╗ìσ║öµë⌐σñº CTSpine1K/σÉîΣ╗╗σèíµò░µì«Φºäµ¿í∩╝¢
-- Φ«¡τ╗âµ£ƒΘù┤σÅ»Σ╜┐τö¿ patch validation Φ┐¢Φíî CPU Σ╜ÄµêÉµ£¼µ¿íσ₧ïΘÇëµï⌐∩╝îΣ╜åµ£Çτ╗êσÅ»σåÖσàÑΦ«║µûçτÜä test τ╗ôµ₧£σ┐àΘí╗ΘÇÜΦ┐çτï¼τ½ï full-volume evaluation τöƒµêÉ Dice/HD95/ASSD/τ╗ôµ₧ä/uncertainty/calibration τ¡ëµîçµáç∩╝¢
-- Σ╕ïΣ╕Çµ¡ÑΦ┐¢σàÑ CT-only binary baseline τÜäµ¢┤Θò┐Φ«¡τ╗â∩╝îσ╣╢σ£¿µ»ÅΣ╕¬σ«₧Φ┤¿Σ╗╗σèíσ«îµêÉσÉÄτ½ïσì│σÉîµ¡Ñ GitHubπÇé
+- `binary_semantic`：只区分“椎骨前景 vs 背景”，所有 C/T/L 椎体标签合并为一个前景类别；适合当前样本量较小、首篇先验证骨结构分割/边界/三维重建的路线；
+- `multiclass_semantic`：同时区分每节椎体类别，例如 T12、L1、L2 等；信息更丰富，但类别数多、不同 CT 覆盖范围不同、训练难度和数据需求明显更高；
+- 当前工程 pilot 选择 binary semantic 仅作为低风险 CPU baseline，不等于替项目组锁定正式 task spec。正式任务仍需最终确认后再把 `task_locked=true` 并生成 formal split/config。
 
-
-### 2026-08-26∩╜£Θÿ╢µ«╡ R∩╝ÜCPU binary CT-only 5-epoch formal-pilot baseline
-
-σ£¿Θÿ╢µ«╡ Q σ╖▓ΘÇÜΦ┐ç `formal_readiness --allow-cpu` τÜäσëìµÅÉΣ╕ï∩╝îµ£¼Θÿ╢µ«╡τ¢┤µÄÑΣ╜┐τö¿Θöüσ«ÜτÜä `binary_semantic` task Σ╕Ä 7/2/1 formal-pilot split∩╝îσ£¿σ╜ôσëì Ryzen 7 8745H CPU τ¼öΦ«░µ£¼Σ╕èΦ┐ÉΦíî CT-only SegFormer3D baseline 5 epochsπÇéΦ«¡τ╗âσÅ¬Σ╜┐τö¿ 7 Σ╕¬ train τùàΣ╛ï∩╝î2 Σ╕¬ validation τùàΣ╛ïτö¿Σ║Ä patch validation∩╝îσ«ÿµû╣ `test_private liver_169` µ£¬σÅéΣ╕ÄΦ«¡τ╗âµêûΦ░âσÅéπÇé
-
-τ£ƒσ«₧Φ┐ÉΦíîτ¢«σ╜ò∩╝Ü`experiments/20260826_151810_cpu_binary_formal_pilot_ct_only`πÇé
-
-Φ┐ÉΦíîτ╗ôµ₧£∩╝Ü
-
-- epoch 1∩╝Ütrain lossΓëê5.5221∩╝îpatch-val DiceΓëê0.1847∩╝¢
-- epoch 2∩╝Ütrain lossΓëê4.7494∩╝îpatch-val DiceΓëê0.1518∩╝¢
-- epoch 3∩╝Ütrain lossΓëê3.6347∩╝îpatch-val DiceΓëê0.2480∩╝¢
-- epoch 4∩╝Ütrain lossΓëê2.8162∩╝îpatch-val DiceΓëê0.2719∩╝îΣ╕║σ╜ôσëìµ£ÇΣ╜│∩╝¢
-- epoch 5∩╝Ütrain lossΓëê2.6524∩╝îpatch-val DiceΓëê0.2456∩╝¢
-- µ£ÇΣ╜│ checkpoint∩╝Ü`experiments/20260826_151810_cpu_binary_formal_pilot_ct_only/checkpoint/best.pt`∩╝¢
-- `config.yaml / split.json / run_metadata.json / history.csv / train.log / summary.json` σ¥çσ╖▓Σ┐¥σ¡ÿπÇé
-
-ΘçìΦªüΦ╛╣τòî∩╝Ü
-
-- Σ╕èΦ┐░ Dice µÿ» 36┬│ patch-validation proxy∩╝îσÅ¬τö¿Σ║ÄΦ»üµÿÄσ╜ôσëì CPU baseline σ¡ªΣ╣áΦ╢ïσè┐σÆî checkpoint ΘÇëµï⌐Θô╛σÅ»Φ┐ÉΦíî∩╝î**Σ╕ìσ╛ùΣ╜£Σ╕║Φ«║µûçµ¡úσ╝Å Dice**∩╝¢
-- train loss µÇ╗Σ╜ôµîüτ╗¡Σ╕ïΘÖì∩╝îΦ»┤µÿÄσ╜ôσëì CPU τÄ»σóâσÆîΦ«¡τ╗âΘô╛τí«σ«₧σ£¿σ¡ªΣ╣á∩╝¢validation σ£¿µ₧üσ░Åµá╖µ£¼Σ╕ïσ¡ÿσ£¿µÿÄµÿ╛µ│óσè¿∩╝îτ¼ªσÉê 2 Σ╛ï validation + 5 epoch τÜä pilot µÇºΦ┤¿∩╝¢
-- Σ╕ïΣ╕Çµ¡Ñσ┐àΘí╗Σ╜┐τö¿σ╜ôσëìµ£ÇΣ╜│ checkpoint σ»╣τï¼τ½ï test `liver_169` σüÜ full-volume evaluation∩╝îτöƒµêÉ Dice/HD95/ASSD/τ╗ôµ₧äπÇüuncertainty Σ╕Ä calibration τ¡ëΘªûµë╣τ£ƒσ«₧ pilot µîçµáç∩╝¢
-- σ«îµêÉµ£¼Θÿ╢µ«╡σÉÄµîëΘí╣τ¢«Φ┤ƒΦ┤úΣ║║Φªüµ▒éτ½ïσì│σÉîµ¡Ñ GitHub∩╝îσåìΦ┐¢σàÑΣ╕ïΣ╕ÇΘí╣Σ╗╗σèíπÇé
+当前真正剩余的 P0 已从“人工 QC + GPU + task + split”收敛为：**正式 task 类型锁定 + 正式 patient-level split**。GPU 仅在后续希望大幅缩短 full-volume 训练/评估耗时时再考虑。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ S∩╝Ü5-epoch checkpoint τï¼τ½ï full-volume pilot test∩╝êGitHub σÉîµ¡Ñτé╣ #3∩╝ë
+### 2026-08-26｜阶段 Q：锁定 binary semantic 任务与 CPU formal-pilot split
 
-µ£¼Θÿ╢µ«╡Σ╕Ñµá╝Σ╜┐τö¿Θÿ╢µ«╡ R σ╖▓σ¢║σ«ÜτÜäµ£ÇΣ╜│ checkpoint∩╝êepoch 4∩╝ëσ»╣τï¼τ½ï test `ctspine1k-msd-t10-liver_169` Φ┐ÉΦíî full-volume evaluationπÇéΦ»ÑτùàΣ╛ïµ¥ÑΦç¬σ«ÿµû╣ `test_private`∩╝îµ¡ñσëìΣ╗Äµ£¬Φ┐¢σàÑ train µêû validation∩╝îσ¢áµ¡ñµ£¼µ¼íµ╡ïΦ»òΣ╗àτö¿Σ║Äσ£¿Φ«¡τ╗âµû╣µíêσ╖▓σ¢║σ«ÜσÉÄΘ¬îΦ»üσ«îµò┤τºæτáöΦ»äΣ╝░Θô╛∩╝îΣ╕ìτö¿Σ║Äτ╗ºτ╗¡Φ░âσÅéπÇé
+本阶段根据项目负责人明确选择，将首个椎体分割任务正式锁定为 `binary_semantic`，并把已完成的 10/10 人工 QC、当前笔记本 CPU 训练能力和 10 例 CTSpine1K 数据整合成一条可通过正式保护检查的流程 pilot。当前 10 例样本量仍不足以代表最终论文主实验规模，因此本阶段只声明“正式流程已锁定并可运行”，不把后续 pilot 指标直接等同于最终论文结论。
 
-τ£ƒσ«₧Φ╛ôσç║τ¢«σ╜ò∩╝Ü`experiments/evaluation_20260826_152657_test`πÇé
+完成：
 
-τ£ƒσ«₧ full-volume CPU test∩╝Ü
+- 新建锁定任务规格 `configs/task_specs/vertebra_binary_ctspine1k_msd_t10_v1.json`：`task_id=vertebra_binary_ctspine1k_msd_t10_v1`、`task_type=binary_semantic`、`task_locked=true`、`num_classes=2`，CTSpine1K/VerSe 原始 `1..25` 椎体标签在训练时统一视为前景；
+- 保留 `configs/task_specs/vertebra_task_template.json` 作为未锁定模板，不覆盖模板语义；
+- 新建固定 patient-level split `data/splits/ctspine1k_msd_t10_binary_formal_pilot_v1.json`：7 train / 2 validation / 1 test，`formal_experiment=true`；
+- 官方 `test_private` 病例 `ctspine1k-msd-t10-liver_169` 只进入 test，严格不参与训练与调参；
+- 新建 `configs/orthopedic_ct_cpu_binary_formal_pilot_v1.yaml`，绑定 locked task spec 的 SHA-256 指纹，并保留当前 Ryzen 7 8745H CPU 可运行的 36³ patch 配置；
+- `src.modeling.task_lock` 实测：`ready=true`、0 error / 0 warning；
+- `src.modeling.formal_readiness --allow-cpu` 实测：task ready、formal preflight ready、7/2/1 split、10 例 pipeline 0.3.0、10/10 人工 QC 均通过，最终 `ready=true`、`blocker_count=0`；GPU report 仍如实显示 CPU-only，但在负责人明确允许 CPU 时不再构成 blocker；
+- 全项目回归：`pytest tests -q → 97 passed, 153 warnings`；`ruff check src web tests → All checks passed!`；`git diff --check` 通过。
 
-- DiceΓëê`0.0220767`∩╝¢
-- IoUΓëê`0.0111616`∩╝¢
-- PrecisionΓëê`0.0115527`∩╝¢
-- RecallΓëê`0.2479101`∩╝¢
-- HD95Γëê`190.931 mm`∩╝¢
-- ASSDΓëê`53.420 mm`∩╝¢
-- component_count_error=`157`∩╝¢
-- false_merge_count=`0`∩╝¢
-- false_break_count=`15`∩╝¢
-- σìòτùàΣ╛ï full-volume inferenceΓëê`9.2866 s`πÇé
+当前边界：
 
-τ£ƒσ«₧ uncertainty / calibration pilot∩╝Ü
-
-- uncertaintyΓåÆerror AUROCΓëê`0.6137`∩╝¢
-- uncertaintyΓåÆerror AUPRCΓëê`0.4395`∩╝¢
-- Top-10% error recallΓëê`0.1385`∩╝¢
-- Top-10% ROI error rateΓëê`0.4909`∩╝¢
-- ECEΓëê`0.2990`∩╝¢
-- MCEΓëê`0.3378`∩╝¢
-- BrierΓëê`0.6347`∩╝¢
-- NLLΓëê`2.1329`∩╝¢
-- mean confidenceΓëê`0.9445`∩╝¢
-- sampled calibration accuracyΓëê`0.6455`∩╝¢
-- confidence gapΓëê`0.2990`πÇé
-
-τ£ƒσ«₧τöƒµêÉµûçΣ╗╢σîàµï¼∩╝Ü
-
-- `experiments/evaluation_20260826_152657_test/metrics_per_case.csv`∩╝¢
-- `experiments/evaluation_20260826_152657_test/summary.json`∩╝¢
-- `experiments/evaluation_20260826_152657_test/predictions/ctspine1k-msd-t10-liver_169/prediction.nii.gz`∩╝¢
-- `experiments/evaluation_20260826_152657_test/uncertainty/ctspine1k-msd-t10-liver_169/predictive_entropy.nii.gz`πÇé
-
-µ£¼Θÿ╢µ«╡τ╗ôΦ«║Σ╕ÄΦ╛╣τòî∩╝Ü
-
-- **5 epoch µ¿íσ₧ïΣ╕ÑΘçìµ¼áΦ«¡τ╗âπÇé** µ₧üΣ╜Ä DiceπÇüσ╛êσñºτÜä HD95/ASSD Σ╕ÄσñºΘçÅ component error Φ»┤µÿÄσ╜ôσëìµ¿íσ₧ïσ░ÜΣ╕ìσÅ»τö¿∩╝¢
-- Σ╕èΦ┐░µò░σ¡ùµÿ» **10 Σ╛ï formal-pilot Σ╕¡σö»Σ╕Çτï¼τ½ï test τùàΣ╛ï**τÜäσ╖Ñτ¿ï/τºæτáöµ╡üτ¿ïΘ¬îΦ»üτ╗ôµ₧£∩╝îΣ╕ìΦâ╜σ«úΣ╝áΣ╕║Φ╢│σñƒΦºäµ¿íτÜäΦ«║µûçΣ╕╗σ«₧Θ¬î∩╝îµ¢┤Σ╕ìΦâ╜σåÖµêÉµ£Çτ╗êΦ«║µûçµÇºΦâ╜∩╝¢
-- uncertainty/calibration Θô╛σ╖▓Φ»üµÿÄσÅ»Σ╗Ñσ»╣τ£ƒσ«₧ checkpoint Φ╛ôσç║∩╝îΣ╜å segmentation µ£¼Φ║½σ╛êσ╖«∩╝îσ¢áµ¡ñΦ┐ÖΣ║¢µò░σ¡ùΣ╣ƒσÅ¬Σ╜£Σ╕║ pipeline Φ»üµì«∩╝îΣ╕ìσüÜΓÇ£µ¿íσ₧ïσ╖▓σÅ»Θ¥á/σ╖▓µáíσçåΓÇ¥τ╗ôΦ«║∩╝¢
-- test `liver_169` Σ╕ìσåìτö¿Σ║ÄΣ╕ïΣ╕ÇΘÿ╢µ«╡Φ«¡τ╗âµû╣µíêΦ░âσÅé∩╝¢σÉÄτ╗¡µëÇµ£ëΦ«¡τ╗âµö╣σè¿σÅ¬Σ╛¥µì« train + validation σå│τ¡û∩╝îσ╛àµû░µû╣µíêσ«îσà¿σ¢║σ«ÜσÉÄµëìσàüΦ«╕σåìµ¼íτï¼τ½ï test∩╝¢
-- Σ╕ïΣ╕ÇΘÿ╢µ«╡Σ╝ÿσàêΦ┐¢σàÑµ¢┤Θò┐τÜä CPU binary CT-only baseline∩╝ÜσàêΘ¬îΦ»üµ¢┤σÉêτÉåτÜä patch ROI / foreground sampling / augmentation / scheduler Σ╕Ä early stopping∩╝îσåìΦ┐ÉΦíî 10ΓÇô20 epoch Θÿ╢µ«╡Φ«¡τ╗âσ╣╢τ╗ºτ╗¡ΘÇÉΣ╗╗σèíσÉîµ¡Ñ GitHubπÇé
+- 当前 10 例是正式流程 pilot，不足以支撑最终论文主实验统计强度；后续仍应扩大 CTSpine1K/同任务数据规模；
+- 训练期间可使用 patch validation 进行 CPU 低成本模型选择，但最终可写入论文的 test 结果必须通过独立 full-volume evaluation 生成 Dice/HD95/ASSD/结构/uncertainty/calibration 等指标；
+- 下一步进入 CT-only binary baseline 的更长训练，并在每个实质任务完成后立即同步 GitHub。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ T∩╝ÜΣ┐«σñì CPU Φ╖¿ epoch ΘçìσñìΦ«¡τ╗âσÉîΣ╕Ç patch τÜäΘççµá╖τ╝║ΘÖ╖
+### 2026-08-26｜阶段 R：CPU binary CT-only 5-epoch formal-pilot baseline
 
-σ£¿σÉîµ¡Ñτé╣ #3 σ«îµêÉσÉÄ∩╝îµ▓íµ£ëτ¢┤µÄÑµèè epochs Σ╗Ä 5 τ▓ùµÜ┤σó₧σèáσê░ 20/50∩╝îΦÇîµÿ»σàêµúÇµƒÑ `ProcessedOrthopedicCTDataset` Σ╕ÄΦ«¡τ╗âσ╛¬τÄ»πÇéτí«Φ«ñσ╜ôσëì CPU Θàìτ╜« `num_workers=0` µù╢∩╝î`__getitem__()` τÜäΘÜÅµ£║µ╡üσÅ¬µ╖╖σàÑσ¢║σ«Ü `seed / torch.initial_seed() / index`∩╝îΦ«¡τ╗âσ╛¬τÄ»σÅêµ▓íµ£ëσÉæ Dataset Σ╝áσàÑ epoch∩╝îσ¢áµ¡ñσÉîΣ╕ÇτùàΣ╛ïσ£¿Σ╕ìσÉî epoch Σ╝ÜΘçìσñìΣ╜┐τö¿σÉîΣ╕ÇΘÜÅµ£║Φúüσë¬/σó₧σ╝║ΘÜÅµ£║µ╡üπÇéΦ┐ÖΣ╝Üµÿ╛ΦæùΘÖìΣ╜Ä 7 Σ╕¬ train τùàΣ╛ïσ£¿Θò┐Φ«¡τ╗âΣ╕¡τÜäµ£ëµòê patch σñÜµá╖µÇº∩╝îµÿ» 5-epoch pilot Σ╣ïσÉÄσ┐àΘí╗σàêΣ┐«σñìτÜäΦ«¡τ╗âµ£║σê╢Θù«ΘóÿπÇé
+在阶段 Q 已通过 `formal_readiness --allow-cpu` 的前提下，本阶段直接使用锁定的 `binary_semantic` task 与 7/2/1 formal-pilot split，在当前 Ryzen 7 8745H CPU 笔记本上运行 CT-only SegFormer3D baseline 5 epochs。训练只使用 7 个 train 病例，2 个 validation 病例用于 patch validation，官方 `test_private liver_169` 未参与训练或调参。
 
-σ«îµêÉ∩╝Ü
+真实运行目录：`experiments/20260826_151810_cpu_binary_formal_pilot_ct_only`。
 
-- `src/modeling/dataset.py` µû░σó₧ `epoch` τè╢µÇüΣ╕Ä `set_epoch()`∩╝¢
-- Φ«¡τ╗â patch τÜäΘÜÅµ£║τºìσ¡Éµÿ╛σ╝Åµ╖╖σàÑ epoch∩╝îΣ╜┐σÉîΣ╕ÇτùàΣ╛ïσ£¿Σ╕ìσÉî epoch Θççµá╖Σ╕ìσÉîπÇüσÉîΣ╕Ç epoch Σ╗ìσÅ»σñìτÄ░∩╝¢
-- `src/modeling/train.py` σ£¿µ»ÅΣ╕¬Φ«¡τ╗â epoch σ╝Çσºïµù╢Φ░âτö¿ `train_ds.set_epoch(epoch)`∩╝¢
-- patch-validation Dataset Σ╕ìΦ░âτö¿ `set_epoch()`∩╝îτ╗ºτ╗¡σ¢║σ«Üσ£¿σÉîΣ╕ÇΘ¬îΦ»üΘÜÅµ£║µ╡ü∩╝îΘü┐σàìµ»ÅΣ╕¬ epoch σ¢áΘ¬îΦ»ü patch µ╝éτº╗ΦÇîµ▒íµƒô checkpoint µ»öΦ╛â∩╝¢
-- `run_metadata.json` µû░σó₧ `training_patch_sampling_epoch_aware=true` Σ╕Ä `validation_patch_sampling_fixed_across_epochs` Φ┐╜Φ╕¬σ¡ùµ«╡∩╝¢
-- µû░σó₧ `tests/test_dataset_epoch_sampling.py`∩╝îΘ¬îΦ»üσÉîΣ╕Ç epoch ΘçìσñìΦ»╗σÅûσ«îσà¿Σ╕ÇΦç┤πÇüΣ╕ìσÉî epoch patch µö╣σÅÿπÇüΦ┤ƒ epoch Φó½µïÆτ╗¥∩╝¢
-- µ£¼Σ┐«σñìσÅ¬µö╣σÅÿ train/validation patch Θççµá╖µ£║σê╢∩╝îµ▓íµ£ëΦ»╗σÅûµêûσê⌐τö¿τï¼τ½ï test `liver_169` τÜäτ╗ôµ₧£σüÜσÅéµò░ΘÇëµï⌐πÇé
+运行结果：
 
-Θ¬îΦ»ü∩╝Ü
+- epoch 1：train loss≈5.5221，patch-val Dice≈0.1847；
+- epoch 2：train loss≈4.7494，patch-val Dice≈0.1518；
+- epoch 3：train loss≈3.6347，patch-val Dice≈0.2480；
+- epoch 4：train loss≈2.8162，patch-val Dice≈0.2719，为当前最佳；
+- epoch 5：train loss≈2.6524，patch-val Dice≈0.2456；
+- 最佳 checkpoint：`experiments/20260826_151810_cpu_binary_formal_pilot_ct_only/checkpoint/best.pt`；
+- `config.yaml / split.json / run_metadata.json / history.csv / train.log / summary.json` 均已保存。
+
+重要边界：
+
+- 上述 Dice 是 36³ patch-validation proxy，只用于证明当前 CPU baseline 学习趋势和 checkpoint 选择链可运行，**不得作为论文正式 Dice**；
+- train loss 总体持续下降，说明当前 CPU 环境和训练链确实在学习；validation 在极小样本下存在明显波动，符合 2 例 validation + 5 epoch 的 pilot 性质；
+- 下一步必须使用当前最佳 checkpoint 对独立 test `liver_169` 做 full-volume evaluation，生成 Dice/HD95/ASSD/结构、uncertainty 与 calibration 等首批真实 pilot 指标；
+- 完成本阶段后按项目负责人要求立即同步 GitHub，再进入下一项任务。
+
+
+### 2026-08-26｜阶段 S：5-epoch checkpoint 独立 full-volume pilot test（GitHub 同步点 #3）
+
+本阶段严格使用阶段 R 已固定的最佳 checkpoint（epoch 4）对独立 test `ctspine1k-msd-t10-liver_169` 运行 full-volume evaluation。该病例来自官方 `test_private`，此前从未进入 train 或 validation，因此本次测试仅用于在训练方案已固定后验证完整科研评估链，不用于继续调参。
+
+真实输出目录：`experiments/evaluation_20260826_152657_test`。
+
+真实 full-volume CPU test：
+
+- Dice≈`0.0220767`；
+- IoU≈`0.0111616`；
+- Precision≈`0.0115527`；
+- Recall≈`0.2479101`；
+- HD95≈`190.931 mm`；
+- ASSD≈`53.420 mm`；
+- component_count_error=`157`；
+- false_merge_count=`0`；
+- false_break_count=`15`；
+- 单病例 full-volume inference≈`9.2866 s`。
+
+真实 uncertainty / calibration pilot：
+
+- uncertainty→error AUROC≈`0.6137`；
+- uncertainty→error AUPRC≈`0.4395`；
+- Top-10% error recall≈`0.1385`；
+- Top-10% ROI error rate≈`0.4909`；
+- ECE≈`0.2990`；
+- MCE≈`0.3378`；
+- Brier≈`0.6347`；
+- NLL≈`2.1329`；
+- mean confidence≈`0.9445`；
+- sampled calibration accuracy≈`0.6455`；
+- confidence gap≈`0.2990`。
+
+真实生成文件包括：
+
+- `experiments/evaluation_20260826_152657_test/metrics_per_case.csv`；
+- `experiments/evaluation_20260826_152657_test/summary.json`；
+- `experiments/evaluation_20260826_152657_test/predictions/ctspine1k-msd-t10-liver_169/prediction.nii.gz`；
+- `experiments/evaluation_20260826_152657_test/uncertainty/ctspine1k-msd-t10-liver_169/predictive_entropy.nii.gz`。
+
+本阶段结论与边界：
+
+- **5 epoch 模型严重欠训练。** 极低 Dice、很大的 HD95/ASSD 与大量 component error 说明当前模型尚不可用；
+- 上述数字是 **10 例 formal-pilot 中唯一独立 test 病例**的工程/科研流程验证结果，不能宣传为足够规模的论文主实验，更不能写成最终论文性能；
+- uncertainty/calibration 链已证明可以对真实 checkpoint 输出，但 segmentation 本身很差，因此这些数字也只作为 pipeline 证据，不做“模型已可靠/已校准”结论；
+- test `liver_169` 不再用于下一阶段训练方案调参；后续所有训练改动只依据 train + validation 决策，待新方案完全固定后才允许再次独立 test；
+- 下一阶段优先进入更长的 CPU binary CT-only baseline：先验证更合理的 patch ROI / foreground sampling / augmentation / scheduler 与 early stopping，再运行 10–20 epoch 阶段训练并继续逐任务同步 GitHub。
+
+
+### 2026-08-26｜阶段 T：修复 CPU 跨 epoch 重复训练同一 patch 的采样缺陷
+
+在同步点 #3 完成后，没有直接把 epochs 从 5 粗暴增加到 20/50，而是先检查 `ProcessedOrthopedicCTDataset` 与训练循环。确认当前 CPU 配置 `num_workers=0` 时，`__getitem__()` 的随机流只混入固定 `seed / torch.initial_seed() / index`，训练循环又没有向 Dataset 传入 epoch，因此同一病例在不同 epoch 会重复使用同一随机裁剪/增强随机流。这会显著降低 7 个 train 病例在长训练中的有效 patch 多样性，是 5-epoch pilot 之后必须先修复的训练机制问题。
+
+完成：
+
+- `src/modeling/dataset.py` 新增 `epoch` 状态与 `set_epoch()`；
+- 训练 patch 的随机种子显式混入 epoch，使同一病例在不同 epoch 采样不同、同一 epoch 仍可复现；
+- `src/modeling/train.py` 在每个训练 epoch 开始时调用 `train_ds.set_epoch(epoch)`；
+- patch-validation Dataset 不调用 `set_epoch()`，继续固定在同一验证随机流，避免每个 epoch 因验证 patch 漂移而污染 checkpoint 比较；
+- `run_metadata.json` 新增 `training_patch_sampling_epoch_aware=true` 与 `validation_patch_sampling_fixed_across_epochs` 追踪字段；
+- 新增 `tests/test_dataset_epoch_sampling.py`，验证同一 epoch 重复读取完全一致、不同 epoch patch 改变、负 epoch 被拒绝；
+- 本修复只改变 train/validation patch 采样机制，没有读取或利用独立 test `liver_169` 的结果做参数选择。
+
+验证：
 
 ```text
 pytest tests/test_dataset_epoch_sampling.py tests/test_training_smoke.py -q --disable-warnings
-ΓåÆ 5 passed
+→ 5 passed
 
 pytest tests -q --disable-warnings
-ΓåÆ 99 passed, 153 warnings
+→ 99 passed, 153 warnings
 
 ruff check src web tests
-ΓåÆ All checks passed!
+→ All checks passed!
 
 git diff --check
-ΓåÆ ΘÇÜΦ┐ç
+→ 通过
 ```
 
-τ╗ôΦ«║Σ╕ÄΣ╕ïΣ╕Çµ¡Ñ∩╝Ü
+结论与下一步：
 
-- Σ╣ïσëì 5-epoch run τÜäσ╖Ñτ¿ïΘô╛Σ╗ìτä╢µ£ëµòê∩╝îΣ╜åσà╢ CPU `num_workers=0` Φ«¡τ╗â patch σñÜµá╖µÇºσÅùΦ»Ñτ╝║ΘÖ╖ΘÖÉσê╢∩╝îσ¢áµ¡ñΣ╕ìΦâ╜Σ╗àΘÇÜΦ┐çΓÇ£τ╗ºτ╗¡σÄƒΘàìτ╜«σñÜΦ╖æ epochΓÇ¥µ¥Ñσêñµû¡µ¿íσ₧ïΣ╕èΘÖÉ∩╝¢
-- Σ╕ïΣ╕Çµ¡ÑσÅ¬Σ╜┐τö¿ train/validation σüÜ CPU Φ╡äµ║ÉΣ╕Ä ROI ΘÇëµï⌐∩╝Üσàêσ»╣ `36┬│ / 48┬│ / 64┬│` Φ«¡τ╗â patch σüÜσìòµ¡ÑΦÇùµù╢Σ╕ÄσÅ»Φ┐ÉΦíîµÇºµúÇµƒÑ∩╝îσåìσ¢║σ«Üµû░τÜä 10ΓÇô20 epoch CT-only baseline Θàìτ╜«∩╝¢
-- µû░µû╣µíêσ«îσà¿σ¢║σ«ÜσëìΣ╕ìσåìµ¼íΦ┐ÉΦíî test∩╝îΘü┐σàìµèè `liver_169` τö¿Σ╜£Φ░âσÅéΘ¢åπÇé
-
-
-### 2026-08-26∩╜£Θÿ╢µ«╡ U∩╝ÜCPU ROI σìòµ¡Ñ benchmark∩╝êGitHub σÉîµ¡Ñτé╣ #5∩╝ë
-
-µ£¼Θÿ╢µ«╡Σ╕Ñµá╝σÅ¬Σ╜┐τö¿ formal-pilot τÜä `train` split∩╝îσñìτö¿ `src.modeling.real_patch_smoke.run_real_patch_smoke()` σ»╣ `36┬│ / 48┬│ / 64┬│` σüÜτ£ƒσ«₧σìò patch Φ«¡τ╗âΘô╛µúÇµƒÑ∩╝¢µ»Åµ¼íσ¥çσ«₧ΘÖàµëºΦíî Dataset σÅûµá╖πÇüSegFormer3D forwardπÇüRegion Dice+CE lossπÇübackward Σ╕Ä AdamW optimizer stepπÇéµ▓íµ£ëΦ»╗σÅû validation µîçµáçσüÜ ROI ΘÇëµï⌐∩╝îµ¢┤µ▓íµ£ëΦ«┐Θù«τï¼τ½ï test `liver_169`πÇé
-
-τ£ƒσ«₧τ╗ôµ₧£∩╝Ü
-
-- `36┬│`∩╝Ü3 µ¼íσìòµ¡ÑΦ┐¢τ¿ï wall-time τ║ª `1.929 / 1.840 / 1.821 s`∩╝îΣ╕¡Σ╜ìµò░τ║ª `1.840 s`∩╝¢σìòµ¼íτ╗ôµ¥ƒ RSSΓëê`505 MB`∩╝îΦ┐¢τ¿ï peak working setΓëê`1529.8 MB`∩╝¢
-- `48┬│`∩╝Ü3 µ¼íτ║ª `1.972 / 1.894 / 1.970 s`∩╝îΣ╕¡Σ╜ìµò░τ║ª `1.970 s`∩╝¢σìòµ¼íτ╗ôµ¥ƒ RSSΓëê`523 MB`∩╝îpeak working setΓëê`1530.2 MB`∩╝¢
-- `64┬│`∩╝Ü3 µ¼íτ║ª `2.083 / 1.939 / 2.038 s`∩╝îΣ╕¡Σ╜ìµò░τ║ª `2.038 s`∩╝¢σìòµ¼íτ╗ôµ¥ƒ RSSΓëê`565 MB`∩╝îpeak working setΓëê`1530.7 MB`∩╝¢
-- Σ╕ëµíúσ¥çΣ║ºτöƒµ£ëΘÖÉ lossπÇüµ£ëΘÖÉµó»σ║ªσ╣╢µêÉσèƒσ«îµêÉ optimizer step∩╝¢µ£¼Θÿ╢µ«╡τÜä loss Σ╕║ΘÜÅµ£║σê¥σºïσîûΣ╕ïσ╖Ñτ¿ï smoke Φ╛ôσç║∩╝îΣ╕ìσ▒₧Σ║Äµ¿íσ₧ïµÇºΦâ╜πÇé
-
-ROI σå│τ¡û∩╝Ü
-
-- `48┬│` µÿÄτí«σÅ»Φ┐ÉΦíî∩╝¢
-- `64┬│` τ¢╕σ»╣ `48┬│` τÜäΦ┐¢τ¿ï wall-time Σ╕¡Σ╜ìµò░Σ╗àσó₧σèáτ║ª 3.5%∩╝îτ╗ôµ¥ƒ RSS τ║ªσó₧σèá 42 MB∩╝îσ╜ôσëìτ║ª 20 GB RAM µ£║σÖ¿σÅ»Φ╜╗µ¥╛µë┐σÅù∩╝¢σÉîµù╢ 64┬│ µÅÉΣ╛¢µÿÄµÿ╛µ¢┤σñºτÜä 3D ΦºúσëûΣ╕èΣ╕ïµûç∩╝¢
-- σ¢áµ¡ñΣ╕ïΣ╕Çτëê CT-only Θò┐ baseline σ¢║σ«ÜΣ╜┐τö¿ `64┬│`∩╝îΣ╕ìσåìµ▓┐τö¿µùº `36┬│`∩╝¢ΦïÑσÉÄτ╗¡σ«îµò┤ epoch Φ«¡τ╗âσç║τÄ░µÿÄµÿ╛σÉ₧σÉÉ/σåàσ¡ÿσ╝éσ╕╕∩╝îσåìσ¢₧ΘÇÇσê░ `48┬│`∩╝îΣ╜åΣ╕ìΦâ╜Σ╜┐τö¿ test µîçµáçσå│σ«Üµÿ»σÉªσ¢₧ΘÇÇπÇé
-
-Θ¬îΦ»üΣ╕ÄΦ╛╣τòî∩╝Ü
-
-- benchmark σñìτö¿Σ║åτÄ░µ£ëτ£ƒσ«₧σìò patch smoke Φ«¡τ╗âΘô╛∩╝îµ▓íµ£ëµû░σó₧µ¿íσ₧ïµÇºΦâ╜σú░µÿÄ∩╝¢
-- ROI ΘÇëµï⌐σÅ¬Σ╛¥µì« train-side σ╖Ñτ¿ïΦ╡äµ║ÉσÅ»Φ┐ÉΦíîµÇº∩╝îΣ╕ìΣ╜┐τö¿ `liver_169`∩╝¢
-- Σ╕ïΣ╕Çµ¡Ñτ½ïσì│µû░σ╗║Σ╕ìΦªåτ¢ûσÄåσÅ▓Θàìτ╜«τÜä 20-epoch CT-only baseline Θàìτ╜«∩╝îτ╗ºτ╗¡Θççτö¿ epoch-aware training patchπÇüσ¢║σ«Ü patch-validationπÇüAdamW Σ╕ÄσÉêτÉå scheduler/early stopping∩╝îτä╢σÉÄσÉ»σè¿τ£ƒσ«₧Φ«¡τ╗âπÇé
+- 之前 5-epoch run 的工程链仍然有效，但其 CPU `num_workers=0` 训练 patch 多样性受该缺陷限制，因此不能仅通过“继续原配置多跑 epoch”来判断模型上限；
+- 下一步只使用 train/validation 做 CPU 资源与 ROI 选择：先对 `36³ / 48³ / 64³` 训练 patch 做单步耗时与可运行性检查，再固定新的 10–20 epoch CT-only baseline 配置；
+- 新方案完全固定前不再次运行 test，避免把 `liver_169` 用作调参集。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ V∩╝ÜΘöüσ«Ü 64┬│ CPU CT-only long-v2 Θàìτ╜«∩╝êGitHub σÉîµ¡Ñτé╣ #6∩╝ë
+### 2026-08-26｜阶段 U：CPU ROI 单步 benchmark（GitHub 同步点 #5）
 
-σ«îµêÉµû░τÜäΘò┐Φ«¡τ╗â baseline Θàìτ╜«∩╝Ü`configs/orthopedic_ct_cpu_binary_long_v2.yaml`∩╝îΣ╕ìΦªåτ¢ûµùº 36┬│ formal-pilot Θàìτ╜«σÆîσÄåσÅ▓σ«₧Θ¬îπÇé
+本阶段严格只使用 formal-pilot 的 `train` split，复用 `src.modeling.real_patch_smoke.run_real_patch_smoke()` 对 `36³ / 48³ / 64³` 做真实单 patch 训练链检查；每次均实际执行 Dataset 取样、SegFormer3D forward、Region Dice+CE loss、backward 与 AdamW optimizer step。没有读取 validation 指标做 ROI 选择，更没有访问独立 test `liver_169`。
 
-Θàìτ╜«σà│Θö«τé╣∩╝Ü
+真实结果：
 
-- task τ╗ºτ╗¡τ╗æσ«Üσ╖▓Θöüσ«Ü `vertebra_binary_ctspine1k_msd_t10_v1`∩╝îbinary semantic∩╝î2 τ▒╗∩╝¢
-- µò░µì« split τ╗ºτ╗¡Σ╜┐τö¿σ¢║σ«Ü 7 train / 2 validation / 1 test τÜä `ctspine1k_msd_t10_binary_formal_pilot_v1.json`∩╝¢
-- Φ╛ôσàÑΣ┐¥µîü CT-only∩╝îΣ╕ìµÅÉσëìσèáσàÑ bone-window∩╝¢loss Σ┐¥µîü Region Dice + CE∩╝îΣ╕ìµÅÉσëìσèáσàÑ Boundary/Topology∩╝¢
-- train ROI Σ╗Äµùº `36┬│` µÅÉσìçΣ╕║ `64┬│`∩╝¢foreground sampling=`0.8`∩╝¢
-- epochs=`20`∩╝îbatch size=`1`∩╝î`num_workers=0`∩╝îτ╗ºτ╗¡Σ╜┐τö¿σ╖▓Σ┐«σñìτÜä epoch-aware training patch∩╝¢
-- validation τ╗ºτ╗¡σ¢║σ«Ü `64┬│` foreground patch∩╝îΣ╕ìΘÜÅ epoch µ╝éτº╗∩╝îσÅ¬Σ╜£Σ╕║σ░Åµá╖µ£¼ checkpoint proxy∩╝¢
-- optimizer=`AdamW(lr=1e-4, weight_decay=0.01)`∩╝¢scheduler Σ┐¥µîü `2 epoch warmup + cosine annealing warm restarts (T0=10, min_lr=6e-6)`∩╝¢
-- early stopping patience Σ╗Äµùº 5 µÅÉΘ½ÿΣ╕║ `8`∩╝îΘü┐σàì 2 Σ╕¬ validation τùàΣ╛ïτÜäτƒ¡µ£ƒµ│óσè¿Φ┐çµù⌐τ╗êµ¡óΦ«¡τ╗â∩╝¢
-- full-volume inference/evaluation ROI Σ╗ìΣ┐¥µîü `128┬│`∩╝îµ£Çτ╗ê checkpoint Σ╗ìσ┐àΘí╗τö▒ validation full-volume σñìµá╕σÉÄσåìσàüΦ«╕ testπÇé
+- `36³`：3 次单步进程 wall-time 约 `1.929 / 1.840 / 1.821 s`，中位数约 `1.840 s`；单次结束 RSS≈`505 MB`，进程 peak working set≈`1529.8 MB`；
+- `48³`：3 次约 `1.972 / 1.894 / 1.970 s`，中位数约 `1.970 s`；单次结束 RSS≈`523 MB`，peak working set≈`1530.2 MB`；
+- `64³`：3 次约 `2.083 / 1.939 / 2.038 s`，中位数约 `2.038 s`；单次结束 RSS≈`565 MB`，peak working set≈`1530.7 MB`；
+- 三档均产生有限 loss、有限梯度并成功完成 optimizer step；本阶段的 loss 为随机初始化下工程 smoke 输出，不属于模型性能。
 
-Θ¬îµö╢∩╝Ü
+ROI 决策：
 
-- `formal_readiness` µÿ╛σ╝ÅΣ╝áσàÑσ╖▓Θöüσ«Ü task spec σ╣╢Σ╜┐τö¿ `--allow-cpu`∩╝Ü`ready=true`πÇü`blocker_count=0`∩╝¢
-- formal preflight∩╝Ü10 Σ╛ïµúÇµƒÑΘÇÜΦ┐ç∩╝îsplit=7/2/1∩╝îpipeline 0.3.0=10∩╝î0 error / 0 warning∩╝¢
-- σ╜ôσëì CPU-only GPU report Σ╗ìσªéσ«₧µÿ╛τñ║µùá CUDA∩╝îΣ╜åσ£¿µÿ╛σ╝Å `--allow-cpu` Σ╕ïΣ╕ìµ₧äµêÉ blocker∩╝¢
-- Σ╕ïΣ╕Çµ¡Ñτ¢┤µÄÑσÉ»σè¿Φ»ÑΘàìτ╜«τÜäτ£ƒσ«₧ 20-epoch Φ«¡τ╗â∩╝¢Φ«¡τ╗âµ£ƒΘù┤Σ╕ìσ╛ùΦ»╗σÅû `liver_169` σüÜΣ╗╗Σ╜òΦ░âσÅéπÇé
+- `48³` 明确可运行；
+- `64³` 相对 `48³` 的进程 wall-time 中位数仅增加约 3.5%，结束 RSS 约增加 42 MB，当前约 20 GB RAM 机器可轻松承受；同时 64³ 提供明显更大的 3D 解剖上下文；
+- 因此下一版 CT-only 长 baseline 固定使用 `64³`，不再沿用旧 `36³`；若后续完整 epoch 训练出现明显吞吐/内存异常，再回退到 `48³`，但不能使用 test 指标决定是否回退。
 
+验证与边界：
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ W∩╝Ü64┬│ CT-only long-v2 τ£ƒσ«₧Φ«¡τ╗âσ«îµêÉ early-stop∩╝êGitHub σÉîµ¡Ñτé╣ #8∩╝ë
-
-τ£ƒσ«₧ run∩╝Ü`experiments/20260826_162919_cpu_binary_long_v2_ct_only_roi64`πÇé
-
-µ£¼Θÿ╢µ«╡Σ╜┐τö¿σ╖▓τ╗ÅΘöüσ«Üσ╣╢ΘÇÜΦ┐ç formal preflight τÜä long-v2 Θàìτ╜«∩╝îΦ«¡τ╗âΣ╗àΣ╜┐τö¿ 7 Σ╕¬ train τùàΣ╛ï∩╝î2 Σ╕¬ validation τùàΣ╛ïΣ╜┐τö¿σ¢║σ«Ü 64┬│ foreground patch σüÜΣ╜ÄµêÉµ£¼ checkpoint proxy∩╝¢τï¼τ½ï test `liver_169` µ▓íµ£ëσÅéΣ╕ÄΦ«¡τ╗âπÇüschedulerπÇüearly stopping µêûΣ╗╗Σ╜òσÅéµò░σå│τ¡ûπÇé
-
-τ£ƒσ«₧Φ«¡τ╗âΦ╜¿Φ┐╣∩╝Üepoch 1 `lossΓëê4.22295 / valΓëê0.36133`∩╝êσ╜ôσëìµ£ÇΣ╜│∩╝ë∩╝¢epoch 2 `3.99598 / 0.28158`∩╝¢epoch 3 `3.19031 / 0.27159`∩╝¢epoch 4 `3.32249 / 0.24556`∩╝¢epoch 5 `2.68145 / 0.00103`∩╝¢epoch 6 `2.68893 / 0.20272`∩╝¢epoch 7 `1.85129 / 0.13539`∩╝¢epoch 8 `2.11683 / 0.14045`∩╝¢epoch 9 `2.36157 / 0.20656`πÇéΘÜÅσÉÄΦ╛╛σê░Θóäσàêσ¢║σ«ÜτÜä `early_stopping_patience=8`∩╝îµ¡úσ╕╕σü£µ¡óπÇé
-
-Σ║ºτë⌐σ«îµò┤∩╝Ü`config.yaml / split.json / run_metadata.json / history.csv / train.log / checkpoint/best.pt / checkpoint/last.pt / summary.json` σ¥çσ¡ÿσ£¿∩╝¢`best.pt` σ»╣σ║ö epoch 1∩╝î`last.pt` σ»╣σ║ö epoch 9πÇé
-
-ΦºúΘçèΣ╕ÄΦ╛╣τòî∩╝Ü
-
-- Φ«¡τ╗âΣ╕ìµÿ»σæ╜Σ╗ñΦ╢àµù╢µêûσ╝éσ╕╕Σ╕¡µû¡∩╝îΦÇîµÿ»µùóσ«Ü early stopping µ¡úσ╕╕ΦºªσÅæ∩╝¢σ¢áµ¡ñΣ╕ìΣ╕║Σ║åσçæΓÇ£20 epochsΓÇ¥τ╗òΦ┐ç validation ΦºäσêÖσ╝║Φíîτ╗ºτ╗¡∩╝¢
-- train loss µÿÄµÿ╛Σ╜ÄΣ║Äµù⌐µ£ƒ epoch∩╝îΣ╜åσ¢║σ«Ü patch-val µ£¬σåìΦ╢àΦ┐ç epoch 1∩╝îµÅÉτñ║σ░Åµá╖µ£¼Σ╕ïσÅ»Φâ╜σ¡ÿσ£¿µ│¢σîûΣ╕ïΘÖìµêû validation proxy σüÅσ╖«∩╝îΣ╕ìΦâ╜Σ╗àσç¡ patch proxy ΘÇëµï⌐µ£Çτ╗ê baseline∩╝¢
-- Σ╕ïΣ╕Çµ¡ÑσÅ¬σ»╣ `liver_7/liver_8` σüÜ full-volume validation∩╝îµ»öΦ╛â long-v2 `best.pt` Σ╕Äσ┐àΦªüσÇÖΘÇë checkpoint∩╝îΣ╜┐τö¿ Dice/IoU/Precision/Recall/HD95/ASSD/τ╗ôµ₧ä/uncertainty/calibration Σ╕Ä inference time Θöüσ«Ü baseline∩╝¢
-- σ£¿ validation σ«îµêÉσ╣╢σ¢║σ«Ü ROI/Φ«¡τ╗âΦ«╛τ╜«/checkpoint σëì∩╝îτªüµ¡óσåìµ¼íΦ«┐Θù« `liver_169` σüÜΘÇëµï⌐πÇé
+- benchmark 复用了现有真实单 patch smoke 训练链，没有新增模型性能声明；
+- ROI 选择只依据 train-side 工程资源可运行性，不使用 `liver_169`；
+- 下一步立即新建不覆盖历史配置的 20-epoch CT-only baseline 配置，继续采用 epoch-aware training patch、固定 patch-validation、AdamW 与合理 scheduler/early stopping，然后启动真实训练。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ X∩╝Üµö»µîü CPU σêåτùàΣ╛ï full-volume evaluation∩╝êGitHub σÉîµ¡Ñτé╣ #9∩╝ë
+### 2026-08-26｜阶段 V：锁定 64³ CPU CT-only long-v2 配置（GitHub 同步点 #6）
 
-σ£¿ long-v2 `best.pt` σ»╣µò┤Σ╕¬ validation split Σ╕Çµ¼íµÇº full-volume Φ»äΣ╝░µù╢∩╝îσìòµ¥íσæ╜Σ╗ñΦ╢àΦ┐ç 300 τºÆσ╖Ñσà╖µëºΦíîΣ╕èΘÖÉ∩╝¢Φ╢àµù╢σëìσ╖▓τ£ƒσ«₧τöƒµêÉ `liver_7` prediction/entropy∩╝îΦ»┤µÿÄΦ»äΣ╝░µ£¼Φ║½σÅ»µëºΦíî∩╝îΣ╜åΣ╕ñΣ╛ïΦ┐₧τ╗¡Φ┐ÉΦíîΣ╕ìΘÇéσÉêσ╜ôσëìσ╖Ñσà╖µù╢Θù┤τ¬ùπÇé
+完成新的长训练 baseline 配置：`configs/orthopedic_ct_cpu_binary_long_v2.yaml`，不覆盖旧 36³ formal-pilot 配置和历史实验。
 
-Σ╕║Σ┐¥µîüΦ»äΣ╝░µû╣µ│òΣ╕ìσÅÿΣ╕öΘü┐σàìΘçìσñìµ╡¬Φ┤╣τ«ùσè¢∩╝Ü
+配置关键点：
 
-- `src/modeling/evaluate.py` µû░σó₧ `case_id` σÅéµò░Σ╕Ä CLI `--case-id`∩╝¢
-- µîçσ«ÜτùàΣ╛ïσ┐àΘí╗σ╖▓τ╗Åσ▒₧Σ║ÄµëÇΘÇë `validation` µêû `test` split∩╝îσÉªσêÖτ¢┤µÄÑ `ValueError`∩╝îΣ╕ìΦâ╜σÇƒΦ»ÑσÅéµò░Φ╖¿ split τ╗òΦ┐çµò░µì«ΘÜöτª╗∩╝¢
-- formal preflight Σ╗ìσ£¿ case filter σëìµëºΦíî∩╝îΘàìτ╜«/task/split/QC Σ┐¥µèñΣ╕ìΘÖìΣ╜Ä∩╝¢
-- σìòτùàΣ╛ïΣ╗ìΣ╜┐τö¿σ«îσà¿τ¢╕σÉîτÜä full-volume sliding-windowπÇüσî║σƒƒ/Φí¿Θ¥ó/τ╗ôµ₧äπÇüuncertaintyπÇücalibration µîçµáçΣ╕Ä prediction/entropy Φ╛ôσç║∩╝¢
-- `summary.json` σó₧σèá `case_filter` Φ┐╜Φ╕¬σ¡ùµ«╡∩╝¢
-- `tests/test_evaluate_smoke.py` σó₧σèáσÉêµ│ò case filter Σ╕Ä split Φ╢èτòîµïÆτ╗¥σ¢₧σ╜Æµ╡ïΦ»ò∩╝¢σ«ÜσÉæµ╡ïΦ»ò `4 passed`πÇüRuff cleanπÇü`git diff --check` ΘÇÜΦ┐çπÇé
+- task 继续绑定已锁定 `vertebra_binary_ctspine1k_msd_t10_v1`，binary semantic，2 类；
+- 数据 split 继续使用固定 7 train / 2 validation / 1 test 的 `ctspine1k_msd_t10_binary_formal_pilot_v1.json`；
+- 输入保持 CT-only，不提前加入 bone-window；loss 保持 Region Dice + CE，不提前加入 Boundary/Topology；
+- train ROI 从旧 `36³` 提升为 `64³`；foreground sampling=`0.8`；
+- epochs=`20`，batch size=`1`，`num_workers=0`，继续使用已修复的 epoch-aware training patch；
+- validation 继续固定 `64³` foreground patch，不随 epoch 漂移，只作为小样本 checkpoint proxy；
+- optimizer=`AdamW(lr=1e-4, weight_decay=0.01)`；scheduler 保持 `2 epoch warmup + cosine annealing warm restarts (T0=10, min_lr=6e-6)`；
+- early stopping patience 从旧 5 提高为 `8`，避免 2 个 validation 病例的短期波动过早终止训练；
+- full-volume inference/evaluation ROI 仍保持 `128³`，最终 checkpoint 仍必须由 validation full-volume 复核后再允许 test。
 
-Σ╕ïΣ╕Çµ¡Ñσêåσê½Φ┐ÉΦíî `liver_7`πÇü`liver_8` τÜä long-v2 `best.pt` validation∩╝îσåìΣ╗ÑσÉîµá╖µû╣σ╝ÅΦ»äΣ╝░σ┐àΦªüσÇÖΘÇë checkpoint∩╝îσ╣╢σÅ¬Σ╛¥µì«Σ╕ñΣ╛ï validation µ▒çµÇ╗Θöüσ«Ü baselineπÇé
+验收：
+
+- `formal_readiness` 显式传入已锁定 task spec 并使用 `--allow-cpu`：`ready=true`、`blocker_count=0`；
+- formal preflight：10 例检查通过，split=7/2/1，pipeline 0.3.0=10，0 error / 0 warning；
+- 当前 CPU-only GPU report 仍如实显示无 CUDA，但在显式 `--allow-cpu` 下不构成 blocker；
+- 下一步直接启动该配置的真实 20-epoch 训练；训练期间不得读取 `liver_169` 做任何调参。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ Y∩╝Üσ«îµêÉ long-v2 full-volume validation Θù¡τÄ»σ╣╢τí«Φ«ñ patch selector σñ▒τ£ƒ∩╝êGitHub σÉîµ¡Ñτé╣ #10∩╝ë
+### 2026-08-26｜阶段 W：64³ CT-only long-v2 真实训练完成 early-stop（GitHub 同步点 #8）
 
-σ╖▓µá╕σ»╣Σ╗ÑΣ╕ïσ¢¢Σ╕¬σ╖▓µ£ë evaluation τÜä `metrics_per_case.csv` Σ╕Ä `summary.json`∩╝îµ▓íµ£ëΘçìσñìΦ┐ÉΦíî∩╝Ü
+真实 run：`experiments/20260826_162919_cpu_binary_long_v2_ct_only_roi64`。
 
-- `evaluation_20260826_long_v2_best_val_liver7`∩╝ÜDiceΓëê0.02765∩╝îASSDΓëê58.50 mm∩╝îcomponent error=1843∩╝¢
-- `evaluation_20260826_long_v2_best_val_liver8`∩╝ÜDiceΓëê0.04632∩╝îASSDΓëê55.04 mm∩╝îcomponent error=1391∩╝¢
-- `evaluation_20260826_long_v2_last_val_liver7`∩╝ÜDiceΓëê0.05431∩╝îASSDΓëê51.83 mm∩╝îcomponent error=1211∩╝¢
-- `evaluation_20260826_long_v2_last_val_liver8`∩╝ÜDiceΓëê0.04475∩╝îASSDΓëê49.74 mm∩╝îcomponent error=957πÇé
+本阶段使用已经锁定并通过 formal preflight 的 long-v2 配置，训练仅使用 7 个 train 病例，2 个 validation 病例使用固定 64³ foreground patch 做低成本 checkpoint proxy；独立 test `liver_169` 没有参与训练、scheduler、early stopping 或任何参数决策。
 
-Σ╕ñΣ╛ïµ▒çµÇ╗∩╝Ü`best.pt`∩╝êepoch 1∩╝ëσ╣│σ¥ç DiceΓëê0.03698πÇüσ╣│σ¥ç ASSDΓëê56.77 mmπÇüσ╣│σ¥ç component errorΓëê1617∩╝¢`last.pt`∩╝êepoch 9∩╝ëσ╣│σ¥ç DiceΓëê0.04953πÇüσ╣│σ¥ç ASSDΓëê50.78 mmπÇüσ╣│σ¥ç component errorΓëê1084πÇéΦÖ╜τä╢ `last.pt` Σ╗ìτä╢Θ¥₧σ╕╕σ╖«∩╝îΣ╜åσ£¿ full-volume validation Σ╕èµÇ╗Σ╜ôΣ╝ÿΣ║Äτö▒σ¢║σ«Ü patch validation ΘÇëσç║τÜä `best.pt`πÇé
+真实训练轨迹：epoch 1 `loss≈4.22295 / val≈0.36133`（当前最佳）；epoch 2 `3.99598 / 0.28158`；epoch 3 `3.19031 / 0.27159`；epoch 4 `3.32249 / 0.24556`；epoch 5 `2.68145 / 0.00103`；epoch 6 `2.68893 / 0.20272`；epoch 7 `1.85129 / 0.13539`；epoch 8 `2.11683 / 0.14045`；epoch 9 `2.36157 / 0.20656`。随后达到预先固定的 `early_stopping_patience=8`，正常停止。
 
-σà│Θö«τ╗ôΦ«║∩╝Üepoch 1 σ¢║σ«Ü 64┬│ patch-val DiceΓëê0.3613∩╝îΦÇîσÉî checkpoint Σ╕ñΣ╛ï full-volume σ╣│σ¥ç DiceΣ╗àΓëê0.037∩╝îσ╖«σ╝éΦ┐æΣ╕ÇΣ╕¬µò░ΘçÅτ║º∩╝¢σ¢áµ¡ñσ╜ôσëìσ¢║σ«Ü foreground patch validation Σ╕ÑΘçìΘ½ÿΣ╝░/Φ»»σêñσà¿σì╖µ│¢σîû∩╝îΣ╕ìΦâ╜τ╗ºτ╗¡Σ╜£Σ╕║σÅ»Θ¥á checkpoint selectorπÇélong-v2 σ╜ôσëìΣ╣ƒΣ╕ìΦâ╜τº░Σ╕║µ╗íµäÅ baseline∩╝îµ¢┤Σ╕ìΦâ╜µì«µ¡ñΘçìµû░Φ«┐Θù«τï¼τ½ï test `liver_169`πÇé
+产物完整：`config.yaml / split.json / run_metadata.json / history.csv / train.log / checkpoint/best.pt / checkpoint/last.pt / summary.json` 均存在；`best.pt` 对应 epoch 1，`last.pt` 对应 epoch 9。
 
-Σ╕ïΣ╕Çµ¡Ñσ╖▓τ╗ÅµÅÉσìçΣ╕║ P0∩╝Üσ«₧τÄ░ full-volume-aware checkpoint selection∩╝îσ╣╢Σ╝ÿσàêµÄÆµƒÑ foreground/background samplingπÇüRegion Dice+CE ΦâîµÖ»µèæσê╢πÇülabel mappingπÇütrain/inference preprocessingπÇüsliding-window stitching/logits resize/threshold Σ╕Ä class imbalance∩╝¢validation Φ»èµû¡Θ£Çσó₧σèá prediction/GT foreground fractionπÇüµªéτÄçσêåσ╕âπÇüconnected components Σ╕Ä false-positive τ⌐║Θù┤σêåσ╕âπÇé
+解释与边界：
 
-µ£¼σÉîµ¡Ñτé╣σ¢₧σ╜Æ∩╝Ü
+- 训练不是命令超时或异常中断，而是既定 early stopping 正常触发；因此不为了凑“20 epochs”绕过 validation 规则强行继续；
+- train loss 明显低于早期 epoch，但固定 patch-val 未再超过 epoch 1，提示小样本下可能存在泛化下降或 validation proxy 偏差，不能仅凭 patch proxy 选择最终 baseline；
+- 下一步只对 `liver_7/liver_8` 做 full-volume validation，比较 long-v2 `best.pt` 与必要候选 checkpoint，使用 Dice/IoU/Precision/Recall/HD95/ASSD/结构/uncertainty/calibration 与 inference time 锁定 baseline；
+- 在 validation 完成并固定 ROI/训练设置/checkpoint 前，禁止再次访问 `liver_169` 做选择。
+
+
+### 2026-08-26｜阶段 X：支持 CPU 分病例 full-volume evaluation（GitHub 同步点 #9）
+
+在 long-v2 `best.pt` 对整个 validation split 一次性 full-volume 评估时，单条命令超过 300 秒工具执行上限；超时前已真实生成 `liver_7` prediction/entropy，说明评估本身可执行，但两例连续运行不适合当前工具时间窗。
+
+为保持评估方法不变且避免重复浪费算力：
+
+- `src/modeling/evaluate.py` 新增 `case_id` 参数与 CLI `--case-id`；
+- 指定病例必须已经属于所选 `validation` 或 `test` split，否则直接 `ValueError`，不能借该参数跨 split 绕过数据隔离；
+- formal preflight 仍在 case filter 前执行，配置/task/split/QC 保护不降低；
+- 单病例仍使用完全相同的 full-volume sliding-window、区域/表面/结构、uncertainty、calibration 指标与 prediction/entropy 输出；
+- `summary.json` 增加 `case_filter` 追踪字段；
+- `tests/test_evaluate_smoke.py` 增加合法 case filter 与 split 越界拒绝回归测试；定向测试 `4 passed`、Ruff clean、`git diff --check` 通过。
+
+下一步分别运行 `liver_7`、`liver_8` 的 long-v2 `best.pt` validation，再以同样方式评估必要候选 checkpoint，并只依据两例 validation 汇总锁定 baseline。
+
+
+### 2026-08-26｜阶段 Y：完成 long-v2 full-volume validation 闭环并确认 patch selector 失真（GitHub 同步点 #10）
+
+已核对以下四个已有 evaluation 的 `metrics_per_case.csv` 与 `summary.json`，没有重复运行：
+
+- `evaluation_20260826_long_v2_best_val_liver7`：Dice≈0.02765，ASSD≈58.50 mm，component error=1843；
+- `evaluation_20260826_long_v2_best_val_liver8`：Dice≈0.04632，ASSD≈55.04 mm，component error=1391；
+- `evaluation_20260826_long_v2_last_val_liver7`：Dice≈0.05431，ASSD≈51.83 mm，component error=1211；
+- `evaluation_20260826_long_v2_last_val_liver8`：Dice≈0.04475，ASSD≈49.74 mm，component error=957。
+
+两例汇总：`best.pt`（epoch 1）平均 Dice≈0.03698、平均 ASSD≈56.77 mm、平均 component error≈1617；`last.pt`（epoch 9）平均 Dice≈0.04953、平均 ASSD≈50.78 mm、平均 component error≈1084。虽然 `last.pt` 仍然非常差，但在 full-volume validation 上总体优于由固定 patch validation 选出的 `best.pt`。
+
+关键结论：epoch 1 固定 64³ patch-val Dice≈0.3613，而同 checkpoint 两例 full-volume 平均 Dice仅≈0.037，差异近一个数量级；因此当前固定 foreground patch validation 严重高估/误判全卷泛化，不能继续作为可靠 checkpoint selector。long-v2 当前也不能称为满意 baseline，更不能据此重新访问独立 test `liver_169`。
+
+下一步已经提升为 P0：实现 full-volume-aware checkpoint selection，并优先排查 foreground/background sampling、Region Dice+CE 背景抑制、label mapping、train/inference preprocessing、sliding-window stitching/logits resize/threshold 与 class imbalance；validation 诊断需增加 prediction/GT foreground fraction、概率分布、connected components 与 false-positive 空间分布。
+
+本同步点回归：
 
 ```text
 pytest tests -q
-ΓåÆ 101 passed, 153 warnings
+→ 101 passed, 153 warnings
 
 ruff check src web tests
-ΓåÆ All checks passed!
+→ All checks passed!
 
 git diff --check
-ΓåÆ ΘÇÜΦ┐ç
+→ 通过
 ```
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ Z∩╝Üσ«ÜΣ╜ìσà¿σì╖σüçΘÿ│µÇºΣ╕╗σ¢áσ╣╢µë⌐σ▒òσñÜ patch Φ«¡τ╗â/Φ»èµû¡∩╝êGitHub σÉîµ¡Ñτé╣ #11∩╝ë
+### 2026-08-26｜阶段 Z：定位全卷假阳性主因并扩展多 patch 训练/诊断（GitHub 同步点 #11）
 
-σ»╣ long-v2 τÜäσ«₧ΘÖàΘççµá╖σêåσ╕âΣ╕Äσ¢¢Σ╕¬σ╖▓µ£ë validation prediction σüÜΣ║åΣ╕ìΦ«┐Θù« test τÜäΦ»èµû¡πÇé7 Σ╕¬ train σà¿σì╖σ╣│σ¥çσëìµÖ»Σ╜ôτ┤áσìáµ»öΣ╗àΓëê0.68%∩╝¢Σ╜åµîë long-v2 σÄƒΘàìτ╜« `foreground_probability=0.8`πÇüµ»ÅτùàΣ╛ïµ»Å epoch Σ╗à 1 patch σñìτÄ░ epoch 1ΓÇô9 τÜä 63 Σ╕¬τ£ƒσ«₧ΘÜÅµ£║µ╡üσÉÄ∩╝îΦ«¡τ╗â patch σ╣│σ¥çσëìµÖ»Γëê21.2%∩╝îΣ╕¡Σ╜ìµò░Γëê24.3%∩╝îΣ╗à 14/63 Σ╕║σà¿ΦâîµÖ» patchπÇéΣ╣ƒσ░▒µÿ»Φ»┤Φ«¡τ╗âµò░µì«σêåσ╕âΣ╕¡τÜäσëìµÖ»σàêΘ¬îτ║ªΦó½µö╛σñº 30 σÇìπÇé
+对 long-v2 的实际采样分布与四个已有 validation prediction 做了不访问 test 的诊断。7 个 train 全卷平均前景体素占比仅≈0.68%；但按 long-v2 原配置 `foreground_probability=0.8`、每病例每 epoch 仅 1 patch 复现 epoch 1–9 的 63 个真实随机流后，训练 patch 平均前景≈21.2%，中位数≈24.3%，仅 14/63 为全背景 patch。也就是说训练数据分布中的前景先验约被放大 30 倍。
 
-σê⌐τö¿σ╖▓µ£ë full-volume prediction τ¢┤µÄÑτ╗ƒΦ«í/τö▒ precision-recall Σ║ñσÅëµá╕σ»╣∩╝Ü`liver_7/liver_8` GT σëìµÖ»τ║ª 0.70% / 0.57%∩╝îΦÇî long-v2 prediction σëìµÖ»τ║ª 14.5%ΓÇô17.1%∩╝îτ║ªΣ╕║ GT τÜä 24ΓÇô27 σÇìπÇéΦ»Ñµò░ΘçÅτ║ºΣ╕ÄΦ«¡τ╗â patch prior σñ▒ΘàìΘ½ÿσ║ªΣ╕ÇΦç┤∩╝îσ¢áµ¡ñσ╜ôσëìµ£Çµ£ëΦ»üµì«τÜäΘªûΦªüµá╣σ¢áµÿ» foreground-biased sampling Φ┐çσ╝║ + µ»Å epoch patch µò░Φ┐çσ░æ∩╝îΦÇîΣ╕ìµÿ»τ«ÇσìòΓÇ£σåìσñÜΦ«¡σçáΣ╕¬ epochΓÇ¥πÇéσ╜ôσëìµúÇµƒÑµ£¬σÅæτÄ░ binary label mappingπÇütrain/evaluate Φ╜┤σÅÿµìóπÇüsliding-window predictor resize τÜäτ¢┤µÄÑσ«₧τÄ░ΘöÖΦ»»πÇé
+利用已有 full-volume prediction 直接统计/由 precision-recall 交叉核对：`liver_7/liver_8` GT 前景约 0.70% / 0.57%，而 long-v2 prediction 前景约 14.5%–17.1%，约为 GT 的 24–27 倍。该数量级与训练 patch prior 失配高度一致，因此当前最有证据的首要根因是 foreground-biased sampling 过强 + 每 epoch patch 数过少，而不是简单“再多训几个 epoch”。当前检查未发现 binary label mapping、train/evaluate 轴变换、sliding-window predictor resize 的直接实现错误。
 
-σ╖Ñτ¿ïΣ┐«σñì∩╝Ü
+工程修复：
 
-- `ProcessedOrthopedicCTDataset` µû░σó₧ `patches_per_case`∩╝îΦ«¡τ╗âµù╢µò░µì«Θ¢åΘò┐σ║ªµë⌐σ▒òΣ╕║ `case_count ├ù patches_per_case`∩╝¢
-- σÉîτùàΣ╛ïΣ╕ìσÉî patch slot Σ╕ÄΣ╕ìσÉî epoch Σ╜┐τö¿τï¼τ½ïπÇüσÅ»σñìτÄ░ΘÜÅµ£║µ╡ü∩╝îΣ┐¥τòÖσÄƒ epoch-aware sampling∩╝¢
-- `train.py` µÄÑσàÑ `training.patches_per_case`∩╝îσ╣╢σåÖσàÑ `run_metadata.json` / `summary.json`∩╝¢
-- `evaluate.py` µû░σó₧ `prediction_foreground_fraction`πÇü`target_foreground_fraction`πÇü`prediction_to_target_foreground_ratio` σê░ΘÇÉτùàΣ╛ï CSV Σ╕Ä summary∩╝îσÉÄτ╗¡µùáΘ£Çσåìµëïσ╖ÑσÅìµÄ¿σüçΘÿ│µÇºΦå¿ΦâÇ∩╝¢
-- µû░σó₧σñÜ patch ΘÜÅµ£║µ╡ü/σÅéµò░µáíΘ¬îΣ╕Ä evaluation foreground-fraction σ¢₧σ╜Æµ╡ïΦ»òπÇé
+- `ProcessedOrthopedicCTDataset` 新增 `patches_per_case`，训练时数据集长度扩展为 `case_count × patches_per_case`；
+- 同病例不同 patch slot 与不同 epoch 使用独立、可复现随机流，保留原 epoch-aware sampling；
+- `train.py` 接入 `training.patches_per_case`，并写入 `run_metadata.json` / `summary.json`；
+- `evaluate.py` 新增 `prediction_foreground_fraction`、`target_foreground_fraction`、`prediction_to_target_foreground_ratio` 到逐病例 CSV 与 summary，后续无需再手工反推假阳性膨胀；
+- 新增多 patch 随机流/参数校验与 evaluation foreground-fraction 回归测试。
 
-µ£¼σÉîµ¡Ñτé╣σ¢₧σ╜Æ∩╝Ü
+本同步点回归：
 
 ```text
 pytest tests -q
-ΓåÆ 103 passed, 153 warnings
+→ 103 passed, 153 warnings
 
 ruff check src web tests
-ΓåÆ All checks passed!
+→ All checks passed!
 
 git diff --check
-ΓåÆ ΘÇÜΦ┐ç
+→ 通过
 ```
 
-Σ╕ïΣ╕Çµ¡Ñτ¢┤µÄÑµû░σ╗║ CT-only v3∩╝îΣ╕ìΦªåτ¢û long-v2∩╝ÜΘÖìΣ╜Ä foreground samplingπÇüµÅÉΘ½ÿ patches_per_case∩╝îσ╣╢µèè `validation.patch_mode=false`∩╝îΦ«⌐ checkpoint/early stopping τ¢┤µÄÑΣ╛¥µì« `liver_7/liver_8` full-volume Dice∩╝¢Σ╗ìτªüµ¡óΦ«┐Θù« `liver_169`πÇé
+下一步直接新建 CT-only v3，不覆盖 long-v2：降低 foreground sampling、提高 patches_per_case，并把 `validation.patch_mode=false`，让 checkpoint/early stopping 直接依据 `liver_7/liver_8` full-volume Dice；仍禁止访问 `liver_169`。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ AA∩╝ÜΘöüσ«Ü balanced + full-volume validation v3 Θàìτ╜«∩╝êGitHub σÉîµ¡Ñτé╣ #12∩╝ë
+### 2026-08-26｜阶段 AA：锁定 balanced + full-volume validation v3 配置（GitHub 同步点 #12）
 
-µû░σ╗║ `configs/orthopedic_ct_cpu_binary_balanced_fullval_v3.yaml`∩╝îσÅ¬ΘÆêσ»╣σ╖▓σ«ÜΣ╜ìτÜä sampling/checkpoint Θù«ΘóÿσüÜµ£Çσ░ÅσÅ»σ╜Æσ¢áΣ┐«µö╣∩╝Ü
+新建 `configs/orthopedic_ct_cpu_binary_balanced_fullval_v3.yaml`，只针对已定位的 sampling/checkpoint 问题做最小可归因修改：
 
-- CT-onlyπÇü64┬│ ROIπÇüSegFormer3D τ╗ôµ₧äπÇüRegion Dice+CEπÇüAdamW lr=1e-4πÇüweight_decay=0.01 Σ┐¥µîüΣ╕ìσÅÿ∩╝¢
-- `foreground_probability: 0.8 ΓåÆ 0.25`∩╝îµÿ╛Φæùσó₧σèáτ║»ΦâîµÖ»/Σ╜ÄσëìµÖ» patch∩╝¢
-- `training.patches_per_case: 4`∩╝î7 Σ╕¬ train τùàΣ╛ïµ»Å epoch Σ╗Ä 7 Σ╕¬ patch µÅÉσìçσê░ 28 Σ╕¬ patch∩╝¢
-- `validation.patch_mode=false`∩╝îΣ╕ìσåìτö¿σ¢║σ«Ü foreground patch proxy∩╝îcheckpoint Σ╕Ä early stopping τ¢┤µÄÑΣ╛¥µì«Σ╕ñΣ╛ï validation full-volume Dice∩╝¢
-- Σ╕èΘÖÉ 12 epochπÇüpatience=4∩╝¢σªéµ₧£ full-volume Dice/σüçΘÿ│µÇºµ»öΣ╛ïµÿÄµÿ╛Σ╕ìµö╣σûä∩╝îσàüΦ«╕µÅÉσëìσü£µ¡ó∩╝îΣ╕ìΣ╕║σçæΦ╜«µò░τ╗ºτ╗¡µ╡¬Φ┤╣ CPUπÇé
+- CT-only、64³ ROI、SegFormer3D 结构、Region Dice+CE、AdamW lr=1e-4、weight_decay=0.01 保持不变；
+- `foreground_probability: 0.8 → 0.25`，显著增加纯背景/低前景 patch；
+- `training.patches_per_case: 4`，7 个 train 病例每 epoch 从 7 个 patch 提升到 28 个 patch；
+- `validation.patch_mode=false`，不再用固定 foreground patch proxy，checkpoint 与 early stopping 直接依据两例 validation full-volume Dice；
+- 上限 12 epoch、patience=4；如果 full-volume Dice/假阳性比例明显不改善，允许提前停止，不为凑轮数继续浪费 CPU。
 
-readiness∩╝Ü
+readiness：
 
 ```text
 formal_readiness --allow-cpu
-ΓåÆ ready=true
-ΓåÆ blocker_count=0
-ΓåÆ preflight 10 cases / split 7-2-1 / 0 error / 0 warning
+→ ready=true
+→ blocker_count=0
+→ preflight 10 cases / split 7-2-1 / 0 error / 0 warning
 ```
 
-Φ»ÑΘàìτ╜«Σ╗ìΣ╕Ñµá╝Σ╕ìΦ«┐Θù« `liver_169`∩╝¢Σ╕ïΣ╕Çµ¡Ñτ¢┤µÄÑσÉ»σè¿ v3 τ£ƒσ«₧Φ«¡τ╗âσ╣╢ΘÇÉ epoch full-volume validationπÇé
+该配置仍严格不访问 `liver_169`；下一步直接启动 v3 真实训练并逐 epoch full-volume validation。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ AB∩╝Übalanced v3 epoch 1/2 + detailed full-volume validation∩╝êGitHub σÉîµ¡Ñτé╣ #13∩╝ë
+### 2026-08-26｜阶段 AB：balanced v3 epoch 1/2 + detailed full-volume validation（GitHub 同步点 #13）
 
-v3 run∩╝Ü`experiments/20260826_173511_cpu_binary_balanced_fullval_v3_roi64`πÇéσ╜ôσëìτ£ƒσ«₧Φ«¡τ╗âσÄåσÅ▓∩╝Ü
+v3 run：`experiments/20260826_173511_cpu_binary_balanced_fullval_v3_roi64`。当前真实训练历史：
 
-- epoch 1∩╝Ütrain lossΓëê`2.55371`∩╝îΣ╕ñΣ╛ï full-volume val DiceΓëê`0.054070`∩╝îstdΓëê`0.010840`∩╝îvalidation inference totalΓëê`127.26 s`∩╝îlr=`5e-5`∩╝¢
-- epoch 2∩╝Ütrain lossΓëê`1.94022`∩╝îΣ╕ñΣ╛ï full-volume val DiceΓëê`0.040839`∩╝îstdΓëê`0.001075`∩╝îvalidation inference totalΓëê`130.42 s`∩╝îlr=`1e-4`∩╝¢
-- σ╜ôσëìµ£ÇΣ╜│ checkpoint∩╝Ü`checkpoint/best.pt`∩╝îσ»╣σ║ö epoch 1πÇé
+- epoch 1：train loss≈`2.55371`，两例 full-volume val Dice≈`0.054070`，std≈`0.010840`，validation inference total≈`127.26 s`，lr=`5e-5`；
+- epoch 2：train loss≈`1.94022`，两例 full-volume val Dice≈`0.040839`，std≈`0.001075`，validation inference total≈`130.42 s`，lr=`1e-4`；
+- 当前最佳 checkpoint：`checkpoint/best.pt`，对应 epoch 1。
 
-σ»╣ epoch 1 `best.pt` σÅ¬σ£¿ validation split σêåτùàΣ╛ïσüÜ detailed full-volume evaluation∩╝îµ£¬Φ«┐Θù« `liver_169`∩╝Ü
+对 epoch 1 `best.pt` 只在 validation split 分病例做 detailed full-volume evaluation，未访问 `liver_169`：
 
-- `liver_7`∩╝ÜDiceΓëê`0.04323`∩╝îIoUΓëê`0.02209`∩╝îPrecisionΓëê`0.02753`∩╝îRecallΓëê`0.10055`∩╝îHD95Γëê`199.91 mm`∩╝îASSDΓëê`56.25 mm`∩╝¢prediction foregroundΓëê`2.555%`∩╝îGTΓëê`0.700%`∩╝îratioΓëê`3.65`∩╝¢pred/target components=`1581/3`∩╝îcomponent error=`1578`∩╝îfalse merge=`1`∩╝îfalse break=`63`∩╝îinferenceΓëê`52.74 s`∩╝¢
-- `liver_8`∩╝ÜDiceΓëê`0.06491`∩╝îIoUΓëê`0.03354`∩╝îPrecisionΓëê`0.04267`∩╝îRecallΓëê`0.13561`∩╝îHD95Γëê`175.46 mm`∩╝îASSDΓëê`48.26 mm`∩╝¢prediction foregroundΓëê`1.799%`∩╝îGTΓëê`0.566%`∩╝îratioΓëê`3.18`∩╝¢pred/target components=`1599/2`∩╝îcomponent error=`1597`∩╝îfalse merge=`0`∩╝îfalse break=`68`∩╝îinferenceΓëê`83.14 s`πÇé
+- `liver_7`：Dice≈`0.04323`，IoU≈`0.02209`，Precision≈`0.02753`，Recall≈`0.10055`，HD95≈`199.91 mm`，ASSD≈`56.25 mm`；prediction foreground≈`2.555%`，GT≈`0.700%`，ratio≈`3.65`；pred/target components=`1581/3`，component error=`1578`，false merge=`1`，false break=`63`，inference≈`52.74 s`；
+- `liver_8`：Dice≈`0.06491`，IoU≈`0.03354`，Precision≈`0.04267`，Recall≈`0.13561`，HD95≈`175.46 mm`，ASSD≈`48.26 mm`；prediction foreground≈`1.799%`，GT≈`0.566%`，ratio≈`3.18`；pred/target components=`1599/2`，component error=`1597`，false merge=`0`，false break=`68`，inference≈`83.14 s`。
 
-Σ╕ñΣ╛ïσ╣│σ¥ç DiceΓëê`0.05407`πÇüPrecisionΓëê`0.03510`πÇüASSDΓëê`52.25 mm`πÇüforeground ratioΓëê`3.42`πÇéτ¢╕Φ╛â long-v2 `last.pt` σ╣│σ¥ç DiceΓëê`0.04953`πÇüPrecisionΓëê`0.02577`∩╝îΣ╕ö prediction/GT foreground ratio τ║ª `24ΓÇô27`∩╝îbalanced sampling σ╖▓µÿ╛ΦæùσÄïΣ╜Äµò┤σì╖σëìµÖ»Φ┐çΘóäµ╡ïσ╣╢σ╕ªµ¥Ñσ░Åσ╣à Dice/Precision µö╣σûä∩╝îΦ»┤µÿÄµû╣σÉæµ£ëµòêπÇé
+两例平均 Dice≈`0.05407`、Precision≈`0.03510`、ASSD≈`52.25 mm`、foreground ratio≈`3.42`。相较 long-v2 `last.pt` 平均 Dice≈`0.04953`、Precision≈`0.02577`，且 prediction/GT foreground ratio 约 `24–27`，balanced sampling 已显著压低整卷前景过预测并带来小幅 Dice/Precision 改善，说明方向有效。
 
-Σ╜åτ╗ôµ₧äΘöÖΦ»»µ▓íµ£ëσÉîµ¡Ñµö╣σûä∩╝Üv3 Σ╕ñΣ╛ï component count error σ╣│σ¥çΓëê`1587.5`∩╝îσÅìΦÇîΘ½ÿΣ║Ä long-v2 `last.pt` τÜäΓëê`1084`∩╝¢Recall Σ╣ƒΣ╗Ä long-v2 τÜäΘ½ÿΦ┐çΘóäµ╡ïτè╢µÇüµÿÄµÿ╛Σ╕ïΘÖìπÇéσ╜ôσëìτ╗ôΦ«║µÿ»ΓÇ£σëìµÖ»σàêΘ¬îσñ▒Θàìσ╖▓σñºσ╣àτ╝ôΦºú∩╝îΣ╜åΘóäµ╡ïΣ╗ìΘ½ÿσ║ªτóÄτëçσîû∩╝îbaseline Σ╗ìΣ╕ìσÅ»Θ¥áΓÇ¥∩╝îΣ╕ìΦâ╜µèè v3 ΦºåΣ╕║σ«îµêÉ∩╝îµ¢┤Σ╕ìΦâ╜Φ«┐Θù«τï¼τ½ï testπÇé
+但结构错误没有同步改善：v3 两例 component count error 平均≈`1587.5`，反而高于 long-v2 `last.pt` 的≈`1084`；Recall 也从 long-v2 的高过预测状态明显下降。当前结论是“前景先验失配已大幅缓解，但预测仍高度碎片化，baseline 仍不可靠”，不能把 v3 视为完成，更不能访问独立 test。
 
-µ£¼Θÿ╢µ«╡σ¢₧σ╜Æ∩╝Ü`pytest tests -q ΓåÆ 103 passed`∩╝¢`ruff check src web tests ΓåÆ All checks passed`∩╝¢`git diff --check ΓåÆ ΘÇÜΦ┐ç`πÇé
+本阶段回归：`pytest tests -q → 103 passed`；`ruff check src web tests → All checks passed`；`git diff --check → 通过`。
 
-Σ╕ïΣ╕Çµ¡Ñσàêτ╗ºτ╗¡ epoch 3∩╝¢ΦïÑ full-volume Dice Σ╕ìσ¢₧σìçπÇüforeground ratio/Precision µü╢σîûµêû fragmentation τ╗ºτ╗¡Σ╕ÑΘçì∩╝îσêÖσü£µ¡óµ£║µó░τ╗¡Φ«¡σ╣╢Σ╝ÿσàêµúÇµƒÑ Region Dice+CE µ¥âΘçìπÇüΦâîµÖ»σêåτ▒╗τ║ªµ¥ƒΣ╕Ä sampling σÅéµò░πÇé
+下一步先继续 epoch 3；若 full-volume Dice 不回升、foreground ratio/Precision 恶化或 fragmentation 继续严重，则停止机械续训并优先检查 Region Dice+CE 权重、背景分类约束与 sampling 参数。
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ AC∩╝Üv3 epoch 3 ΦâîµÖ»σíîτ╝⌐Φ»èµû¡∩╝êGitHub σÉîµ¡Ñτé╣ #14∩╝ë
+### 2026-08-26｜阶段 AC：v3 epoch 3 背景塌缩诊断（GitHub 同步点 #14）
 
-Σ╗ÄσÉîΣ╕Ç v3 run τÜä `last.pt` resume σê░µÇ╗ epoch 3∩╝îτ£ƒσ«₧τ╗ôµ₧£∩╝Ütrain lossΓëê`1.63162`∩╝îfull-volume val DiceΓëê`1.30e-11`∩╝îΦ»┤µÿÄΦ«¡τ╗âµìƒσñ▒τ╗ºτ╗¡Σ╕ïΘÖìΣ╜åσà¿σì╖µ│¢σîûσÅæτöƒτü╛ΘÜ╛µÇºσíîτ╝⌐∩╝îσ¢áµ¡ñµ▓íµ£ëτ╗ºτ╗¡ epoch 4πÇé
+从同一 v3 run 的 `last.pt` resume 到总 epoch 3，真实结果：train loss≈`1.63162`，full-volume val Dice≈`1.30e-11`，说明训练损失继续下降但全卷泛化发生灾难性塌缩，因此没有继续 epoch 4。
 
-σ»╣ epoch 3 `last.pt` τÜä validation detailed evaluation∩╝Ü`liver_7` Dice/Precision/Recall=`0/0/0`∩╝îprediction foregroundΓëê`0.326%`πÇüGTΓëê`0.700%`πÇüratioΓëê`0.466`∩╝îpred components=`351`∩╝¢`liver_8` Dice/Precision/Recall=`0/0/0`∩╝îprediction foregroundΓëê`0.150%`πÇüGTΓëê`0.566%`πÇüratioΓëê`0.265`∩╝îpred components=`341`πÇéΦ┐ÖΣ║¢Θóäµ╡ïΣ╕Äτ£ƒσ«₧σëìµÖ»σ«îσà¿Σ╕ìΘçìσÅá∩╝îσ▒₧Σ║ÄΦâîµÖ»σíîτ╝⌐/ΘöÖΦ»»Σ╜ìτ╜«σ░æΘçÅτóÄτëç∩╝îΦÇîΣ╕ìµÿ»τ╗ºτ╗¡Φ«¡τ╗âσÅ»Φç¬τä╢µüóσñìτÜäµÖ«ΘÇÜµ│óσè¿πÇé
+对 epoch 3 `last.pt` 的 validation detailed evaluation：`liver_7` Dice/Precision/Recall=`0/0/0`，prediction foreground≈`0.326%`、GT≈`0.700%`、ratio≈`0.466`，pred components=`351`；`liver_8` Dice/Precision/Recall=`0/0/0`，prediction foreground≈`0.150%`、GT≈`0.566%`、ratio≈`0.265`，pred components=`341`。这些预测与真实前景完全不重叠，属于背景塌缩/错误位置少量碎片，而不是继续训练可自然恢复的普通波动。
 
-Σ╗úτáüµúÇµƒÑµÿ╛τñ║ `RegionDiceCELoss3D` σ╜ôσëìµèè foreground Dice loss Σ╕Äµ£¬σèáµ¥âσà¿Σ╜ôτ┤á CrossEntropy Σ╗ÑΘ╗ÿΦ«ñ `1:1` τ¢╕σèá∩╝¢`train.build_criterion()` σ»╣ `region_dice_ce` σÅ¬Σ╝á `include_background`∩╝îσ░Üµ£¬Φ»╗σÅû YAML τÜä `dice_weight/ce_weight`πÇéσ£¿ v3 σ╖▓σñºσ╣àσó₧σèáΦâîµÖ» patch τÜäµ¥íΣ╗╢Σ╕ï∩╝îΦ┐ÖΣ╕Çσ«₧τÄ░Σ╝ÜΦ«⌐ CE τÜäµ╡╖ΘçÅΦâîµÖ»Σ╜ôτ┤áµ¢┤σ«╣µÿôΣ╕╗σ»╝Σ╝ÿσîû∩╝îσÆî epoch 3 collapse τÜäµû╣σÉæΣ╕ÇΦç┤πÇéΣ╕ïΣ╕Çµ¡ÑΘççτö¿µ£Çσ░ÅσÅ»σ╜Æσ¢áΣ┐«σñì∩╝ÜΣ┐¥µîü sampling Σ╕ìσÅÿ∩╝îΣ╗àΦ«⌐ YAML σÅ»Θàìτ╜« Dice/CE σåàΘâ¿µ¥âΘçìσ╣╢ΘÖìΣ╜Ä CE µ¥âΘçìσüÜµû░ run validationπÇé
+代码检查显示 `RegionDiceCELoss3D` 当前把 foreground Dice loss 与未加权全体素 CrossEntropy 以默认 `1:1` 相加；`train.build_criterion()` 对 `region_dice_ce` 只传 `include_background`，尚未读取 YAML 的 `dice_weight/ce_weight`。在 v3 已大幅增加背景 patch 的条件下，这一实现会让 CE 的海量背景体素更容易主导优化，和 epoch 3 collapse 的方向一致。下一步采用最小可归因修复：保持 sampling 不变，仅让 YAML 可配置 Dice/CE 内部权重并降低 CE 权重做新 run validation。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ W∩╝Üσ«₧τÄ░σ╣╢σ«₧µ╡ïσÅ»Θ¥á checkpoint resume∩╝êGitHub σÉîµ¡Ñτé╣ #7∩╝ë
+### 2026-08-26｜阶段 W：实现并实测可靠 checkpoint resume（GitHub 同步点 #7）
 
-Σ╕║Σ║åΘü┐σàì CPU 20/50 epoch Θò┐Φ«¡τ╗âσ¢áσìòµ¼íσæ╜Σ╗ñµëºΦíîΣ╕èΘÖÉΣ╕¡µû¡σÉÄσÅ¬Φâ╜Θçìσñ┤σ╝Çσºï∩╝îµ£¼Θÿ╢µ«╡µèè checkpoint resume µÅÉσëìσ«₧τÄ░σ╣╢σ«îµêÉτ£ƒσ«₧τ½»σê░τ½»Θ¬îΦ»üπÇé
+为了避免 CPU 20/50 epoch 长训练因单次命令执行上限中断后只能重头开始，本阶段把 checkpoint resume 提前实现并完成真实端到端验证。
 
-Σ╗úτáüσ«îµêÉ∩╝Ü
+代码完成：
 
-- `train.py` µû░σó₧ `--resume <checkpoint>`∩╝¢`--max-epochs` σ£¿ resume µ¿íσ╝ÅΣ╕ïΦí¿τñ║Φ»Ñ run τÜäµÇ╗τ¢«µáç epoch∩╝îΦÇîΣ╕ìµÿ»ΓÇ£σåìΦ«¡τ╗âσñÜσ░æΦ╜«ΓÇ¥∩╝¢
-- µ»ÅΣ╕¬σ«îµêÉτÜä epoch ΘÖñµ£ÇΣ╜│ `best.pt` σñû∩╝îσ¢║σ«ÜσåÖσàÑ `checkpoint/last.pt`∩╝¢
-- checkpoint τÄ░σ£¿σÉîµù╢Σ┐¥σ¡ÿ/µüóσñì∩╝Ümodel stateπÇüoptimizer stateπÇüscheduler stateπÇüσ╜ôσëì epochπÇübest validation DiceπÇüearly-stopping Φ┐₧τ╗¡µ£¬µö╣σûäΦ«íµò░∩╝¢
-- Θó¥σñûΣ┐¥σ¡ÿ/µüóσñì Python / NumPy / Torch / CUDA RNG τè╢µÇü∩╝îΘü┐σàìτ╗¡Φ«¡µù╢ DataLoader shuffle σÆîσà╢σ«âΘÜÅµ£║µ╡üµùáµ¥íΣ╗╢Θçìτ╜«∩╝¢
-- `WarmupCosineRestarts` µû░σó₧ `load_state_dict()`∩╝¢
-- resume µù╢σñìτö¿σÄƒ run τ¢«σ╜ò∩╝îΣ╕ìΦªåτ¢û `config.yaml / split.json`∩╝î`history.csv` µö╣Σ╕║Φ┐╜σèá∩╝¢`run_metadata.json` Φ«░σ╜ò resume event∩╝¢
-- checkpoint Σ╕¡ config Σ╕Äσ╜ôσëì config Σ╕ìΣ╕ÇΦç┤µù╢µïÆτ╗¥ resume∩╝îΘÿ▓µ¡óµèèΣ╕ìσÉîσ«₧Θ¬îΘöÖΦ»»µï╝µÄÑσ£¿Σ╕ÇΦ╡╖∩╝¢
-- `summary.json` µû░σó₧ `last_epoch / target_max_epochs / epochs_without_improvement / resumed`πÇé
+- `train.py` 新增 `--resume <checkpoint>`；`--max-epochs` 在 resume 模式下表示该 run 的总目标 epoch，而不是“再训练多少轮”；
+- 每个完成的 epoch 除最佳 `best.pt` 外，固定写入 `checkpoint/last.pt`；
+- checkpoint 现在同时保存/恢复：model state、optimizer state、scheduler state、当前 epoch、best validation Dice、early-stopping 连续未改善计数；
+- 额外保存/恢复 Python / NumPy / Torch / CUDA RNG 状态，避免续训时 DataLoader shuffle 和其它随机流无条件重置；
+- `WarmupCosineRestarts` 新增 `load_state_dict()`；
+- resume 时复用原 run 目录，不覆盖 `config.yaml / split.json`，`history.csv` 改为追加；`run_metadata.json` 记录 resume event；
+- checkpoint 中 config 与当前 config 不一致时拒绝 resume，防止把不同实验错误拼接在一起；
+- `summary.json` 新增 `last_epoch / target_max_epochs / epochs_without_improvement / resumed`。
 
-τ£ƒσ«₧ 64┬│ resume smoke∩╝Ü
+真实 64³ resume smoke：
 
-- run∩╝Ü`experiments/20260826_162450_cpu_binary_long_v2_ct_only_roi64`∩╝¢
-- τ¼¼Σ╕Çµ¼íΦ┐ÉΦíî `--max-epochs 1`∩╝Üepoch 1 train lossΓëê`4.22295`∩╝îσ¢║σ«Ü patch-val DiceΓëê`0.36133`∩╝¢
-- ΘÜÅσÉÄΣ╗ÄσÉîΣ╕Ç run τÜä `checkpoint/last.pt` µëºΦíî `--max-epochs 2 --resume ...`∩╝ÜµêÉσèƒτ¢┤µÄÑΦ┐¢σàÑ epoch 2∩╝îtrain lossΓëê`3.99598`∩╝îpatch-val DiceΓëê`0.28158`∩╝¢
-- `history.csv` Σ┐¥µîü epoch `1 ΓåÆ 2` Φ┐₧τ╗¡∩╝îµ▓íµ£ëµû░σ╗║τ¼¼Σ║îΣ╕¬ run∩╝¢
-- `best.pt` Σ╕Ä `last.pt` σ¥çσ¡ÿσ£¿∩╝îresume metadata Φ«░σ╜ò checkpoint epoch=1πÇütarget=2∩╝¢
-- Φ┐ÖΣ║¢ 1ΓÇô2 epoch µò░σÇ╝σÅ¬µÿ» resume σ╖Ñτ¿ïΘ¬îΦ»ü∩╝îΣ╕ìΣ╜£Σ╕║ 20-epoch baseline τ╗ôµ₧£∩╝îΣ╣ƒΣ╕ìΦ«┐Θù« test `liver_169`πÇé
+- run：`experiments/20260826_162450_cpu_binary_long_v2_ct_only_roi64`；
+- 第一次运行 `--max-epochs 1`：epoch 1 train loss≈`4.22295`，固定 patch-val Dice≈`0.36133`；
+- 随后从同一 run 的 `checkpoint/last.pt` 执行 `--max-epochs 2 --resume ...`：成功直接进入 epoch 2，train loss≈`3.99598`，patch-val Dice≈`0.28158`；
+- `history.csv` 保持 epoch `1 → 2` 连续，没有新建第二个 run；
+- `best.pt` 与 `last.pt` 均存在，resume metadata 记录 checkpoint epoch=1、target=2；
+- 这些 1–2 epoch 数值只是 resume 工程验证，不作为 20-epoch baseline 结果，也不访问 test `liver_169`。
 
-σ¢₧σ╜Æ∩╝Ü
+回归：
 
 ```text
 pytest tests -q --disable-warnings
-ΓåÆ 100 passed, 153 warnings
+→ 100 passed, 153 warnings
 
 ruff check src web tests
-ΓåÆ All checks passed!
+→ All checks passed!
 
 git diff --check
-ΓåÆ ΘÇÜΦ┐ç
+→ 通过
 ```
 
-Σ╕ïΣ╕Çµ¡Ñ∩╝Ü
+下一步：
 
-- σàêµÅÉΣ║ñσ╣╢σÉîµ¡Ñµ£¼ resume µ£║σê╢∩╝¢
-- σåìΣ╗Äσ╣▓σçÇ Git τè╢µÇüµû░σ╗║τ£ƒµ¡úτÜä 20-epoch long-v2 run∩╝îσ╣╢σê⌐τö¿ `last.pt` σêåµ«╡τ╗¡Φ«¡σê░µÇ╗τ¢«µáç 20 epoch∩╝¢
-- 20 epoch σ«îµêÉσÉÄσÅ¬µá╣µì« train + validation σêñµû¡µÿ»σÉªτ╗ºτ╗¡ 50 epoch∩╝¢σ£¿ full-volume validation σ«îµêÉπÇüµ£Çτ╗ê checkpoint σ¢║σ«ÜΣ╣ïσëì∩╝îΣ╕ìσåìµ¼íΦ«┐Θù« testπÇé
+- 先提交并同步本 resume 机制；
+- 再从干净 Git 状态新建真正的 20-epoch long-v2 run，并利用 `last.pt` 分段续训到总目标 20 epoch；
+- 20 epoch 完成后只根据 train + validation 判断是否继续 50 epoch；在 full-volume validation 完成、最终 checkpoint 固定之前，不再次访问 test。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ AD∩╝Üv4 Region Dice+CE µ¥âΘçìσ╖Ñτ¿ïΘù¡τÄ»∩╝êGitHub σÉîµ¡Ñτé╣ #15∩╝ë
+### 2026-08-26｜阶段 AD：v4 Region Dice+CE 权重工程闭环（GitHub 同步点 #15）
 
-σ£¿ v3 epoch 3 σ╖▓τí«Φ«ñΦâîµÖ»σíîτ╝⌐σÉÄ∩╝îµ£¼Θÿ╢µ«╡Σ╕Ñµá╝µîëΓÇ£Σ╕Çµ¼íσÅ¬µö╣Σ╕ÇΣ╕¬Σ╕╗ΦªüσÅÿΘçÅΓÇ¥τÜäσÄƒσêÖ∩╝îΣ╗àΣ┐«σñì Region Dice+CE σåàΘâ¿µ¥âΘçìτÜäΘàìτ╜«Θô╛∩╝îΣ╕ìµö╣σÅÿ v3 τÜäµò░µì« splitπÇüCT-only Φ╛ôσàÑπÇü64┬│ ROIπÇü`foreground_probability=0.25`πÇü`patches_per_case=4`πÇüfull-volume validation µêû optimizer/schedulerπÇé
+在 v3 epoch 3 已确认背景塌缩后，本阶段严格按“一次只改一个主要变量”的原则，仅修复 Region Dice+CE 内部权重的配置链，不改变 v3 的数据 split、CT-only 输入、64³ ROI、`foreground_probability=0.25`、`patches_per_case=4`、full-volume validation 或 optimizer/scheduler。
 
-σ«îµêÉσåàσ«╣∩╝Ü
+完成内容：
 
-- `src/modeling/train.py`∩╝Ü`region_dice_ce` τÄ░σ£¿τ£ƒσ«₧Σ╗Ä YAML Φ»╗σÅû `loss.dice_weight` Σ╕Ä `loss.ce_weight`∩╝¢
-- `src/modeling/joint_loss.py`∩╝Üµû░σó₧ Dice/CE µ¥âΘçìΘ¥₧Φ┤ƒΣ╕öΣ╕ìΦâ╜σÉîµù╢Σ╕║ 0 τÜäσÉêµ│òµÇºµúÇµƒÑ∩╝¢
-- `tests/test_training_smoke.py`∩╝Üµû░σó₧σ¢₧σ╜Æµ╡ïΦ»ò∩╝îτí«Φ«ñ `build_criterion()` Φâ╜µ¡úτí«Φ»╗σÅû `dice_weight=1.0 / ce_weight=0.25`∩╝¢
-- µû░σ╗║ `configs/orthopedic_ct_cpu_binary_balanced_loss_v4.yaml`∩╝ÜΣ┐¥µîü v3 σà╢σ«âµ¥íΣ╗╢Σ╕ìσÅÿ∩╝îΣ╗àµèè Region CE τ¢╕σ»╣µ¥âΘçìΣ╗Ä 1.0 ΘÖìσê░ 0.25∩╝¢
-- µ£¬Φ«┐Θù«τï¼τ½ï test `liver_169`∩╝îµ£¼µ¼íµëÇµ£ëµúÇµƒÑσÅ¬Σ╜┐τö¿Θöüσ«Ü taskπÇüformal-pilot split Σ╕Ä train/validation ΦºäσêÖπÇé
+- `src/modeling/train.py`：`region_dice_ce` 现在真实从 YAML 读取 `loss.dice_weight` 与 `loss.ce_weight`；
+- `src/modeling/joint_loss.py`：新增 Dice/CE 权重非负且不能同时为 0 的合法性检查；
+- `tests/test_training_smoke.py`：新增回归测试，确认 `build_criterion()` 能正确读取 `dice_weight=1.0 / ce_weight=0.25`；
+- 新建 `configs/orthopedic_ct_cpu_binary_balanced_loss_v4.yaml`：保持 v3 其它条件不变，仅把 Region CE 相对权重从 1.0 降到 0.25；
+- 未访问独立 test `liver_169`，本次所有检查只使用锁定 task、formal-pilot split 与 train/validation 规则。
 
-τ£ƒσ«₧Θ¬îµö╢∩╝Ü
+真实验收：
 
 ```text
 formal_readiness --task-spec configs/task_specs/vertebra_binary_ctspine1k_msd_t10_v1.json \
   --config configs/orthopedic_ct_cpu_binary_balanced_loss_v4.yaml --allow-cpu
-ΓåÆ ready=true
-ΓåÆ blocker_count=0
-ΓåÆ preflight 10 cases / split 7-2-1 / 0 error / 0 warning
+→ ready=true
+→ blocker_count=0
+→ preflight 10 cases / split 7-2-1 / 0 error / 0 warning
 
 pytest tests -q
-ΓåÆ 104 passed, 153 warnings
+→ 104 passed, 153 warnings
 
 ruff check src web tests
-ΓåÆ All checks passed!
+→ All checks passed!
 
 git diff --check
-ΓåÆ ΘÇÜΦ┐ç
+→ 通过
 ```
 
-Σ╕ïΣ╕Çµ¡Ñτ¢┤µÄÑσÉ»σè¿µû░τÜä v4 run∩╝îσàêσÅ¬Φ╖æ epoch 1∩╝¢ΘÜÅσÉÄΣ╗àσ»╣ `liver_7/liver_8` σüÜ full-volume validation Σ╕Ä detailed evaluation∩╝îΦüöσÉêµúÇµƒÑ DiceπÇüPrecisionπÇüRecallπÇüHD95πÇüASSDπÇüprediction/target foreground ratioπÇücomponent fragmentationπÇüuncertainty/calibration Σ╕Ä inference timeπÇéΦïÑ epoch 1 µÿÄµÿ╛µö╣σûäσåìτ╗¡Φ«¡ epoch 2/3∩╝¢ΦïÑΣ╗ìσç║τÄ░ΓÇ£epoch 1 σ░ÜσÅ»πÇüσÉÄτ╗¡σíîτ╝⌐ΓÇ¥∩╝îΣ╕ïΣ╕ÇΣ╝ÿσàêσÅÿΘçÅµÿ»µèèσ¡ªΣ╣áτÄçΣ╗Ä `1e-4` ΘÖìσê░ `5e-5`∩╝îΦÇîΣ╕ìµÿ»τ╗ºτ╗¡µ£║µó░σó₧σèá epochπÇé
+下一步直接启动新的 v4 run，先只跑 epoch 1；随后仅对 `liver_7/liver_8` 做 full-volume validation 与 detailed evaluation，联合检查 Dice、Precision、Recall、HD95、ASSD、prediction/target foreground ratio、component fragmentation、uncertainty/calibration 与 inference time。若 epoch 1 明显改善再续训 epoch 2/3；若仍出现“epoch 1 尚可、后续塌缩”，下一优先变量是把学习率从 `1e-4` 降到 `5e-5`，而不是继续机械增加 epoch。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ AE∩╝Üv4 epoch 1 τ£ƒσ«₧Θ¬îΦ»üΓÇöΓÇöCE=0.25 σ»╝Φç┤σëìµÖ»τ║ªµ¥ƒΦ┐çσ╝▒∩╝êGitHub σÉîµ¡Ñτé╣ #16∩╝ë
+### 2026-08-26｜阶段 AE：v4 epoch 1 真实验证——CE=0.25 导致前景约束过弱（GitHub 同步点 #16）
 
-v4 run∩╝Ü`experiments/20260826_213818_cpu_binary_balanced_loss_v4_roi64`πÇéµ£¼Θÿ╢µ«╡σÅ¬Φ«¡τ╗âσê░ epoch 1∩╝îΣ╕ìΦ«┐Θù«τï¼τ½ï test `liver_169`πÇé
+v4 run：`experiments/20260826_213818_cpu_binary_balanced_loss_v4_roi64`。本阶段只训练到 epoch 1，不访问独立 test `liver_169`。
 
-τ£ƒσ«₧Φ«¡τ╗â/full-volume validation∩╝Ü
+真实训练/full-volume validation：
 
-- epoch 1 train lossΓëê`1.350736`∩╝¢
-- Σ╕ñΣ╛ï full-volume validation mean DiceΓëê`0.047625`∩╝îstdΓëê`0.001878`∩╝¢
-- validation inference totalΓëê`134.19 s`∩╝¢
-- epoch 1 lr=`5e-5`∩╝¢
-- σ╜ôσëì v4 `best.pt` σì│ epoch 1∩╝Ü`experiments/20260826_213818_cpu_binary_balanced_loss_v4_roi64/checkpoint/best.pt`πÇé
+- epoch 1 train loss≈`1.350736`；
+- 两例 full-volume validation mean Dice≈`0.047625`，std≈`0.001878`；
+- validation inference total≈`134.19 s`；
+- epoch 1 lr=`5e-5`；
+- 当前 v4 `best.pt` 即 epoch 1：`experiments/20260826_213818_cpu_binary_balanced_loss_v4_roi64/checkpoint/best.pt`。
 
-σêåτùàΣ╛ï detailed validation∩╝Ü
+分病例 detailed validation：
 
-- `liver_7`∩╝ÜDiceΓëê`0.04950`∩╝îPrecisionΓëê`0.02888`∩╝îRecallΓëê`0.17306`∩╝îHD95Γëê`218.02 mm`∩╝îASSDΓëê`55.76 mm`∩╝îprediction/GT foreground ratioΓëê`5.99`∩╝îpred/target components=`2128/3`∩╝îcomponent error=`2125`∩╝îfalse merge=`1`∩╝îfalse break=`89`∩╝îinferenceΓëê`54.62 s`∩╝¢
-- `liver_8`∩╝ÜDiceΓëê`0.04575`∩╝îPrecisionΓëê`0.02672`∩╝îRecallΓëê`0.15878`∩╝îHD95Γëê`208.74 mm`∩╝îASSDΓëê`54.91 mm`∩╝îprediction/GT foreground ratioΓëê`5.94`∩╝îpred/target components=`1863/2`∩╝îcomponent error=`1861`∩╝îfalse merge=`0`∩╝îfalse break=`98`∩╝îinferenceΓëê`87.58 s`πÇé
+- `liver_7`：Dice≈`0.04950`，Precision≈`0.02888`，Recall≈`0.17306`，HD95≈`218.02 mm`，ASSD≈`55.76 mm`，prediction/GT foreground ratio≈`5.99`，pred/target components=`2128/3`，component error=`2125`，false merge=`1`，false break=`89`，inference≈`54.62 s`；
+- `liver_8`：Dice≈`0.04575`，Precision≈`0.02672`，Recall≈`0.15878`，HD95≈`208.74 mm`，ASSD≈`54.91 mm`，prediction/GT foreground ratio≈`5.94`，pred/target components=`1863/2`，component error=`1861`，false merge=`0`，false break=`98`，inference≈`87.58 s`。
 
-Σ╕ñΣ╛ïσ╣│σ¥ç∩╝Ü
+两例平均：
 
-- DiceΓëê`0.04762`∩╝¢
-- PrecisionΓëê`0.02780`∩╝¢
-- RecallΓëê`0.16592`∩╝¢
-- HD95Γëê`213.38 mm`∩╝¢
-- ASSDΓëê`55.33 mm`∩╝¢
-- prediction/GT foreground ratioΓëê`5.97`∩╝¢
-- component count errorΓëê`1993`πÇé
+- Dice≈`0.04762`；
+- Precision≈`0.02780`；
+- Recall≈`0.16592`；
+- HD95≈`213.38 mm`；
+- ASSD≈`55.33 mm`；
+- prediction/GT foreground ratio≈`5.97`；
+- component count error≈`1993`。
 
-Σ╕Ä v3 epoch 1 σ»╣µ»ö∩╝Üv3 mean DiceΓëê`0.05407`πÇüPrecisionΓëê`0.03510`πÇüforeground ratioΓëê`3.42`πÇücomponent count errorΓëê`1587.5`πÇéσ¢áµ¡ñ v4 σ╣╢µ£¬µö╣σûä∩╝îΦÇîµÿ»µèèσà¿σì╖σëìµÖ»Φ┐çΘóäµ╡ïΣ╕ÄτóÄτëçσîûσåìµ¼íµö╛σñºπÇéσ╜ôσëìΦ»üµì«µ¢┤µö»µîüΓÇ£CE=0.25 Φ┐çΣ╜Ä∩╝îΦâîµÖ»σêåτ▒╗τ║ªµ¥ƒΣ╕ìΦ╢│ΓÇ¥∩╝îΦÇîΣ╕ìµÿ»ΓÇ£τ╗ºτ╗¡ΘÖìΣ╜Ä CE σÅ»Σ╗ÑΣ┐«σñìΦâîµÖ»σíîτ╝⌐ΓÇ¥πÇé
+与 v3 epoch 1 对比：v3 mean Dice≈`0.05407`、Precision≈`0.03510`、foreground ratio≈`3.42`、component count error≈`1587.5`。因此 v4 并未改善，而是把全卷前景过预测与碎片化再次放大。当前证据更支持“CE=0.25 过低，背景分类约束不足”，而不是“继续降低 CE 可以修复背景塌缩”。
 
-σå│τ¡û∩╝Ü
+决策：
 
-- Σ╕ìτ╗ºτ╗¡µ£║µó░Φ┐ÉΦíî v4 epoch 2∩╝¢
-- µüóσñì Region Dice/CE=`1:1`∩╝¢
-- Σ┐¥µîü v3 τÜä CT-onlyπÇü64┬│ ROIπÇüforeground_probability=0.25πÇüpatches_per_case=4πÇüfull-volume validation Σ╕ìσÅÿ∩╝¢
-- Σ╕ïΣ╕ÇσìòσÅÿΘçÅσ«₧Θ¬îΣ╝ÿσàêµèè optimizer peak lr Σ╗Ä `1e-4` ΘÖìσê░ `5e-5`∩╝îΘ¬îΦ»ü v3 σ£¿ lr Σ╗Ä 5e-5 σìçσê░ 1e-4 σÉÄµü╢σîûπÇüΘÜÅσÉÄσíîτ╝⌐µÿ»σÉªΣ╕╗Φªüτö▒σ¡ªΣ╣áτÄçσ»╝Φç┤∩╝¢
-- baseline σ«îσà¿Θöüσ«Üσëìτ╗ºτ╗¡τªüµ¡óΦ«┐Θù« `liver_169`πÇé
+- 不继续机械运行 v4 epoch 2；
+- 恢复 Region Dice/CE=`1:1`；
+- 保持 v3 的 CT-only、64³ ROI、foreground_probability=0.25、patches_per_case=4、full-volume validation 不变；
+- 下一单变量实验优先把 optimizer peak lr 从 `1e-4` 降到 `5e-5`，验证 v3 在 lr 从 5e-5 升到 1e-4 后恶化、随后塌缩是否主要由学习率导致；
+- baseline 完全锁定前继续禁止访问 `liver_169`。
 
-Φ»┤µÿÄ∩╝Üτ¼¼Σ╕Çµ¼íΣ╕▓ΦíîΦ┐ÉΦíîΣ╕ñΣ╛ï detailed evaluation µù╢σìòσæ╜Σ╗ñΦ╢àΦ┐ç 300 τºÆσ╖Ñσà╖Σ╕èΘÖÉ∩╝¢`liver_7` σ╖▓σ«îµò┤ΦÉ╜τ¢ÿ∩╝î`liver_8` Φ╛ôσç║τ¢«σ╜òΣ╗àΦó½σê¢σ╗║Σ╜åµ£¬σåÖτ╗ôµ₧£πÇéΣ╕║Θü╡σ«êΓÇ£Σ╕ìσêáΘÖñ/Φªåτ¢ûσ╖▓µ£ëσ«₧Θ¬îΓÇ¥ΦºäσêÖ∩╝îµ▓íµ£ëσêáΘÖñΦ»Ñτ⌐║τ¢«σ╜ò∩╝îΦÇîµÿ»Σ╜┐τö¿ `experiments/evaluation_20260826_v4_e1_val_liver8_retry1` σ«îµêÉ `liver_8` Φ»äΣ╝░πÇé
+说明：第一次串行运行两例 detailed evaluation 时单命令超过 300 秒工具上限；`liver_7` 已完整落盘，`liver_8` 输出目录仅被创建但未写结果。为遵守“不删除/覆盖已有实验”规则，没有删除该空目录，而是使用 `experiments/evaluation_20260826_v4_e1_val_liver8_retry1` 完成 `liver_8` 评估。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ AF∩╝ÜΘöüσ«Ü balanced-lr v5 σìòσÅÿΘçÅΘàìτ╜«∩╝êGitHub σÉîµ¡Ñτé╣ #17∩╝ë
+### 2026-08-26｜阶段 AF：锁定 balanced-lr v5 单变量配置（GitHub 同步点 #17）
 
-σƒ║Σ║Ä v4 CE=0.25 τÜäΦ┤ƒτ╗ôµ₧£∩╝îµ£¼Θÿ╢µ«╡Σ╕ìτ╗ºτ╗¡ΘÖìΣ╜Ä CE∩╝îΣ╣ƒΣ╕ìσÉîµù╢Σ┐«µö╣ sampling/ROI/augmentation∩╝îΦÇîµÿ»σ¢₧σê░ v3 τÜä Region Dice+CE=`1:1`∩╝îσÅ¬µ╡ïΦ»òσ¡ªΣ╣áτÄçσ¢áτ┤áπÇé
+基于 v4 CE=0.25 的负结果，本阶段不继续降低 CE，也不同时修改 sampling/ROI/augmentation，而是回到 v3 的 Region Dice+CE=`1:1`，只测试学习率因素。
 
-µû░σ╗║∩╝Ü`configs/orthopedic_ct_cpu_binary_balanced_lr_v5.yaml`πÇé
+新建：`configs/orthopedic_ct_cpu_binary_balanced_lr_v5.yaml`。
 
-Σ╕Ä v3 τÜäµû╣µ│òσ¡ªσ╖«σ╝é∩╝Ü
+与 v3 的方法学差异：
 
-- optimizer peak lr∩╝Ü`1e-4 ΓåÆ 5e-5`∩╝¢
-- `dice_weight=1.0 / ce_weight=1.0` Σ╗àµèè v3 σÄƒµ£¼τÜäΘ╗ÿΦ«ñ 1:1 µÿ╛σ╝ÅσåÖσàÑ YAML∩╝îΣ╕ìµ₧äµêÉµû╣µ│òσÅÿσîû∩╝¢
-- CT-onlyπÇü64┬│ ROIπÇüforeground_probability=0.25πÇüpatches_per_case=4πÇüvalidation.patch_mode=falseπÇüsplitπÇüseedπÇüµ¿íσ₧ïτ╗ôµ₧äπÇüweight decayπÇüscheduler τ▒╗σ₧ïΣ╕Ä sliding-window inference σ¥çΣ┐¥µîüΣ╕ìσÅÿπÇé
+- optimizer peak lr：`1e-4 → 5e-5`；
+- `dice_weight=1.0 / ce_weight=1.0` 仅把 v3 原本的默认 1:1 显式写入 YAML，不构成方法变化；
+- CT-only、64³ ROI、foreground_probability=0.25、patches_per_case=4、validation.patch_mode=false、split、seed、模型结构、weight decay、scheduler 类型与 sliding-window inference 均保持不变。
 
-σè¿µ£║∩╝Üv3 epoch 1 τÜäσ«₧ΘÖà lr=`5e-5` µù╢Σ╕ñΣ╛ï full-volume DiceΓëê0.05407∩╝îΣ╕║σ╜ôσëìµ£ÇΣ╜│∩╝¢epoch 2 lr σìçσê░ `1e-4` σÉÄ Dice ΘÖìσê░Γëê0.04084∩╝îepoch 3 σ£¿Γëê`9.77e-5` µù╢σ«îσà¿ΦâîµÖ»σíîτ╝⌐πÇév4 σÅêµÿ╛τñ║σìòτ║»µèè CE ΘÖìσê░ 0.25 Σ╝Üσ»╝Φç┤σëìµÖ»Φ┐çΘóäµ╡ï/τóÄτëçσîûσèáΘçì∩╝îσ¢áµ¡ñσ╜ôσëìµ¢┤µ£ëΦ»üµì«τÜäΣ╕ïΣ╕ÇσÅÿΘçÅµÿ»Φ╛âΣ╜Ä peak lrπÇé
+动机：v3 epoch 1 的实际 lr=`5e-5` 时两例 full-volume Dice≈0.05407，为当前最佳；epoch 2 lr 升到 `1e-4` 后 Dice 降到≈0.04084，epoch 3 在≈`9.77e-5` 时完全背景塌缩。v4 又显示单纯把 CE 降到 0.25 会导致前景过预测/碎片化加重，因此当前更有证据的下一变量是较低 peak lr。
 
-readiness∩╝Ü
+readiness：
 
 ```text
 formal_readiness --task-spec configs/task_specs/vertebra_binary_ctspine1k_msd_t10_v1.json \
   --config configs/orthopedic_ct_cpu_binary_balanced_lr_v5.yaml --allow-cpu
-ΓåÆ ready=true
-ΓåÆ blocker_count=0
-ΓåÆ preflight 10 cases / split 7-2-1 / 0 error / 0 warning
+→ ready=true
+→ blocker_count=0
+→ preflight 10 cases / split 7-2-1 / 0 error / 0 warning
 ```
 
-Σ╕ïΣ╕Çµ¡Ñτ¢┤µÄÑσÉ»σè¿ v5 epoch 1∩╝¢ΦïÑ full-volume µîçµáçµû╣σÉæσÉêτÉåσêÖσêåµ«╡τ╗¡Φ«¡ epoch 2/3∩╝îσ╣╢τ╗ºτ╗¡σÅ¬Σ╜┐τö¿ `liver_7/liver_8` σüÜµëÇµ£ëσÅéµò░σå│τ¡û∩╝îτªüµ¡óµÅÉσëìΦ«┐Θù« `liver_169`πÇé
+下一步直接启动 v5 epoch 1；若 full-volume 指标方向合理则分段续训 epoch 2/3，并继续只使用 `liver_7/liver_8` 做所有参数决策，禁止提前访问 `liver_169`。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ AG∩╝ÜGitHub Actions Python CI µû░Θ▓£ runner σÅ»σñìτÄ░µÇºΣ┐«σñì∩╝êGitHub σÉîµ¡Ñτé╣ #18∩╝ë
+### 2026-08-26｜阶段 AG：GitHub Actions Python CI 新鲜 runner 可复现性修复（GitHub 同步点 #18）
 
-µö╢σê░ GitHub Actions `Python tests and lint` σñ▒Φ┤ÑΘÇÜτƒÑσÉÄ∩╝îτ¢┤µÄÑΦ»╗σÅûσñ▒Φ┤Ñ job µùÑσ┐ùσ«ÜΣ╜ìσê░ 5 Σ╕¬ pytest σñ▒Φ┤Ñ∩╝Üσà╢Σ╕¡ 4 Σ╕¬µÿ» GitHub µû░Θ▓£ runner µ▓íµ£ëΦó½ `.gitignore` µÄÆΘÖñτÜä `third_party/SegFormer3D` checkout∩╝îσ»╝Φç┤ `SegFormer3DUpstreamNotFound`∩╝¢σÅª 1 Σ╕¬µÿ» `tests/test_gpu_environment.py` µèèΓÇ£σ╜ôσëì Python σ┐àΘí╗Σ╜ìΣ║ÄΘí╣τ¢« `.venv`ΓÇ¥τí¼τ╝ûτáüΣ╕║ `True`∩╝îΣ╕Ä GitHub Actions τÜä `setup-python` runner τÄ»σóâΣ╕ìσà╝σ«╣πÇéRuff Σ╕Äσëìτ½»/Σ╗ôσ║ôΘ¥ÖµÇüµúÇµƒÑµ£¼Φ║½σ¥çσ╖▓ΘÇÜΦ┐çπÇé
+收到 GitHub Actions `Python tests and lint` 失败通知后，直接读取失败 job 日志定位到 5 个 pytest 失败：其中 4 个是 GitHub 新鲜 runner 没有被 `.gitignore` 排除的 `third_party/SegFormer3D` checkout，导致 `SegFormer3DUpstreamNotFound`；另 1 个是 `tests/test_gpu_environment.py` 把“当前 Python 必须位于项目 `.venv`”硬编码为 `True`，与 GitHub Actions 的 `setup-python` runner 环境不兼容。Ruff 与前端/仓库静态检查本身均已通过。
 
-µ£¼Θÿ╢µ«╡Σ┐«σñì∩╝Ü
+本阶段修复：
 
-- `.github/workflows/ci.yml`∩╝ÜPython job σ£¿µ╡ïΦ»òσëìΦ░âτö¿ `env/fetch_segformer3d.ps1`∩╝îτí«Σ┐¥µû░Θ▓£ runner Φç¬σè¿σçåσñç SegFormer3D Σ╕èµ╕╕∩╝¢
-- `env/fetch_segformer3d.ps1`∩╝Üσà¿µû░ΦÄ╖σÅûµù╢σ¢║σ«ÜµúÇσç║Σ╕èµ╕╕ `e314242f14b6731458130809945a0ee27f4298bd`∩╝îΘü┐σàì CI ΘÜÅΣ╕èµ╕╕ `main` µ╝éτº╗∩╝¢ΘÜÅσÉÄΦç¬σè¿σ║öτö¿µ£¼Θí╣τ¢«σÅùτëêµ£¼µÄºσê╢τÜä PyTorch 2.1 TorchScript σà╝σ«╣ΦíÑΣ╕ü∩╝¢σ╖▓µ£ëµ£¼σ£░ `third_party/SegFormer3D` τ¢«σ╜òΣ╗ìΣ┐¥µîüΓÇ£Σ╕ìΦªåτ¢ûΓÇ¥σÄƒσêÖ∩╝îσ¢áµ¡ñΣ╕ìΣ╝Üτá┤σ¥Åσ╜ôσëìµ£║σÖ¿σ╖▓µ£ëτ¼¼Σ╕ëµû╣µ£¼σ£░ patch∩╝¢
-- µû░σó₧ `env/patches/segformer3d_torch21_cube_root.patch`∩╝Üµèèµ¡ñσëìΣ╗àσ¡ÿσ£¿Σ║Äµ£¼σ£░τ¼¼Σ╕ëµû╣ working tree τÜä `cube_root()` `int(round(...))` σà╝σ«╣Σ┐«σñìσÅÿµêÉσÅ»σñìσê╢πÇüσÅ»σ«íΦ«íτÜäΦíÑΣ╕üµûçΣ╗╢∩╝¢
-- `tests/test_gpu_environment.py`∩╝Üµö╣Σ╕║Θ¬îΦ»ü `project_venv` µÿ» machine-readable bool∩╝¢ΦïÑτÄ»σóâτí«σ«₧Σ╕ìσ£¿Θí╣τ¢« `.venv`∩╝îσêÖΦªüµ▒é report τÜä `issues` µÿÄτí«σîàσÉ½σ»╣σ║öµÅÉτñ║∩╝îΣ╕ìσåìΘöÖΦ»»σüçΦ«╛µëÇµ£ëσÉêµ│òµ╡ïΦ»òτÄ»σóâΘâ╜σ┐àΘí╗µÿ» Windows Θí╣τ¢« `.venv`∩╝¢
-- `third_party/README.md` Σ╕Ä `TASKS.md`∩╝ÜσÉîµ¡ÑΦ«░σ╜òσ¢║σ«ÜΣ╕èµ╕╕µÅÉΣ║ñπÇüσÅùτëêµ£¼µÄºσê╢ΦíÑΣ╕üΣ╕Ä CI µû░Θ▓£ runner ΦÄ╖σÅûΘô╛πÇé
+- `.github/workflows/ci.yml`：Python job 在测试前调用 `env/fetch_segformer3d.ps1`，确保新鲜 runner 自动准备 SegFormer3D 上游；
+- `env/fetch_segformer3d.ps1`：全新获取时固定检出上游 `e314242f14b6731458130809945a0ee27f4298bd`，避免 CI 随上游 `main` 漂移；随后自动应用本项目受版本控制的 PyTorch 2.1 TorchScript 兼容补丁；已有本地 `third_party/SegFormer3D` 目录仍保持“不覆盖”原则，因此不会破坏当前机器已有第三方本地 patch；
+- 新增 `env/patches/segformer3d_torch21_cube_root.patch`：把此前仅存在于本地第三方 working tree 的 `cube_root()` `int(round(...))` 兼容修复变成可复制、可审计的补丁文件；
+- `tests/test_gpu_environment.py`：改为验证 `project_venv` 是 machine-readable bool；若环境确实不在项目 `.venv`，则要求 report 的 `issues` 明确包含对应提示，不再错误假设所有合法测试环境都必须是 Windows 项目 `.venv`；
+- `third_party/README.md` 与 `TASKS.md`：同步记录固定上游提交、受版本控制补丁与 CI 新鲜 runner 获取链。
 
-µ£¼σ£░σ¢₧σ╜Æ∩╝Ü
+本地回归：
 
 ```text
 .venv/Scripts/python.exe -m pytest tests -q
-ΓåÆ 104 passed, 153 warnings
+→ 104 passed, 153 warnings
 
 .venv/Scripts/python.exe -m ruff check src web tests
-ΓåÆ All checks passed!
+→ All checks passed!
 
 PyYAML parse .github/workflows/ci.yml
-ΓåÆ OK
+→ OK
 
 PowerShell parser: env/fetch_segformer3d.ps1
-ΓåÆ OK
+→ OK
 
 git -C third_party/SegFormer3D apply --reverse --check ../../env/patches/segformer3d_torch21_cube_root.patch
-ΓåÆ ΘÇÜΦ┐ç∩╝êτí«Φ«ñσÅùτëêµ£¼µÄºσê╢ patch Σ╕Äσ╜ôσëìµ£¼σ£░σà╝σ«╣ diff Σ╕ÇΦç┤∩╝ë
+→ 通过（确认受版本控制 patch 与当前本地兼容 diff 一致）
 
 git diff --check
-ΓåÆ ΘÇÜΦ┐ç
+→ 通过
 ```
 
-Σ║æτ½»µ£Çτ╗êΘ¬îµö╢∩╝ÜΣ┐«σñìµÅÉΣ║ñ `6c5eac1` µÄ¿ΘÇüσê░ `origin/main` σÉÄΦºªσÅæ GitHub Actions CI run `32978966080`∩╝êrun #18∩╝ëπÇé`Fetch pinned SegFormer3D upstream`πÇü`Run Ruff`πÇü`Run pytest` σà¿Θâ¿ success∩╝¢`Python tests and lint` Σ╕Ä `Frontend and repository static checks` Σ╕ñΣ╕¬ job σ¥çµ£Çτ╗êΣ╕║ `success`πÇéσ¢áµ¡ñσÅ»Σ╗Ñµ¡úσ╝Åτí«Φ«ñ∩╝Üµ¡ñσëìΘé«Σ╗╢Σ╕¡τÜä GitHub Actions Python CI σñ▒Φ┤Ñσ╖▓Σ┐«σñì∩╝îµû░Θ▓£ Ubuntu runner Φâ╜µîëσà¼σ╝ÇΣ╗ôσ║ôσåàσ«╣Φç¬σè¿ΦÄ╖σÅûσ¢║σ«ÜΣ╕èµ╕╕πÇüσ║öτö¿σà╝σ«╣ΦíÑΣ╕üσ╣╢σ«îµêÉσà¿σÑù CIπÇé
+云端最终验收：修复提交 `6c5eac1` 推送到 `origin/main` 后触发 GitHub Actions CI run `32978966080`（run #18）。`Fetch pinned SegFormer3D upstream`、`Run Ruff`、`Run pytest` 全部 success；`Python tests and lint` 与 `Frontend and repository static checks` 两个 job 均最终为 `success`。因此可以正式确认：此前邮件中的 GitHub Actions Python CI 失败已修复，新鲜 Ubuntu runner 能按公开仓库内容自动获取固定上游、应用兼容补丁并完成全套 CI。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ AG∩╝Üv5 Σ╜Äσ│░σÇ╝σ¡ªΣ╣áτÄçσ«₧Θ¬îτí«Φ«ñσëìµÖ»µ│¢µ╗Ñ∩╝êGitHub σÉîµ¡Ñτé╣ #18∩╝ë
+### 2026-08-26｜阶段 AG：v5 低峰值学习率实验确认前景泛滥（GitHub 同步点 #18）
 
-v5 run∩╝Ü`experiments/20260826_221337_cpu_binary_balanced_lr_v5_roi64`πÇéΦ»ÑΘàìτ╜«Σ┐¥µîü v3 τÜä CT-onlyπÇü64┬│ ROIπÇü`foreground_probability=0.25`πÇü`patches_per_case=4`πÇüRegion Dice/CE=1:1 Σ╕Ä full-volume validation Σ╕ìσÅÿ∩╝îΣ╗àσ░å optimizer peak lr Σ╗Ä `1e-4` ΘÖìσê░ `5e-5`∩╝¢Σ╜åΣ╗ìΣ┐¥τòÖ `warmup_epochs=2`πÇé
+v5 run：`experiments/20260826_221337_cpu_binary_balanced_lr_v5_roi64`。该配置保持 v3 的 CT-only、64³ ROI、`foreground_probability=0.25`、`patches_per_case=4`、Region Dice/CE=1:1 与 full-volume validation 不变，仅将 optimizer peak lr 从 `1e-4` 降到 `5e-5`；但仍保留 `warmup_epochs=2`。
 
-τ£ƒσ«₧Φ«¡τ╗â∩╝Ü
+真实训练：
 
-- epoch 1∩╝Ütrain lossΓëê`2.29635`∩╝îΣ╕ñΣ╛ï full-volume val DiceΓëê`0.0318517`∩╝îlr=`2.5e-5`∩╝¢
-- epoch 2∩╝Ütrain lossΓëê`2.08801`∩╝îΣ╕ñΣ╛ï full-volume val DiceΓëê`0.0326909`∩╝îlr=`5e-5`∩╝¢
-- `best.pt` σ»╣σ║ö epoch 2πÇé
+- epoch 1：train loss≈`2.29635`，两例 full-volume val Dice≈`0.0318517`，lr=`2.5e-5`；
+- epoch 2：train loss≈`2.08801`，两例 full-volume val Dice≈`0.0326909`，lr=`5e-5`；
+- `best.pt` 对应 epoch 2。
 
-σ»╣ v5 `best.pt` τÜä validation detailed evaluation∩╝Ü
+对 v5 `best.pt` 的 validation detailed evaluation：
 
-- `liver_7`∩╝ÜDiceΓëê`0.03185`∩╝îPrecisionΓëê`0.01621`∩╝îRecallΓëê`0.89485`∩╝îHD95Γëê`210.68 mm`∩╝îASSDΓëê`60.61 mm`∩╝îprediction/GT foreground ratioΓëê`55.19`∩╝îpred/target components=`207/3`∩╝îcomponent error=`204`∩╝¢
-- `liver_8`∩╝ÜDiceΓëê`0.03353`∩╝îPrecisionΓëê`0.01707`∩╝îRecallΓëê`0.93585`∩╝îHD95Γëê`202.54 mm`∩╝îASSDΓëê`61.76 mm`∩╝îprediction/GT foreground ratioΓëê`54.82`∩╝îpred/target components=`187/2`∩╝îcomponent error=`185`πÇé
+- `liver_7`：Dice≈`0.03185`，Precision≈`0.01621`，Recall≈`0.89485`，HD95≈`210.68 mm`，ASSD≈`60.61 mm`，prediction/GT foreground ratio≈`55.19`，pred/target components=`207/3`，component error=`204`；
+- `liver_8`：Dice≈`0.03353`，Precision≈`0.01707`，Recall≈`0.93585`，HD95≈`202.54 mm`，ASSD≈`61.76 mm`，prediction/GT foreground ratio≈`54.82`，pred/target components=`187/2`，component error=`185`。
 
-τ╗ôΦ«║∩╝Üv5 Σ╕ìµÿ»ΦâîµÖ»σíîτ╝⌐∩╝îΦÇîµÿ»Σ╕ÑΘçìσëìµÖ»µ│¢µ╗ÑπÇéΘÖìΣ╜Ä peak lr σÉîµù╢Σ┐¥τòÖ 2-epoch warmup∩╝îΣ╜┐ epoch 1 σ«₧ΘÖà lr σÅ¬µ£ë `2.5e-5`∩╝îµ¿íσ₧ïσê░ epoch 2 Σ╗ìΣ┐¥µîüµ₧üΘ½ÿ RecallπÇüµ₧üΣ╜Ä Precision σÆîτ║ª 55├ù τÜäσà¿σì╖σëìµÖ»Φå¿ΦâÇ∩╝¢Φ┐ÖµÿÄµÿ╛σèúΣ║Ä v3 epoch 1 τÜäΣ╕ñΣ╛ïσ╣│σ¥ç DiceΓëê`0.05407`πÇüPrecisionΓëê`0.03510`πÇüforeground ratioΓëê`3.42`πÇéσ¢áµ¡ñΣ╕ìτ╗ºτ╗¡ v5 epoch 3πÇé
+结论：v5 不是背景塌缩，而是严重前景泛滥。降低 peak lr 同时保留 2-epoch warmup，使 epoch 1 实际 lr 只有 `2.5e-5`，模型到 epoch 2 仍保持极高 Recall、极低 Precision 和约 55× 的全卷前景膨胀；这明显劣于 v3 epoch 1 的两例平均 Dice≈`0.05407`、Precision≈`0.03510`、foreground ratio≈`3.42`。因此不继续 v5 epoch 3。
 
-Σ╕ïΣ╕Çσ«₧Θ¬îΣ╕ìσåìµèèΓÇ£µ¢┤Σ╜Ä lrΓÇ¥Σ╕ÄΓÇ£µ¢┤Θò┐ warmupΓÇ¥µ╖╖σ£¿Σ╕ÇΦ╡╖∩╝ÜΣ┐¥τòÖ v3 σà╢σ«âµ¥íΣ╗╢∩╝îτ¼¼Σ╕ÇΦ╜«τ¢┤µÄÑΦ╛╛σê░ `5e-5`∩╝îΣ╣ïσÉÄσ¡ªΣ╣áτÄçσºïτ╗êΣ╕ìΦ╢àΦ┐ç `5e-5`πÇéΦ┐Öµá╖µ¢┤µÄÑΦ┐æ v3 epoch 1 τÜäµ£ëµòêΦ╡╖τé╣∩╝îσÉîµù╢Θü┐σàì v3 epoch 2 σìçσê░ `1e-4` σÉÄµÇºΦâ╜Σ╕ïΘÖìπÇéµò┤Σ╕¬ v5 Φ«¡τ╗âσÆîΦ»äΣ╝░σÅ¬Σ╜┐τö¿ train + `liver_7/liver_8` validation∩╝îµ£¬Φ«┐Θù« `liver_169`πÇé
+下一实验不再把“更低 lr”与“更长 warmup”混在一起：保留 v3 其它条件，第一轮直接达到 `5e-5`，之后学习率始终不超过 `5e-5`。这样更接近 v3 epoch 1 的有效起点，同时避免 v3 epoch 2 升到 `1e-4` 后性能下降。整个 v5 训练和评估只使用 train + `liver_7/liver_8` validation，未访问 `liver_169`。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ AH∩╝ÜΘöüσ«Ü v6 σìò warmup Σ╜Äσ¡ªΣ╣áτÄçΘàìτ╜«∩╝êGitHub σÉîµ¡Ñτé╣ #19∩╝ë
+### 2026-08-26｜阶段 AH：锁定 v6 单 warmup 低学习率配置（GitHub 同步点 #19）
 
-µû░σ╗║ `configs/orthopedic_ct_cpu_binary_balanced_lr_v6.yaml`πÇév6 τ╗ºµë┐ v5 τÜä CT-onlyπÇü64┬│ ROIπÇü`foreground_probability=0.25`πÇü`patches_per_case=4`πÇüRegion Dice/CE=1:1πÇüoptimizer peak lr=`5e-5`πÇüfull-volume validationπÇütask/split/seed τ¡ëσà¿Θâ¿µ¥íΣ╗╢∩╝îΣ╗àσ░å `scheduler.warmup_epochs` Σ╗Ä 2 µö╣Σ╕║ 1πÇé
+新建 `configs/orthopedic_ct_cpu_binary_balanced_lr_v6.yaml`。v6 继承 v5 的 CT-only、64³ ROI、`foreground_probability=0.25`、`patches_per_case=4`、Region Dice/CE=1:1、optimizer peak lr=`5e-5`、full-volume validation、task/split/seed 等全部条件，仅将 `scheduler.warmup_epochs` 从 2 改为 1。
 
-Σ╗úτáüµá╕σ»╣ `WarmupCosineRestarts.step()`∩╝Üwarmup epoch σåàσ¡ªΣ╣áτÄçΣ╕║ `base_lr * epoch / warmup_epochs`∩╝îσ¢áµ¡ñ v6 epoch 1 Σ╝Üτ¢┤µÄÑΣ╜┐τö¿ `5e-5`∩╝¢Σ╣ïσÉÄΦ┐¢σàÑ cosine schedule∩╝îσ¡ªΣ╣áτÄçΣ╕ìΣ╝ÜΦ╢àΦ┐ç base lr=`5e-5`πÇéΦ┐ÖΣ╕Ä v5 epoch 1 σÅ¬µ£ë `2.5e-5` τÜäµâàσå╡Σ╕ìσÉî∩╝îµ¢┤µÄÑΦ┐æ v3 epoch 1 τÜäµ£ëµòêΦ╡╖τé╣∩╝îσÉîµù╢Θü┐σàì v3 epoch 2 σìçΦç│ `1e-4`πÇé
+代码核对 `WarmupCosineRestarts.step()`：warmup epoch 内学习率为 `base_lr * epoch / warmup_epochs`，因此 v6 epoch 1 会直接使用 `5e-5`；之后进入 cosine schedule，学习率不会超过 base lr=`5e-5`。这与 v5 epoch 1 只有 `2.5e-5` 的情况不同，更接近 v3 epoch 1 的有效起点，同时避免 v3 epoch 2 升至 `1e-4`。
 
-τ£ƒσ«₧ readiness∩╝Ü
+真实 readiness：
 
 ```text
 formal_readiness --task-spec configs/task_specs/vertebra_binary_ctspine1k_msd_t10_v1.json \
   --config configs/orthopedic_ct_cpu_binary_balanced_lr_v6.yaml --allow-cpu
-ΓåÆ ready=true
-ΓåÆ blocker_count=0
-ΓåÆ preflight 10 cases / split 7-2-1 / 0 error / 0 warning
+→ ready=true
+→ blocker_count=0
+→ preflight 10 cases / split 7-2-1 / 0 error / 0 warning
 ```
 
-Σ╕ïΣ╕Çµ¡ÑσÅ¬Φ╖æ v6 epoch 1∩╝îσ╣╢Σ╗àΣ╜┐τö¿ `liver_7/liver_8` full-volume validation σêñµû¡∩╝¢ΦïÑΦâ╜σñìτÄ░µêûΦ╢àΦ┐ç v3 epoch 1 τÜä Dice/Precision/foreground ratio σåìτ╗ºτ╗¡ epoch 2/3∩╝îσÉªσêÖτ½ïσì│σü£µ¡óπÇéτï¼τ½ï test `liver_169` τ╗ºτ╗¡τªüµ¡óΦ«┐Θù«πÇé
+下一步只跑 v6 epoch 1，并仅使用 `liver_7/liver_8` full-volume validation 判断；若能复现或超过 v3 epoch 1 的 Dice/Precision/foreground ratio 再继续 epoch 2/3，否则立即停止。独立 test `liver_169` 继续禁止访问。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ AI∩╝Üv6 epoch 1/2 Σ╕Ä epoch 2 detailed validation τ╗ôµ₧£σ¢₧σí½
+### 2026-08-26｜阶段 AI：v6 epoch 1/2 与 epoch 2 detailed validation 结果回填
 
-µá╕σ»╣τ£ƒσ«₧ run∩╝Ü`experiments/20260826_224150_cpu_binary_balanced_lr_v6_roi64`πÇé`history.csv`πÇü`best.pt`πÇü`last.pt` Σ╕Ä `summary.json` σ¥çσ¡ÿσ£¿∩╝¢`summary.json` Φ«░σ╜ò `best_val_dice=0.05407000716611769`πÇü`last_epoch=2`∩╝îσ¢áµ¡ñ `best.pt` Σ┐¥µîü epoch 1πÇé
+核对真实 run：`experiments/20260826_224150_cpu_binary_balanced_lr_v6_roi64`。`history.csv`、`best.pt`、`last.pt` 与 `summary.json` 均存在；`summary.json` 记录 `best_val_dice=0.05407000716611769`、`last_epoch=2`，因此 `best.pt` 保持 epoch 1。
 
-τ£ƒσ«₧Φ«¡τ╗â/validation∩╝Ü
+真实训练/validation：
 
 ```text
 epoch 1: train_loss=2.5537127596991405, val Dice=0.05407000716611769, lr=5e-5
 epoch 2: train_loss=1.9332212380000524, val Dice=0.0323937293334203, lr=4.892324335849338e-5
 ```
 
-v6 epoch 1 σçáΣ╣Äτ▓╛τí«σñìτÄ░ v3 epoch 1∩╝îΦ»┤µÿÄτ¼¼Σ╕ÇΦ╜«τ¢┤µÄÑΣ╜┐τö¿ `5e-5` µÿ»σÅ»ΦíîτÜä∩╝îΣ╣ƒσÅìΦ»ü v5 τ¼¼Σ╕ÇΦ╜« `2.5e-5` τÜäΘò┐ warmup µÿ»ΘöÖΦ»»µû╣σÉæπÇéΣ╜å v6 epoch 2 σ£¿σ¡ªΣ╣áτÄçσºïτ╗êµ£¬Φ╢àΦ┐ç `5e-5` τÜäµâàσå╡Σ╕ïΣ╗ìµÿÄµÿ╛µü╢σîû∩╝îσ¢áµ¡ñΓÇ£v3 epoch 2 σìçΦç│ `1e-4` µÿ»Σ╕╗Φªüµá╣σ¢áΓÇ¥τÜäσüçΦ«╛σƒ║µ£¼Φó½σÉªσ«ÜπÇé
+v6 epoch 1 几乎精确复现 v3 epoch 1，说明第一轮直接使用 `5e-5` 是可行的，也反证 v5 第一轮 `2.5e-5` 的长 warmup 是错误方向。但 v6 epoch 2 在学习率始终未超过 `5e-5` 的情况下仍明显恶化，因此“v3 epoch 2 升至 `1e-4` 是主要根因”的假设基本被否定。
 
-σ»╣ v6 epoch 2 `last.pt` τÜä validation detailed evaluation∩╝Ü
+对 v6 epoch 2 `last.pt` 的 validation detailed evaluation：
 
-- `liver_7`∩╝ÜDiceΓëê`0.0321042`∩╝îPrecisionΓëê`0.0163178`∩╝îRecallΓëê`0.985616`∩╝îHD95Γëê`222.03 mm`∩╝îASSDΓëê`76.73 mm`∩╝îprediction foregroundΓëê`42.257%`πÇüGTΓëê`0.6996%`πÇüratioΓëê`60.40`∩╝îpred/target components=`90/3`∩╝îcomponent error=`87`∩╝¢
-- `liver_8`∩╝ÜDiceΓëê`0.0326833`∩╝îPrecisionΓëê`0.0166134`∩╝îRecallΓëê`0.999194`∩╝îHD95Γëê`211.83 mm`∩╝îASSDΓëê`81.00 mm`∩╝îprediction foregroundΓëê`34.039%`πÇüGTΓëê`0.5660%`πÇüratioΓëê`60.14`∩╝îpred/target components=`67/2`∩╝îcomponent error=`65`πÇé
-component µò░ΘçÅτ¢╕σ»╣µù⌐µ£ƒτóÄτëçσîûτ╗ôµ₧£ΦÖ╜Σ╕ïΘÖì∩╝îΣ╜åΦ┐Öµÿ»σ¢áΣ╕║µ¿íσ₧ïµèèσñºΦîâσ¢┤ΦâîµÖ»Φ┐₧µêÉσ╖¿σñºσëìµÖ»σî║σƒƒ∩╝îΣ╕ìµÿ»µ¡úτí«τ╗ôµ₧äµö╣σûäπÇév6 epoch 2 µÿÄτí«σ▒₧Σ║ÄΣ╕ÑΘçì foreground explosion∩╝îσ¢áµ¡ñΣ╕ìτ╗ºτ╗¡µ£║µó░ epoch 3πÇé
+- `liver_7`：Dice≈`0.0321042`，Precision≈`0.0163178`，Recall≈`0.985616`，HD95≈`222.03 mm`，ASSD≈`76.73 mm`，prediction foreground≈`42.257%`、GT≈`0.6996%`、ratio≈`60.40`，pred/target components=`90/3`，component error=`87`；
+- `liver_8`：Dice≈`0.0326833`，Precision≈`0.0166134`，Recall≈`0.999194`，HD95≈`211.83 mm`，ASSD≈`81.00 mm`，prediction foreground≈`34.039%`、GT≈`0.5660%`、ratio≈`60.14`，pred/target components=`67/2`，component error=`65`。
+component 数量相对早期碎片化结果虽下降，但这是因为模型把大范围背景连成巨大前景区域，不是正确结构改善。v6 epoch 2 明确属于严重 foreground explosion，因此不继续机械 epoch 3。
 
-Σ╕ïΣ╕Çµ¡ÑΣ╝ÿσàêτ║ºΦ╜¼Σ╕║τ£ƒσ«₧ sampling σñìτÄ░∩╝ÜΣ╜┐τö¿ `ProcessedOrthopedicCTDataset` σ╜ôσëìσ«₧ΘÖà epoch-aware sampling σÆîσ¢║σ«Ü seed∩╝îσñìτÄ░ v3/v6 epoch 1/2πÇüv3 epoch 3 τÜä 28 Σ╕¬ training patch foreground fraction σêåσ╕â∩╝îσàêΦ»üσ«₧µêûσÉªσ«Ü epoch-to-epoch sampling prior µ╝éτº╗∩╝îσåìσå│σ«Ü v7 τÜäσö»Σ╕ÇσÅÿΘçÅπÇéτï¼τ½ï test `liver_169` τ╗ºτ╗¡τªüµ¡óΦ«┐Θù«πÇé
+下一步优先级转为真实 sampling 复现：使用 `ProcessedOrthopedicCTDataset` 当前实际 epoch-aware sampling 和固定 seed，复现 v3/v6 epoch 1/2、v3 epoch 3 的 28 个 training patch foreground fraction 分布，先证实或否定 epoch-to-epoch sampling prior 漂移，再决定 v7 的唯一变量。独立 test `liver_169` 继续禁止访问。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ AJ∩╝ÜσñìτÄ░τ£ƒσ«₧ epoch patch prior∩╝îσ╣╢µèè sampling statistics µÄÑσàÑΦ«¡τ╗â
+### 2026-08-26｜阶段 AJ：复现真实 epoch patch prior，并把 sampling statistics 接入训练
 
-Σ╜┐τö¿ `configs/orthopedic_ct_cpu_binary_balanced_fullval_v3.yaml` τÜäτ£ƒσ«₧ `ProcessedOrthopedicCTDataset`πÇü`seed=42`πÇü`foreground_probability=0.25`πÇü`patches_per_case=4`∩╝îµîëΦ«¡τ╗âΣ╗úτáüτ¢╕σÉîτÜä `set_epoch(epoch)` Σ╕ÄΘÜÅµ£║τºìσ¡Éτ╗äσÉêσñìτÄ░ 7 Σ╕¬ train τùàΣ╛ï ├ù 4 patch τÜäσ«₧ΘÖà label foreground fractionπÇéΣ╕║Θü┐σàìΘçìσñìΦºúσÄïσñºΣ╜ôτº» NIfTI∩╝îσÉîΣ╕ÇτùàΣ╛ïσÅ¬σèáΦ╜╜Σ╕Çµ¼í∩╝îΣ╜åµ»ÅΣ╕¬ patch Σ╗ìτö▒ Dataset Φç¬σ╖▒τÜä `__getitem__`πÇüτ£ƒσ«₧ crop/flip/random stream τöƒµêÉπÇé
+使用 `configs/orthopedic_ct_cpu_binary_balanced_fullval_v3.yaml` 的真实 `ProcessedOrthopedicCTDataset`、`seed=42`、`foreground_probability=0.25`、`patches_per_case=4`，按训练代码相同的 `set_epoch(epoch)` 与随机种子组合复现 7 个 train 病例 × 4 patch 的实际 label foreground fraction。为避免重复解压大体积 NIfTI，同一病例只加载一次，但每个 patch 仍由 Dataset 自己的 `__getitem__`、真实 crop/flip/random stream 生成。
 
-τ╗ôµ₧£∩╝Ü
+结果：
 
 ```text
 epoch 1: mean=0.079073, median=0, std=0.121046, min=0, max=0.329468,
@@ -2016,501 +2016,501 @@ epoch 3: mean=0.056800, median=0, std=0.105252, min=0, max=0.356922,
          q25=0, q75=0.068274, q90=0.239979, background=20/28, foreground=8/28
 ```
 
-τùàΣ╛ïτ║ºµ│óσè¿µ¢┤µÿÄµÿ╛∩╝Üepoch 1 τÜä `liver_2` Σ╕Ä `liver_6` 4/4 patch σ¥çΣ╕║τ║»ΦâîµÖ»∩╝¢epoch 2 σêÖΘçìµû░σêåΘàì foreground exposureπÇéΦ»┤µÿÄσ╜ôσëìτï¼τ½ï Bernoulli foreground-aware sampling Σ╝ÜΘÇáµêÉτ£ƒσ«₧τÜä case/epoch prior µ│óσè¿πÇéΣ╕ìΦ┐ç v6 epoch 1ΓåÆ2 τÜä overall mean Σ╗àτ║ª 7.91%ΓåÆ8.84%πÇüτ║»ΦâîµÖ» patch σÉîΣ╕║ 18/28∩╝îσ¢áµ¡ñΦ»Ñµ│óσè¿Σ╕ìΦâ╜σìòτï¼ΦºúΘçè validation Σ╗Äτ║ª 3.4├ù foreground ratio τ¬üτä╢µü╢σîûσê░τ║ª 60├ù∩╝¢σ╜ôσëìτ╗ôΦ«║µÿ» sampling τ¿│σ«ÜµÇºτí«µ£ëΘù«Θóÿ∩╝îΣ╜åΣ╕ìµÿ»σ╖▓Φ»üσ«₧σö»Σ╕Çµá╣σ¢áπÇé
+病例级波动更明显：epoch 1 的 `liver_2` 与 `liver_6` 4/4 patch 均为纯背景；epoch 2 则重新分配 foreground exposure。说明当前独立 Bernoulli foreground-aware sampling 会造成真实的 case/epoch prior 波动。不过 v6 epoch 1→2 的 overall mean 仅约 7.91%→8.84%、纯背景 patch 同为 18/28，因此该波动不能单独解释 validation 从约 3.4× foreground ratio 突然恶化到约 60×；当前结论是 sampling 稳定性确有问题，但不是已证实唯一根因。
 
-Σ╕║Φ«⌐σÉÄτ╗¡µ»ÅΣ╕¬ run Θâ╜Φâ╜τ¢┤µÄÑΘ¬îΦ»üΓÇ£µ¿íσ₧ïσÅÿσîûµÿ»σÉªσ»╣σ║ö sampling prior µ╝éτº╗ΓÇ¥∩╝î`src/modeling/train.py` µû░σó₧ `sampling_stats.csv`∩╝îΣ╗Äµ¿íσ₧ïσ«₧ΘÖàµö╢σê░τÜä training label ΘÇÉ epoch Φ«░σ╜ò∩╝Üpatch_countπÇüforeground fraction mean/median/std/min/maxπÇüq10/q25/q75/q90πÇüforeground/background patch count∩╝¢metadata σÉîµù╢µáçΦ«░ `training_sampling_stats_logged=true`πÇéµû░σó₧ `tests/test_training_sampling_stats.py`∩╝î focused dataset/sampling tests σà▒ 6 passed∩╝îRuff cleanπÇé
+为让后续每个 run 都能直接验证“模型变化是否对应 sampling prior 漂移”，`src/modeling/train.py` 新增 `sampling_stats.csv`，从模型实际收到的 training label 逐 epoch 记录：patch_count、foreground fraction mean/median/std/min/max、q10/q25/q75/q90、foreground/background patch count；metadata 同时标记 `training_sampling_stats_logged=true`。新增 `tests/test_training_sampling_stats.py`， focused dataset/sampling tests 共 6 passed，Ruff clean。
 
-Σ╕ïΣ╕Çµ¡ÑσÅ¬µö╣Σ╕ÇΣ╕¬σÅÿΘçÅσüÜ v7∩╝Üµèèµ»ÅτùàΣ╛ïµ»Å epoch τÜä foreground-aware/random patch ΘàìΘó¥Σ╗Äτï¼τ½ï Bernoulli µö╣Σ╕║σ¢║σ«ÜΘàìΘó¥∩╝îΣ┐¥µîü v6 τÜä CT-onlyπÇü64┬│πÇüDice/CE=1:1πÇüpeak lr=5e-5πÇüwarmup=1πÇücosineπÇüfull-volume validation τ¡ëσà¿Θâ¿Σ╕ìσÅÿπÇéτï¼τ½ï test `liver_169` τ╗ºτ╗¡τªüµ¡óΦ«┐Θù«πÇé
+下一步只改一个变量做 v7：把每病例每 epoch 的 foreground-aware/random patch 配额从独立 Bernoulli 改为固定配额，保持 v6 的 CT-only、64³、Dice/CE=1:1、peak lr=5e-5、warmup=1、cosine、full-volume validation 等全部不变。独立 test `liver_169` 继续禁止访问。
 
 
-### 2026-08-26∩╜£Θÿ╢µ«╡ AK∩╝Üσ«îµêÉ v7 fixed-per-case sampling σ╖Ñτ¿ïΘù¡τÄ»σçåσñç
+### 2026-08-26｜阶段 AK：完成 v7 fixed-per-case sampling 工程闭环准备
 
-µá╕σ»╣Σ╕èΣ╕ÇΦ╜«µ£¬µÅÉΣ║ñΣ┐«µö╣σÉÄτí«Φ«ñσ╖ÑΣ╜£σî║σÅ¬σîàσÉ½ `src/modeling/dataset.py`πÇü`src/modeling/train.py`πÇü`tests/test_dataset_epoch_sampling.py` Σ╕Äµû░Θàìτ╜« `configs/orthopedic_ct_cpu_binary_stable_sampling_v7.yaml`∩╝îΦ┐£τ¿ïσƒ║τ║┐Σ╗ìΣ╕║ `0fa2dab2c7eeb9fd0e010d4eabca87ed8856a117`∩╝îµ£¬µëºΦíî reset/restore Φªåτ¢ûσÄåσÅ▓Σ┐«µö╣πÇé
+核对上一轮未提交修改后确认工作区只包含 `src/modeling/dataset.py`、`src/modeling/train.py`、`tests/test_dataset_epoch_sampling.py` 与新配置 `configs/orthopedic_ct_cpu_binary_stable_sampling_v7.yaml`，远程基线仍为 `0fa2dab2c7eeb9fd0e010d4eabca87ed8856a117`，未执行 reset/restore 覆盖历史修改。
 
-v7 µû░σó₧ `foreground_sampling_mode=fixed_per_case`∩╝Üσ£¿σ╜ôσëì `patches_per_case=4`πÇü`foreground_probability=0.25` Σ╕ï∩╝îµ»ÅτùàΣ╛ïµ»Å epoch σ¢║σ«Ü 1 Σ╕¬ foreground-aware slot Σ╕Ä 3 Σ╕¬ random slotπÇé`train.py` σ╖▓µèè sampling mode Σ╝áσàÑ Dataset σ╣╢σåÖσàÑ run metadataπÇéΘàìτ╜«Σ╕Ä v6 ΘÇÉΘí╣σ»╣µ»öτí«Φ«ñ∩╝îΘÖñ `experiment_name` σñûΣ╗àµû░σó₧Φ»Ñ sampling mode∩╝¢CT-onlyπÇü64┬│ ROIπÇüRegion Dice+CE=1:1πÇüpeak lr=5e-5πÇüwarmup=1πÇücosine schedulerπÇüseedπÇüsplit Σ╕Ä full-volume validation σ¥çΣ┐¥µîüΣ╕ìσÅÿ∩╝îσ¢áµ¡ñ v7 Σ╗ìµÿ»σìòΣ╕╗ΦªüσÅÿΘçÅσ«₧Θ¬îπÇé
+v7 新增 `foreground_sampling_mode=fixed_per_case`：在当前 `patches_per_case=4`、`foreground_probability=0.25` 下，每病例每 epoch 固定 1 个 foreground-aware slot 与 3 个 random slot。`train.py` 已把 sampling mode 传入 Dataset 并写入 run metadata。配置与 v6 逐项对比确认，除 `experiment_name` 外仅新增该 sampling mode；CT-only、64³ ROI、Region Dice+CE=1:1、peak lr=5e-5、warmup=1、cosine scheduler、seed、split 与 full-volume validation 均保持不变，因此 v7 仍是单主要变量实验。
 
-σ╖Ñτ¿ïΘ¬îΦ»üΘçìµû░σ«₧Φ╖æ∩╝Ü
+工程验证重新实跑：
 
 ```text
 pytest tests -q
-ΓåÆ 108 passed
+→ 108 passed
 
 ruff check src web tests
-ΓåÆ All checks passed!
+→ All checks passed!
 
 git diff --check
-ΓåÆ ΘÇÜΦ┐ç
+→ 通过
 ```
 
-Σ╕ïΣ╕Çµ¡Ñσ£¿σ«îµêÉµ£¼µ¼í commit/push Σ╕öτí«Φ«ñ `HEAD == origin/main` σÉÄ∩╝îτ½ïσì│µëºΦíî v7 `formal_readiness --allow-cpu`∩╝¢σ┐àΘí╗ `ready=true / blocker_count=0` µëìσÉ»σè¿ epoch 1πÇéepoch 1 σ«îµêÉσÉÄσ┐àΘí╗µá╕σ»╣ `history.csv`πÇü`sampling_stats.csv`πÇü`best.pt`πÇü`last.pt`πÇü`summary.json`πÇü`train.log`∩╝îΘÜÅσÉÄσ»╣ `liver_7/liver_8` σüÜ full-volume/detailed validationπÇéτï¼τ½ï test `liver_169` τ╗ºτ╗¡τªüµ¡óΦ«┐Θù«πÇé
+下一步在完成本次 commit/push 且确认 `HEAD == origin/main` 后，立即执行 v7 `formal_readiness --allow-cpu`；必须 `ready=true / blocker_count=0` 才启动 epoch 1。epoch 1 完成后必须核对 `history.csv`、`sampling_stats.csv`、`best.pt`、`last.pt`、`summary.json`、`train.log`，随后对 `liver_7/liver_8` 做 full-volume/detailed validation。独立 test `liver_169` 继续禁止访问。
 
 
-### 2026-08-27∩╜£Θÿ╢µ«╡ AL∩╝Üσ«îµêÉ v7 epoch 1 detailed validation σ╣╢σü£µ¡ó fixed-per-case sampling σ«₧Θ¬î
+### 2026-08-27｜阶段 AL：完成 v7 epoch 1 detailed validation 并停止 fixed-per-case sampling 实验
 
-σ╖▓Σ╗Äτ£ƒσ«₧ run `experiments/20260827_000843_cpu_binary_stable_sampling_v7_roi64` µá╕Θ¬î v7 epoch 1∩╝Ü`train_loss=2.398116941962923`∩╝îΣ╕ñΣ╛ï full-volume validation mean Dice=`0.04561579108399831`∩╝îstd=`0.03207655051989757`∩╝îvalidation inference totalΓëê`123.24 s`∩╝îlr=`5e-5`∩╝¢`sampling_stats.csv` µÿ╛τñ║ 28 Σ╕¬ training patch∩╝îforeground fraction meanΓëê`0.06460`πÇümedian=`0`πÇüstdΓëê`0.11167`πÇümaxΓëê`0.36113`∩╝îlabel-positive patches=`10/28`πÇüpure-background patches=`18/28`πÇéΦ┐ÖΣ╕Ä fixed-per-case Φ«╛Φ«íΣ╕ìτƒ¢τ¢╛∩╝Üσ¢║σ«ÜτÜäµÿ»µ»ÅτùàΣ╛ï 1 Σ╕¬ foreground-aware slot + 3 Σ╕¬ random slot∩╝îrandom patch Σ╗ìσÅ»Φâ╜Θççσê░σëìµÖ»πÇé
+已从真实 run `experiments/20260827_000843_cpu_binary_stable_sampling_v7_roi64` 核验 v7 epoch 1：`train_loss=2.398116941962923`，两例 full-volume validation mean Dice=`0.04561579108399831`，std=`0.03207655051989757`，validation inference total≈`123.24 s`，lr=`5e-5`；`sampling_stats.csv` 显示 28 个 training patch，foreground fraction mean≈`0.06460`、median=`0`、std≈`0.11167`、max≈`0.36113`，label-positive patches=`10/28`、pure-background patches=`18/28`。这与 fixed-per-case 设计不矛盾：固定的是每病例 1 个 foreground-aware slot + 3 个 random slot，random patch 仍可能采到前景。
 
-σ»╣ v7 epoch 1 `best.pt` σÅ¬σ£¿ validation split σüÜ detailed full-volume evaluation∩╝îµ£¬Φ«┐Θù«τï¼τ½ï test `liver_169`∩╝Ü
+对 v7 epoch 1 `best.pt` 只在 validation split 做 detailed full-volume evaluation，未访问独立 test `liver_169`：
 
-- `ctspine1k-msd-t10-liver_7`∩╝ÜDice=`0.01353924`∩╝îIoU=`0.00681576`∩╝îPrecision=`0.00790974`∩╝îRecall=`0.04696506`∩╝îHD95Γëê`184.59 mm`∩╝îASSDΓëê`56.61 mm`∩╝¢prediction foregroundΓëê`4.154%`∩╝îGTΓëê`0.700%`∩╝îratioΓëê`5.94`∩╝¢pred/target components=`1363/3`∩╝îcomponent error=`1360`∩╝îfalse merge=`1`∩╝îfalse break=`103`∩╝îinferenceΓëê`75.89 s`∩╝¢uncertainty AUROC/AUPRCΓëê`0.91614/0.33726`∩╝îECEΓëê`0.03153`∩╝îMCEΓëê`0.19165`∩╝îBrierΓëê`0.07959`∩╝îNLLΓëê`0.19557`πÇé
-- `ctspine1k-msd-t10-liver_8`∩╝ÜDice=`0.07769234`∩╝îIoU=`0.04041618`∩╝îPrecision=`0.04419672`∩╝îRecall=`0.32087773`∩╝îHD95Γëê`178.33 mm`∩╝îASSDΓëê`52.88 mm`∩╝¢prediction foregroundΓëê`4.109%`∩╝îGTΓëê`0.566%`∩╝îratioΓëê`7.26`∩╝¢pred/target components=`1265/2`∩╝îcomponent error=`1263`∩╝îfalse merge=`0`∩╝îfalse break=`53`∩╝îinferenceΓëê`121.12 s`∩╝¢uncertainty AUROC/AUPRCΓëê`0.93387/0.34531`∩╝îECEΓëê`0.02835`∩╝îMCEΓëê`0.19835`∩╝îBrierΓëê`0.07196`∩╝îNLLΓëê`0.16423`πÇé
+- `ctspine1k-msd-t10-liver_7`：Dice=`0.01353924`，IoU=`0.00681576`，Precision=`0.00790974`，Recall=`0.04696506`，HD95≈`184.59 mm`，ASSD≈`56.61 mm`；prediction foreground≈`4.154%`，GT≈`0.700%`，ratio≈`5.94`；pred/target components=`1363/3`，component error=`1360`，false merge=`1`，false break=`103`，inference≈`75.89 s`；uncertainty AUROC/AUPRC≈`0.91614/0.33726`，ECE≈`0.03153`，MCE≈`0.19165`，Brier≈`0.07959`，NLL≈`0.19557`。
+- `ctspine1k-msd-t10-liver_8`：Dice=`0.07769234`，IoU=`0.04041618`，Precision=`0.04419672`，Recall=`0.32087773`，HD95≈`178.33 mm`，ASSD≈`52.88 mm`；prediction foreground≈`4.109%`，GT≈`0.566%`，ratio≈`7.26`；pred/target components=`1265/2`，component error=`1263`，false merge=`0`，false break=`53`，inference≈`121.12 s`；uncertainty AUROC/AUPRC≈`0.93387/0.34531`，ECE≈`0.02835`，MCE≈`0.19835`，Brier≈`0.07196`，NLL≈`0.16423`。
 
-Σ╕ñΣ╛ïσ╣│σ¥ç∩╝ÜDiceΓëê`0.04562`πÇüPrecisionΓëê`0.02605`πÇüRecallΓëê`0.18392`πÇüHD95Γëê`181.46 mm`πÇüASSDΓëê`54.74 mm`πÇüprediction/GT foreground ratioΓëê`6.60`πÇücomponent errorΓëê`1311.5`πÇéσ»╣µ»ö v3/v6 epoch 1∩╝êmean DiceΓëê`0.05407`∩╝¢v3 detailed mean PrecisionΓëê`0.03510`πÇüforeground ratioΓëê`3.42`πÇücomponent errorΓëê`1587.5`∩╝ë∩╝îv7 ΦÖ╜µ£¬σç║τÄ░ v6 epoch 2 τ║ª `60├ù` foreground explosion∩╝îΣ╜å Dice Σ╕Ä Precision µ¢┤σ╖«πÇüforeground ratio µ¢┤Θ½ÿ∩╝¢τ╗ôµ₧äτóÄτëçµò░ΘçÅΦÖ╜τòÑΣ╜Ä∩╝îΣ╜åµ▓íµ£ëσ╜óµêÉΦ╢│Σ╗Ñµè╡µ╢êσî║σƒƒµîçµáçΘÇÇσîûτÜäµò┤Σ╜ôµö╣σûäπÇé`liver_7` Φ┐ÿµÿÄµÿ╛σèúΣ║Ä v3 epoch 1∩╝¢`liver_8` σìòΣ╛ïΦ╛âσÑ╜∩╝îΣ╜åΣ╕ìΦ╢│Σ╗ÑΣ╜┐Σ╕ñΣ╛ïµò┤Σ╜ôµÄÑΦ┐æµêûΦ╢àΦ┐ç v3/v6 epoch 1πÇé
+两例平均：Dice≈`0.04562`、Precision≈`0.02605`、Recall≈`0.18392`、HD95≈`181.46 mm`、ASSD≈`54.74 mm`、prediction/GT foreground ratio≈`6.60`、component error≈`1311.5`。对比 v3/v6 epoch 1（mean Dice≈`0.05407`；v3 detailed mean Precision≈`0.03510`、foreground ratio≈`3.42`、component error≈`1587.5`），v7 虽未出现 v6 epoch 2 约 `60×` foreground explosion，但 Dice 与 Precision 更差、foreground ratio 更高；结构碎片数量虽略低，但没有形成足以抵消区域指标退化的整体改善。`liver_7` 还明显劣于 v3 epoch 1；`liver_8` 单例较好，但不足以使两例整体接近或超过 v3/v6 epoch 1。
 
-σ¢áµ¡ñµîëΘóäσàêΘöüσ«ÜτÜäσêñσ«ÜΦºäσêÖσü£µ¡ó v7∩╝îΣ╕ìµ£║µó░Φ┐ÉΦíî epoch 2πÇéτ╗ôΦ«║ΘÖÉσ«ÜΣ╕║∩╝Ü**σ£¿σ╜ôσëì v7 σìòσÅÿΘçÅσ«₧Θ¬îµ¥íΣ╗╢Σ╕ï∩╝îfixed-per-case quota µ▓íµ£ëµö╣σûä epoch 1 full-volume validation∩╝îσ¢áµ¡ñ sampling instability Σ╕ìµÿ»Φ╢│Σ╗ÑΦºúσå│σ╜ôσëì baseline instability τÜäΣ╕╗Φªüσ╣▓ΘóäπÇé** Σ╕ìΦâ╜µì«µ¡ñσåÖµêÉΓÇ£sampling σ«îσà¿µùáσ╜▒σôìΓÇ¥µêûΓÇ£sampling Σ╕ÄΘù«Θóÿµùáσà│ΓÇ¥πÇé
+因此按预先锁定的判定规则停止 v7，不机械运行 epoch 2。结论限定为：**在当前 v7 单变量实验条件下，fixed-per-case quota 没有改善 epoch 1 full-volume validation，因此 sampling instability 不是足以解决当前 baseline instability 的主要干预。** 不能据此写成“sampling 完全无影响”或“sampling 与问题无关”。
 
-Σ╕ïΣ╕Çµ¡ÑΦ┐¢σàÑµ¢┤τ¢┤µÄÑτÜäΣ╝ÿσîûσè¿σè¢σ¡ª diagnostics∩╝ÜΣ╝ÿσàêΦ«░σ╜ò validation logits/probability σêåσ╕âπÇüDice/CE σêåΘí╣Σ╕ÄσëìµÖ»/ΦâîµÖ» CE contributionπÇüµ£Çτ╗ê segmentation head τÜä bias/weight/gradient norm∩╝îσ╣╢τö¿σÄåσÅ▓ v3/v6 validation checkpoint µúÇµƒÑ epoch 1ΓåÆ2 µÿ»σÉªσ¡ÿσ£¿µò┤Σ╜ô foreground probability/bias µ╝éτº╗∩╝¢σÉîµù╢ΘÆêσ»╣ full-volume inference Σ╕Ä patch training τÜä normalizationπÇülogits resizeπÇüsoftmax/argmaxπÇüpadding/cropping τ¡ëΣ╕ÇΦç┤µÇºσó₧σèáσ¢₧σ╜Æµ╡ïΦ»òπÇéτï¼τ½ï test `liver_169` τ╗ºτ╗¡τªüµ¡óΦ«┐Θù«πÇé
+下一步进入更直接的优化动力学 diagnostics：优先记录 validation logits/probability 分布、Dice/CE 分项与前景/背景 CE contribution、最终 segmentation head 的 bias/weight/gradient norm，并用历史 v3/v6 validation checkpoint 检查 epoch 1→2 是否存在整体 foreground probability/bias 漂移；同时针对 full-volume inference 与 patch training 的 normalization、logits resize、softmax/argmax、padding/cropping 等一致性增加回归测试。独立 test `liver_169` 继续禁止访问。
 
 
-### 2026-08-27∩╜£Θÿ╢µ«╡ AM∩╝Üσ«îµêÉ checkpoint diagnostics σ╖Ñτ¿ïΘù¡τÄ»σ╣╢Θöüσ«Ü v8 BN-running-stat σìòσÅÿΘçÅµû╣σÉæ
+### 2026-08-27｜阶段 AM：完成 checkpoint diagnostics 工程闭环并锁定 v8 BN-running-stat 单变量方向
 
-Σ╗ÄΦ┐£τ¿ïσÉîµ¡Ñτé╣ `353197296fb0a55fab706e272801e7de9f929d13` µüóσñìµû¡τé╣σÉÄ∩╝îτí«Φ«ñσ╖ÑΣ╜£µáæσÅ¬µ£ë 3 Σ╕¬µ£¬Φ╖ƒΦ╕¬ diagnostics µûçΣ╗╢∩╝Ü`src/modeling/diagnostics.py`πÇü`src/modeling/diagnose_checkpoint.py`πÇü`tests/test_checkpoint_diagnostics.py`∩╝îµ£¬σÅæτÄ░σà╢σ«âσ╛àΣ┐¥τòÖΣ┐«µö╣∩╝îΣ╣ƒµ£¬µëºΦíî reset/restoreπÇé
+从远程同步点 `353197296fb0a55fab706e272801e7de9f929d13` 恢复断点后，确认工作树只有 3 个未跟踪 diagnostics 文件：`src/modeling/diagnostics.py`、`src/modeling/diagnose_checkpoint.py`、`tests/test_checkpoint_diagnostics.py`，未发现其它待保留修改，也未执行 reset/restore。
 
-µ£¼Φ╜«σ»╣ diagnostics σ«₧τÄ░ΘÇÉµûçΣ╗╢σñìµá╕σ╣╢Θçìµû░σ«₧Φ╖æΘ¬îΦ»üπÇéΦ»Ñσ╖Ñσà╖Σ╕Ñµá╝ΘÖÉσ«Ü validation split∩╝îΣ╕ìµÜ┤Θ£▓ test split σÅéµò░∩╝îΣ╕ìµëºΦíî `optimizer.step`∩╝¢µö»µîü binary logits/probability σêåσ╕âπÇüGT foreground/background Σ╕èτÜä P(fg)πÇüprobability histogramπÇüprediction/target foreground fractionπÇüRegion Dice+CE σêåΘí╣σÅè foreground/background CE contributionπÇüµ£Çτ╗ê segmentation head σÅéµò░Φîâµò░/σüÅτ╜«/gradientπÇüσà¿Θâ¿ BatchNorm3d running statistics∩╝îΣ╗ÑσÅè `--bn-mode running|batch` σ»╣τàºπÇéσ¢║σ«Ü foreground-centered patch gradient diagnostic σÅ¬ backward Σ╕Çµ¼íσ╣╢σ£¿τ╗ôµ¥ƒσÉÄµ╕àτ⌐║ gradient∩╝¢full-volume predictor Σ╕Ä training τ╗ºτ╗¡σñìτö¿σÉîΣ╕Ç `resize_logits_to_target(..., trilinear, align_corners=False)` helperπÇé
+本轮对 diagnostics 实现逐文件复核并重新实跑验证。该工具严格限定 validation split，不暴露 test split 参数，不执行 `optimizer.step`；支持 binary logits/probability 分布、GT foreground/background 上的 P(fg)、probability histogram、prediction/target foreground fraction、Region Dice+CE 分项及 foreground/background CE contribution、最终 segmentation head 参数范数/偏置/gradient、全部 BatchNorm3d running statistics，以及 `--bn-mode running|batch` 对照。固定 foreground-centered patch gradient diagnostic 只 backward 一次并在结束后清空 gradient；full-volume predictor 与 training 继续复用同一 `resize_logits_to_target(..., trilinear, align_corners=False)` helper。
 
-Θçìµû░Φ»╗σÅûτ£ƒσ«₧µûçΣ╗╢ `experiments/diagnostics_20260827_v6_e2_liver7_bn_batch_v2/diagnostics.json` σÉÄτí«Φ«ñ∩╝Üv6 epoch2 / `liver_7` σ£¿Σ╕┤µù╢ batch-stat inference Σ╕ï prediction foreground fraction=`0.2798134`∩╝îGT foreground fraction=`0.00699608`∩╝îCE=`1.2322532`∩╝îσà╢Σ╕¡ foreground/background weighted CE contributionΓëê`0.02247/1.20978`πÇéµáçσçå running-stat inference σÉî checkpoint τÜä prediction foregroundΓëê`42.26%`∩╝¢batch-stat σÅ»µÿÄµÿ╛τ╝ôΦºúσê░Γëê`27.98%`∩╝îΣ╜åΣ╗ìΦ┐£Θ½ÿΣ║Ä GTΓëê`0.70%`πÇéτ╗ôσÉê epoch1ΓåÆepoch2 final head weight norm/bias σçáΣ╣ÄΣ╕ìσÅÿ∩╝îΦÇî 9 Σ╕¬ BatchNorm3d τÜä running statistics µÿÄµÿ╛µ╝éτº╗∩╝îσ╜ôσëìτ╗ôΦ«║ΘÖÉσ«ÜΣ╕║∩╝Ü**BatchNorm running-statistics / train-eval normalization mismatch µÿ» foreground explosion τÜäΘçìΦªüµ£║σê╢Σ╣ïΣ╕Ç∩╝îΣ╜åΣ╕ìµÿ»σö»Σ╕Çµ£║σê╢∩╝¢Σ╕ìΦâ╜σåÖµêÉσö»Σ╕Çµá╣σ¢áσ╖▓Φó½σ«îσà¿Φ»üµÿÄπÇé**
+重新读取真实文件 `experiments/diagnostics_20260827_v6_e2_liver7_bn_batch_v2/diagnostics.json` 后确认：v6 epoch2 / `liver_7` 在临时 batch-stat inference 下 prediction foreground fraction=`0.2798134`，GT foreground fraction=`0.00699608`，CE=`1.2322532`，其中 foreground/background weighted CE contribution≈`0.02247/1.20978`。标准 running-stat inference 同 checkpoint 的 prediction foreground≈`42.26%`；batch-stat 可明显缓解到≈`27.98%`，但仍远高于 GT≈`0.70%`。结合 epoch1→epoch2 final head weight norm/bias 几乎不变，而 9 个 BatchNorm3d 的 running statistics 明显漂移，当前结论限定为：**BatchNorm running-statistics / train-eval normalization mismatch 是 foreground explosion 的重要机制之一，但不是唯一机制；不能写成唯一根因已被完全证明。**
 
-σ╖Ñτ¿ïΘ¬îΦ»üΘçìµû░σ«₧Φ╖æ∩╝Ü
+工程验证重新实跑：
 
 ```text
 .venv/Scripts/python.exe -m pytest tests/test_checkpoint_diagnostics.py -q
-ΓåÆ 8 passed
+→ 8 passed
 
 .venv/Scripts/python.exe -m pytest tests -q
-ΓåÆ 116 passed
+→ 116 passed
 
 .venv/Scripts/python.exe -m ruff check src web tests
-ΓåÆ All checks passed!
+→ All checks passed!
 
 git diff --check
-ΓåÆ ΘÇÜΦ┐ç
+→ 通过
 ```
 
-Σ╕ïΣ╕Çµ¡ÑΘöüσ«Ü v8∩╝ÜΣ╕Ñµá╝σƒ║Σ║Ä `configs/orthopedic_ct_cpu_binary_balanced_lr_v6.yaml`∩╝îσö»Σ╕Çσ«₧Θ¬îσÅÿΘçÅµÿ»Φ«¡τ╗âΘÿ╢µ«╡σå╗τ╗ô `BatchNorm3d` running statistics∩╝¢Σ╝ÿσàêΘççτö¿µ»Åµ¼íΦ┐¢σàÑΦ«¡τ╗âµÇüσÉÄσ░å BN module Φ«╛Σ╕║ evalπÇüΣ╜åΣ┐¥τòÖ affine weight/bias `requires_grad=True` τÜäµ£Çσ░Åσ«₧τÄ░πÇéσ┐àΘí╗σó₧σèáσ¢₧σ╜Æµ╡ïΦ»òΦ»üµÿÄ running_mean/running_var/num_batches_tracked Σ╕ìµ¢┤µû░πÇüBN affine Σ╗ìµ£ë gradientπÇüσà╢σ«âµ¿íσ¥ùΣ╗ìΣ╕║ trainingπÇüΘ╗ÿΦ«ñµùºΘàìτ╜«ΦíîΣ╕║Σ╕ìσÅÿπÇüvalidation/inference Σ╕ìσÅùµäÅσñûσ╜▒σôìπÇéσ«îµêÉΣ╗úτáü/config/µ╡ïΦ»ò/readiness σ╣╢ GitHub Θù¡τÄ»σÉÄτ¢┤µÄÑΦ╖æ v8 epoch1∩╝¢ΦïÑµùáµÿÄµÿ╛τü╛ΘÜ╛τ╗ºτ╗¡ epoch2∩╝îτ¿│σ«ÜσêÖ epoch3πÇéτï¼τ½ï test `ctspine1k-msd-t10-liver_169` σ£¿ validation σÅéµò░Σ╕Ä checkpoint ΘÇëµï⌐ΦºäσêÖσ«îσà¿Θöüσ«Üσëìτ╗ºτ╗¡τªüµ¡óΦ«┐Θù«πÇé
+下一步锁定 v8：严格基于 `configs/orthopedic_ct_cpu_binary_balanced_lr_v6.yaml`，唯一实验变量是训练阶段冻结 `BatchNorm3d` running statistics；优先采用每次进入训练态后将 BN module 设为 eval、但保留 affine weight/bias `requires_grad=True` 的最小实现。必须增加回归测试证明 running_mean/running_var/num_batches_tracked 不更新、BN affine 仍有 gradient、其它模块仍为 training、默认旧配置行为不变、validation/inference 不受意外影响。完成代码/config/测试/readiness 并 GitHub 闭环后直接跑 v8 epoch1；若无明显灾难继续 epoch2，稳定则 epoch3。独立 test `ctspine1k-msd-t10-liver_169` 在 validation 参数与 checkpoint 选择规则完全锁定前继续禁止访问。
 
 
-### 2026-08-27∩╜£Θÿ╢µ«╡ AN∩╝Üσ«îµêÉ v8 BN-running-stat σìòσÅÿΘçÅσ╖Ñτ¿ïΣ╕Ä readiness
+### 2026-08-27｜阶段 AN：完成 v8 BN-running-stat 单变量工程与 readiness
 
-v8 Σ╕Ñµá╝σƒ║Σ║Ä `configs/orthopedic_ct_cpu_binary_balanced_lr_v6.yaml`∩╝îµû░σó₧ `configs/orthopedic_ct_cpu_binary_bn_frozen_v8.yaml`πÇéσ«₧ΘÖà config diff σÅ¬µ£ëΣ╕ñσñä∩╝Ü`experiment_name` µö╣Σ╕║ `cpu_binary_bn_frozen_v8_roi64`∩╝îΣ╗ÑσÅè `training.freeze_batchnorm_running_stats: true`∩╝¢CT-onlyπÇüsplit/seedπÇüROI64πÇüpatches_per_case=4πÇüforeground_probability=0.25πÇüBernoulli samplingπÇüRegion Dice+CE=1:1πÇülr=5e-5πÇüwarmup=1πÇüfull-volume validation ROI128 / overlap=0.25 τ¡ëσ¥çΣ┐¥µîüΣ╕ìσÅÿπÇé
+v8 严格基于 `configs/orthopedic_ct_cpu_binary_balanced_lr_v6.yaml`，新增 `configs/orthopedic_ct_cpu_binary_bn_frozen_v8.yaml`。实际 config diff 只有两处：`experiment_name` 改为 `cpu_binary_bn_frozen_v8_roi64`，以及 `training.freeze_batchnorm_running_stats: true`；CT-only、split/seed、ROI64、patches_per_case=4、foreground_probability=0.25、Bernoulli sampling、Region Dice+CE=1:1、lr=5e-5、warmup=1、full-volume validation ROI128 / overlap=0.25 等均保持不变。
 
-`src/modeling/train.py` µû░σó₧ `configure_batchnorm_training_mode()`∩╝Üµ»ÅΣ╕¬ epoch Σ╗ìσàêµëºΦíîσ«îµò┤ `model.train()`∩╝îΣ╗àσ╜ôµû░Θàìτ╜«σÉ»τö¿µù╢µèèµëÇµ£ë `BatchNorm3d` σ¡Éµ¿íσ¥ùσêçσê░ eval∩╝îΣ╜┐ forward Σ╜┐τö¿σ¢║σ«Ü running_mean/running_var Σ╕öΣ╕ìσåìσó₧σèá `num_batches_tracked`∩╝¢σç╜µò░Σ╕ìΣ┐«µö╣Σ╗╗Σ╜òσÅéµò░ `requires_grad`∩╝îσ¢áµ¡ñ BN affine weight/bias Σ╗ìσÅ»σÅéΣ╕ÄσÅìσÉæΣ╝áµÆ¡πÇéΘ╗ÿΦ«ñµ£¬Θàìτ╜«µù╢τ¢┤µÄÑ no-op∩╝îµùºΘàìτ╜«Φ«¡τ╗âΦíîΣ╕║Σ╕ìσÅÿ∩╝¢validation/inference Σ╗ìτö▒σÄƒ `model.eval()` Φ╖»σ╛äµÄºσê╢πÇé
+`src/modeling/train.py` 新增 `configure_batchnorm_training_mode()`：每个 epoch 仍先执行完整 `model.train()`，仅当新配置启用时把所有 `BatchNorm3d` 子模块切到 eval，使 forward 使用固定 running_mean/running_var 且不再增加 `num_batches_tracked`；函数不修改任何参数 `requires_grad`，因此 BN affine weight/bias 仍可参与反向传播。默认未配置时直接 no-op，旧配置训练行为不变；validation/inference 仍由原 `model.eval()` 路径控制。
 
-µû░σó₧ `tests/test_batchnorm_freeze_training.py`∩╝îσ¢₧σ╜ÆΦªåτ¢û∩╝Ürunning_mean/running_var Σ╕ìµ¢┤µû░πÇünum_batches_tracked Σ╕ìσó₧σèáπÇüBN affine weight/bias σ¥çΦÄ╖σ╛ùΘ¥₧Θ¢╢ gradientπÇüσà╢σ«âµ¿íσ¥ùΣ┐¥µîü trainingπÇüΘ╗ÿΦ«ñσà│Θù¡µù╢ BN τ╗ºτ╗¡µ¡úσ╕╕µ¢┤µû░ running statsπÇüeval/inference τè╢µÇüΣ╕ìΦó½ helper µäÅσñûµö╣σÅÿ∩╝îΣ╗ÑσÅè v8/v6 Θàìτ╜«ΘÖñσ«₧Θ¬îσÉìσÆî BN µû░ΘÇëΘí╣σñûσ«îσà¿τ¢╕σÉîπÇé
+新增 `tests/test_batchnorm_freeze_training.py`，回归覆盖：running_mean/running_var 不更新、num_batches_tracked 不增加、BN affine weight/bias 均获得非零 gradient、其它模块保持 training、默认关闭时 BN 继续正常更新 running stats、eval/inference 状态不被 helper 意外改变，以及 v8/v6 配置除实验名和 BN 新选项外完全相同。
 
-τ£ƒσ«₧σ╖Ñτ¿ïΘ¬îΦ»ü∩╝Ü
+真实工程验证：
 
 ```text
 pytest tests -q
-ΓåÆ 120 passed
+→ 120 passed
 
 ruff check src web tests
-ΓåÆ All checks passed!
+→ All checks passed!
 
 v8 YAML parse
-ΓåÆ OK
+→ OK
 
 formal_readiness --task-spec configs/task_specs/vertebra_binary_ctspine1k_msd_t10_v1.json \
   --config configs/orthopedic_ct_cpu_binary_bn_frozen_v8.yaml --allow-cpu
-ΓåÆ ready=true
-ΓåÆ blocker_count=0
-ΓåÆ preflight checked_case_count=10
-ΓåÆ split train/validation/test=7/2/1
-ΓåÆ 0 error / 0 warning
+→ ready=true
+→ blocker_count=0
+→ preflight checked_case_count=10
+→ split train/validation/test=7/2/1
+→ 0 error / 0 warning
 ```
 
-readiness Σ╕¡ GPU σ¡ÉµúÇµƒÑΣ╗ìσªéΘóäµ£ƒµèÑσæèµ£¼µ£║ PyTorch Σ╕║ CPU buildπÇüµùá CUDA∩╝¢τö▒Σ║Äµ£¼Φ╜«µÿÄτí«Σ╜┐τö¿ `--allow-cpu`∩╝îΦ┐ÖΣ╕ìµ₧äµêÉ blockerπÇéτï¼τ½ï test `ctspine1k-msd-t10-liver_169` µ£¬Φó½Φ«┐Θù«∩╝îτ╗ºτ╗¡Σ┐¥µîüΘöüσ«ÜπÇé
+readiness 中 GPU 子检查仍如预期报告本机 PyTorch 为 CPU build、无 CUDA；由于本轮明确使用 `--allow-cpu`，这不构成 blocker。独立 test `ctspine1k-msd-t10-liver_169` 未被访问，继续保持锁定。
 
-Σ╕ïΣ╕Çµ¡Ñσ£¿µ£¼Θÿ╢µ«╡ commit/push σ╣╢τí«Φ«ñ `HEAD == origin/main` σÉÄ∩╝îτ¢┤µÄÑσÉ»σè¿ v8 epoch1πÇéepoch1 σ«îµêÉσÉÄσ┐àΘí╗σàêµá╕σ»╣ run artifacts Σ╕Ä full-volume validation∩╝îσåìσ»╣ `liver_7/liver_8` σüÜ detailed evaluation σÆî checkpoint diagnostics∩╝¢ΦïÑµ▓íµ£ëµÿÄµÿ╛ foreground/background τü╛ΘÜ╛∩╝îσêÖτ╗¡Φ«¡ epoch2∩╝îepoch2 µÿ»Σ╕╗Φªüσêñσ«Üτé╣πÇé
+下一步在本阶段 commit/push 并确认 `HEAD == origin/main` 后，直接启动 v8 epoch1。epoch1 完成后必须先核对 run artifacts 与 full-volume validation，再对 `liver_7/liver_8` 做 detailed evaluation 和 checkpoint diagnostics；若没有明显 foreground/background 灾难，则续训 epoch2，epoch2 是主要判定点。
 
 
-### 2026-08-27∩╜£Θÿ╢µ«╡ AO∩╝Üv8 epoch1 σÅæτöƒΣ╕ÑΘçìΦâîµÖ»σíîτ╝⌐∩╝îµîëΦºäσêÖσü£µ¡ó
+### 2026-08-27｜阶段 AO：v8 epoch1 发生严重背景塌缩，按规则停止
 
-v8 run∩╝Ü`experiments/20260827_125357_cpu_binary_bn_frozen_v8_roi64`πÇéµ£¼Φ╜«σÅ¬Σ╜┐τö¿ train 7 Σ╛ïΣ╕Ä validation 2 Σ╛ï∩╝îµ£¬σ»╣τï¼τ½ï test `ctspine1k-msd-t10-liver_169` σüÜ tuning/evaluationπÇé
+v8 run：`experiments/20260827_125357_cpu_binary_bn_frozen_v8_roi64`。本轮只使用 train 7 例与 validation 2 例，未对独立 test `ctspine1k-msd-t10-liver_169` 做 tuning/evaluation。
 
-τ£ƒσ«₧Φ«¡τ╗â / full-volume validation∩╝Ü
+真实训练 / full-volume validation：
 
 ```text
 epoch 1: train_loss=6.0181837635
          mean val Dice=0.0001247640
          val Dice std=0.0001247640
-         validation inference totalΓëê138.29 s
+         validation inference total≈138.29 s
          lr=5e-5
 ```
 
-Φ«¡τ╗â sampling Σ╕Ä v3/v6 epoch1 σ«îσà¿Σ╕ÇΦç┤∩╝Ü28 patches∩╝îforeground fraction meanΓëê`7.9073%`πÇümedian=`0`πÇüpure-background=`18/28`πÇüforeground-positive=`10/28`πÇéσ¢áµ¡ñµ£¼Φ╜«τü╛ΘÜ╛Σ╕ìΦâ╜σ╜Æσ¢áΣ║Ä sampling σÅæτöƒΣ║åµû░τÜäσÅÿσîûπÇé
+训练 sampling 与 v3/v6 epoch1 完全一致：28 patches，foreground fraction mean≈`7.9073%`、median=`0`、pure-background=`18/28`、foreground-positive=`10/28`。因此本轮灾难不能归因于 sampling 发生了新的变化。
 
-σ»╣ `best.pt`∩╝êσì│ epoch1∩╝ëσüÜΣ╕ñΣ╛ï validation detailed full-volume evaluation∩╝Ü
+对 `best.pt`（即 epoch1）做两例 validation detailed full-volume evaluation：
 
-- `liver_7`∩╝ÜDice=`0.00024953`∩╝îPrecision=`0.00163274`∩╝îRecall=`0.00013509`∩╝îprediction foreground=`0.05788%`∩╝îGT foreground=`0.69961%`∩╝îprediction/GT ratioΓëê`0.08274`∩╝îcomponent error=`230`∩╝¢
-- `liver_8`∩╝ÜDice=`0`∩╝îPrecision=`0`∩╝îRecall=`0`∩╝îprediction foreground=`0.07086%`∩╝îGT foreground=`0.56596%`∩╝îprediction/GT ratioΓëê`0.12520`∩╝îcomponent error=`218`πÇé
+- `liver_7`：Dice=`0.00024953`，Precision=`0.00163274`，Recall=`0.00013509`，prediction foreground=`0.05788%`，GT foreground=`0.69961%`，prediction/GT ratio≈`0.08274`，component error=`230`；
+- `liver_8`：Dice=`0`，Precision=`0`，Recall=`0`，prediction foreground=`0.07086%`，GT foreground=`0.56596%`，prediction/GT ratio≈`0.12520`，component error=`218`。
 
-Φ┐ÖΣ╕Ä v6 epoch2 τÜä foreground explosion τ¢╕σÅì∩╝îσ▒₧Σ║ÄΣ╕ÑΘçì **background collapse / foreground under-prediction**πÇéσ¢áµ¡ñ v8 µÿÄµÿ╛µ£¬Φ╛╛σê░ΓÇ£epoch1 µùáτü╛ΘÜ╛ΓÇ¥τÜäτ╗ºτ╗¡µ¥íΣ╗╢∩╝îΣ╕ìµëºΦíî epoch2πÇé
+这与 v6 epoch2 的 foreground explosion 相反，属于严重 **background collapse / foreground under-prediction**。因此 v8 明显未达到“epoch1 无灾难”的继续条件，不执行 epoch2。
 
-checkpoint diagnostics Φ┐¢Σ╕Çµ¡Ñτí«Φ«ñ BN freeze µîëΦ«╛Φ«íτ£ƒσ«₧τöƒµòê∩╝Üv8 epoch1 Σ╕ñΣ╛ïΘâ╜µÿ╛τñ║ 9 Σ╕¬ `BatchNorm3d`∩╝îτ¼¼Σ╕Çσ▒é `num_batches_tracked=0`πÇürunning mean channel std=`0`πÇürunning var mean=`1`∩╝¢σì│ running stats Σ╗Äσê¥σºïσîûσ╝Çσºïσ«îσà¿µ£¬µ¢┤µû░πÇé`liver_7` τÜä prediction foreground fractionΓëê`0.0005788`∩╝îGTΓëê`0.0069961`∩╝îGT foreground mean P(fg)Γëê`0.0001326`∩╝îGT background mean P(fg)Γëê`0.0006001`∩╝¢`liver_8` τÜä GT foreground mean P(fg) τöÜΦç│τ║ª `4.1e-12`πÇéΦ┐ÖΦ»┤µÿÄΓÇ£Σ╗ÄΘÜÅµ£║σê¥σºïσîûσ╝Çσºïµèè BN running stats µ░╕Σ╣àσ¢║σ«ÜΣ╕║ 0/1ΓÇ¥Σ╝ÜΘÇáµêÉΣ╕ÑΘçì train/inference representation mismatch∩╝îΣ╕ìΦâ╜Σ╜£Σ╕║τ¿│σ«Ü baseline µû╣µíêπÇé
+checkpoint diagnostics 进一步确认 BN freeze 按设计真实生效：v8 epoch1 两例都显示 9 个 `BatchNorm3d`，第一层 `num_batches_tracked=0`、running mean channel std=`0`、running var mean=`1`；即 running stats 从初始化开始完全未更新。`liver_7` 的 prediction foreground fraction≈`0.0005788`，GT≈`0.0069961`，GT foreground mean P(fg)≈`0.0001326`，GT background mean P(fg)≈`0.0006001`；`liver_8` 的 GT foreground mean P(fg) 甚至约 `4.1e-12`。这说明“从随机初始化开始把 BN running stats 永久固定为 0/1”会造成严重 train/inference representation mismatch，不能作为稳定 baseline 方案。
 
-σ╜ôσëìµ¢┤τ▓╛τí«τÜäµ£║σê╢σêñµû¡µÿ»∩╝Ü**BN running-statistics τí«σ«₧σÅéΣ╕ÄΣ║å v6 epoch1ΓåÆepoch2 τÜäΣ╕ìτ¿│σ«Ü∩╝îΣ╜åσà╢σñäτÉåµû╣σ╝ÅΣ╕ìΦâ╜τ«Çσìòµö╣Σ╕║Σ╗Äσê¥σºïσîûΦ╡╖σ«îσà¿σå╗τ╗ôπÇé** v6 epoch1 τÜä BN stats∩╝êΣ╛ïσªéΘªûσ▒é running mean stdΓëê`0.01449`πÇürunning var meanΓëê`0.06225`πÇünum_batches=28∩╝ëσÅìΦÇîΣ╕Äσ╜ôµù╢Φ╛âσÑ╜τÜä validation Φí¿τÄ░τ¢╕Σ╝┤∩╝¢v6 epoch2 µ╝éτº╗σê░ running mean stdΓëê`0.06107`πÇürunning var meanΓëê`0.01357`πÇünum_batches=56 σÉÄσç║τÄ░ foreground explosionπÇéΣ╕ïΣ╕Çµ¡Ñσ┐àΘí╗σàêΘçÅσîû encoder/decoder/head-input activation µ╝éτº╗Σ╕Ä checkpoint σÅéµò░ delta∩╝îσåìΘÇëµï⌐Σ╕ÇΣ╕¬σÅ»ΦºúΘçèτÜä v9 σìòσÅÿΘçÅ∩╝îΦÇîΣ╕ìµÿ»τ¢┤µÄÑσÉîµù╢µö╣ normalization/lr/loss/samplingπÇé
-
-
-### 2026-08-27∩╜£Θÿ╢µ«╡ AP∩╝Üσó₧σèáσñÜ checkpoint activation / parameter-delta Φ»èµû¡σ╖Ñσà╖
-
-Σ╕║Θü┐σàìσ£¿ v8 σñ▒Φ┤ÑσÉÄτ¢┤µÄÑτî£µ╡ï v9∩╝îµ£¼Φ╜«µû░σó₧ `src/modeling/compare_checkpoint_dynamics.py`∩╝îΣ╕ôΘù¿σ»╣ validation τùàΣ╛ïτÜäσ¢║σ«Ü foreground-centered 64┬│ patch µ»öΦ╛âσñÜΣ╕¬ checkpointπÇéΦ»ÑσàÑσÅúΣ╕ìµÅÉΣ╛¢ test split∩╝îΣ╕ìµëºΦíî optimizer.stepπÇé
-
-Θ╗ÿΦ«ñΦ«░σ╜òΣ╗ÑΣ╕ïσà│Θö«µ┐Çµ┤╗∩╝Üencoder σ¢¢τ║º patch embeddingπÇüµ»Åτ║ºµ£ÇσÉÄΣ╕ÇΣ╕¬ transformer blockπÇüdecoder `linear_fuse` Conv/BatchNormπÇü`linear_pred` head input Σ╕Äµ£Çτ╗ê logitsπÇéµ»ÅΣ╕¬µ┐Çµ┤╗Φ«░σ╜ò shapeπÇüL2 normπÇümean/std/min/max σÆî q01/q05/q10/q25/q50/q75/q90/q95/q99πÇéσÅªσ»╣ checkpoint state_dict Φ«íτ«ùµîë encoder/decoder σ¡Éµ¿íσ¥ùΦüÜσÉêτÜä parameter relative deltaπÇüσÅÿσîûµ£ÇσñºτÜäσìòσÅéµò░∩╝îΣ╗ÑσÅè BatchNorm running_mean/running_var buffer deltaπÇé
-
-µû░σó₧ `tests/test_compare_checkpoint_dynamics.py`∩╝îΘ¬îΦ»ü head input/output hook Φâ╜µ¡úτí«µèôσÅû∩╝îΣ╗ÑσÅèσÅéµò░τ╗äσÅÿσîûΣ╕Ä BN running buffer σÅÿσîûΦâ╜Φó½Φ»åσê½πÇéfocused tests=`2 passed`∩╝îRuff cleanπÇé
-
-Σ╕ïΣ╕Çµ¡Ñσ£¿σ«îµêÉµ£¼Φ╜«σ╖Ñτ¿ï commit/push σÉÄ∩╝îτ¢┤µÄÑτö¿σÉîΣ╕Ç `liver_7` validation foreground-centered patch µ»öΦ╛â v6 epoch1πÇüv6 epoch2πÇüv8 epoch1∩╝îΣ╛¥µì«τ£ƒσ«₧ activation / parameter delta ΘÇëµï⌐ v9 τÜäσö»Σ╕ÇσÅÿΘçÅπÇéτï¼τ½ï test `ctspine1k-msd-t10-liver_169` τ╗ºτ╗¡τªüµ¡óΦ«┐Θù«πÇé
+当前更精确的机制判断是：**BN running-statistics 确实参与了 v6 epoch1→epoch2 的不稳定，但其处理方式不能简单改为从初始化起完全冻结。** v6 epoch1 的 BN stats（例如首层 running mean std≈`0.01449`、running var mean≈`0.06225`、num_batches=28）反而与当时较好的 validation 表现相伴；v6 epoch2 漂移到 running mean std≈`0.06107`、running var mean≈`0.01357`、num_batches=56 后出现 foreground explosion。下一步必须先量化 encoder/decoder/head-input activation 漂移与 checkpoint 参数 delta，再选择一个可解释的 v9 单变量，而不是直接同时改 normalization/lr/loss/sampling。
 
 
-### 2026-08-27∩╜£Θÿ╢µ«╡ AQ∩╝Üµá╕Θ¬î checkpoint dynamics σ╣╢σ«îµêÉ v9 epoch1ΓåÆepoch2 BN ΘöÜσ«Üσ╖Ñτ¿ï/readiness
+### 2026-08-27｜阶段 AP：增加多 checkpoint activation / parameter-delta 诊断工具
 
-Σ╗Ä GitHub Θù¡τÄ»τé╣ `2f6389db57c0e9531227c2f61503cf9750ac3171` µüóσñìτ£ƒσ«₧µû¡τé╣∩╝îσ╖ÑΣ╜£µáæσê¥σºïσ╣▓σçÇ∩╝î`HEAD == origin/main`πÇéΘçìµû░Φ»╗σÅû `experiments/checkpoint_dynamics_20260827_v6e1_v6e2_v8e1_liver7/checkpoint_dynamics.json`∩╝îτí«Φ«ñΦ»Ñτ╗ôµ₧£σ╖▓τ£ƒσ«₧µ»öΦ╛â v6 epoch1πÇüv6 epoch2πÇüv8 epoch1∩╝îσ¢║σ«ÜτùàΣ╛ïΣ╕║ validation `liver_7` τÜä foreground-centered 64┬│ patch∩╝îµ£¬Φ«┐Θù« testπÇé
+为避免在 v8 失败后直接猜测 v9，本轮新增 `src/modeling/compare_checkpoint_dynamics.py`，专门对 validation 病例的固定 foreground-centered 64³ patch 比较多个 checkpoint。该入口不提供 test split，不执行 optimizer.step。
 
-v6 epoch1ΓåÆepoch2 τÜä state delta µÿ╛τñ║∩╝ÜµÖ«ΘÇÜσÅ»Φ«¡τ╗âσÅéµò░µîëτ╗äΦüÜσÉêτÜäµ£Çσñºτ¢╕σ»╣σÅÿσîûτ║ªΣ╕║ encoder `embed_4=0.6635%`πÇü`embed_3=0.4723%`πÇü`embed_2=0.3114%`πÇü`embed_1=0.2362%`∩╝îdecoder `linear_fuseΓëê0.1908%`∩╝¢τ¢╕µ»öΣ╣ïΣ╕ï BN running buffer µÿÄµÿ╛µ¢┤σëºτâê∩╝îσñÜσñä running_mean relative deltaΓëê`98.9%ΓÇô331.2%`∩╝îΘªûσ▒é running_varΓëê`76.6%ΓÇô78.6%`∩╝îτ¼¼Σ║îσ▒éτ║ª `62.4%ΓÇô66.3%`πÇéσ¢║σ«Ü patch Σ╕è decoder `linear_fuse` BN output std Σ╗Ä v6 epoch1Γëê`1.4235` ΘÖìσê░ epoch2Γëê`1.1247`∩╝îhead input mean/std Σ╗ÄΓëê`0.5549/0.8030` ΘÖìσê░Γëê`0.4399/0.6440`∩╝îfinal logits L2 norm Σ╗ÄΓëê`1480.8` ΘÖìσê░Γëê`1204.3`πÇéΦ┐ÖΣ║¢Φ»üµì«Φ┐¢Σ╕Çµ¡Ñµö»µîüΓÇ£epoch1ΓåÆepoch2 BN running-stat drift / normalization mismatch µÿ»ΘçìΦªüµ£║σê╢Σ╣ïΣ╕ÇΓÇ¥∩╝îΣ╜åΣ╗ìΣ╕ìΦâ╜σú░τº░µÿ»σö»Σ╕Çµá╣σ¢áπÇé
+默认记录以下关键激活：encoder 四级 patch embedding、每级最后一个 transformer block、decoder `linear_fuse` Conv/BatchNorm、`linear_pred` head input 与最终 logits。每个激活记录 shape、L2 norm、mean/std/min/max 和 q01/q05/q10/q25/q50/q75/q90/q95/q99。另对 checkpoint state_dict 计算按 encoder/decoder 子模块聚合的 parameter relative delta、变化最大的单参数，以及 BatchNorm running_mean/running_var buffer delta。
 
-µì«µ¡ñΘöüσ«Ü v9 σìòσÅÿΘçÅ∩╝ÜΣ╕Ñµá╝σƒ║Σ║Ä `configs/orthopedic_ct_cpu_binary_balanced_lr_v6.yaml`∩╝îµû░σó₧ `configs/orthopedic_ct_cpu_binary_bn_freeze_after_e1_v9.yaml`∩╝¢σö»Σ╕Çσ«₧Θ¬îµÇºσÅÿσîûµÿ» `training.freeze_batchnorm_running_stats_from_epoch: 2`∩╝îσì│ epoch1 σ«îσà¿Σ┐¥µîü v6 σÄƒσºïΦ«¡τ╗â/BN µ¢┤µû░∩╝îepoch2 Φ╡╖µèèµëÇµ£ë `BatchNorm3d` σêçσê░ eval Σ╜┐τö¿ epoch1 σ╖▓σ╗║τ½ïτÜä running_mean/running_var∩╝îσ╣╢σü£µ¡óσó₧σèá num_batches_tracked∩╝¢BN affine weight/bias σÆîσà╢σ«âµ¿íσ₧ïσÅéµò░τ╗ºτ╗¡Φ«¡τ╗âπÇéµùº `freeze_batchnorm_running_stats: true` τ╗ºτ╗¡σà╝σ«╣ v8∩╝îΘ╗ÿΦ«ñµùºΘàìτ╜«Σ╕ìσå╗τ╗ôπÇé
+新增 `tests/test_compare_checkpoint_dynamics.py`，验证 head input/output hook 能正确抓取，以及参数组变化与 BN running buffer 变化能被识别。focused tests=`2 passed`，Ruff clean。
 
-`src/modeling/train.py` µû░σó₧ epoch-aware `should_freeze_batchnorm_running_stats()`∩╝îΦ«¡τ╗âσ╛¬τÄ»µ»ÅΣ╕¬ epoch σ£¿ `model.train()` σÉÄµîëσ╜ôσëì epoch σå│σ«Üµÿ»σÉªσå╗τ╗ô BN∩╝¢σ¢áµ¡ñΣ╗Ä `last.pt` resume σê░ epoch2 µù╢Σ╝Üτ¢┤µÄÑΦ┐¢σàÑσå╗τ╗ôτè╢µÇü∩╝îΣ╕ìΣ╛¥Φ╡ûσëìΣ╕ÇΦ┐¢τ¿ïσåàσ¡ÿτè╢µÇüπÇérun metadata σÉîµ¡ÑΦ«░σ╜ò freeze-from-epoch Θàìτ╜«πÇé
+下一步在完成本轮工程 commit/push 后，直接用同一 `liver_7` validation foreground-centered patch 比较 v6 epoch1、v6 epoch2、v8 epoch1，依据真实 activation / parameter delta 选择 v9 的唯一变量。独立 test `ctspine1k-msd-t10-liver_169` 继续禁止访问。
 
-`tests/test_batchnorm_freeze_training.py` µû░σó₧σ¢₧σ╜ÆΦªåτ¢û∩╝ÜΘ╗ÿΦ«ñΘàìτ╜«Σ╕ìσå╗τ╗ô∩╝¢v8 legacy always-freeze Σ╗ìτöƒµòê∩╝¢v9 epoch1 running_mean/running_var Σ╝Üτ£ƒσ«₧σÅÿσîûΣ╕ö num_batches_tracked σó₧σèá∩╝¢µ¿íµïƒ epoch1 validation σÉÄ epoch2 σåìµ¼í `model.train()` µù╢ BN µ¡úτí«σå╗τ╗ô∩╝¢epoch2 running_mean/running_var/num_batches_tracked Σ┐¥µîü epoch1 ΘöÜτé╣∩╝¢BN affine weight/bias Σ╗ìΦÄ╖σ╛ùΘ¥₧Θ¢╢ gradient∩╝¢σà╢σ«âµ¿íσ¥ùΣ┐¥µîü training∩╝¢resume/start_epoch=2 σêñσ«ÜΣ╝Üσå╗τ╗ô∩╝¢v9/v6 Θàìτ╜«σ╜ÆΣ╕Çσîûµ»öΦ╛âΘÖñ experiment_name Σ╕Ä freeze-from-epoch σñûσ«îσà¿Σ╕ÇΦç┤πÇé
 
-τ£ƒσ«₧σ╖Ñτ¿ïΘ¬îΦ»ü∩╝Ü
+### 2026-08-27｜阶段 AQ：核验 checkpoint dynamics 并完成 v9 epoch1→epoch2 BN 锚定工程/readiness
+
+从 GitHub 闭环点 `2f6389db57c0e9531227c2f61503cf9750ac3171` 恢复真实断点，工作树初始干净，`HEAD == origin/main`。重新读取 `experiments/checkpoint_dynamics_20260827_v6e1_v6e2_v8e1_liver7/checkpoint_dynamics.json`，确认该结果已真实比较 v6 epoch1、v6 epoch2、v8 epoch1，固定病例为 validation `liver_7` 的 foreground-centered 64³ patch，未访问 test。
+
+v6 epoch1→epoch2 的 state delta 显示：普通可训练参数按组聚合的最大相对变化约为 encoder `embed_4=0.6635%`、`embed_3=0.4723%`、`embed_2=0.3114%`、`embed_1=0.2362%`，decoder `linear_fuse≈0.1908%`；相比之下 BN running buffer 明显更剧烈，多处 running_mean relative delta≈`98.9%–331.2%`，首层 running_var≈`76.6%–78.6%`，第二层约 `62.4%–66.3%`。固定 patch 上 decoder `linear_fuse` BN output std 从 v6 epoch1≈`1.4235` 降到 epoch2≈`1.1247`，head input mean/std 从≈`0.5549/0.8030` 降到≈`0.4399/0.6440`，final logits L2 norm 从≈`1480.8` 降到≈`1204.3`。这些证据进一步支持“epoch1→epoch2 BN running-stat drift / normalization mismatch 是重要机制之一”，但仍不能声称是唯一根因。
+
+据此锁定 v9 单变量：严格基于 `configs/orthopedic_ct_cpu_binary_balanced_lr_v6.yaml`，新增 `configs/orthopedic_ct_cpu_binary_bn_freeze_after_e1_v9.yaml`；唯一实验性变化是 `training.freeze_batchnorm_running_stats_from_epoch: 2`，即 epoch1 完全保持 v6 原始训练/BN 更新，epoch2 起把所有 `BatchNorm3d` 切到 eval 使用 epoch1 已建立的 running_mean/running_var，并停止增加 num_batches_tracked；BN affine weight/bias 和其它模型参数继续训练。旧 `freeze_batchnorm_running_stats: true` 继续兼容 v8，默认旧配置不冻结。
+
+`src/modeling/train.py` 新增 epoch-aware `should_freeze_batchnorm_running_stats()`，训练循环每个 epoch 在 `model.train()` 后按当前 epoch 决定是否冻结 BN；因此从 `last.pt` resume 到 epoch2 时会直接进入冻结状态，不依赖前一进程内存状态。run metadata 同步记录 freeze-from-epoch 配置。
+
+`tests/test_batchnorm_freeze_training.py` 新增回归覆盖：默认配置不冻结；v8 legacy always-freeze 仍生效；v9 epoch1 running_mean/running_var 会真实变化且 num_batches_tracked 增加；模拟 epoch1 validation 后 epoch2 再次 `model.train()` 时 BN 正确冻结；epoch2 running_mean/running_var/num_batches_tracked 保持 epoch1 锚点；BN affine weight/bias 仍获得非零 gradient；其它模块保持 training；resume/start_epoch=2 判定会冻结；v9/v6 配置归一化比较除 experiment_name 与 freeze-from-epoch 外完全一致。
+
+真实工程验证：
 
 ```text
 focused pytest (BN + scheduler)
-ΓåÆ 9 passed
+→ 9 passed
 
 pytest tests -q
-ΓåÆ 125 passed
+→ 125 passed
 
 ruff check src web tests
-ΓåÆ All checks passed!
+→ All checks passed!
 
 git diff --check
-ΓåÆ ΘÇÜΦ┐ç
+→ 通过
 
 v9 vs v6 normalized config comparison
-ΓåÆ normalized_equal=true
-ΓåÆ v9 extra training key only: freeze_batchnorm_running_stats_from_epoch
+→ normalized_equal=true
+→ v9 extra training key only: freeze_batchnorm_running_stats_from_epoch
 
 formal_readiness --allow-cpu
-ΓåÆ ready=true
-ΓåÆ blocker_count=0
-ΓåÆ checked_case_count=10
-ΓåÆ split train/validation/test=7/2/1
-ΓåÆ task/preflight 0 error / 0 warning
+→ ready=true
+→ blocker_count=0
+→ checked_case_count=10
+→ split train/validation/test=7/2/1
+→ task/preflight 0 error / 0 warning
 ```
 
-GPU σ¡ÉµúÇµƒÑΣ╗ìσªéΘóäµ£ƒµèÑσæèµ£¼µ£║Σ╕║ CPU build/µùá CUDA∩╝¢µ£¼Φ╜«µÿ╛σ╝Å `--allow-cpu`∩╝îΣ╕ìµ₧äµêÉ blockerπÇéτï¼τ½ï test `ctspine1k-msd-t10-liver_169` µ£¬Φ«┐Θù«πÇé
+GPU 子检查仍如预期报告本机为 CPU build/无 CUDA；本轮显式 `--allow-cpu`，不构成 blocker。独立 test `ctspine1k-msd-t10-liver_169` 未访问。
 
-Σ╕ïΣ╕Çµ¡Ñσ«îµêÉµ£¼Θÿ╢µ«╡ commit/push σ╣╢σåìµ¼íτí«Φ«ñ `HEAD == origin/main` σÉÄ∩╝îτ½ïσì│Φ┐ÉΦíî v9 epoch1πÇéepoch1 τÉåΦ«║ΦíîΣ╕║σ║öΣ╕Ä v6 epoch1 µÄÑΦ┐æ∩╝¢ΦïÑ mean Dice Σ╕Ä v6 epoch1Γëê`0.05407` σ╖«σ╝éµÿ╛Φæù∩╝îσêÖσàêσü£µ¡óµúÇµƒÑσ«₧τÄ░∩╝îΣ╕ìΦ┐¢σàÑ epoch2πÇéΦïÑσñìτÄ░µ¡úσ╕╕∩╝îσêÖτ¢┤µÄÑτ╗¡Φ«¡ epoch2∩╝îσ╣╢Θ¬îΦ»üµëÇµ£ë BN running_mean/running_var/num_batches_tracked Σ╕Ä epoch1 checkpoint σ«îσà¿Σ┐¥µîüΘöÜσ«Ü∩╝îσåìσüÜΣ╕ñΣ╛ï detailed validation + checkpoint diagnosticsπÇé
+下一步完成本阶段 commit/push 并再次确认 `HEAD == origin/main` 后，立即运行 v9 epoch1。epoch1 理论行为应与 v6 epoch1 接近；若 mean Dice 与 v6 epoch1≈`0.05407` 差异显著，则先停止检查实现，不进入 epoch2。若复现正常，则直接续训 epoch2，并验证所有 BN running_mean/running_var/num_batches_tracked 与 epoch1 checkpoint 完全保持锚定，再做两例 detailed validation + checkpoint diagnostics。
 
 
-### 2026-08-27∩╜£Θÿ╢µ«╡ AR∩╝Üv9 epoch1 τ▓╛τí«σñìτÄ░ v6 epoch1∩╝îΦ┐¢σàÑσà│Θö« epoch2
+### 2026-08-27｜阶段 AR：v9 epoch1 精确复现 v6 epoch1，进入关键 epoch2
 
-v9 σ╖Ñτ¿ïµÅÉΣ║ñ `daafe2c1d9debc96831dc141fd5f305d01932900` σ╖▓µÄ¿ΘÇüσ╣╢τí«Φ«ñ `HEAD == origin/main` σÉÄ∩╝îΣ╜┐τö¿ `configs/orthopedic_ct_cpu_binary_bn_freeze_after_e1_v9.yaml` σÉ»σè¿ CPU formal validation experiment∩╝îσÅ¬Φ«¡τ╗âσê░ epoch1πÇépreflight σåìµ¼í `ready=true`∩╝îsplit=7/2/1∩╝îµ£¬Φ«┐Θù«τï¼τ½ï testπÇé
+v9 工程提交 `daafe2c1d9debc96831dc141fd5f305d01932900` 已推送并确认 `HEAD == origin/main` 后，使用 `configs/orthopedic_ct_cpu_binary_bn_freeze_after_e1_v9.yaml` 启动 CPU formal validation experiment，只训练到 epoch1。preflight 再次 `ready=true`，split=7/2/1，未访问独立 test。
 
-τ£ƒσ«₧ run∩╝Ü`experiments/20260827_132502_cpu_binary_bn_freeze_after_e1_v9_roi64`πÇé
+真实 run：`experiments/20260827_132502_cpu_binary_bn_freeze_after_e1_v9_roi64`。
 
 ```text
 epoch 1
 train_loss=2.5537127596991405
 mean validation Dice=0.05407000716611769
 validation Dice std=0.010840379918928316
-validation inference totalΓëê137.32 s
+validation inference total≈137.32 s
 lr=5e-5
 ```
 
-Φ»Ñτ╗ôµ₧£Σ╕Ä v6 epoch1 µò░σÇ╝τ▓╛τí«Σ╕ÇΦç┤∩╝îΦ»üµÿÄµû░σó₧ `freeze_batchnorm_running_stats_from_epoch=2` µ▓íµ£ëσ╜▒σôì epoch1 µò░µì«µ╡üπÇüschedulerπÇüoptimizerπÇünormalization µêû full-volume validation ΦíîΣ╕║∩╝îσ¢áµ¡ñµ╗íΦ╢│Φ┐¢σàÑ epoch2 τÜäΘóäΦ«╛µ¥íΣ╗╢πÇé
+该结果与 v6 epoch1 数值精确一致，证明新增 `freeze_batchnorm_running_stats_from_epoch=2` 没有影响 epoch1 数据流、scheduler、optimizer、normalization 或 full-volume validation 行为，因此满足进入 epoch2 的预设条件。
 
-σ»╣ epoch1 `best.pt` σêåσê½σüÜ validation-only detailed full-volume evaluation∩╝Ü
+对 epoch1 `best.pt` 分别做 validation-only detailed full-volume evaluation：
 
-- `liver_7`∩╝ÜDiceΓëê`0.04322963`∩╝îIoUΓëê`0.02209234`∩╝îPrecisionΓëê`0.02753337`∩╝îRecallΓëê`0.10055295`∩╝îHD95Γëê`199.91 mm`∩╝îASSDΓëê`56.25 mm`∩╝¢prediction foregroundΓëê`2.5550%`∩╝îGTΓëê`0.6996%`∩╝îratioΓëê`3.6520`∩╝îcomponent error=`1578`πÇé
-- `liver_8`∩╝ÜDiceΓëê`0.06491039`∩╝îIoUΓëê`0.03354387`∩╝îPrecisionΓëê`0.04266633`∩╝îRecallΓëê`0.13561118`∩╝îHD95Γëê`175.46 mm`∩╝îASSDΓëê`48.26 mm`∩╝¢prediction foregroundΓëê`1.7988%`∩╝îGTΓëê`0.5660%`∩╝îratioΓëê`3.1784`∩╝îcomponent error=`1597`πÇé
+- `liver_7`：Dice≈`0.04322963`，IoU≈`0.02209234`，Precision≈`0.02753337`，Recall≈`0.10055295`，HD95≈`199.91 mm`，ASSD≈`56.25 mm`；prediction foreground≈`2.5550%`，GT≈`0.6996%`，ratio≈`3.6520`，component error=`1578`。
+- `liver_8`：Dice≈`0.06491039`，IoU≈`0.03354387`，Precision≈`0.04266633`，Recall≈`0.13561118`，HD95≈`175.46 mm`，ASSD≈`48.26 mm`；prediction foreground≈`1.7988%`，GT≈`0.5660%`，ratio≈`3.1784`，component error=`1597`。
 
-checkpoint diagnostics σ»╣Σ╕ñΣ╛ïΘâ╜τí«Φ«ñσÉîΣ╕Ç checkpoint τÜä 9 Σ╕¬ BatchNorm3d τè╢µÇüΣ╕ÇΦç┤∩╝Ü`num_batches_tracked=28`∩╝¢Θªûσ▒é BN running mean stdΓëê`0.0144922826`∩╝îrunning var meanΓëê`0.0622548461`∩╝îσì│Σ╕Äµ¡ñσëì v6 epoch1 Φ«░σ╜òτÜäΘöÜτé╣Σ╕ÇΦç┤πÇé`liver_7` τÜä GT foreground/background mean P(fg)Γëê`0.12394/0.03265`∩╝îforeground/background weighted CE contributionΓëê`0.04322/0.06985`∩╝¢`liver_8` σ»╣σ║öΓëê`0.15221/0.02478` Σ╕ÄΓëê`0.03320/0.04651`πÇéΦ┐ÖΣ║¢σÅ¬Σ╜£Σ╕║ validation mechanism diagnostics∩╝îΣ╕ìµÿ»µ£Çτ╗ê test τ╗ôµ₧£πÇé
+checkpoint diagnostics 对两例都确认同一 checkpoint 的 9 个 BatchNorm3d 状态一致：`num_batches_tracked=28`；首层 BN running mean std≈`0.0144922826`，running var mean≈`0.0622548461`，即与此前 v6 epoch1 记录的锚点一致。`liver_7` 的 GT foreground/background mean P(fg)≈`0.12394/0.03265`，foreground/background weighted CE contribution≈`0.04322/0.06985`；`liver_8` 对应≈`0.15221/0.02478` 与≈`0.03320/0.04651`。这些只作为 validation mechanism diagnostics，不是最终 test 结果。
 
-τ╗ôΦ«║∩╝Ü**v9 epoch1 σ╖▓ΘÇÜΦ┐çΓÇ£σ┐àΘí╗µÄÑΦ┐æ v6 epoch1ΓÇ¥τÜäΘù¿µº¢∩╝îΦÇîΣ╕öµÿ»τ▓╛τí«σñìτÄ░πÇé** Σ╕ïΣ╕Çµ¡Ñτ¢┤µÄÑΣ╗Äµ£¼ run τÜä `checkpoint/last.pt` resume σê░µÇ╗ epoch2∩╝¢epoch2 Φ«¡τ╗âσÉÄΘªûσàêµ»öΦ╛â checkpoint state_dict∩╝îΦªüµ▒éµëÇµ£ë BN running_mean/running_var/num_batches_tracked Σ╕Ä epoch1 checkpoint σ«îσà¿Σ╕ÇΦç┤∩╝îσåìΦ┐ÉΦíîΣ╕ñΣ╛ï detailed validation σÆî diagnosticsπÇéΦïÑ foreground explosion µÿ╛Φæùτ╝ôΦºúΣ╕ö validation Σ╕ìτü╛ΘÜ╛µÇºΣ╕ïΘÖì∩╝îτ╗ºτ╗¡ epoch3∩╝¢ΦïÑΣ╗ìσç║τÄ░σçáσìüσÇìσëìµÖ»µ│¢µ╗Ñ∩╝îσêÖσü£µ¡óσ╣╢Φ┐¢σàÑ v10 µ£║σê╢Φ»èµû¡πÇé
+结论：**v9 epoch1 已通过“必须接近 v6 epoch1”的门槛，而且是精确复现。** 下一步直接从本 run 的 `checkpoint/last.pt` resume 到总 epoch2；epoch2 训练后首先比较 checkpoint state_dict，要求所有 BN running_mean/running_var/num_batches_tracked 与 epoch1 checkpoint 完全一致，再运行两例 detailed validation 和 diagnostics。若 foreground explosion 显著缓解且 validation 不灾难性下降，继续 epoch3；若仍出现几十倍前景泛滥，则停止并进入 v10 机制诊断。
 
 
-### 2026-08-27∩╜£Θÿ╢µ«╡ AS∩╝Üσ«îµêÉ v9 epoch2 detailed validation / diagnostics / dynamics∩╝îσü£µ¡ó v9
+### 2026-08-27｜阶段 AS：完成 v9 epoch2 detailed validation / diagnostics / dynamics，停止 v9
 
-Σ╗Ä Git Θù¡τÄ»τé╣ `981714b17713a9b762cbbacb76817318378aca8c` µüóσñìτ£ƒσ«₧µû¡τé╣σÉÄ∩╝îΘçìµû░τí«Φ«ñσ╖ÑΣ╜£µáæσê¥σºïσ╣▓σçÇΣ╕ö `HEAD == origin/main`πÇéτ£ƒσ«₧ v9 run=`experiments/20260827_132502_cpu_binary_bn_freeze_after_e1_v9_roi64` σ╖▓σ¡ÿσ£¿ epoch2 Φ«¡τ╗âΣ║ºτë⌐∩╝Ü`history.csv` µÿ╛τñ║ epoch2 train loss=`2.6975343355110715`πÇümean validation Dice=`0.026778433853422875`πÇüstd=`0.002211471671448084`πÇüvalidation inference totalΓëê`131.09 s`πÇülr=`4.892324335849338e-05`∩╝¢`summary.json` µÿÄτí« `last_epoch=2`πÇü`best_val_dice=0.05407000716611769`∩╝îσ¢áµ¡ñ `best.pt` Σ╗ìΣ╕║ epoch1∩╝î`last.pt` Σ╕║ epoch2πÇé`sampling_stats.csv` µÿ╛τñ║ epoch2 Σ╗ìΣ╕║ 28 patches∩╝îmean foreground fractionΓëê`8.8408%`πÇümedian=`0`πÇüforeground-positive/background patches=`10/18`∩╝îΣ╕ÄσÄåσÅ▓σñìτÄ░σ«₧Θççµá╖τ╗ƒΦ«íΣ╕ÇΦç┤πÇé
+从 Git 闭环点 `981714b17713a9b762cbbacb76817318378aca8c` 恢复真实断点后，重新确认工作树初始干净且 `HEAD == origin/main`。真实 v9 run=`experiments/20260827_132502_cpu_binary_bn_freeze_after_e1_v9_roi64` 已存在 epoch2 训练产物：`history.csv` 显示 epoch2 train loss=`2.6975343355110715`、mean validation Dice=`0.026778433853422875`、std=`0.002211471671448084`、validation inference total≈`131.09 s`、lr=`4.892324335849338e-05`；`summary.json` 明确 `last_epoch=2`、`best_val_dice=0.05407000716611769`，因此 `best.pt` 仍为 epoch1，`last.pt` 为 epoch2。`sampling_stats.csv` 显示 epoch2 仍为 28 patches，mean foreground fraction≈`8.8408%`、median=`0`、foreground-positive/background patches=`10/18`，与历史复现实采样统计一致。
 
-σ»╣ v9 epoch2 `last.pt` Σ╗àσ£¿ validation split σêåτùàΣ╛ïΦ┐ÉΦíî full-volume detailed evaluation∩╝îτï¼τ½ï test `liver_169` µ£¬Φ«┐Θù«πÇéτ╗ôµ₧£τ¢«σ╜ò∩╝Ü
+对 v9 epoch2 `last.pt` 仅在 validation split 分病例运行 full-volume detailed evaluation，独立 test `liver_169` 未访问。结果目录：
 
 - `experiments/evaluation_20260827_v9e2_liver7`
 - `experiments/evaluation_20260827_v9e2_liver8`
 
-τ£ƒσ«₧ΘÇÉΣ╛ïτ╗ôµ₧£∩╝Ü
+真实逐例结果：
 
-- `liver_7`∩╝ÜDice=`0.0289899055`∩╝îIoU=`0.0147081467`∩╝îPrecision=`0.0163801553`∩╝îRecall=`0.1259438040`∩╝îHD95=`187.3259 mm`∩╝îASSD=`64.2019 mm`∩╝¢prediction foreground=`5.37915%`∩╝îGT=`0.69961%`∩╝îratio=`7.6888`∩╝¢pred/GT components=`517/3`∩╝îcomponent error=`514`∩╝îfalse merge=`1`∩╝îfalse break=`32`∩╝¢inferenceΓëê`44.75 s`∩╝¢uncertainty AUROC/AUPRCΓëê`0.86919/0.30592`∩╝¢ECE/MCE/Brier/NLLΓëê`0.04598/0.21958/0.10427/0.35269`πÇé
-- `liver_8`∩╝ÜDice=`0.0245669622`∩╝îIoU=`0.0124362414`∩╝îPrecision=`0.0136715130`∩╝îRecall=`0.1209869693`∩╝îHD95=`187.8004 mm`∩╝îASSD=`64.0517 mm`∩╝¢prediction foreground=`5.00849%`∩╝îGT=`0.56596%`∩╝îratio=`8.8496`∩╝¢pred/GT components=`517/2`∩╝îcomponent error=`515`∩╝îfalse merge=`0`∩╝îfalse break=`31`∩╝¢inferenceΓëê`73.10 s`∩╝¢uncertainty AUROC/AUPRCΓëê`0.85851/0.26238`∩╝¢ECE/MCE/Brier/NLLΓëê`0.04316/0.17657/0.09777/0.40703`πÇé
+- `liver_7`：Dice=`0.0289899055`，IoU=`0.0147081467`，Precision=`0.0163801553`，Recall=`0.1259438040`，HD95=`187.3259 mm`，ASSD=`64.2019 mm`；prediction foreground=`5.37915%`，GT=`0.69961%`，ratio=`7.6888`；pred/GT components=`517/3`，component error=`514`，false merge=`1`，false break=`32`；inference≈`44.75 s`；uncertainty AUROC/AUPRC≈`0.86919/0.30592`；ECE/MCE/Brier/NLL≈`0.04598/0.21958/0.10427/0.35269`。
+- `liver_8`：Dice=`0.0245669622`，IoU=`0.0124362414`，Precision=`0.0136715130`，Recall=`0.1209869693`，HD95=`187.8004 mm`，ASSD=`64.0517 mm`；prediction foreground=`5.00849%`，GT=`0.56596%`，ratio=`8.8496`；pred/GT components=`517/2`，component error=`515`，false merge=`0`，false break=`31`；inference≈`73.10 s`；uncertainty AUROC/AUPRC≈`0.85851/0.26238`；ECE/MCE/Brier/NLL≈`0.04316/0.17657/0.09777/0.40703`。
 
-Σ╕ñΣ╛ïσ╣│σ¥çτ║ª∩╝ÜDice=`0.02677843`πÇüIoU=`0.01357219`πÇüPrecision=`0.01502583`πÇüRecall=`0.12346539`πÇüHD95=`187.56 mm`πÇüASSD=`64.13 mm`πÇüprediction foregroundΓëê`5.19%`πÇüprediction/GT ratioΓëê`8.27`πÇücomponent errorΓëê`514.5`πÇéσ»╣µ»ö v6 epoch2∩╝Ü`liver_7/liver_8` prediction foregroundΓëê`42.26%/34.04%`πÇüratioΓëê`60.40/60.14`πÇüRecallΓëê`0.9856/0.9992`πÇéσ¢áµ¡ñ v9 µÿÄµÿ╛σÄïΣ╜ÄΣ║å v6 τÜä foreground explosion∩╝îΣ╜åσ╣╢µ£¬µüóσñì segmentation quality∩╝ÜDice τ╗ºτ╗¡Σ╕ïΘÖìπÇüPrecision µ₧üΣ╜ÄΣ╕öΘóäµ╡ïτóÄτëçΣ╗ìΘ¥₧σ╕╕σñÜπÇé
+两例平均约：Dice=`0.02677843`、IoU=`0.01357219`、Precision=`0.01502583`、Recall=`0.12346539`、HD95=`187.56 mm`、ASSD=`64.13 mm`、prediction foreground≈`5.19%`、prediction/GT ratio≈`8.27`、component error≈`514.5`。对比 v6 epoch2：`liver_7/liver_8` prediction foreground≈`42.26%/34.04%`、ratio≈`60.40/60.14`、Recall≈`0.9856/0.9992`。因此 v9 明显压低了 v6 的 foreground explosion，但并未恢复 segmentation quality：Dice 继续下降、Precision 极低且预测碎片仍非常多。
 
-ΘÜÅσÉÄσ»╣σÉîΣ╕Ç v9 epoch2 `last.pt` Φ┐ÉΦíî validation-only checkpoint diagnostics∩╝Ü
+随后对同一 v9 epoch2 `last.pt` 运行 validation-only checkpoint diagnostics：
 
 - `experiments/diagnostics_20260827_v9e2_liver7`
 - `experiments/diagnostics_20260827_v9e2_liver8`
 
-Σ╕ñΣ╛ï `head_parameters` τ¢╕σÉî∩╝Üsegmentation head weight normΓëê`22.33960`πÇübias normΓëê`0.0008889`πÇé`liver_7` τÜä GT foreground/background mean P(fg)Γëê`0.13278/0.05583`∩╝îDice lossΓëê`0.97081`πÇüCEΓëê`0.35051`∩╝îforeground/background weighted CE contributionΓëê`0.04732/0.30318`∩╝¢`liver_8` σ»╣σ║ö mean P(fg)Γëê`0.12832/0.05242`πÇüDice lossΓëê`0.97521`πÇüCEΓëê`0.40268`πÇüweighted CE contributionΓëê`0.03511/0.36757`πÇéΦ┐ÖΦ»┤µÿÄσ£¿σà¿σì╖Σ╕èΣ╗ìσ¡ÿσ£¿µÿÄµÿ╛ΦâîµÖ»σüçΘÿ│µÇº∩╝îσÉîµù╢τ╗¥σñºσñÜµò░ GT foreground voxel τÜä P(fg) σ╛êΣ╜Ä∩╝¢Σ╕ìµÿ»τ«ÇσìòτÜäΓÇ£σà¿σ▒ÇσëìµÖ»ΘÿêσÇ╝σüÅΘ½ÿΓÇ¥σìòΣ╕ÇΘù«ΘóÿπÇé
+两例 `head_parameters` 相同：segmentation head weight norm≈`22.33960`、bias norm≈`0.0008889`。`liver_7` 的 GT foreground/background mean P(fg)≈`0.13278/0.05583`，Dice loss≈`0.97081`、CE≈`0.35051`，foreground/background weighted CE contribution≈`0.04732/0.30318`；`liver_8` 对应 mean P(fg)≈`0.12832/0.05242`、Dice loss≈`0.97521`、CE≈`0.40268`、weighted CE contribution≈`0.03511/0.36757`。这说明在全卷上仍存在明显背景假阳性，同时绝大多数 GT foreground voxel 的 P(fg) 很低；不是简单的“全局前景阈值偏高”单一问题。
 
-BN ΘöÜσ«Üσåìµ¼íτö¿τ£ƒσ«₧ checkpoint state_dict ΘÇÉΘí╣µá╕σ»╣∩╝Üµ»öΦ╛â v9 epoch1 `best.pt` Σ╕Ä epoch2 `last.pt`∩╝îµëÇµ£ë key σÉìσîàσÉ½ `running_mean`πÇü`running_var`πÇü`num_batches_tracked` τÜä buffer σà▒ `27` Σ╕¬∩╝î`changed=0`πÇédiagnostics σÉîµù╢µÿ╛τñ║ 9 Σ╕¬ BatchNorm3d τÜäτ¼¼Σ╕Çσ▒éΣ╗ìΣ╕║ `num_batches_tracked=28`πÇürunning mean stdΓëê`0.0144922826`πÇürunning var meanΓëê`0.0622548461`∩╝îσì│ epoch2 τí«σ«₧τ╗ºτ╗¡Σ╜┐τö¿ epoch1 ΘöÜτé╣πÇé
+BN 锚定再次用真实 checkpoint state_dict 逐项核对：比较 v9 epoch1 `best.pt` 与 epoch2 `last.pt`，所有 key 名包含 `running_mean`、`running_var`、`num_batches_tracked` 的 buffer 共 `27` 个，`changed=0`。diagnostics 同时显示 9 个 BatchNorm3d 的第一层仍为 `num_batches_tracked=28`、running mean std≈`0.0144922826`、running var mean≈`0.0622548461`，即 epoch2 确实继续使用 epoch1 锚点。
 
-τö▒Σ║Ä v9 µ╗íΦ╢│ΓÇ£foreground explosion µÿÄµÿ╛τ╝ôΦºúΣ╜å Dice Σ╗ìµÿ╛ΦæùΘÇÇσîûΓÇ¥τÜäΘóäΦ«╛µâàσå╡ A∩╝îµ£¼Φ╜«µ▓íµ£ëΦ┐ÉΦíî epoch3∩╝îΦÇîµÿ»τ½ïσì│µëºΦíîσ¢¢ checkpoint dynamics∩╝Ü`experiments/checkpoint_dynamics_20260827_v6e1_v6e2_v9e1_v9e2_liver7`∩╝îσ¢║σ«Ü `liver_7` foreground-centered 64┬│ patch∩╝îµ£¬Φ«┐Θù« testπÇé
+由于 v9 满足“foreground explosion 明显缓解但 Dice 仍显著退化”的预设情况 A，本轮没有运行 epoch3，而是立即执行四 checkpoint dynamics：`experiments/checkpoint_dynamics_20260827_v6e1_v6e2_v9e1_v9e2_liver7`，固定 `liver_7` foreground-centered 64³ patch，未访问 test。
 
-σà│Θö« dynamics Φ»üµì«∩╝Ü
+关键 dynamics 证据：
 
-1. `v6e1 ΓåÆ v9e1`∩╝ÜµëÇµ£ëµÖ«ΘÇÜσÅéµò░τ╗ä delta=`0`∩╝îµëÇµ£ë BN running buffer delta=`0`∩╝îΦ»üµÿÄ v9 epoch1 checkpoint Σ╕Ä v6 epoch1 Σ╕ìσÅ¬µÿ»µîçµáçτ¢╕σÉî∩╝îΦÇîµÿ» checkpoint state σ£¿µ»öΦ╛âΦîâσ¢┤σåàτ▓╛τí«Σ╕ÇΦç┤πÇé
-2. `v6e1 ΓåÆ v6e2`∩╝ÜµÖ«ΘÇÜσÅéµò░ΦüÜσÉêµ£Çσñº relative delta Σ╗ìσÅ¬µ£ë encoder embed4Γëê`0.663%`πÇüembed3Γëê`0.472%`πÇüembed2Γëê`0.311%` τ¡ë∩╝¢σÉîµù╢ BN running_mean relative delta µ£ÇΘ½ÿΓëê`3.31├ù`∩╝îrunning_var σñÜσñäΓëê`66%ΓÇô79%`∩╝îΣ╕Äµ¡ñσëìτ╗ôΦ«║Σ╕ÇΦç┤πÇé
-3. `v6e1 ΓåÆ v9e2`∩╝ÜµëÇµ£ë BN running buffers relative delta=`0`∩╝¢Σ╜åµÖ«ΘÇÜ trainable σÅéµò░Σ╗ìσÅæτöƒσ░Åσ╣àµ¢┤µû░∩╝îencoder embed4Γëê`0.658%`πÇüembed3Γëê`0.436%`πÇüembed2Γëê`0.275%`πÇüdecoder linear_fuseΓëê`0.148%`πÇüfinal headΓëê`0.0179%`πÇé
-4. σ¢║σ«Ü patch Σ╕è∩╝îepoch1 decoder `linear_fuse` BN output mean/stdΓëê`-0.0715/1.4235`πÇühead inputΓëê`0.5549/0.8030`πÇüfinal logits mean/stdΓëê`-11.3113/11.8207`∩╝¢v6e2 σÅÿΣ╕║Γëê`-0.0500/1.1247`πÇü`0.4399/0.6440`πÇü`-8.7949/9.9843`∩╝¢v9e2 σ£¿ BN running stats Σ╕ìσÅÿµù╢σÅìΦÇîΣ╕║Γëê`-0.1501/1.4962`πÇü`0.5474/0.8370`πÇü`-4.5614/10.5338`πÇéΣ╣ƒσ░▒µÿ»Φ»┤ v9 µèæσê╢Σ║å running-stat drift σÉÄ∩╝îhead-input Φ╛╣τ╝ÿτ╗ƒΦ«íµÄÑΦ┐æ epoch1∩╝îΣ╜å final logits Σ╗ìσÅæτöƒσñºσ╣àΣ╜ìτ╜«µ╝éτº╗∩╝îΣ╕ö final head µ£¼Φ║½σÅéµò░ΦüÜσÉêσÅÿσîûµ₧üσ░ÅπÇé
+1. `v6e1 → v9e1`：所有普通参数组 delta=`0`，所有 BN running buffer delta=`0`，证明 v9 epoch1 checkpoint 与 v6 epoch1 不只是指标相同，而是 checkpoint state 在比较范围内精确一致。
+2. `v6e1 → v6e2`：普通参数聚合最大 relative delta 仍只有 encoder embed4≈`0.663%`、embed3≈`0.472%`、embed2≈`0.311%` 等；同时 BN running_mean relative delta 最高≈`3.31×`，running_var 多处≈`66%–79%`，与此前结论一致。
+3. `v6e1 → v9e2`：所有 BN running buffers relative delta=`0`；但普通 trainable 参数仍发生小幅更新，encoder embed4≈`0.658%`、embed3≈`0.436%`、embed2≈`0.275%`、decoder linear_fuse≈`0.148%`、final head≈`0.0179%`。
+4. 固定 patch 上，epoch1 decoder `linear_fuse` BN output mean/std≈`-0.0715/1.4235`、head input≈`0.5549/0.8030`、final logits mean/std≈`-11.3113/11.8207`；v6e2 变为≈`-0.0500/1.1247`、`0.4399/0.6440`、`-8.7949/9.9843`；v9e2 在 BN running stats 不变时反而为≈`-0.1501/1.4962`、`0.5474/0.8370`、`-4.5614/10.5338`。也就是说 v9 抑制了 running-stat drift 后，head-input 边缘统计接近 epoch1，但 final logits 仍发生大幅位置漂移，且 final head 本身参数聚合变化极小。
 
-σ╜ôσëìτºæσ¡ªσêñµû¡σ┐àΘí╗Σ╕Ñµá╝ΘÖÉσ«ÜΣ╕║∩╝Ü**BN running-statistics drift / train-eval normalization mismatch σ╖▓Φó½Φ»üµÿÄµÿ» v6 epoch2 foreground explosion τÜäΘçìΦªüµö╛σñºµ£║σê╢∩╝¢σ«âΣ╕ìµÿ»σ┐àΦªüΣ╕öσààσêåτÜäσö»Σ╕Çµá╣σ¢áπÇé** v9 Φ»üµÿÄµèè BN stats σ¢║σ«Üσ£¿ epoch1 σÅ»Σ╗Ñµèèτ║ª `60├ù` τÜäσëìµÖ»τêåτé╕µÿ╛ΦæùσÄïΣ╜Äσê░τ║ª `8├ù`∩╝îΣ╜åΣ╗ìΣ╕ìΦâ╜Θÿ╗µ¡ó epoch2 DiceπÇüPrecision σÆîτ╗ôµ₧äΦ┤¿ΘçÅΘÇÇσîûπÇéσë⌐Σ╜ÖΦ»üµì«µ¢┤µîçσÉæΓÇ£BN running stats Σ╣ïσñûτÜä trainable normalization / upstream feature parameter update ΘÇáµêÉτÜä logit dynamicsΓÇ¥∩╝îΦÇîΣ╕ìµÿ»τ╗ºτ╗¡µèèΘù«Θóÿσ╜Æσ¢áΣ║Ä BN bufferπÇé
+当前科学判断必须严格限定为：**BN running-statistics drift / train-eval normalization mismatch 已被证明是 v6 epoch2 foreground explosion 的重要放大机制；它不是必要且充分的唯一根因。** v9 证明把 BN stats 固定在 epoch1 可以把约 `60×` 的前景爆炸显著压低到约 `8×`，但仍不能阻止 epoch2 Dice、Precision 和结构质量退化。剩余证据更指向“BN running stats 之外的 trainable normalization / upstream feature parameter update 造成的 logit dynamics”，而不是继续把问题归因于 BN buffer。
 
-σ¢áµ¡ñµ£¼Θÿ╢µ«╡σå│τ¡û∩╝Ü**σü£µ¡ó v9∩╝îΣ╕ìΦ╖æ epoch3∩╝¢stable baseline=NO∩╝¢lock parameters=NO∩╝¢formal locked test ready=NOπÇé** σ╜ôσëìµ£ÇΣ╜│ checkpoint Σ╗ìΣ╕║ v9/v6 epoch1 τÜä `experiments/20260827_132502_cpu_binary_bn_freeze_after_e1_v9_roi64/checkpoint/best.pt`∩╝îmean validation Dice=`0.05407000716611769`πÇéΣ╕ïΣ╕Çµ¡Ñσ┐àΘí╗σÅ¬ΘÇëΣ╕ÇΣ╕¬ v10 Σ╕╗ΦªüσÅÿΘçÅ∩╝îΣ╝ÿσàêΘÜöτª╗ BN running stats σ╖▓σ¢║σ«ÜσÉÄΣ╗ìσÅ»Φ«¡τ╗âτÜä normalization / feature parameters∩╝¢Σ╕ìσ╛ùσÉîµù╢µö╣σÅÿ lrπÇülossπÇüsamplingπÇüROIπÇüaugmentation∩╝îΣ╣ƒτ╗ºτ╗¡τªüµ¡óΦ«┐Θù«τï¼τ½ï testπÇé
+因此本阶段决策：**停止 v9，不跑 epoch3；stable baseline=NO；lock parameters=NO；formal locked test ready=NO。** 当前最佳 checkpoint 仍为 v9/v6 epoch1 的 `experiments/20260827_132502_cpu_binary_bn_freeze_after_e1_v9_roi64/checkpoint/best.pt`，mean validation Dice=`0.05407000716611769`。下一步必须只选一个 v10 主要变量，优先隔离 BN running stats 已固定后仍可训练的 normalization / feature parameters；不得同时改变 lr、loss、sampling、ROI、augmentation，也继续禁止访问独立 test。
 
 
-### 2026-08-27∩╜£Θÿ╢µ«╡ AT∩╝Üv10 σìòσÅÿΘçÅσå│τ¡ûΣ╕Ä encoder-freeze σ╖Ñτ¿ïΘù¡τÄ»σçåσñç
+### 2026-08-27｜阶段 AT：v10 单变量决策与 encoder-freeze 工程闭环准备
 
-σ£¿ v9 σ╖▓σü£µ¡óΣ╕ö BN running buffers σ╖▓Φó½Σ╕Ñµá╝ΘöÜσ«ÜτÜäσëìµÅÉΣ╕ï∩╝îΦ┐¢Σ╕Çµ¡Ñτ¢┤µÄÑµ»öΦ╛â v6e1ΓåÆv6e2 Σ╕Ä v9e1ΓåÆv9e2 checkpoint stateπÇéµîëσÅéµò░τ▒╗σ₧ïΦüÜσÉê L2 relative delta σÉÄ∩╝îv9e1ΓåÆv9e2∩╝Üpatch embeddingsΓëê`0.7842%`πÇüencoder attentionΓëê`0.7075%`πÇüencoder MLPΓëê`0.1906%`πÇüdecoder projectionsΓëê`0.1614%`πÇüdecoder linear_fuseΓëê`0.1568%`∩╝¢τ¢╕µ»öΣ╣ïΣ╕ï LayerNorm affineΓëê`0.0208%`πÇüBN affineΓëê`0.0194%`πÇüsegmentation headΓëê`0.0179%`πÇéΦÖ╜τä╢Σ╕¬σê½ normalization bias σ¢áσê¥σºïτ╗¥σ»╣σÇ╝µÄÑΦ┐æ 0 ΦÇîσæêτÄ░Φ╛âσñºτÜäΘÇÉσÅéµò░τ¢╕σ»╣τÖ╛σêåµ»ö∩╝îΣ╜åσà╢ΦüÜσÉêτ╗¥σ»╣σÅÿσîûσÆîµò┤Σ╜ôσ╜ÆΣ╕ÇσîûσÅÿσîûσ¥çΦ┐£σ░ÅΣ║Ä encoder patch/attention µ¥âΘçìτ╗äπÇéτ╗ôσÉê fixed foreground patch Σ╕è final head Φç¬Φ║½σÅÿσîûµ₧üσ░ÅπÇüfinal logits mean σì┤Σ╗Ä epoch1Γëê`-11.31` µ╝éτº╗σê░ v9e2Γëê`-4.56`∩╝îσ╜ôσëìµ£Çσ╝║Φ»üµì«µ¢┤µîçσÉæΣ╕èµ╕╕ encoder representation update∩╝îΦÇîΣ╕ìµÿ»Σ╝ÿσàêµèèσë⌐Σ╜ÖΘù«Θóÿσ╜Æτ╗ôΣ╕║ BN affineπÇé
+在 v9 已停止且 BN running buffers 已被严格锚定的前提下，进一步直接比较 v6e1→v6e2 与 v9e1→v9e2 checkpoint state。按参数类型聚合 L2 relative delta 后，v9e1→v9e2：patch embeddings≈`0.7842%`、encoder attention≈`0.7075%`、encoder MLP≈`0.1906%`、decoder projections≈`0.1614%`、decoder linear_fuse≈`0.1568%`；相比之下 LayerNorm affine≈`0.0208%`、BN affine≈`0.0194%`、segmentation head≈`0.0179%`。虽然个别 normalization bias 因初始绝对值接近 0 而呈现较大的逐参数相对百分比，但其聚合绝对变化和整体归一化变化均远小于 encoder patch/attention 权重组。结合 fixed foreground patch 上 final head 自身变化极小、final logits mean 却从 epoch1≈`-11.31` 漂移到 v9e2≈`-4.56`，当前最强证据更指向上游 encoder representation update，而不是优先把剩余问题归结为 BN affine。
 
-σ¢áµ¡ñ v10 σÅ¬µû░σó₧Σ╕ÇΣ╕¬Σ╕╗Φªüσ«₧Θ¬îσÅÿΘçÅ∩╝Ü`training.freeze_encoder_parameters_from_epoch: 2`πÇéΘàìτ╜«Σ╕║ `configs/orthopedic_ct_cpu_binary_encoder_freeze_after_e1_v10.yaml`πÇéσ«âσ«îµò┤τ╗ºµë┐ v9∩╝Üepoch1 µ¡úσ╕╕Φ«¡τ╗â∩╝¢epoch2 Φ╡╖τ╗ºτ╗¡Σ┐¥µîü `freeze_batchnorm_running_stats_from_epoch=2`∩╝îσ╣╢Θó¥σñûσå╗τ╗ô `segformer_encoder` τÜä trainable parameters∩╝¢decoder / segmentation head τ╗ºτ╗¡Φ«¡τ╗âπÇélrπÇülossπÇüsamplingπÇüROIπÇüaugmentationπÇüinput channelsπÇüschedulerπÇüfull-volume validation σ¥çΣ╕ìµö╣σÅÿπÇéτ¢╕σ»╣ v9 τÜäσ╜ÆΣ╕Çσîû config diff σÅ¬µ£ë experiment name σÆîΦ┐ÖΣ╕Çµ¥í encoder-freeze Θàìτ╜«πÇé
+因此 v10 只新增一个主要实验变量：`training.freeze_encoder_parameters_from_epoch: 2`。配置为 `configs/orthopedic_ct_cpu_binary_encoder_freeze_after_e1_v10.yaml`。它完整继承 v9：epoch1 正常训练；epoch2 起继续保持 `freeze_batchnorm_running_stats_from_epoch=2`，并额外冻结 `segformer_encoder` 的 trainable parameters；decoder / segmentation head 继续训练。lr、loss、sampling、ROI、augmentation、input channels、scheduler、full-volume validation 均不改变。相对 v9 的归一化 config diff 只有 experiment name 和这一条 encoder-freeze 配置。
 
-σ╖Ñτ¿ïσ«₧τÄ░µû░σó₧ `should_freeze_encoder_parameters()` Σ╕Ä `configure_encoder_parameter_training()`∩╝¢resume σê░ epoch2 µù╢Σ╗ìµîëσ╜ôσëì epoch Φç¬σè¿ΦºªσÅæσå╗τ╗ôπÇéσ¢₧σ╜Æµ╡ïΦ»òΦªåτ¢û∩╝Üepoch1/epoch2 policyπÇüresume σêñσ«ÜπÇüσÅ¬σà│Θù¡ encoder gradient ΦÇîΣ╕ìσà│Θù¡ decoder gradientπÇüµüóσñì trainabilityπÇüv10/v9 σìòσÅÿΘçÅ config diffπÇéfocused tests=`11 passed`∩╝¢σà¿ΘçÅ `pytest tests -q`=`129 passed`∩╝¢Ruff=`All checks passed`∩╝¢`git diff --check` ΘÇÜΦ┐çπÇé`formal_readiness --allow-cpu` σ»╣ v10 σ«₧µ╡ï `ready=true`πÇü`blocker_count=0`∩╝îtask specπÇü7/2/1 splitπÇü10 Σ╛ï preprocessing/QC σ¥çΘÇÜΦ┐ç∩╝¢CPU-only τè╢µÇüΣ╗ìσªéσ«₧Φ«░σ╜òΣ╜åσ¢áµÿ╛σ╝Å `--allow-cpu` Σ╕ìµ₧äµêÉ blockerπÇé
+工程实现新增 `should_freeze_encoder_parameters()` 与 `configure_encoder_parameter_training()`；resume 到 epoch2 时仍按当前 epoch 自动触发冻结。回归测试覆盖：epoch1/epoch2 policy、resume 判定、只关闭 encoder gradient 而不关闭 decoder gradient、恢复 trainability、v10/v9 单变量 config diff。focused tests=`11 passed`；全量 `pytest tests -q`=`129 passed`；Ruff=`All checks passed`；`git diff --check` 通过。`formal_readiness --allow-cpu` 对 v10 实测 `ready=true`、`blocker_count=0`，task spec、7/2/1 split、10 例 preprocessing/QC 均通过；CPU-only 状态仍如实记录但因显式 `--allow-cpu` 不构成 blocker。
 
-σ╜ôσëìσå│τ¡û∩╝Üv10 σ╖Ñτ¿ïµ¥íΣ╗╢σ╖▓µ╗íΦ╢│∩╝îΣ╕ïΣ╕Çµ¡Ñτ½ïσì│σÅ¬Φ╖æ epoch1πÇéepoch1 σ┐àΘí╗σñìτÄ░µêûµÄÑΦ┐æ v9/v6 epoch1∩╝¢ΘÇÜΦ┐çσÉÄσåìΣ╗ÄσÉîΣ╕Ç run resume σê░ epoch2∩╝îΣ╗Ñτ¢┤µÄÑµúÇΘ¬îΓÇ£encoder σÅéµò░µ¢┤µû░µÿ»σÉªµÿ» BN running stats Σ╣ïσñûΘÇáµêÉ logit/segmentation degradation τÜäΣ╕╗Φªüσë⌐Σ╜Öµ£║σê╢ΓÇ¥πÇéτï¼τ½ï test `liver_169` τ╗ºτ╗¡τªüµ¡óΦ«┐Θù«πÇé
+当前决策：v10 工程条件已满足，下一步立即只跑 epoch1。epoch1 必须复现或接近 v9/v6 epoch1；通过后再从同一 run resume 到 epoch2，以直接检验“encoder 参数更新是否是 BN running stats 之外造成 logit/segmentation degradation 的主要剩余机制”。独立 test `liver_169` 继续禁止访问。
 
 
-### 2026-08-27∩╜£Θÿ╢µ«╡ AU∩╝Üv10 epoch1 τ▓╛τí«σñìτÄ░πÇüσÅîτùàΣ╛ïΦ»èµû¡Σ╕ÄΦ┐¢σàÑ epoch2 Θù¿µº¢τí«Φ«ñ
+### 2026-08-27｜阶段 AU：v10 epoch1 精确复现、双病例诊断与进入 epoch2 门槛确认
 
-v10 epoch1 σ╖▓σ£¿µùóµ£ë run `experiments/20260827_170359_cpu_binary_encoder_freeze_after_e1_v10_roi64` τ£ƒσ«₧σ«îµêÉ∩╝îµ£¼Θÿ╢µ«╡µ£¬ΘçìΦ╖æ epoch1πÇé`history.csv` Φ«░σ╜ò∩╝Ütrain loss=`2.5537127596991405`πÇümean full-volume validation Dice=`0.05407000716611769`πÇüval Dice std=`0.010840379918928316`πÇüvalidation inference totalΓëê`143.4137 s`πÇülr=`5e-5`πÇé`sampling_stats.csv` Φ«░σ╜ò 28 Σ╕¬Φ«¡τ╗â patch∩╝îforeground fraction meanΓëê`0.07907336`∩╝îforeground/background patch=`10/18`πÇéΦ┐ÖΣ║¢µò░σÇ╝Σ╕Ä v6/v9 epoch1 τ▓╛τí«Σ╕ÇΦç┤πÇé
+v10 epoch1 已在既有 run `experiments/20260827_170359_cpu_binary_encoder_freeze_after_e1_v10_roi64` 真实完成，本阶段未重跑 epoch1。`history.csv` 记录：train loss=`2.5537127596991405`、mean full-volume validation Dice=`0.05407000716611769`、val Dice std=`0.010840379918928316`、validation inference total≈`143.4137 s`、lr=`5e-5`。`sampling_stats.csv` 记录 28 个训练 patch，foreground fraction mean≈`0.07907336`，foreground/background patch=`10/18`。这些数值与 v6/v9 epoch1 精确一致。
 
-Σ╕ñΣ╛ï detailed validation σ¥çΣ╜┐τö¿ v10 epoch1 `best.pt` Σ╕öσÅ¬Φ«┐Θù« validation split∩╝Ü`liver_7` Dice=`0.0432296272`πÇüIoU=`0.0220923353`πÇüPrecision=`0.0275333742`πÇüRecall=`0.1005529539`πÇüHD95=`199.91498 mm`πÇüASSD=`56.24754 mm`πÇüprediction/GT foreground ratio=`3.6520├ù`πÇüpred components=`1581`πÇücomponent error=`1578`πÇüfalse merge=`1`πÇüfalse break=`63`∩╝¢`liver_8` Dice=`0.0649103871`πÇüIoU=`0.0335438662`πÇüPrecision=`0.0426663277`πÇüRecall=`0.1356111771`πÇüHD95=`175.45655 mm`πÇüASSD=`48.25676 mm`πÇüprediction/GT foreground ratio=`3.1784├ù`πÇüpred components=`1599`πÇücomponent error=`1597`πÇüfalse merge=`0`πÇüfalse break=`68`πÇéΣ╕ñΣ╛ïτ╗ôµ₧£Σ╕Ä v6/v9 epoch1 ΘöÜτé╣Σ╕ÇΦç┤πÇé
+两例 detailed validation 均使用 v10 epoch1 `best.pt` 且只访问 validation split：`liver_7` Dice=`0.0432296272`、IoU=`0.0220923353`、Precision=`0.0275333742`、Recall=`0.1005529539`、HD95=`199.91498 mm`、ASSD=`56.24754 mm`、prediction/GT foreground ratio=`3.6520×`、pred components=`1581`、component error=`1578`、false merge=`1`、false break=`63`；`liver_8` Dice=`0.0649103871`、IoU=`0.0335438662`、Precision=`0.0426663277`、Recall=`0.1356111771`、HD95=`175.45655 mm`、ASSD=`48.25676 mm`、prediction/GT foreground ratio=`3.1784×`、pred components=`1599`、component error=`1597`、false merge=`0`、false break=`68`。两例结果与 v6/v9 epoch1 锚点一致。
 
-Σ╕ñΣ╛ï validation-only diagnostics σ¥çσ╖▓σ«îµêÉπÇé`liver_7` τÜä GT foreground/background mean P(fg)Γëê`0.12394/0.03265`∩╝îDice lossΓëê`0.95683`πÇüCE lossΓëê`0.11307`∩╝îforeground/background weighted CE contributionΓëê`0.04322/0.06985`∩╝îfixed foreground patch head weight gradient normΓëê`6.75449`∩╝¢`liver_8` τÜäσ»╣σ║öµò░σÇ╝Γëê`0.15221/0.02478`πÇüDice lossΓëê`0.94430`πÇüCE lossΓëê`0.07972`πÇüCE contributionΓëê`0.03320/0.04651`πÇühead weight gradient normΓëê`6.52452`πÇéΣ╕ñΣ╛ïσ¥çµÿ╛τñ║ 9 Σ╕¬ BatchNorm3d σ╖▓µîë epoch1 µ¡úσ╕╕σ╗║τ½ï running statistics∩╝îΘªûσ▒é `num_batches_tracked=28`πÇürunning mean stdΓëê`0.0144923`πÇürunning var meanΓëê`0.0622548`∩╝îΣ╕Ä v6/v9 epoch1 ΘöÜτé╣Σ╕ÇΦç┤πÇédiagnostics σà¿τ¿ïµ£¬µëºΦíî optimizer.stepπÇé
+两例 validation-only diagnostics 均已完成。`liver_7` 的 GT foreground/background mean P(fg)≈`0.12394/0.03265`，Dice loss≈`0.95683`、CE loss≈`0.11307`，foreground/background weighted CE contribution≈`0.04322/0.06985`，fixed foreground patch head weight gradient norm≈`6.75449`；`liver_8` 的对应数值≈`0.15221/0.02478`、Dice loss≈`0.94430`、CE loss≈`0.07972`、CE contribution≈`0.03320/0.04651`、head weight gradient norm≈`6.52452`。两例均显示 9 个 BatchNorm3d 已按 epoch1 正常建立 running statistics，首层 `num_batches_tracked=28`、running mean std≈`0.0144923`、running var mean≈`0.0622548`，与 v6/v9 epoch1 锚点一致。diagnostics 全程未执行 optimizer.step。
 
-ΘÜÅσÉÄσ»╣ v6 epoch1πÇüv9 epoch1πÇüv10 epoch1 Σ╕ëΣ╕¬ `best.pt` σüÜΘÇÉ tensor τ▓╛τí«µ»öΦ╛â∩╝ÜΣ╕ëΦÇà checkpoint epoch σ¥çΣ╕║ 1πÇüval Dice σ¥çΣ╕║ `0.05407000716611769`∩╝¢`model_state_dict` σà▒ 232 Σ╕¬ tensor∩╝îkey σ«îσà¿Σ╕ÇΦç┤πÇé`v6Γåöv9`πÇü`v6Γåöv10`πÇü`v9Γåöv10` Σ╕ëτ╗äΘÇÉ tensor `torch.equal` σ¥çσà¿Θâ¿µêÉτ½ï∩╝îdiff tensor=`0`∩╝¢µëÇµ£ë `running_mean/running_var/num_batches_tracked` τÜä BN buffer diff=`0`πÇéσ¢áµ¡ñσÅ»Σ╗ÑΣ╕Ñµá╝σåÖµêÉ∩╝Ü**v6e1 == v9e1 == v10e1∩╝êmodel state exact equal∩╝ë**∩╝îv10 τÜäσ╗╢Φ┐ƒ encoder-freeze σ╖Ñτ¿ïµ▓íµ£ëµ▒íµƒô epoch1πÇé
+随后对 v6 epoch1、v9 epoch1、v10 epoch1 三个 `best.pt` 做逐 tensor 精确比较：三者 checkpoint epoch 均为 1、val Dice 均为 `0.05407000716611769`；`model_state_dict` 共 232 个 tensor，key 完全一致。`v6↔v9`、`v6↔v10`、`v9↔v10` 三组逐 tensor `torch.equal` 均全部成立，diff tensor=`0`；所有 `running_mean/running_var/num_batches_tracked` 的 BN buffer diff=`0`。因此可以严格写成：**v6e1 == v9e1 == v10e1（model state exact equal）**，v10 的延迟 encoder-freeze 工程没有污染 epoch1。
 
-µ£¼Θÿ╢µ«╡σêñµû¡∩╝Üv10 epoch1 σ╖▓ΘÇÜΦ┐çΦ┐¢σàÑ epoch2 τÜäσà¿Θâ¿Θù¿µº¢πÇéΣ╕ïΣ╕Çµ¡ÑΣ╗ÄσÉîΣ╕Ç run τÜä `checkpoint/last.pt` resume σê░µÇ╗ epoch2∩╝¢epoch2 Φ╡╖σ┐àΘí╗Θ¬îΦ»ü encoder trainable parameters σå╗τ╗ôπÇüBN running statistics σå╗τ╗ôπÇüdecoder/head τ╗ºτ╗¡Φ«¡τ╗â∩╝îσ╣╢σ£¿Φ«¡τ╗âσÉÄµúÇµƒÑ `v10e1ΓåÆv10e2`∩╝Üencoder parameter delta=`0`πÇüBN running-buffer delta=`0`πÇüdecoder/head delta Σ╗ÑσÅè fixed-patch activation/logit driftπÇéΘÜÅσÉÄσÅ¬σ»╣ `liver_7/liver_8` σüÜ detailed validation Σ╕Ä diagnosticsπÇéτï¼τ½ï test `liver_169` τ╗ºτ╗¡Σ╕Ñµá╝τªüµ¡óΦ«┐Θù«∩╝¢stable baseline Σ╗ìΣ╕║ NOπÇülock parameters=NOπÇüformal test ready=NO∩╝îτ¢┤σê░Φç│σ░æ epoch1/2/3 Φ┐₧τ╗¡τ¿│σ«ÜπÇé
+本阶段判断：v10 epoch1 已通过进入 epoch2 的全部门槛。下一步从同一 run 的 `checkpoint/last.pt` resume 到总 epoch2；epoch2 起必须验证 encoder trainable parameters 冻结、BN running statistics 冻结、decoder/head 继续训练，并在训练后检查 `v10e1→v10e2`：encoder parameter delta=`0`、BN running-buffer delta=`0`、decoder/head delta 以及 fixed-patch activation/logit drift。随后只对 `liver_7/liver_8` 做 detailed validation 与 diagnostics。独立 test `liver_169` 继续严格禁止访问；stable baseline 仍为 NO、lock parameters=NO、formal test ready=NO，直到至少 epoch1/2/3 连续稳定。
 
 
-### 2026-08-27∩╜£Θÿ╢µ«╡ AV∩╝Üv10 epoch2 τü╛ΘÜ╛µÇºΦâîµÖ»σíîτ╝⌐∩╝îencoder/BN σ╖▓µÄÆΘÖñΣ╕║σ┐àΦªüµ¥íΣ╗╢
+### 2026-08-27｜阶段 AV：v10 epoch2 灾难性背景塌缩，encoder/BN 已排除为必要条件
 
-v10 σ╖▓Σ╗ÄσÉîΣ╕Ç run `experiments/20260827_170359_cpu_binary_encoder_freeze_after_e1_v10_roi64/checkpoint/last.pt` resume σê░µÇ╗ epoch2πÇéformal preflight σåìµ¼í `ready=true / 0 blocker`πÇéepoch2 τ£ƒσ«₧Φ«¡τ╗âτ╗ôµ₧£∩╝Ütrain loss=`2.405222313744681`πÇümean full-volume validation Dice=`1.6538643217978726e-11`πÇüstd=`2.4799193429642677e-13`πÇüvalidation inference totalΓëê`128.1903 s`πÇülrΓëê`4.892324335849338e-5`πÇésampling_stats Σ╗ìΣ╕║ 28 patchπÇüforeground/background patch=`10/18`∩╝îforeground fraction meanΓëê`0.08840765`∩╝îΣ╕Ä epoch1 τÜäΓëê`0.07907336` σÉîΘçÅτ║º∩╝îΣ╕ìΦâ╜ΦºúΘçèµÄÑΦ┐æ 0 τÜä DiceπÇé
+v10 已从同一 run `experiments/20260827_170359_cpu_binary_encoder_freeze_after_e1_v10_roi64/checkpoint/last.pt` resume 到总 epoch2。formal preflight 再次 `ready=true / 0 blocker`。epoch2 真实训练结果：train loss=`2.405222313744681`、mean full-volume validation Dice=`1.6538643217978726e-11`、std=`2.4799193429642677e-13`、validation inference total≈`128.1903 s`、lr≈`4.892324335849338e-5`。sampling_stats 仍为 28 patch、foreground/background patch=`10/18`，foreground fraction mean≈`0.08840765`，与 epoch1 的≈`0.07907336` 同量级，不能解释接近 0 的 Dice。
 
-σå╗τ╗ôµ£║σê╢τ╗Å checkpoint ΘÇÉΘí╣µá╕σ»╣σ╖▓Σ╕Ñµá╝τöƒµòê∩╝Üv10e1ΓåÆv10e2 τÜä `segformer_encoder.*` σà▒ 208 Σ╕¬ state tensor∩╝îchanged=`0`πÇüaggregate relative L2 delta=`0`∩╝¢27 Σ╕¬ BN `running_mean/running_var/num_batches_tracked` changed=`0`πÇéΣ╕Äµ¡ñσÉîµù╢ decoder 24 Σ╕¬ state tensor Σ╕¡ 21 Σ╕¬σÅæτöƒσÅÿσîû∩╝îaggregate relative L2Γëê`0.1167%`∩╝¢σà╢Σ╕¡ `linear_c4Γëê0.2529%`πÇü`linear_c3Γëê0.1811%`πÇü`linear_fuseΓëê0.1681%`πÇü`linear_c2Γëê0.1206%`πÇü`linear_c1Γëê0.0893%`∩╝îµ£Çτ╗ê `linear_predΓëê0.02255%`πÇéfinal head weight/bias σ¥çτí«σ«₧µ¢┤µû░∩╝îσ¢áµ¡ñΣ╕ìµÿ»ΓÇ£µò┤Σ╕¬µ¿íσ₧ïµ▓íµ£ëΦ«¡τ╗âΓÇ¥πÇé
+冻结机制经 checkpoint 逐项核对已严格生效：v10e1→v10e2 的 `segformer_encoder.*` 共 208 个 state tensor，changed=`0`、aggregate relative L2 delta=`0`；27 个 BN `running_mean/running_var/num_batches_tracked` changed=`0`。与此同时 decoder 24 个 state tensor 中 21 个发生变化，aggregate relative L2≈`0.1167%`；其中 `linear_c4≈0.2529%`、`linear_c3≈0.1811%`、`linear_fuse≈0.1681%`、`linear_c2≈0.1206%`、`linear_c1≈0.0893%`，最终 `linear_pred≈0.02255%`。final head weight/bias 均确实更新，因此不是“整个模型没有训练”。
 
-Σ╕ñΣ╛ï detailed validation Σ╜┐τö¿ epoch2 `last.pt` Σ╕öσÅ¬Φ«┐Θù« validation splitπÇé`liver_7`∩╝ÜDice/IoU/Precision/Recall=`0/0/0/0`∩╝îHD95Γëê`169.059 mm`πÇüASSDΓëê`92.743 mm`∩╝îprediction foreground fractionΓëê`0.00051049`πÇüGTΓëê`0.00699608`πÇüprediction/GTΓëê`0.07297├ù`∩╝îpred components=`354`πÇücomponent error=`351`πÇüfalse merge/break=`0/0`πÇé`liver_8`∩╝ÜDice/IoU/Precision/Recall=`0/0/0/0`∩╝îHD95Γëê`174.311 mm`πÇüASSDΓëê`98.331 mm`∩╝îprediction foreground fractionΓëê`0.00036441`πÇüGTΓëê`0.00565958`πÇüprediction/GTΓëê`0.06439├ù`∩╝îpred components=`322`πÇücomponent error=`320`πÇüfalse merge/break=`0/0`πÇéΦ┐ÖΣ╕ìµÿ»µ¡úσ╕╕µö╣σûä∩╝îΦÇîµÿ»µÿÄτí« background collapseπÇé
+两例 detailed validation 使用 epoch2 `last.pt` 且只访问 validation split。`liver_7`：Dice/IoU/Precision/Recall=`0/0/0/0`，HD95≈`169.059 mm`、ASSD≈`92.743 mm`，prediction foreground fraction≈`0.00051049`、GT≈`0.00699608`、prediction/GT≈`0.07297×`，pred components=`354`、component error=`351`、false merge/break=`0/0`。`liver_8`：Dice/IoU/Precision/Recall=`0/0/0/0`，HD95≈`174.311 mm`、ASSD≈`98.331 mm`，prediction foreground fraction≈`0.00036441`、GT≈`0.00565958`、prediction/GT≈`0.06439×`，pred components=`322`、component error=`320`、false merge/break=`0/0`。这不是正常改善，而是明确 background collapse。
 
-validation-only diagnostics Σ╕Ä detailed validation Σ╕ÇΦç┤πÇé`liver_7` full-volume foreground/background logit meanΓëê`-15.0796/7.94395`∩╝îGT foreground/background mean P(fg)Γëê`1.34e-5/7.43e-4`∩╝îDice lossΓëê`0.999973`πÇüCE lossΓëê`0.111025`∩╝îforeground/background weighted CE contributionΓëê`0.10928/0.00175`∩╝¢`liver_8` foreground/background logit meanΓëê`-15.0863/9.20556`∩╝îGT foreground/background mean P(fg)Γëê`1.82e-5/4.95e-4`∩╝îDice lossΓëê`0.999964`πÇüCE lossΓëê`0.087960`∩╝îCE contributionΓëê`0.08691/0.00105`πÇéΣ╕ñΣ╛ï head gradient norm Σ╗ìΓëê`6.94/6.91`∩╝îΦ»┤µÿÄ final head Σ╗ìµö╢σê░µÿ╛Φæùµó»σ║ª∩╝¢Θªûσ▒é BN Σ╗ìΣ╕Ñµá╝Σ┐¥µîü epoch1 ΘöÜτé╣ `num_batches_tracked=28`πÇürunning mean stdΓëê`0.0144923`πÇürunning var meanΓëê`0.0622548`πÇé
+validation-only diagnostics 与 detailed validation 一致。`liver_7` full-volume foreground/background logit mean≈`-15.0796/7.94395`，GT foreground/background mean P(fg)≈`1.34e-5/7.43e-4`，Dice loss≈`0.999973`、CE loss≈`0.111025`，foreground/background weighted CE contribution≈`0.10928/0.00175`；`liver_8` foreground/background logit mean≈`-15.0863/9.20556`，GT foreground/background mean P(fg)≈`1.82e-5/4.95e-4`，Dice loss≈`0.999964`、CE loss≈`0.087960`，CE contribution≈`0.08691/0.00105`。两例 head gradient norm 仍≈`6.94/6.91`，说明 final head 仍收到显著梯度；首层 BN 仍严格保持 epoch1 锚点 `num_batches_tracked=28`、running mean std≈`0.0144923`、running var mean≈`0.0622548`。
 
-σ¢║σ«Ü `liver_7` foreground-centered 64┬│ patch τÜä checkpoint dynamics Φ┐¢Σ╕Çµ¡ÑΘÜöτª╗Σ║åµ£║σê╢∩╝Üv10e1 Σ╕Ä v10e2 τÜäµëÇµ£ë encoder hook activation mean/std σ«îσà¿ΘÇÉσÇ╝Σ╕ÇΦç┤∩╝¢decoder `linear_fuse.0` mean Σ╗ÄΓëê`-0.0740` µ╝éσê░Γëê`-0.1246`∩╝î`linear_fuse.1` mean Σ╗ÄΓëê`-0.07155` µ╝éσê░Γëê`-0.10212`∩╝îfinal head input mean/stdΓëê`0.55495/0.80298 ΓåÆ 0.54336/0.80388`∩╝îfinal logits mean/stdΓëê`-11.3113/11.8207 ΓåÆ -9.81895/14.5471`πÇéσ¢áµ¡ñ encoder representation µ£¼Φ║½σ£¿σ¢║σ«ÜΦ╛ôσàÑΣ╕èσ«îσà¿Σ╕ìσÅÿ∩╝îΦÇî decoder feature transformation Σ╕Äµ£Çτ╗ê logits Σ╗ìσÅæτöƒµÿÄµÿ╛ dynamicsπÇé
+固定 `liver_7` foreground-centered 64³ patch 的 checkpoint dynamics 进一步隔离了机制：v10e1 与 v10e2 的所有 encoder hook activation mean/std 完全逐值一致；decoder `linear_fuse.0` mean 从≈`-0.0740` 漂到≈`-0.1246`，`linear_fuse.1` mean 从≈`-0.07155` 漂到≈`-0.10212`，final head input mean/std≈`0.55495/0.80298 → 0.54336/0.80388`，final logits mean/std≈`-11.3113/11.8207 → -9.81895/14.5471`。因此 encoder representation 本身在固定输入上完全不变，而 decoder feature transformation 与最终 logits 仍发生明显 dynamics。
 
-τºæσ¡ªσêñµû¡σ┐àΘí╗µ¢┤µû░Σ╕║∩╝Ü**v10 σÉªσ«ÜΣ║åΓÇ£encoder parameter update µÿ» epoch2 degradation τÜäσ┐àΦªüµ¥íΣ╗╢ΓÇ¥Φ┐ÖΣ╕Çµ¢┤σ╝║σüçΦ«╛πÇé** encoder Σ╕Ä BN running stats Θâ╜Φó½σå╗τ╗ôσÉÄΣ╗ìσÅ»σç║τÄ░µ¢┤Σ╕ÑΘçìτÜä background collapse∩╝îΦ»┤µÿÄσë⌐Σ╜ÖΣ╕ìτ¿│σ«ÜµÇºΦç│σ░æσÅ»Σ╗Ñτö▒ decoder/head training dynamics Σ║ºτöƒπÇéτö▒Σ║Ä decoder feature groups τÜäΦüÜσÉêσÅÿσîûµÿ╛ΦæùσñºΣ║Ä final `linear_pred`∩╝îΣ╕ö encoder activation σ«îσà¿Σ╕ìσÅÿΦÇî decoder fuse/final logits µ╝éτº╗∩╝îΣ╕ïΣ╕ÇσìòσÅÿΘçÅΣ╝ÿσàêΘÜöτª╗ decoder representation update∩╝îΦÇîΣ╕ìµÿ»σåìµö╣ lr/loss/sampling/ROI/augmentationπÇé
+科学判断必须更新为：**v10 否定了“encoder parameter update 是 epoch2 degradation 的必要条件”这一更强假设。** encoder 与 BN running stats 都被冻结后仍可出现更严重的 background collapse，说明剩余不稳定性至少可以由 decoder/head training dynamics 产生。由于 decoder feature groups 的聚合变化显著大于 final `linear_pred`，且 encoder activation 完全不变而 decoder fuse/final logits 漂移，下一单变量优先隔离 decoder representation update，而不是再改 lr/loss/sampling/ROI/augmentation。
 
-σ¢áµ¡ñ v10 τ½ïσì│ STOP∩╝îΣ╕ìΦ╖æ epoch3πÇéstable baseline=NO∩╝¢lock parameters=NO∩╝¢formal test ready=NO∩╝¢τï¼τ½ï test `liver_169` τ╗ºτ╗¡τªüµ¡óΦ«┐Θù«πÇév11 Φ«íσêÆΣ╕Ñµá╝σìòσÅÿΘçÅ∩╝Üτ╗ºµë┐ v10 τÜä epoch2 encoder freeze + BN-running-stat freeze∩╝îσ╣╢Σ╗Ä epoch2 Φ╡╖Θó¥σñûσå╗τ╗ô decoder feature parameters∩╝ê`linear_c1..c4` Σ╕Ä `linear_fuse`∩╝ë∩╝îΣ╗àΣ┐¥τòÖµ£Çτ╗ê `linear_pred` segmentation head σÅ»Φ«¡τ╗â∩╝¢σà╢σ«â lr/loss/sampling/ROI/augmentation/input/scheduler/full-volume validation σà¿Θâ¿Σ╕ìσÅÿπÇéΦ»Ñσ«₧Θ¬îσÅ¬τö¿Σ║Äσêñµû¡ decoder representation update µÿ»σÉªµÿ» v10 σë⌐Σ╜Ö collapse τÜäΣ╕╗Φªüµ¥Ñµ║ÉπÇé
+因此 v10 立即 STOP，不跑 epoch3。stable baseline=NO；lock parameters=NO；formal test ready=NO；独立 test `liver_169` 继续禁止访问。v11 计划严格单变量：继承 v10 的 epoch2 encoder freeze + BN-running-stat freeze，并从 epoch2 起额外冻结 decoder feature parameters（`linear_c1..c4` 与 `linear_fuse`），仅保留最终 `linear_pred` segmentation head 可训练；其它 lr/loss/sampling/ROI/augmentation/input/scheduler/full-volume validation 全部不变。该实验只用于判断 decoder representation update 是否是 v10 剩余 collapse 的主要来源。
 
 
-### 2026-08-27∩╜£Θÿ╢µ«╡ AW∩╝Üv11 decoder-feature-freeze σ╖Ñτ¿ïσ«îµêÉσ╣╢ΘÇÜΦ┐ç readiness
+### 2026-08-27｜阶段 AW：v11 decoder-feature-freeze 工程完成并通过 readiness
 
-σƒ║Σ║Ä v10 τÜäτ£ƒσ«₧Φ»üµì«∩╝îµ£¼Θÿ╢µ«╡µ▓íµ£ëΘçìµû░σ╝ÇσÅæσ╖▓σ¡ÿσ£¿τÜä v11∩╝îΦÇîµÿ»σàêµÄÑτ«íµ£¼σ£░µ£¬µÅÉΣ║ñΣ┐«µö╣σ╣╢µá╕σ»╣σìòσÅÿΘçÅΦ«╛Φ«íπÇév11 Θàìτ╜«Σ╕║ `configs/orthopedic_ct_cpu_binary_decoder_feature_freeze_after_e1_v11.yaml`∩╝îσ«îµò┤τ╗ºµë┐ v10 τÜä CT-onlyπÇü64┬│ training ROIπÇüRegion Dice+CE=1:1πÇüforeground samplingπÇüAdamW peak lr=`5e-5`πÇüschedulerπÇüfull-volume validationπÇü`freeze_batchnorm_running_stats_from_epoch=2` Σ╕Ä `freeze_encoder_parameters_from_epoch=2`∩╝îσö»Σ╕Çµû░σó₧Σ╕╗Φªüσ«₧Θ¬îσÅÿΘçÅµÿ» `freeze_decoder_feature_parameters_from_epoch=2`πÇé
+基于 v10 的真实证据，本阶段没有重新开发已存在的 v11，而是先接管本地未提交修改并核对单变量设计。v11 配置为 `configs/orthopedic_ct_cpu_binary_decoder_feature_freeze_after_e1_v11.yaml`，完整继承 v10 的 CT-only、64³ training ROI、Region Dice+CE=1:1、foreground sampling、AdamW peak lr=`5e-5`、scheduler、full-volume validation、`freeze_batchnorm_running_stats_from_epoch=2` 与 `freeze_encoder_parameters_from_epoch=2`，唯一新增主要实验变量是 `freeze_decoder_feature_parameters_from_epoch=2`。
 
-σ╖Ñτ¿ïσ«₧τÄ░Σ╜ìΣ║Ä `src/modeling/train.py`∩╝Üµû░σó₧ `should_freeze_decoder_feature_parameters()` Σ╕Ä `configure_decoder_feature_parameter_training()`πÇéepoch1 decoder σà¿Θâ¿µ¡úσ╕╕Φ«¡τ╗â∩╝¢epoch2 Φ╡╖ `segformer_decoder` Σ╕¡ΘÖñ `linear_pred.*` σñûτÜäσÅéµò░σà¿Θâ¿ `requires_grad=False`∩╝îσì│σå╗τ╗ô `linear_c1/linear_c2/linear_c3/linear_c4/linear_fuse` τ¡ë decoder feature parameters∩╝îσÉîµù╢σºïτ╗êΣ┐¥τòÖµ£Çτ╗ê `linear_pred` segmentation head σÅ»Φ«¡τ╗âπÇéτ╝║σ░æ `segformer_decoder` µêûσ£¿σÉ»τö¿σå╗τ╗ôµù╢τ╝║σ░æ `linear_pred` Σ╝Üµÿ╛σ╝ÅµèÑΘöÖπÇéµû░σó₧ `tests/test_decoder_feature_freeze_training.py` Φªåτ¢û epoch policy/resumeπÇüΣ╗à `linear_pred` Σ┐¥τòÖ gradientπÇütrainability µüóσñìΣ╗ÑσÅè v11/v10 normalized config diffπÇé
+工程实现位于 `src/modeling/train.py`：新增 `should_freeze_decoder_feature_parameters()` 与 `configure_decoder_feature_parameter_training()`。epoch1 decoder 全部正常训练；epoch2 起 `segformer_decoder` 中除 `linear_pred.*` 外的参数全部 `requires_grad=False`，即冻结 `linear_c1/linear_c2/linear_c3/linear_c4/linear_fuse` 等 decoder feature parameters，同时始终保留最终 `linear_pred` segmentation head 可训练。缺少 `segformer_decoder` 或在启用冻结时缺少 `linear_pred` 会显式报错。新增 `tests/test_decoder_feature_freeze_training.py` 覆盖 epoch policy/resume、仅 `linear_pred` 保留 gradient、trainability 恢复以及 v11/v10 normalized config diff。
 
-µ£¼Θÿ╢µ«╡Θçìµû░µëºΦíîτ£ƒσ«₧Θ¬îΦ»ü∩╝Üfocused freeze tests=`15 passed`∩╝¢σà¿ΘçÅ `pytest tests -q`=`133 passed`∩╝¢`ruff check src web tests`=`All checks passed!`πÇéΣ╜┐τö¿ locked task spec µëºΦíî `python -m src.modeling.formal_readiness --task-spec configs/task_specs/vertebra_binary_ctspine1k_msd_t10_v1.json --config configs/orthopedic_ct_cpu_binary_decoder_feature_freeze_after_e1_v11.yaml --allow-cpu`∩╝îτ╗ôµ₧£ `ready=true`πÇü`blocker_count=0`∩╝î10 Σ╛ï preprocessing/QCπÇü7/2/1 split Σ╕Ä task lock σ¥çΘÇÜΦ┐çπÇéCPU-only / CUDA unavailable Σ╗ìσªéσ«₧σ¡ÿσ£¿∩╝îΣ╜åσ£¿µÿ╛σ╝Å `--allow-cpu` Σ╕ïΣ╕ìµ₧äµêÉσ╜ôσëì engineering validation blockerπÇé
+本阶段重新执行真实验证：focused freeze tests=`15 passed`；全量 `pytest tests -q`=`133 passed`；`ruff check src web tests`=`All checks passed!`。使用 locked task spec 执行 `python -m src.modeling.formal_readiness --task-spec configs/task_specs/vertebra_binary_ctspine1k_msd_t10_v1.json --config configs/orthopedic_ct_cpu_binary_decoder_feature_freeze_after_e1_v11.yaml --allow-cpu`，结果 `ready=true`、`blocker_count=0`，10 例 preprocessing/QC、7/2/1 split 与 task lock 均通过。CPU-only / CUDA unavailable 仍如实存在，但在显式 `--allow-cpu` 下不构成当前 engineering validation blocker。
 
-σ╜ôσëìτºæσ¡ªτ¢«µáçΣ┐¥µîüΣ╕Ñµá╝σìòσÅÿΘçÅ∩╝ÜΘ¬îΦ»üΓÇ£σ╜ô encoder parametersπÇüBN running statsπÇüdecoder feature parameters σ¥çΣ╗Ä epoch2 Φ╡╖σ¢║σ«Ü∩╝îσÅ¬σàüΦ«╕ final segmentation head µ¢┤µû░µù╢∩╝îepoch2 µÿ»σÉªΣ╗ìσÅæτöƒ collapseΓÇ¥πÇéσ¢áµ¡ñΣ╕ïΣ╕Çµ¡Ñσ┐àΘí╗σàêΦ┐ÉΦíî v11 epoch1∩╝îσ╣╢σ░å v11e1 `best.pt` Σ╕Ä v10e1 `best.pt` σüÜΘÇÉ tensor `torch.equal`∩╝¢σÅ¬µ£ë exact equal µëìσàüΦ«╕Σ╗ÄσÉîΣ╕Ç run resume σê░ epoch2πÇéτï¼τ½ï test `liver_169` τ╗ºτ╗¡τªüµ¡óΦ«┐Θù«∩╝¢stable baseline=NO∩╝îlock parameters=NO∩╝îformal locked test ready=NOπÇé
+当前科学目标保持严格单变量：验证“当 encoder parameters、BN running stats、decoder feature parameters 均从 epoch2 起固定，只允许 final segmentation head 更新时，epoch2 是否仍发生 collapse”。因此下一步必须先运行 v11 epoch1，并将 v11e1 `best.pt` 与 v10e1 `best.pt` 做逐 tensor `torch.equal`；只有 exact equal 才允许从同一 run resume 到 epoch2。独立 test `liver_169` 继续禁止访问；stable baseline=NO，lock parameters=NO，formal locked test ready=NO。
 
 
-### 2026-08-27∩╜£Θÿ╢µ«╡ AX∩╝Üv11 epoch1 τ▓╛τí«σñìτÄ░σ╣╢ΘÇÜΦ┐çΦ┐¢σàÑ epoch2 Θù¿µº¢
+### 2026-08-27｜阶段 AX：v11 epoch1 精确复现并通过进入 epoch2 门槛
 
-v11 epoch1 σ╖▓σ£¿µû░ run `experiments/20260827_180730_cpu_binary_decoder_feature_freeze_after_e1_v11_roi64` τ£ƒσ«₧σ«îµêÉπÇéformal preflight=`ready=true`πÇé`history.csv`∩╝Ütrain loss=`2.5537127596991405`πÇümean full-volume validation Dice=`0.05407000716611769`πÇüstd=`0.010840379918928316`πÇüvalidation inference totalΓëê`145.990662 s`πÇülr=`5e-5`πÇé`sampling_stats.csv`∩╝Ü28 Σ╕¬ training patch∩╝îforeground fraction mean=`0.07907336098807198`πÇüforeground/background patch=`10/18`∩╝¢Σ╕Ä v10/v9/v6 epoch1 ΘöÜτé╣Σ╕ÇΦç┤πÇé
+v11 epoch1 已在新 run `experiments/20260827_180730_cpu_binary_decoder_feature_freeze_after_e1_v11_roi64` 真实完成。formal preflight=`ready=true`。`history.csv`：train loss=`2.5537127596991405`、mean full-volume validation Dice=`0.05407000716611769`、std=`0.010840379918928316`、validation inference total≈`145.990662 s`、lr=`5e-5`。`sampling_stats.csv`：28 个 training patch，foreground fraction mean=`0.07907336098807198`、foreground/background patch=`10/18`；与 v10/v9/v6 epoch1 锚点一致。
 
-ΘÜÅσÉÄτ¢┤µÄÑµ»öΦ╛â v10 epoch1 `experiments/20260827_170359_cpu_binary_encoder_freeze_after_e1_v10_roi64/checkpoint/best.pt` Σ╕Ä v11 epoch1 `checkpoint/best.pt`πÇéΣ╕ñΦÇà checkpoint epoch σ¥çΣ╕║ 1πÇüval Dice σ¥çΣ╕║ `0.05407000716611769`∩╝¢`model_state_dict` key σ«îσà¿Σ╕ÇΦç┤∩╝îσà▒ 232 Σ╕¬ tensor∩╝îΘÇÉ tensor `torch.equal` σà¿Θâ¿µêÉτ½ï∩╝î`diff_tensor_count=0`πÇéσ¢áµ¡ñσÅ»Σ╗ÑΣ╕Ñµá╝τí«Φ«ñ∩╝Ü**v11e1 == v10e1 == v9e1 == v6e1∩╝êmodel state exact equal∩╝ë**∩╝îv11 µû░σó₧τÜäσ╗╢Φ┐ƒ decoder-feature freeze µ▓íµ£ëµ▒íµƒô epoch1πÇé
+随后直接比较 v10 epoch1 `experiments/20260827_170359_cpu_binary_encoder_freeze_after_e1_v10_roi64/checkpoint/best.pt` 与 v11 epoch1 `checkpoint/best.pt`。两者 checkpoint epoch 均为 1、val Dice 均为 `0.05407000716611769`；`model_state_dict` key 完全一致，共 232 个 tensor，逐 tensor `torch.equal` 全部成立，`diff_tensor_count=0`。因此可以严格确认：**v11e1 == v10e1 == v9e1 == v6e1（model state exact equal）**，v11 新增的延迟 decoder-feature freeze 没有污染 epoch1。
 
-τö▒Σ║Ä v11e1 Σ╕Ä v10e1 checkpoint σ«îσà¿τ¢╕σÉî∩╝îΘçìσñìΦ┐ÉΦíî `liver_7/liver_8` τÜä full-volume detailed evaluation Σ╕Ä validation-only diagnostics Σ╕ìΣ╝ÜΣ║ºτöƒµû░τÜäτºæσ¡ªΣ┐íµü»∩╝îσÅ¬Σ╝ÜΘçìσñìµ╢êΦÇù CPU∩╝¢σ¢áµ¡ñµ£¼Θÿ╢µ«╡Σ╕ìΣ╕║σ╜óσ╝ÅσñìΦ╖æµÿéΦ┤╡ evaluation∩╝îτ¢┤µÄÑµ▓┐τö¿ v10e1 σ╖▓σ«îµêÉΣ╕öΣ╕ÄΦ»Ñ checkpoint τ¡ëΣ╗╖τÜä detailed validation/diagnostics ΘöÜτé╣πÇéΣ╕ïΣ╕Çµ¡ÑσàüΦ«╕Σ╗Ä v11 σÉîΣ╕Ç run τÜä `checkpoint/last.pt` resume σê░µÇ╗ epoch2πÇéepoch2 σÉÄσ┐àΘí╗τ£ƒσ«₧Θ¬îΦ»ü encoder parameter delta=`0`πÇü27 Σ╕¬ BN running buffer delta=`0`πÇüdecoder feature delta=`0`∩╝îΣ╗ÑσÅè `linear_pred` final head µÿ»σÉªσÅæτöƒΘ¥₧Θ¢╢µ¢┤µû░∩╝¢ΘÜÅσÉÄΣ╗àσ»╣ `liver_7/liver_8` σüÜ detailed validationπÇüdiagnostics Σ╕Ä checkpoint dynamicsπÇéτï¼τ½ï test `liver_169` τ╗ºτ╗¡τªüµ¡óΦ«┐Θù«∩╝¢stable baseline Σ╗ìΣ╕║ NOπÇé
+由于 v11e1 与 v10e1 checkpoint 完全相同，重复运行 `liver_7/liver_8` 的 full-volume detailed evaluation 与 validation-only diagnostics 不会产生新的科学信息，只会重复消耗 CPU；因此本阶段不为形式复跑昂贵 evaluation，直接沿用 v10e1 已完成且与该 checkpoint 等价的 detailed validation/diagnostics 锚点。下一步允许从 v11 同一 run 的 `checkpoint/last.pt` resume 到总 epoch2。epoch2 后必须真实验证 encoder parameter delta=`0`、27 个 BN running buffer delta=`0`、decoder feature delta=`0`，以及 `linear_pred` final head 是否发生非零更新；随后仅对 `liver_7/liver_8` 做 detailed validation、diagnostics 与 checkpoint dynamics。独立 test `liver_169` 继续禁止访问；stable baseline 仍为 NO。
 
 
-### 2026-08-27∩╜£Θÿ╢µ«╡ AY∩╝Üv11 epoch2 τ¿│σ«Üτ╗ôµ₧£πÇüdiagnostics Σ╕Ä checkpoint dynamics Θù¡τÄ»
+### 2026-08-27｜阶段 AY：v11 epoch2 稳定结果、diagnostics 与 checkpoint dynamics 闭环
 
-v11 epoch2 Φ«¡τ╗âΣ║ºτë⌐σ╖▓σ£¿µÄÑτ«íµù╢σ«îµò┤σ¡ÿσ£¿∩╝îσ¢áµ¡ñµ▓íµ£ëΘçìΦ╖æ training∩╝îΣ╣ƒµ▓íµ£ëΘçìσñì `liver_7/liver_8` detailed evaluationπÇé`history.csv` Φ«░σ╜ò epoch2 train loss=`2.305381100092615`πÇümean full-volume validation Dice=`0.05437616811727176`πÇüstd=`0.010164091466349327`πÇülr=`4.892324335849338e-05`∩╝¢τ¢╕σ»╣ epoch1 mean Dice=`0.05407000716611769` µ▓íµ£ëΣ╕ïΘÖìπÇé`sampling_stats.csv` Φ«░σ╜ò 28 Σ╕¬ patchπÇüforeground/background=`10/18`πÇüforeground fraction mean=`0.08840765271868024`πÇé
+v11 epoch2 训练产物已在接管时完整存在，因此没有重跑 training，也没有重复 `liver_7/liver_8` detailed evaluation。`history.csv` 记录 epoch2 train loss=`2.305381100092615`、mean full-volume validation Dice=`0.05437616811727176`、std=`0.010164091466349327`、lr=`4.892324335849338e-05`；相对 epoch1 mean Dice=`0.05407000716611769` 没有下降。`sampling_stats.csv` 记录 28 个 patch、foreground/background=`10/18`、foreground fraction mean=`0.08840765271868024`。
 
-σ╖▓σñìµá╕τÄ░µ£ë detailed validation∩╝Ü`liver_7` Dice=`0.04421207664744834`πÇüPrecision=`0.02769497548718257`πÇüRecall=`0.10954250720461095`πÇüprediction/GT foreground ratio=`3.9553206051873198`∩╝¢`liver_8` Dice=`0.06454025958001404`πÇüPrecision=`0.04149838474144706`πÇüRecall=`0.14511500481173542`πÇüratio=`3.496883209210788`πÇéΣ╕ñΣ╛ïσ¥çµ▓íµ£ëσñìτÄ░ v10 τÜä background collapse∩╝îΣ╣ƒµ▓íµ£ëσ¢₧σê░ v6 τÜäτ║ª `60├ù` foreground explosionπÇé
+已复核现有 detailed validation：`liver_7` Dice=`0.04421207664744834`、Precision=`0.02769497548718257`、Recall=`0.10954250720461095`、prediction/GT foreground ratio=`3.9553206051873198`；`liver_8` Dice=`0.06454025958001404`、Precision=`0.04149838474144706`、Recall=`0.14511500481173542`、ratio=`3.496883209210788`。两例均没有复现 v10 的 background collapse，也没有回到 v6 的约 `60×` foreground explosion。
 
-µ£¼Θÿ╢µ«╡µû░Φ┐ÉΦíî validation-only diagnostics∩╝Ü`experiments/diagnostics_20260827_v11e2_liver7` Σ╕Ä `...liver8`πÇé`liver_7` GT foreground/background mean P(fg)=`0.1326324/0.0348158`∩╝îDice loss=`0.9561937`πÇüCE loss=`0.1170483`∩╝îforeground/background weighted CE contribution=`0.0422318/0.0748165`∩╝îfinal-head weight norm=`22.33962`πÇügradient norm=`6.74654`∩╝¢`liver_8` σ»╣σ║ö mean P(fg)=`0.1611401/0.0267009`∩╝îDice loss=`0.9445096`πÇüCE loss=`0.08285695`∩╝îCE contribution=`0.0323833/0.0504737`∩╝îhead gradient norm=`6.51029`πÇéΣ╕ñΣ╛ï 9 Σ╕¬ BatchNorm3d σ¥çΣ┐¥µîü epoch1 running-stat ΘöÜτé╣∩╝êΘªûσ▒é `num_batches_tracked=28`πÇürunning mean stdΓëê`0.0144923`πÇürunning var meanΓëê`0.0622548`∩╝ëπÇé
+本阶段新运行 validation-only diagnostics：`experiments/diagnostics_20260827_v11e2_liver7` 与 `...liver8`。`liver_7` GT foreground/background mean P(fg)=`0.1326324/0.0348158`，Dice loss=`0.9561937`、CE loss=`0.1170483`，foreground/background weighted CE contribution=`0.0422318/0.0748165`，final-head weight norm=`22.33962`、gradient norm=`6.74654`；`liver_8` 对应 mean P(fg)=`0.1611401/0.0267009`，Dice loss=`0.9445096`、CE loss=`0.08285695`，CE contribution=`0.0323833/0.0504737`，head gradient norm=`6.51029`。两例 9 个 BatchNorm3d 均保持 epoch1 running-stat 锚点（首层 `num_batches_tracked=28`、running mean std≈`0.0144923`、running var mean≈`0.0622548`）。
 
-ΘÜÅσÉÄΦ┐ÉΦíî `experiments/checkpoint_dynamics_20260827_v11e1_v11e2_liver7`πÇéτö▒Σ║Ä v11 epoch1 checkpoint σ╖▓Φó½ epoch2 τÜä `best.pt/last.pt` Φªåτ¢û∩╝îµ£¼µ¼íΣ╜┐τö¿µ¡ñσëìΘÇÉ tensor σ╖▓Φ»üµÿÄΣ╕Ä v11e1 232 Σ╕¬ model-state tensor exact equal τÜä v10e1 `best.pt` Σ╜£Σ╕║ `v11e1_exact_anchor`πÇéσ¢║σ«Ü `liver_7` foreground-centered 64┬│ patch Σ╕è∩╝î8 Σ╕¬ encoder hookπÇü`linear_fuse.0/.1` Σ╕Ä `linear_pred.input` τÜäσ«îµò┤τ╗ƒΦ«íσ¡ùσà╕σ¥ç exact equal∩╝¢Σ╗à `linear_pred` final logits σÅæτöƒσÅÿσîûπÇéstate delta Φ┐¢Σ╕Çµ¡Ñµÿ╛τñ║µëÇµ£ë encoder groups Σ╕Ä decoder `linear_c1..c4/linear_fuse` delta=`0`∩╝î18 Σ╕¬µ╡«τé╣ BN running_mean/running_var buffer delta=`0`∩╝îΣ╗à `linear_pred` weight+bias Θ¥₧Θ¢╢∩╝êgroup relative deltaΓëê`4.491e-4`∩╝ëπÇéτ╗ôσÉêµ¡ñσëìΘÇÉ tensor freeze µúÇµƒÑ∩╝îv11 epoch2 τÜäΘÜöτª╗µ¥íΣ╗╢µêÉτ½ï∩╝ÜencoderπÇüBNπÇüdecoder feature σ¢║σ«Ü∩╝îΣ╗à final head µ¢┤µû░πÇé
+随后运行 `experiments/checkpoint_dynamics_20260827_v11e1_v11e2_liver7`。由于 v11 epoch1 checkpoint 已被 epoch2 的 `best.pt/last.pt` 覆盖，本次使用此前逐 tensor 已证明与 v11e1 232 个 model-state tensor exact equal 的 v10e1 `best.pt` 作为 `v11e1_exact_anchor`。固定 `liver_7` foreground-centered 64³ patch 上，8 个 encoder hook、`linear_fuse.0/.1` 与 `linear_pred.input` 的完整统计字典均 exact equal；仅 `linear_pred` final logits 发生变化。state delta 进一步显示所有 encoder groups 与 decoder `linear_c1..c4/linear_fuse` delta=`0`，18 个浮点 BN running_mean/running_var buffer delta=`0`，仅 `linear_pred` weight+bias 非零（group relative delta≈`4.491e-4`）。结合此前逐 tensor freeze 检查，v11 epoch2 的隔离条件成立：encoder、BN、decoder feature 固定，仅 final head 更新。
 
-τºæσ¡ªσêñµû¡µ¢┤µû░Σ╕║∩╝Üσ£¿σå╗τ╗ô decoder feature σÉÄ∩╝îv10 catastrophic background collapse µ╢êσñ▒∩╝îΣ╕öσ¢║σ«Ü patch τÜä decoder feature/head-input activation σ«îσà¿τ¿│σ«Ü∩╝¢σ¢áµ¡ñσ╜ôσëìτ£ƒσ«₧Φ»üµì«Φ┐¢Σ╕Çµ¡Ñµö»µîü **decoder feature update µÿ» v10 collapse τÜäσà│Θö«µ£║σê╢Σ╣ïΣ╕Ç**πÇéΣ╜åτö▒Σ║ÄΦ┐ÿτ╝║ epoch3 Φ╖¿ epoch τ¿│σ«ÜµÇº∩╝îµÜéΣ╕ìσåÖµêÉσö»Σ╕Çµá╣σ¢á∩╝îΣ╣ƒµÜéΣ╕ìσ«úσ╕â stable baselineπÇéσ╜ôσëìσàüΦ«╕τ¢┤µÄÑ resume v11 σê░µÇ╗ epoch3∩╝¢τï¼τ½ï test `liver_169` µ£¼Θÿ╢µ«╡µ£¬Φ«┐Θù«πÇé
+科学判断更新为：在冻结 decoder feature 后，v10 catastrophic background collapse 消失，且固定 patch 的 decoder feature/head-input activation 完全稳定；因此当前真实证据进一步支持 **decoder feature update 是 v10 collapse 的关键机制之一**。但由于还缺 epoch3 跨 epoch 稳定性，暂不写成唯一根因，也暂不宣布 stable baseline。当前允许直接 resume v11 到总 epoch3；独立 test `liver_169` 本阶段未访问。
 
-Φ┤¿ΘçÅµúÇµƒÑΘçìµû░µëºΦíî∩╝Ü`pytest tests -q`=`133 passed`∩╝î`ruff check src web tests`=`All checks passed!`∩╝î`git diff --check` ΘÇÜΦ┐çπÇéΣ╕ïΣ╕Çµ¡Ñσàêσ«îµêÉµ£¼Θÿ╢µ«╡τï¼τ½ï commit/push σ╣╢τí«Φ«ñ `HEAD == origin/main`∩╝îτä╢σÉÄτ¢┤µÄÑΦ┐¢σàÑ v11 epoch3πÇé
+质量检查重新执行：`pytest tests -q`=`133 passed`，`ruff check src web tests`=`All checks passed!`，`git diff --check` 通过。下一步先完成本阶段独立 commit/push 并确认 `HEAD == origin/main`，然后直接进入 v11 epoch3。
 
 
-### 2026-08-27∩╜£Θÿ╢µ«╡ AZ∩╝Üv11 epoch3 µ£Çτ╗ê freeze Θ¬îΦ»üΣ╕Ä stable baseline σêñσ«Ü
+### 2026-08-27｜阶段 AZ：v11 epoch3 最终 freeze 验证与 stable baseline 判定
 
-µÄÑτ«íµù╢τí«Φ«ñ v11 epoch3 training Σ╕Ä `liver_7/liver_8` detailed validation σ╖▓τ£ƒσ«₧σ«îµêÉ∩╝îσ¢áµ¡ñµ£¼Θÿ╢µ«╡Σ╕Ñµá╝Σ╕ìΘçìΦ╖æ epoch1/2/3 training∩╝îΣ╣ƒΣ╕ìΘçìσñìΣ╕ñΣ╛ï epoch3 evaluationπÇérun=`experiments/20260827_180730_cpu_binary_decoder_feature_freeze_after_e1_v11_roi64` τÜä `history.csv` µ£Çτ╗êΦ«░σ╜ò∩╝Üepoch1 train loss=`2.5537127596991405`πÇümean val Dice=`0.05407000716611769`∩╝¢epoch2 train loss=`2.305381100092615`πÇümean val Dice=`0.05437616811727176`∩╝¢epoch3 train loss=`1.8300107227904456`πÇümean val Dice=`0.054657574013790594`πÇüstd=`0.009516761915114875`πÇülr=`4.5798373876248846e-05`πÇéΣ╕ëΦ╜« full-volume validation Dice Σ╕║ `0.05407001 ΓåÆ 0.05437617 ΓåÆ 0.05465757`∩╝îµ▓íµ£ë catastrophic dropπÇé
+接管时确认 v11 epoch3 training 与 `liver_7/liver_8` detailed validation 已真实完成，因此本阶段严格不重跑 epoch1/2/3 training，也不重复两例 epoch3 evaluation。run=`experiments/20260827_180730_cpu_binary_decoder_feature_freeze_after_e1_v11_roi64` 的 `history.csv` 最终记录：epoch1 train loss=`2.5537127596991405`、mean val Dice=`0.05407000716611769`；epoch2 train loss=`2.305381100092615`、mean val Dice=`0.05437616811727176`；epoch3 train loss=`1.8300107227904456`、mean val Dice=`0.054657574013790594`、std=`0.009516761915114875`、lr=`4.5798373876248846e-05`。三轮 full-volume validation Dice 为 `0.05407001 → 0.05437617 → 0.05465757`，没有 catastrophic drop。
 
-epoch3 sampling σà▒ 28 Σ╕¬ training patch∩╝îforeground/background=`8/20`∩╝îforeground fraction mean=`0.05680016108921596`πÇéτÄ░µ£ë epoch3 detailed validation∩╝Ü`liver_7` Dice=`0.04514081209537846`πÇüIoU=`0.023091592670551418`πÇüPrecision=`0.027923934385888763`πÇüRecall=`0.11772694524495678`πÇüHD95=`197.5005063098456 mm`πÇüASSD=`55.38768805983404 mm`πÇüprediction/GT foreground ratio=`4.215987031700288`∩╝¢`liver_8` Dice=`0.06417433592551017`πÇüIoU=`0.03315088601028112`πÇüPrecision=`0.04057761156434401`πÇüRecall=`0.15335130870533972`πÇüHD95=`174.5995418092499 mm`πÇüASSD=`47.656337177566336 mm`πÇüratio=`3.779209835013828`πÇéτ¢╕σ»╣ epoch2 Σ╕ñΣ╛ïµîçµáçµ▓íµ£ë foreground explosionπÇübackground collapse µêû Precision/Recall µ₧üτ½»τ¬üσÅÿπÇé
+epoch3 sampling 共 28 个 training patch，foreground/background=`8/20`，foreground fraction mean=`0.05680016108921596`。现有 epoch3 detailed validation：`liver_7` Dice=`0.04514081209537846`、IoU=`0.023091592670551418`、Precision=`0.027923934385888763`、Recall=`0.11772694524495678`、HD95=`197.5005063098456 mm`、ASSD=`55.38768805983404 mm`、prediction/GT foreground ratio=`4.215987031700288`；`liver_8` Dice=`0.06417433592551017`、IoU=`0.03315088601028112`、Precision=`0.04057761156434401`、Recall=`0.15335130870533972`、HD95=`174.5995418092499 mm`、ASSD=`47.656337177566336 mm`、ratio=`3.779209835013828`。相对 epoch2 两例指标没有 foreground explosion、background collapse 或 Precision/Recall 极端突变。
 
-τö▒Σ║Ä v11 epoch2 checkpoint σ╖▓Φó½ epoch3 τÜä `best.pt/last.pt` Φªåτ¢û∩╝îµ£¼Θÿ╢µ«╡µ▓íµ£ëΣ╝¬ΘÇáµêûσú░τº░µüóσñìΣ╕ìσ¡ÿσ£¿τÜä epoch2 checkpoint∩╝îΦÇîµÿ»µîëΘóäΦ«╛τ║¬σ╛ïσüÜΣ║ñσÅëΘ¬îΦ»üπÇéµû░Φ┐ÉΦíî validation-only `experiments/checkpoint_dynamics_20260827_v11e1anchor_v11e3_liver7`∩╝îbaseline Σ╜┐τö¿µ¡ñσëìσ╖▓ΘÇÉ tensor Φ»üµÿÄΣ╕Ä v11e1 232 Σ╕¬ model-state tensor exact equal τÜä v10e1 `best.pt`πÇéΣ╗ÄΦ»Ñ exact anchor σê░ v11e3∩╝ÜΘÖñ `segformer_decoder.linear_pred` σñûµëÇµ£ë parameter group delta=`0`∩╝¢18 Σ╕¬µ╡«τé╣ BN `running_mean/running_var` buffer delta=`0`∩╝¢σ¢║σ«Ü `liver_7` foreground-centered 64┬│ patch Σ╕è 8 Σ╕¬ encoder hookπÇü`linear_fuse.0/.1` Σ╕Ä `linear_pred.input` τÜäσ«îµò┤ activation τ╗ƒΦ«íσ¡ùσà╕ exact equal∩╝îΣ╗à `linear_pred` final logits µö╣σÅÿπÇé`linear_pred` group relative delta=`0.0008488773006462217`πÇüdelta norm=`0.018964542390850672`πÇé
+由于 v11 epoch2 checkpoint 已被 epoch3 的 `best.pt/last.pt` 覆盖，本阶段没有伪造或声称恢复不存在的 epoch2 checkpoint，而是按预设纪律做交叉验证。新运行 validation-only `experiments/checkpoint_dynamics_20260827_v11e1anchor_v11e3_liver7`，baseline 使用此前已逐 tensor 证明与 v11e1 232 个 model-state tensor exact equal 的 v10e1 `best.pt`。从该 exact anchor 到 v11e3：除 `segformer_decoder.linear_pred` 外所有 parameter group delta=`0`；18 个浮点 BN `running_mean/running_var` buffer delta=`0`；固定 `liver_7` foreground-centered 64³ patch 上 8 个 encoder hook、`linear_fuse.0/.1` 与 `linear_pred.input` 的完整 activation 统计字典 exact equal，仅 `linear_pred` final logits 改变。`linear_pred` group relative delta=`0.0008488773006462217`、delta norm=`0.018964542390850672`。
 
-σåìΣ╕Äσ╖▓Σ┐¥σ¡ÿτÜä `experiments/checkpoint_dynamics_20260827_v11e1_v11e2_liver7` Σ║ñσÅëΘ¬îΦ»ü∩╝Üepoch2 σ»╣σÉîΣ╕Ç exact anchor τÜä `linear_pred` group delta norm=`0.010033771648873226`∩╝îΦÇî epoch3 Σ╕║ `0.018964542390850672`∩╝¢ΦïÑ epoch2 Σ╕Ä epoch3 final head σ«îσà¿τ¢╕σÉî∩╝îσêÖσ«âΣ╗¼τ¢╕σ»╣σÉîΣ╕Ç anchor τÜäσ╖«σêåσÉæΘçÅσÅèσà╢ norm σ┐àΘí╗τ¢╕σÉî∩╝îσ¢áµ¡ñΦ»Ñσ╖«σ╝éΣ╕Ñµá╝µÄÆΘÖñΓÇ£epoch2ΓåÆepoch3 final head µ£¬µ¢┤µû░ΓÇ¥πÇéΣ╕Äµ¡ñσÉîµù╢ frozen groups σ£¿ epoch2 Σ╕Ä epoch3 Θâ╜σ»╣σÉîΣ╕Ç anchor Σ┐¥µîü exact-zero delta∩╝îσÅ»µì«µ¡ñΣ╕ÑΦ░¿τí«Φ«ñ encoder parametersπÇüBN running buffers Σ╕Ä decoder feature parameters σ£¿ epoch2ΓåÆepoch3 µ£ƒΘù┤τ╗ºτ╗¡Σ┐¥µîüσå╗τ╗ô∩╝îΣ╗à final head µîüτ╗¡µ¢┤µû░πÇé
+再与已保存的 `experiments/checkpoint_dynamics_20260827_v11e1_v11e2_liver7` 交叉验证：epoch2 对同一 exact anchor 的 `linear_pred` group delta norm=`0.010033771648873226`，而 epoch3 为 `0.018964542390850672`；若 epoch2 与 epoch3 final head 完全相同，则它们相对同一 anchor 的差分向量及其 norm 必须相同，因此该差异严格排除“epoch2→epoch3 final head 未更新”。与此同时 frozen groups 在 epoch2 与 epoch3 都对同一 anchor 保持 exact-zero delta，可据此严谨确认 encoder parameters、BN running buffers 与 decoder feature parameters 在 epoch2→epoch3 期间继续保持冻结，仅 final head 持续更新。
 
-σƒ║Σ║ÄΦ┐₧τ╗¡Σ╕ëΦ╜« full-volume validationπÇüτ¿│σ«ÜτÜä foreground ratio/Precision/RecallπÇüσå╗τ╗ôτè╢µÇüΣ║ñσÅëΘ¬îΦ»üπÇüfixed-patch activation τ¿│σ«ÜµÇºσÆîσÅ»ΦºúΘçè sampling∩╝îµ£¼Θÿ╢µ«╡µ¡úσ╝Åσêñσ«Ü∩╝Ü**stable baseline=YES∩╝êengineering/validation∩╝ë**πÇéΦ┐ÖΘçîτÜä stable Σ╗àΦí¿τñ║σ╜ôσëì CT-only Φ«¡τ╗âµ£║σê╢Σ╕ìσåìσÅæτöƒ v6/v10 Θéúτ▒╗τü╛ΘÜ╛µÇºµ╝éτº╗∩╝îσ╣╢Σ╕ìΦí¿τñ║τ╗¥σ»╣σêåσë▓µÇºΦâ╜σ╖▓τ╗ÅΦ╛╛σê░Φ«║µûçτ¢«µáç∩╝¢σ╜ôσëì mean validation Dice Σ╗ìΣ╗àτ║ª `0.05466`∩╝îτ╗ôµ₧äτóÄτëçσîûσÆîΦí¿Θ¥óΦ╖¥τª╗Σ╗ìσ╛êσ╖«∩╝îσ¢áµ¡ñ **lock parameters=NOπÇüformal independent test ready=NO**πÇéτï¼τ½ï `ctspine1k-msd-t10-liver_169` µ£¼Θÿ╢µ«╡µ£¬Φ«┐Θù«∩╝îµùº formal-pilot test τ╗ôµ₧£Σ╗ìσÅ¬Σ╜£Σ╕║σÄåσÅ▓σ╖Ñτ¿ïΘô╛Φ»üµì«πÇé
+基于连续三轮 full-volume validation、稳定的 foreground ratio/Precision/Recall、冻结状态交叉验证、fixed-patch activation 稳定性和可解释 sampling，本阶段正式判定：**stable baseline=YES（engineering/validation）**。这里的 stable 仅表示当前 CT-only 训练机制不再发生 v6/v10 那类灾难性漂移，并不表示绝对分割性能已经达到论文目标；当前 mean validation Dice 仍仅约 `0.05466`，结构碎片化和表面距离仍很差，因此 **lock parameters=NO、formal independent test ready=NO**。独立 `ctspine1k-msd-t10-liver_169` 本阶段未访问，旧 formal-pilot test 结果仍只作为历史工程链证据。
 
-τºæσ¡ªτ╗ôΦ«║Σ┐¥µîüΦ░¿µàÄ∩╝Üv10 Σ╕¡ encoder Σ╕Ä BN σ╖▓σå╗τ╗ôΣ╗ì collapse∩╝îΦÇî v11 Φ┐¢Σ╕Çµ¡Ñσå╗τ╗ô decoder feature σÉÄΦ┐₧τ╗¡ epoch2/3 τ¿│σ«Ü∩╝îΣ╕ö decoder feature/head-input activation σ»╣ exact anchor σ«îσà¿Σ╕ìµ╝éτº╗∩╝¢σ¢áµ¡ñτ£ƒσ«₧Φ»üµì«µö»µîü **decoder feature update µÿ» v10 catastrophic collapse τÜäσà│Θö«µ£║σê╢Σ╣ïΣ╕Ç**∩╝îΣ╜åΣ╕ìΦâ╜µì«µ¡ñσåÖµêÉσö»Σ╕Çµá╣σ¢áπÇé
+科学结论保持谨慎：v10 中 encoder 与 BN 已冻结仍 collapse，而 v11 进一步冻结 decoder feature 后连续 epoch2/3 稳定，且 decoder feature/head-input activation 对 exact anchor 完全不漂移；因此真实证据支持 **decoder feature update 是 v10 catastrophic collapse 的关键机制之一**，但不能据此写成唯一根因。
 
-µ£¼Θÿ╢µ«╡Φ┤¿ΘçÅµúÇµƒÑ∩╝Ü`pytest tests -q`=`133 passed`∩╝¢`ruff check src web tests`=`All checks passed!`∩╝¢`git diff --check` ΘÇÜΦ┐ç∩╝îΣ╗àµÅÉτñ║ Windows checkout τÜä LFΓåÆCRLF Φíîσ░╛Φ╜¼µìóΦ¡ªσæè∩╝îµ▓íµ£ë whitespace errorπÇéΣ╕ïΣ╕Çµ¡ÑµîëΣ╗╗σèíτ║¬σ╛ïτ¢┤µÄÑΦ┐¢σàÑµ£Çσ░ÅσÅ»Σ┐í baseline reproducibility∩╝îτä╢σÉÄσåìσüÜ CT-only vs CT+bone-window Φ╛ôσàÑµ╢êΦ₧ì∩╝¢σ£¿µëÇµ£ë validation σå│τ¡ûΘöüσ«Üσëìτ╗ºτ╗¡τªüµ¡óΘçìµû░Φ«┐Θù« `liver_169`πÇé
+本阶段质量检查：`pytest tests -q`=`133 passed`；`ruff check src web tests`=`All checks passed!`；`git diff --check` 通过，仅提示 Windows checkout 的 LF→CRLF 行尾转换警告，没有 whitespace error。下一步按任务纪律直接进入最小可信 baseline reproducibility，然后再做 CT-only vs CT+bone-window 输入消融；在所有 validation 决策锁定前继续禁止重新访问 `liver_169`。
 
 
-### 2026-08-27∩╜£Θÿ╢µ«╡ BA∩╝Üv11 stable baseline µ£Çσ░ÅσÅ»Σ┐í reproducibility
+### 2026-08-27｜阶段 BA：v11 stable baseline 最小可信 reproducibility
 
-stable baseline τí«Φ«ñσÉÄ∩╝îµ£¼Θÿ╢µ«╡µ▓íµ£ëτ½ïσì│Θçìσñìσ«îµò┤ 3-epoch CPU ΘçìΦ«¡∩╝îσ¢áΣ╕║Φ»ÑµôìΣ╜£ΦÇùµù╢Φ╛âΘ½ÿΣ╕öΣ╕ìΣ╝ÜΣ╝ÿσàêΦºúσå│σ╜ôσëìµ£Çσà│Θö«τÜäΦ╛ôσàÑ/loss µ╢êΦ₧ìΘù«Θóÿ∩╝¢µîëτàºµùóσ«ÜΦºäσêÖ∩╝îΘççτö¿ΓÇ£µ£Çσ░ÅΣ╜åσÅ»Σ┐íΓÇ¥τÜäσñìτÄ░µû╣µíêΘ¬îΦ»üσ¢║σ«Ü checkpoint + config τÜä full-volume validation σÅ»ΘçìσñìµÇºπÇéσàêσ░¥Φ»òΣ╕Çµ¼íµÇºΘçìµö╛µò┤Σ╕¬ validation split∩╝îσìòµ¼íσ╖Ñσà╖Φ╢àµù╢Σ╕öΦ┐¢τ¿ïΘÇÇσç║πÇüΦ╛ôσç║τ¢«σ╜òΣ╕║τ⌐║∩╝¢µîë timeout τ║¬σ╛ïµ▓íµ£ëτ¢┤µÄÑσÉ»σè¿τ¼¼Σ║îΣ╕¬τ¢╕σÉîΣ╗╗σèí∩╝îΦÇîµÿ»µö╣Σ╕║σÅ¬ΦíÑΦ╖æτ╝║σñ▒τÜäΣ╕ñΣ╛ï validation case∩╝îΣ╕öσà¿τ¿ïµ£¬Φ«┐Θù« test splitπÇé
+stable baseline 确认后，本阶段没有立即重复完整 3-epoch CPU 重训，因为该操作耗时较高且不会优先解决当前最关键的输入/loss 消融问题；按照既定规则，采用“最小但可信”的复现方案验证固定 checkpoint + config 的 full-volume validation 可重复性。先尝试一次性重放整个 validation split，单次工具超时且进程退出、输出目录为空；按 timeout 纪律没有直接启动第二个相同任务，而是改为只补跑缺失的两例 validation case，且全程未访问 test split。
 
-σ¢║σ«Ü config=`configs/orthopedic_ct_cpu_binary_decoder_feature_freeze_after_e1_v11.yaml`∩╝îSHA-256=`6898924e3b1dbf9d60d501b252ebc44fe5411d5ec1f967efda06f11355548ae9`∩╝¢σ¢║σ«Ü checkpoint=`experiments/20260827_180730_cpu_binary_decoder_feature_freeze_after_e1_v11_roi64/checkpoint/best.pt`∩╝îSHA-256=`9a805bc9c97b96128ba0b63d84dc30e113bade227f0a3a1cbd524231da896d67`πÇéσêåσê½Θçìµû░Φ┐ÉΦíî `liver_7` Σ╕Ä `liver_8` τÜä formal preflight + full-volume evaluation∩╝îΦ╛ôσç║σê░ `experiments/repro_20260827_v11e3_liver7` Σ╕Ä `...liver8`∩╝¢Σ╕ñµ¼í preflight σ¥ç `ready=true`πÇüerror/warning=`0/0`πÇé
+固定 config=`configs/orthopedic_ct_cpu_binary_decoder_feature_freeze_after_e1_v11.yaml`，SHA-256=`6898924e3b1dbf9d60d501b252ebc44fe5411d5ec1f967efda06f11355548ae9`；固定 checkpoint=`experiments/20260827_180730_cpu_binary_decoder_feature_freeze_after_e1_v11_roi64/checkpoint/best.pt`，SHA-256=`9a805bc9c97b96128ba0b63d84dc30e113bade227f0a3a1cbd524231da896d67`。分别重新运行 `liver_7` 与 `liver_8` 的 formal preflight + full-volume evaluation，输出到 `experiments/repro_20260827_v11e3_liver7` 与 `...liver8`；两次 preflight 均 `ready=true`、error/warning=`0/0`。
 
-Σ╕ÄσÄƒ epoch3 detailed evaluation ΘÇÉΘí╣µ»öΦ╛â summary metrics∩╝Ü`liver_7` Dice Σ╗ìΣ╕║ `0.04514081209537846`∩╝î`liver_8` Dice Σ╗ìΣ╕║ `0.06417433592551017`∩╝¢ΘÖñσóÖΘÆƒ `inference_seconds` σñû∩╝îDiceπÇüIoUπÇüPrecisionπÇüRecallπÇüHD95πÇüASSDπÇüprediction/GT foreground ratioπÇücomponent errorπÇüfalse merge/breakπÇüuncertaintyΓåÆerrorπÇüECE/MCEπÇüBrierπÇüNLLπÇüconfidence gap τ¡ëµëÇµ£ë summary metric mean Θâ╜ exact equalπÇéΣ╗àΦ┐ÉΦíîµù╢Θù┤σ¢áτ│╗τ╗ƒΦ░âσ║ªσÅÿσîû∩╝Ü`liver_7` τ║ª `59.00ΓåÆ55.68 s`∩╝î`liver_8` τ║ª `86.75ΓåÆ89.49 s`πÇé
+与原 epoch3 detailed evaluation 逐项比较 summary metrics：`liver_7` Dice 仍为 `0.04514081209537846`，`liver_8` Dice 仍为 `0.06417433592551017`；除墙钟 `inference_seconds` 外，Dice、IoU、Precision、Recall、HD95、ASSD、prediction/GT foreground ratio、component error、false merge/break、uncertainty→error、ECE/MCE、Brier、NLL、confidence gap 等所有 summary metric mean 都 exact equal。仅运行时间因系统调度变化：`liver_7` 约 `59.00→55.68 s`，`liver_8` 约 `86.75→89.49 s`。
 
-σ¢áµ¡ñµ£¼Θÿ╢µ«╡σÅ»Σ╗ÑΣ╕ÑΦ░¿σåÖ∩╝Ü**v11 epoch3 checkpoint τÜä full-volume inference/evaluation reproducibility=PASS**πÇéΦ»Ñτ╗ôΦ«║Σ╕ìτ¡ëσÉîΣ║ÄΓÇ£Σ╗ÄΘÜÅµ£║σê¥σºïσîûΘçìµû░Φ«¡τ╗â 3 epoch σÉÄσ╛ùσê░σ«îσà¿τ¢╕σÉî checkpoint/Φ╜¿Φ┐╣ΓÇ¥∩╝¢σ«îµò┤ training reproducibility Σ╗ìµ£¬µëºΦíî∩╝îΣ╕ìΦâ╜σñ╕σñºπÇéτï¼τ½ï test `liver_169` µ£¼Θÿ╢µ«╡µ£¬Φ«┐Θù«πÇéΣ╕ïΣ╕Çµ¡ÑµîëΦ«íσêÆΦ┐¢σàÑ CT-only vs CT+bone-window Φ╛ôσàÑµ╢êΦ₧ì∩╝îσ╣╢σ░╜ΘçÅΣ┐¥µîü lrπÇülossπÇüsamplingπÇüROIπÇüaugmentationπÇüschedulerπÇüseed Σ╕Ä validation Σ╕ìσÅÿπÇé
+因此本阶段可以严谨写：**v11 epoch3 checkpoint 的 full-volume inference/evaluation reproducibility=PASS**。该结论不等同于“从随机初始化重新训练 3 epoch 后得到完全相同 checkpoint/轨迹”；完整 training reproducibility 仍未执行，不能夸大。独立 test `liver_169` 本阶段未访问。下一步按计划进入 CT-only vs CT+bone-window 输入消融，并尽量保持 lr、loss、sampling、ROI、augmentation、scheduler、seed 与 validation 不变。
 
 
-### 2026-08-28∩╜£Θÿ╢µ«╡ BB∩╝Üv12 CT+bone-window Φ╛ôσàÑµ╢êΦ₧ìσ«îµêÉ∩╝îCT-only Φâ£σç║
+### 2026-08-28｜阶段 BB：v12 CT+bone-window 输入消融完成，CT-only 胜出
 
-Σ╗ÄΦ┐£τ¿ïΘù¡τÄ»τé╣ `96719876ff4b776d4e955afa37a86e2ff131b0c2` µüóσñìΘí╣τ¢«σÉÄ∩╝îτí«Φ«ñ `HEAD == origin/main`∩╝îσ╖ÑΣ╜£µáæΣ╗àµ£ëσ░Üµ£¬µÅÉΣ║ñτÜä `configs/orthopedic_ct_cpu_binary_ct_bone_window_v12.yaml`πÇéµ£ëµòê v12 run=`experiments/20260827_233142_cpu_binary_ct_bone_window_v12_roi64` σ╖▓τ£ƒσ«₧σ«îµêÉ 3 epoch∩╝îµ£¬ΘçìΦ╖æΦ«¡τ╗â∩╝¢σÅªΣ╕ÇΣ╕¬ `experiments/20260827_232539_cpu_binary_ct_bone_window_v12_roi64` µÿ»σ╖Ñσà╖ timeout σÉÄτòÖΣ╕ïτÜäΣ╕ìσ«îµò┤ run∩╝êµùáµ£ëµòê history/checkpoint∩╝ë∩╝îτ╗ºτ╗¡Σ┐¥τòÖΣ╕öΣ╕ìΣ╜£Σ╕║σ«₧Θ¬îτ╗ôµ₧£πÇé
+从远程闭环点 `96719876ff4b776d4e955afa37a86e2ff131b0c2` 恢复项目后，确认 `HEAD == origin/main`，工作树仅有尚未提交的 `configs/orthopedic_ct_cpu_binary_ct_bone_window_v12.yaml`。有效 v12 run=`experiments/20260827_233142_cpu_binary_ct_bone_window_v12_roi64` 已真实完成 3 epoch，未重跑训练；另一个 `experiments/20260827_232539_cpu_binary_ct_bone_window_v12_roi64` 是工具 timeout 后留下的不完整 run（无有效 history/checkpoint），继续保留且不作为实验结果。
 
-v12 τ¢╕σ»╣ v11 τÜä config diff σÅ¬µ£ëσ«₧Θ¬îσÉìπÇüΦ╛ôσàÑΦí¿τñ║Σ╕ÄΣ╕ÄΣ╣ïσî╣ΘàìτÜäΦ╛ôσàÑΘÇÜΘüôµò░/Φ»┤µÿÄ∩╝Ü`data.input_channels=[ct_normalized] ΓåÆ [ct_normalized,bone_window]`πÇübone window=`center=500,width=2000`πÇü`model.in_channels=1ΓåÆ2`∩╝¢lossπÇüoptimizerπÇülrπÇüschedulerπÇüsamplingπÇüROIπÇüaugmentationπÇüseedπÇüfreeze policyπÇüvalidation σÆî inference σ¥çΣ┐¥µîüΣ╕ìσÅÿπÇéformal preflight σ»╣Σ╕ñµ¼í detailed validation σ¥çσåìµ¼í `ready=true / 0 error / 0 warning`∩╝î7/2/1 split Σ╕ìσÅÿ∩╝îµ£¼Θÿ╢µ«╡µ£¬Φ«┐Θù«τï¼τ½ï test `liver_169`πÇé
+v12 相对 v11 的 config diff 只有实验名、输入表示与与之匹配的输入通道数/说明：`data.input_channels=[ct_normalized] → [ct_normalized,bone_window]`、bone window=`center=500,width=2000`、`model.in_channels=1→2`；loss、optimizer、lr、scheduler、sampling、ROI、augmentation、seed、freeze policy、validation 和 inference 均保持不变。formal preflight 对两次 detailed validation 均再次 `ready=true / 0 error / 0 warning`，7/2/1 split 不变，本阶段未访问独立 test `liver_169`。
 
-v12 Σ╕ëΦ╜«τ£ƒσ«₧Φ«¡τ╗âΦ╜¿Φ┐╣∩╝Üepoch1 train loss=`4.263589756829398`πÇümean val Dice=`0.027270740458087465`∩╝¢epoch2 train loss=`8.248797429459435`πÇümean val Dice=`0.027674864114707952`∩╝¢epoch3 train loss=`6.610349318810871`πÇümean val Dice=`0.028027748189159436`πÇésampling σêåσê½Σ╕║ 28 patches∩╝îforeground/background=`10/18πÇü10/18πÇü8/20`∩╝îforeground fraction mean=`0.07907336098807198 / 0.08840765271868024 / 0.05680016108921596`∩╝îΣ╕Ä v11 σ»╣σ║ö epoch Θççµá╖Σ╕ÇΦç┤πÇé
+v12 三轮真实训练轨迹：epoch1 train loss=`4.263589756829398`、mean val Dice=`0.027270740458087465`；epoch2 train loss=`8.248797429459435`、mean val Dice=`0.027674864114707952`；epoch3 train loss=`6.610349318810871`、mean val Dice=`0.028027748189159436`。sampling 分别为 28 patches，foreground/background=`10/18、10/18、8/20`，foreground fraction mean=`0.07907336098807198 / 0.08840765271868024 / 0.05680016108921596`，与 v11 对应 epoch 采样一致。
 
-µ£¼Θÿ╢µ«╡µû░σ«îµêÉ epoch3 `best.pt` τÜä validation-only detailed evaluation∩╝Ü
+本阶段新完成 epoch3 `best.pt` 的 validation-only detailed evaluation：
 
-- `liver_7`∩╝ÜDice=`0.0284302355`∩╝îIoU=`0.0144201012`∩╝îPrecision=`0.0144321372`∩╝îRecall=`0.9453278098`∩╝îHD95=`248.8152 mm`∩╝îASSD=`80.5652 mm`∩╝¢prediction/GT foreground=`45.8254% / 0.69961%`∩╝îratio=`65.5016├ù`∩╝¢pred/GT components=`398/3`∩╝îcomponent error=`395`∩╝îfalse merge/break=`1/1`∩╝¢uncertainty AUROC/AUPRC=`0.65563/0.54434`∩╝îTop-10% error recall=`0.11556`∩╝¢ECE/MCE/Brier/NLL=`0.42213/0.44697/0.85822/3.65555`∩╝îconfidence gap=`0.42213`∩╝¢CPU inferenceΓëê`76.16 s`πÇé
-- `liver_8`∩╝ÜDice=`0.0276252609`∩╝îIoU=`0.0140060914`∩╝îPrecision=`0.0140087668`∩╝îRecall=`0.9865479483`∩╝îHD95=`264.0114 mm`∩╝îASSD=`86.9848 mm`∩╝¢prediction/GT foreground=`39.8568% / 0.56596%`∩╝îratio=`70.4236├ù`∩╝¢pred/GT components=`466/2`∩╝îcomponent error=`464`∩╝îfalse merge/break=`1/0`∩╝¢uncertainty AUROC/AUPRC=`0.68646/0.51508`∩╝îTop-10% error recall=`0.13092`∩╝¢ECE/MCE/Brier/NLL=`0.36425/0.42877/0.74279/3.15755`∩╝îconfidence gap=`0.36425`∩╝¢CPU inferenceΓëê`124.27 s`πÇé
+- `liver_7`：Dice=`0.0284302355`，IoU=`0.0144201012`，Precision=`0.0144321372`，Recall=`0.9453278098`，HD95=`248.8152 mm`，ASSD=`80.5652 mm`；prediction/GT foreground=`45.8254% / 0.69961%`，ratio=`65.5016×`；pred/GT components=`398/3`，component error=`395`，false merge/break=`1/1`；uncertainty AUROC/AUPRC=`0.65563/0.54434`，Top-10% error recall=`0.11556`；ECE/MCE/Brier/NLL=`0.42213/0.44697/0.85822/3.65555`，confidence gap=`0.42213`；CPU inference≈`76.16 s`。
+- `liver_8`：Dice=`0.0276252609`，IoU=`0.0140060914`，Precision=`0.0140087668`，Recall=`0.9865479483`，HD95=`264.0114 mm`，ASSD=`86.9848 mm`；prediction/GT foreground=`39.8568% / 0.56596%`，ratio=`70.4236×`；pred/GT components=`466/2`，component error=`464`，false merge/break=`1/0`；uncertainty AUROC/AUPRC=`0.68646/0.51508`，Top-10% error recall=`0.13092`；ECE/MCE/Brier/NLL=`0.36425/0.42877/0.74279/3.15755`，confidence gap=`0.36425`；CPU inference≈`124.27 s`。
 
-Σ╕ñΣ╛ïσ╣│σ¥ç v12∩╝ÜDice=`0.0280277482`πÇüIoU=`0.0142130963`πÇüPrecision=`0.0142204520`πÇüRecall=`0.9659378790`πÇüHD95=`256.4133 mm`πÇüASSD=`83.7750 mm`πÇüprediction/GT foreground ratio=`67.9626├ù`πÇücomponent error=`429.5`πÇüuncertainty AUROC/AUPRC=`0.67105/0.52971`πÇüTop-10% error recall=`0.12324`πÇüECE/MCE/Brier/NLL=`0.39319/0.43787/0.80051/3.40655`πÇüconfidence gap=`0.39319`πÇüCPU inferenceΓëê`100.22 s`πÇé
+两例平均 v12：Dice=`0.0280277482`、IoU=`0.0142130963`、Precision=`0.0142204520`、Recall=`0.9659378790`、HD95=`256.4133 mm`、ASSD=`83.7750 mm`、prediction/GT foreground ratio=`67.9626×`、component error=`429.5`、uncertainty AUROC/AUPRC=`0.67105/0.52971`、Top-10% error recall=`0.12324`、ECE/MCE/Brier/NLL=`0.39319/0.43787/0.80051/3.40655`、confidence gap=`0.39319`、CPU inference≈`100.22 s`。
 
-Σ╕Ä v11 CT-only epoch3 σÉîΣ╕ñΣ╛ïΣ╕Ñµá╝σ»╣τàº∩╝Üv11 σ╣│σ¥ç Dice=`0.0546575740`πÇüIoU=`0.0281212393`πÇüPrecision=`0.0342507730`πÇüRecall=`0.1355391270`πÇüHD95=`186.0500 mm`πÇüASSD=`51.5220 mm`πÇüprediction/GT foreground ratio=`3.9976├ù`πÇücomponent error=`1548.0`πÇüuncertainty AUROC/AUPRC=`0.93691/0.32938`πÇüTop-10% error recall=`0.76162`πÇüECE/MCE/Brier/NLL=`0.01084/0.05635/0.04693/0.10288`πÇüconfidence gap=`0.01078`πÇüCPU inferenceΓëê`72.88 s`πÇév12 ΦÖ╜τä╢ Recall σñºσ╣àσìçΘ½ÿΣ╕ö component count error µò░σÇ╝µ¢┤Σ╜Ä∩╝îΣ╜åΦ┐Öµÿ»σ¢áΣ╕║µ¿íσ₧ïµèèτ║ª 40%ΓÇô46% τÜäσà¿σì╖Θâ╜Θóäµ╡ïµêÉσëìµÖ»∩╝îσ╜óµêÉτ║ª `68├ù` τÜäσëìµÖ»µ│¢µ╗Ñ∩╝¢σî║σƒƒΘçìσÅáπÇüPrecisionπÇüΦí¿Θ¥óΦ╖¥τª╗σÆî calibration σ¥çµÿ╛Φæùµü╢σîû∩╝îσ¢áµ¡ñΣ╕ìΦâ╜µèèΘ½ÿ Recall µêûΦ╛âΣ╜Ä component error σìòτï¼ΦºúΘçèΣ╕║τ╗ôµ₧äµö╣σûäπÇé
+与 v11 CT-only epoch3 同两例严格对照：v11 平均 Dice=`0.0546575740`、IoU=`0.0281212393`、Precision=`0.0342507730`、Recall=`0.1355391270`、HD95=`186.0500 mm`、ASSD=`51.5220 mm`、prediction/GT foreground ratio=`3.9976×`、component error=`1548.0`、uncertainty AUROC/AUPRC=`0.93691/0.32938`、Top-10% error recall=`0.76162`、ECE/MCE/Brier/NLL=`0.01084/0.05635/0.04693/0.10288`、confidence gap=`0.01078`、CPU inference≈`72.88 s`。v12 虽然 Recall 大幅升高且 component count error 数值更低，但这是因为模型把约 40%–46% 的全卷都预测成前景，形成约 `68×` 的前景泛滥；区域重叠、Precision、表面距离和 calibration 均显著恶化，因此不能把高 Recall 或较低 component error 单独解释为结构改善。
 
-v12 epoch1 checkpoint σ╖▓Φó½σÉÄτ╗¡ `best.pt/last.pt` Φªåτ¢û∩╝îµ£¼Θÿ╢µ«╡µ▓íµ£ëΣ╝¬ΘÇáΣ╕ìσ¡ÿσ£¿τÜä epoch1/epoch2 checkpointπÇéµö╣τö¿σ╜ôσëì epoch3 checkpoint σåàτÜä AdamW σÄåσÅ▓ step Φ«íµò░ + BN buffer Φ┐¢Φíî freeze verification∩╝Üoptimizer σà▒ 205 Σ╕¬ parameter state∩╝îstep σÇ╝σÅ¬µ£ë `28` σÆî `84`∩╝¢µîëµ¿íσ₧ïσÅéµò░Θí║σ║Åσ»╣Θ╜ÉσÉÄ∩╝î`segformer_encoder` 184 Σ╕¬σÅéµò░σà¿Θâ¿ step=`28`∩╝îdecoder `linear_c1..c4` 16 Σ╕¬σÅéµò░Σ╕Ä `linear_fuse` 3 Σ╕¬σÅéµò░Σ╣ƒσà¿Θâ¿ step=`28`∩╝îΣ╗à `linear_pred` weight+bias Σ╕ñΣ╕¬σÅéµò░ step=`84`πÇéτö▒Σ║Äµ»Å epoch τ£ƒσ«₧Σ╕║ 28 optimizer steps∩╝îΦ┐ÖΣ╕ÄΓÇ£epoch1 σà¿µ¿íσ₧ïΦ«¡τ╗â∩╝îepoch2/3 σå╗τ╗ô encoder + decoder feature∩╝îΣ╗à final head µîüτ╗¡Φ«¡τ╗âΓÇ¥σ«îσà¿Σ╕ÇΦç┤πÇé9 Σ╕¬ BatchNorm3d τÜä `num_batches_tracked` σà¿Θâ¿Σ╕║ `28`∩╝îΦÇîΘ¥₧ 84∩╝îΦ»üµÿÄ BN running statistics Σ╣ƒσÅ¬σ£¿ epoch1 µ¢┤µû░πÇé`best.pt` Σ╕Ä `last.pt` τÜä model state σ£¿ epoch3 exact equalπÇéΦ»ÑΦ»üµì«Φ╢│Σ╗ÑΘ¬îΦ»ü freeze policy τÜäσÄåσÅ▓µëºΦíî∩╝îΣ╜åΣ╕ìσåÆσààΣ╕ìσ¡ÿσ£¿τÜä epoch2 checkpoint state delta µûçΣ╗╢πÇé
+v12 epoch1 checkpoint 已被后续 `best.pt/last.pt` 覆盖，本阶段没有伪造不存在的 epoch1/epoch2 checkpoint。改用当前 epoch3 checkpoint 内的 AdamW 历史 step 计数 + BN buffer 进行 freeze verification：optimizer 共 205 个 parameter state，step 值只有 `28` 和 `84`；按模型参数顺序对齐后，`segformer_encoder` 184 个参数全部 step=`28`，decoder `linear_c1..c4` 16 个参数与 `linear_fuse` 3 个参数也全部 step=`28`，仅 `linear_pred` weight+bias 两个参数 step=`84`。由于每 epoch 真实为 28 optimizer steps，这与“epoch1 全模型训练，epoch2/3 冻结 encoder + decoder feature，仅 final head 持续训练”完全一致。9 个 BatchNorm3d 的 `num_batches_tracked` 全部为 `28`，而非 84，证明 BN running statistics 也只在 epoch1 更新。`best.pt` 与 `last.pt` 的 model state 在 epoch3 exact equal。该证据足以验证 freeze policy 的历史执行，但不冒充不存在的 epoch2 checkpoint state delta 文件。
 
-Φ╛ôσàÑµ╢êΦ₧ìµ£Çτ╗êσêñσ«Ü∩╝Ü**CT-only∩╝êv11∩╝ëbetter∩╝îΣ╜£Σ╕║σÉÄτ╗¡ loss ablation baselineπÇé** v12 CT+bone-window σ£¿σ╜ôσëì normalization/architecture Σ╕ïΣ║ºτöƒΣ╕ÑΘçì foreground overprediction∩╝îSTOP∩╝îΣ╕ìτ╗ºτ╗¡µë⌐σ▒òΦ»ÑΦ╛ôσàÑµû╣σÉæπÇéstable baseline=`YES`∩╝êΣ╗ìµîç v11 engineering/validation stable baseline∩╝ë∩╝¢lock parameters=`NO`∩╝¢formal independent test ready=`NO`∩╝¢µ£¼Φ╜« `liver_169=µ£¬Φ«┐Θù«`πÇé
+输入消融最终判定：**CT-only（v11）better，作为后续 loss ablation baseline。** v12 CT+bone-window 在当前 normalization/architecture 下产生严重 foreground overprediction，STOP，不继续扩展该输入方向。stable baseline=`YES`（仍指 v11 engineering/validation stable baseline）；lock parameters=`NO`；formal independent test ready=`NO`；本轮 `liver_169=未访问`。
 
-Σ╕ïΣ╕Çµ¡Ñτ½ïσì│Σ╗Ñ v11 CT-only Σ╕║σ¢║σ«Ü input baseline Φ┐¢σàÑ loss ablation∩╝ÜRegionπÇüRegion+BoundaryπÇüRegion+TopologyπÇüRegion+Boundary+Topology∩╝¢µ»Åµ¼íσÅ¬µö╣σÅÿ loss Φ┐ÖΣ╕ÇΣ╕╗ΦªüσÅÿΘçÅ∩╝îτ╗ºτ╗¡Σ┐¥µîü ROI/sampling/lr/scheduler/augmentation/seed/freeze policy/validation Σ╕ìσÅÿπÇéΦïÑ 3-epoch minimal comparison σ╖▓µÿÄµÿ╛τü╛ΘÜ╛µÇºσñ▒Φ┤Ñ∩╝îσêÖµîë STOP ΦºäσêÖΦ«░σ╜òσ╣╢Φ┐¢σàÑΣ╕ïΣ╕ÇΘí╣∩╝îΘü┐σàìµ╡¬Φ┤╣ CPUπÇé
+下一步立即以 v11 CT-only 为固定 input baseline 进入 loss ablation：Region、Region+Boundary、Region+Topology、Region+Boundary+Topology；每次只改变 loss 这一主要变量，继续保持 ROI/sampling/lr/scheduler/augmentation/seed/freeze policy/validation 不变。若 3-epoch minimal comparison 已明显灾难性失败，则按 STOP 规则记录并进入下一项，避免浪费 CPU。
 
 
-### 2026-08-28∩╜£Θÿ╢µ«╡ BC∩╝Üv13 Region+Boundary loss ablation σ«îµêÉ
+### 2026-08-28｜阶段 BC：v13 Region+Boundary loss ablation 完成
 
-Σ╗ÑΦ╛ôσàÑµ╢êΦ₧ìΦâ£σç║τÜä v11 CT-only stable baseline Σ╕║σö»Σ╕Çσƒ║τ║┐∩╝îv13=`configs/orthopedic_ct_cpu_binary_loss_region_boundary_v13.yaml` σÅ¬µö╣σÅÿ loss composition∩╝Üτö▒ Region Dice+CE µö╣Σ╕║ `joint_orthopedic`∩╝îΣ┐¥µîü region=`1.0`πÇüµû░σó₧ boundary=`0.1`πÇütopology=`0.0`∩╝¢inputπÇüROIπÇüsamplingπÇülrπÇüschedulerπÇüseedπÇüfreeze policyπÇüvalidation Σ╕Ä inference σ¥çΣ╕ìσÅÿπÇéconfig diff µ£¬σÅæτÄ░σà╢σ«âΣ╕╗Φªüσ«₧Θ¬îσÅÿΘçÅπÇé
+以输入消融胜出的 v11 CT-only stable baseline 为唯一基线，v13=`configs/orthopedic_ct_cpu_binary_loss_region_boundary_v13.yaml` 只改变 loss composition：由 Region Dice+CE 改为 `joint_orthopedic`，保持 region=`1.0`、新增 boundary=`0.1`、topology=`0.0`；input、ROI、sampling、lr、scheduler、seed、freeze policy、validation 与 inference 均不变。config diff 未发现其它主要实验变量。
 
-τ£ƒσ«₧ run=`experiments/20260828_002035_cpu_binary_loss_region_boundary_v13_roi64`πÇéµ£Çσê¥Σ╕ñµ¼íσ╖Ñσà╖ timeout τòÖΣ╕ï `20260828_001444...` Σ╕Ä `20260828_002420...` τ⌐║ history run∩╝îσ¥çµ£¬Σ╜£Σ╕║τ╗ôµ₧£∩╝¢µ£ëµòê run µ£¬ΘçìσñìΦ«¡τ╗âπÇéΣ╕ëΦ╜«τ╗ôµ₧£∩╝Üepoch1 train loss=`2.5547913696084703`πÇümean val Dice=`0.05414399340794464`∩╝¢epoch2 train loss=`2.305156431027821`πÇümean val Dice=`0.05443117660509808`∩╝¢epoch3 train loss=`1.830046398299081`πÇümean val Dice=`0.054709440953703406`πÇüstd=`0.009402906878641024`πÇéΣ╕ëΦ╜« sampling Σ╕Ä v11 σ»╣σ║ö epoch σ«îσà¿Σ╕ÇΦç┤∩╝Ü28 patches/epoch∩╝îforeground/background=`10/18πÇü10/18πÇü8/20`∩╝îforeground fraction mean=`0.07907336/0.08840765/0.05680016`πÇé
+真实 run=`experiments/20260828_002035_cpu_binary_loss_region_boundary_v13_roi64`。最初两次工具 timeout 留下 `20260828_001444...` 与 `20260828_002420...` 空 history run，均未作为结果；有效 run 未重复训练。三轮结果：epoch1 train loss=`2.5547913696084703`、mean val Dice=`0.05414399340794464`；epoch2 train loss=`2.305156431027821`、mean val Dice=`0.05443117660509808`；epoch3 train loss=`1.830046398299081`、mean val Dice=`0.054709440953703406`、std=`0.009402906878641024`。三轮 sampling 与 v11 对应 epoch 完全一致：28 patches/epoch，foreground/background=`10/18、10/18、8/20`，foreground fraction mean=`0.07907336/0.08840765/0.05680016`。
 
-v13 epoch3 `best.pt` validation-only detailed evaluation∩╝Ü`liver_7` Dice=`0.0453065341`πÇüIoU=`0.0231783320`πÇüPrecision=`0.0279913112`πÇüRecall=`0.1187878242`πÇüHD95=`197.3914 mm`πÇüASSD=`55.3591 mm`πÇüprediction/GT foreground ratio=`4.2437├ù`πÇüpred/GT components=`1564/3`πÇücomponent error=`1561`πÇüfalse merge/break=`1/69`∩╝¢`liver_8` Dice=`0.0641123478`πÇüIoU=`0.0331178040`πÇüPrecision=`0.0404694855`πÇüRecall=`0.1541957466`πÇüHD95=`174.5083 mm`πÇüASSD=`47.6139 mm`πÇüratio=`3.8102├ù`πÇüpred/GT components=`1528/2`πÇücomponent error=`1526`πÇüfalse merge/break=`0/60`πÇéΣ╕ñΣ╛ïσ╣│σ¥ç Dice=`0.05470944095`πÇüIoU=`0.0281480680`πÇüPrecision=`0.0342303983`πÇüRecall=`0.1364917854`πÇüHD95=`185.9498359 mm`πÇüASSD=`51.4864689 mm`πÇüforeground ratio=`4.026956├ù`πÇücomponent error=`1543.5`πÇé
+v13 epoch3 `best.pt` validation-only detailed evaluation：`liver_7` Dice=`0.0453065341`、IoU=`0.0231783320`、Precision=`0.0279913112`、Recall=`0.1187878242`、HD95=`197.3914 mm`、ASSD=`55.3591 mm`、prediction/GT foreground ratio=`4.2437×`、pred/GT components=`1564/3`、component error=`1561`、false merge/break=`1/69`；`liver_8` Dice=`0.0641123478`、IoU=`0.0331178040`、Precision=`0.0404694855`、Recall=`0.1541957466`、HD95=`174.5083 mm`、ASSD=`47.6139 mm`、ratio=`3.8102×`、pred/GT components=`1528/2`、component error=`1526`、false merge/break=`0/60`。两例平均 Dice=`0.05470944095`、IoU=`0.0281480680`、Precision=`0.0342303983`、Recall=`0.1364917854`、HD95=`185.9498359 mm`、ASSD=`51.4864689 mm`、foreground ratio=`4.026956×`、component error=`1543.5`。
 
-Σ╕Ä v11 Region σÉîΣ╕ñΣ╛ïΣ╕Ñµá╝σ»╣τàº∩╝Üv11 σ╣│σ¥ç Dice=`0.0546575740`πÇüHD95=`186.0500241 mm`πÇüASSD=`51.5220126 mm`πÇüPrecision=`0.0342507730`πÇüRecall=`0.1355391270`πÇüforeground ratio=`3.997598├ù`πÇücomponent error=`1548.0`πÇéσ¢áµ¡ñ Boundary Σ╜┐ Dice Σ╗àµÅÉσìçτ║ª `5.19e-5`∩╝îHD95 Σ╗àµö╣σûäτ║ª `0.1002 mm`πÇüASSD τ║ª `0.0355 mm`πÇücomponent error τ║ª `4.5`∩╝¢σÉîµù╢ Precision τòÑΘÖìπÇüforeground ratio τòÑσìçπÇüfalse break σ╣│σ¥ç `64.0ΓåÆ64.5`∩╝îECE/Brier/NLL Σ╣ƒµ£ëµ₧üσ░Åµü╢σîûπÇéτºæσ¡ªσêñµû¡∩╝Ü**Region+Boundary σ£¿σ╜ôσëì 0.1 µ¥âΘçìΣ╕ïσÅ¬µÿ╛τñ║Φ╜╗σ╛«Σ╕öΘ¥₧σ╕╕σ╝▒τÜäΦí¿Θ¥óµö╣σûäΦ»üµì«∩╝îΣ╕ìΦâ╜σåÖµêÉµÿÄτí«µö╢τ¢è∩╝¢Σ╕ìσ¢áΦ»Ñσ╛«σ░Åσ╖«σ╝éΘöüσ«Ü BoundaryπÇé**
+与 v11 Region 同两例严格对照：v11 平均 Dice=`0.0546575740`、HD95=`186.0500241 mm`、ASSD=`51.5220126 mm`、Precision=`0.0342507730`、Recall=`0.1355391270`、foreground ratio=`3.997598×`、component error=`1548.0`。因此 Boundary 使 Dice 仅提升约 `5.19e-5`，HD95 仅改善约 `0.1002 mm`、ASSD 约 `0.0355 mm`、component error 约 `4.5`；同时 Precision 略降、foreground ratio 略升、false break 平均 `64.0→64.5`，ECE/Brier/NLL 也有极小恶化。科学判断：**Region+Boundary 在当前 0.1 权重下只显示轻微且非常弱的表面改善证据，不能写成明确收益；不因该微小差异锁定 Boundary。**
 
-freeze verification τ╗ºτ╗¡ΘÇÜΦ┐ç∩╝Üv13 epoch3 checkpoint optimizer state Σ╕¡ 203 Σ╕¬ frozen-group σÅéµò░ step=`28`∩╝îΣ╗à final `linear_pred` 2 Σ╕¬σÅéµò░ step=`84`∩╝¢9 Σ╕¬ BatchNorm3d `num_batches_tracked=28`πÇéΦ┐ÖΣ╕Ä epoch2 Φ╡╖ encoder + decoder feature + BN-running-stat freezeπÇüΣ╗à final head τ╗ºτ╗¡Φ«¡τ╗âτÜäτ¡ûτòÑΣ╕ÇΦç┤πÇéτï¼τ½ï test `liver_169` µ£¼Θÿ╢µ«╡µ£¬Φ«┐Θù«πÇéstable baseline Σ╗ìΣ╕║ engineering/validation τ║º∩╝¢lock parameters=`NO`πÇüformal independent test ready=`NO`πÇé
+freeze verification 继续通过：v13 epoch3 checkpoint optimizer state 中 203 个 frozen-group 参数 step=`28`，仅 final `linear_pred` 2 个参数 step=`84`；9 个 BatchNorm3d `num_batches_tracked=28`。这与 epoch2 起 encoder + decoder feature + BN-running-stat freeze、仅 final head 继续训练的策略一致。独立 test `liver_169` 本阶段未访问。stable baseline 仍为 engineering/validation 级；lock parameters=`NO`、formal independent test ready=`NO`。
 
-Σ╕ïΣ╕Çµ¡Ñτ¢┤µÄÑΦ┐¢σàÑ v14 Region+Topology∩╝îΘçìτé╣τ£ï component count / false merge / false break µÿ»σÉªτ¢╕σ»╣ Region µ£ëτ£ƒσ«₧µö╣σûä∩╝¢ΘÜÅσÉÄ v15 Region+Boundary+TopologyπÇé
+下一步直接进入 v14 Region+Topology，重点看 component count / false merge / false break 是否相对 Region 有真实改善；随后 v15 Region+Boundary+Topology。
 
 
-### 2026-08-28∩╜£Θÿ╢µ«╡ BD∩╝Üv14 Region+Topology loss ablation σ«îµêÉ
+### 2026-08-28｜阶段 BD：v14 Region+Topology loss ablation 完成
 
-v14=`configs/orthopedic_ct_cpu_binary_loss_region_topology_v14.yaml` τ╗ºτ╗¡Σ╗Ñ v11 CT-only Region stable baseline Σ╕║σö»Σ╕Çσ»╣τàº∩╝îσÅ¬µö╣σÅÿ loss composition∩╝Ü`region=1.0`πÇü`boundary=0.0`πÇü`topology=0.1`πÇü`topology_iterations=10`∩╝¢inputπÇüROIπÇüsamplingπÇülrπÇüschedulerπÇüseedπÇüfreeze policyπÇüvalidation Σ╕Ä inference σ¥çΣ┐¥µîüΣ╕ìσÅÿπÇéµ¡úσ╝Å preflight σ╖▓σåìµ¼íΘÇÜΦ┐ç∩╝Ü`ready=true / blocker_count=0`πÇéτï¼τ½ï test `ctspine1k-msd-t10-liver_169` µ£¼Θÿ╢µ«╡µ£¬Φ«┐Θù«πÇé
+v14=`configs/orthopedic_ct_cpu_binary_loss_region_topology_v14.yaml` 继续以 v11 CT-only Region stable baseline 为唯一对照，只改变 loss composition：`region=1.0`、`boundary=0.0`、`topology=0.1`、`topology_iterations=10`；input、ROI、sampling、lr、scheduler、seed、freeze policy、validation 与 inference 均保持不变。正式 preflight 已再次通过：`ready=true / blocker_count=0`。独立 test `ctspine1k-msd-t10-liver_169` 本阶段未访问。
 
-µ£Çσê¥ run=`experiments/20260828_121524_cpu_binary_loss_region_topology_v14_roi64` σ£¿ epoch1 Φ«¡τ╗â 28 patches σÉÄσ¢áσ╖Ñσà╖ 300 τºÆΣ╕èΘÖÉσü£σ£¿ full-volume validation∩╝îµ£¬Σ║ºτöƒ history/checkpoint∩╝îσ¢áµ¡ñµÿÄτí«Σ╕ìΣ╜£Σ╕║τ╗ôµ₧£πÇéµ£ëµòê run=`experiments/20260828_122048_cpu_binary_loss_region_topology_v14_roi64`∩╝Üepoch1 train loss=`2.64983754498618`πÇümean val Dice=`0.0545078970525526`∩╝¢epoch2 τö▒σÉîΣ╕Ç run `last.pt` resume σÉÄ train loss=`2.388446888753346`πÇümean val Dice=`0.05450463747160135`∩╝¢epoch3 σåìτö▒σÉîΣ╕Ç run resume σÉÄ train loss=`1.9175574907234736`πÇümean val Dice=`0.05450932691321425`πÇüstd=`0.0061590328625196755`πÇéΣ╕ëΦ╜« sampling Σ╗ìΣ╕║ 28 patches/epoch∩╝îforeground/background=`10/18πÇü10/18πÇü8/20`∩╝îforeground fraction mean=`0.07907336/0.08840765/0.05680016`∩╝îΣ╕Ä v11 σ»╣σ║ö epoch Σ╕ÇΦç┤πÇé
+最初 run=`experiments/20260828_121524_cpu_binary_loss_region_topology_v14_roi64` 在 epoch1 训练 28 patches 后因工具 300 秒上限停在 full-volume validation，未产生 history/checkpoint，因此明确不作为结果。有效 run=`experiments/20260828_122048_cpu_binary_loss_region_topology_v14_roi64`：epoch1 train loss=`2.64983754498618`、mean val Dice=`0.0545078970525526`；epoch2 由同一 run `last.pt` resume 后 train loss=`2.388446888753346`、mean val Dice=`0.05450463747160135`；epoch3 再由同一 run resume 后 train loss=`1.9175574907234736`、mean val Dice=`0.05450932691321425`、std=`0.0061590328625196755`。三轮 sampling 仍为 28 patches/epoch，foreground/background=`10/18、10/18、8/20`，foreground fraction mean=`0.07907336/0.08840765/0.05680016`，与 v11 对应 epoch 一致。
 
-v14 epoch3 `best.pt` validation-only detailed evaluation Θççτö¿σêåτùàΣ╛ïµëºΦíî∩╝îΘü┐σàì CPU full-volume evaluation σåìµ¼íΦºªσÅæσ╖Ñσà╖Φ╢àµù╢∩╝Ü
+v14 epoch3 `best.pt` validation-only detailed evaluation 采用分病例执行，避免 CPU full-volume evaluation 再次触发工具超时：
 
-- `liver_7`∩╝ÜDice=`0.0483502940`πÇüIoU=`0.0247740637`πÇüPrecision=`0.0288167426`πÇüRecall=`0.1500882565`πÇüHD95=`194.2215 mm`πÇüASSD=`54.2587 mm`∩╝¢prediction/GT foreground=`3.6438% / 0.69961%`∩╝îratio=`5.20837├ù`∩╝¢pred/GT components=`1545/3`∩╝îcomponent error=`1542`∩╝îfalse merge/break=`1/65`∩╝¢uncertainty AUROC/AUPRC=`0.93203/0.35444`∩╝îTop-10% error recall=`0.72025`∩╝¢ECE/MCE/Brier/NLL=`0.01776/0.09953/0.06347/0.13382`∩╝îconfidence gap=`0.01773`∩╝¢CPU inferenceΓëê`59.68 s`πÇé
-- `liver_8`∩╝ÜDice=`0.0606683598`πÇüIoU=`0.0312831279`πÇüPrecision=`0.0365756981`πÇüRecall=`0.1777602455`πÇüHD95=`173.7613 mm`πÇüASSD=`46.9011 mm`∩╝¢prediction/GT foreground=`2.7506% / 0.56596%`∩╝îratio=`4.86006├ù`∩╝¢pred/GT components=`1540/2`∩╝îcomponent error=`1538`∩╝îfalse merge/break=`0/59`∩╝¢uncertainty AUROC/AUPRC=`0.94693/0.34346`∩╝îTop-10% error recall=`0.79514`∩╝¢ECE/MCE/Brier/NLL=`0.01051/0.06257/0.04737/0.09661`∩╝îconfidence gap=`0.01038`∩╝¢CPU inferenceΓëê`90.61 s`πÇé
+- `liver_7`：Dice=`0.0483502940`、IoU=`0.0247740637`、Precision=`0.0288167426`、Recall=`0.1500882565`、HD95=`194.2215 mm`、ASSD=`54.2587 mm`；prediction/GT foreground=`3.6438% / 0.69961%`，ratio=`5.20837×`；pred/GT components=`1545/3`，component error=`1542`，false merge/break=`1/65`；uncertainty AUROC/AUPRC=`0.93203/0.35444`，Top-10% error recall=`0.72025`；ECE/MCE/Brier/NLL=`0.01776/0.09953/0.06347/0.13382`，confidence gap=`0.01773`；CPU inference≈`59.68 s`。
+- `liver_8`：Dice=`0.0606683598`、IoU=`0.0312831279`、Precision=`0.0365756981`、Recall=`0.1777602455`、HD95=`173.7613 mm`、ASSD=`46.9011 mm`；prediction/GT foreground=`2.7506% / 0.56596%`，ratio=`4.86006×`；pred/GT components=`1540/2`，component error=`1538`，false merge/break=`0/59`；uncertainty AUROC/AUPRC=`0.94693/0.34346`，Top-10% error recall=`0.79514`；ECE/MCE/Brier/NLL=`0.01051/0.06257/0.04737/0.09661`，confidence gap=`0.01038`；CPU inference≈`90.61 s`。
 
-Σ╕ñΣ╛ïσ╣│σ¥ç v14∩╝ÜDice=`0.0545093269`πÇüIoU=`0.0280285958`πÇüPrecision=`0.0326962203`πÇüRecall=`0.1639242510`πÇüHD95=`183.9914268 mm`πÇüASSD=`50.5799253 mm`πÇüprediction/GT foreground ratio=`5.034217├ù`πÇücomponent error=`1540.0`πÇüfalse merge=`0.5`πÇüfalse break=`62.0`∩╝¢uncertainty AUROC/AUPRC=`0.93948/0.34895`πÇüTop-10% error recall=`0.75770`∩╝¢ECE/MCE/Brier/NLL=`0.01413/0.08105/0.05542/0.11522`πÇüconfidence gap=`0.01406`∩╝¢CPU inferenceΓëê`75.15 s`πÇé
+两例平均 v14：Dice=`0.0545093269`、IoU=`0.0280285958`、Precision=`0.0326962203`、Recall=`0.1639242510`、HD95=`183.9914268 mm`、ASSD=`50.5799253 mm`、prediction/GT foreground ratio=`5.034217×`、component error=`1540.0`、false merge=`0.5`、false break=`62.0`；uncertainty AUROC/AUPRC=`0.93948/0.34895`、Top-10% error recall=`0.75770`；ECE/MCE/Brier/NLL=`0.01413/0.08105/0.05542/0.11522`、confidence gap=`0.01406`；CPU inference≈`75.15 s`。
 
-Σ╕Ä v11 Region σÉîΣ╕ñΣ╛ïΣ╕Ñµá╝σ»╣τàº∩╝Üv11 σ╣│σ¥ç Dice=`0.0546575740`πÇüHD95=`186.0500241 mm`πÇüASSD=`51.5220126 mm`πÇüPrecision=`0.0342507730`πÇüRecall=`0.1355391270`πÇüprediction/GT foreground ratio=`3.997598├ù`πÇücomponent error=`1548.0`πÇüfalse merge=`0.5`πÇüfalse break=`64.0`πÇéσ¢áµ¡ñ Topology Σ╜┐ component error `1548ΓåÆ1540`πÇüfalse break `64ΓåÆ62`πÇüHD95 µö╣σûäτ║ª `2.0586 mm`πÇüASSD µö╣σûäτ║ª `0.9421 mm`∩╝îΣ╕ö uncertainty AUROC/AUPRC σêåσê½τ║ª `+0.00257/+0.01957`∩╝¢Σ╜å Dice Σ╕ïΘÖìτ║ª `1.48e-4`πÇüPrecision Σ╕ïΘÖìτ║ª `0.00155`πÇüprediction/GT foreground ratio σó₧σèáτ║ª `1.04├ù`∩╝îECE/Brier/NLL/confidence gap σ¥çσÅÿσ╖«∩╝îTop-10% error recall Σ╣ƒτòÑΘÖìπÇéτºæσ¡ªσêñµû¡∩╝Ü**Region+Topology σ»╣τ╗ôµ₧ä/Φí¿Θ¥óµîçµáçσç║τÄ░Σ╕Çσ«Üµö╣σûäΣ┐íσÅ╖∩╝îΣ╜åΣ╗úΣ╗╖µÿ»µ¢┤σ╝║ foreground overpredictionπÇüΦ╛âσ╖« calibration Σ╕ÄΦ╜╗σ╛« Dice/Precision Σ╕ïΘÖì∩╝¢σ╜ôσëìΦ»üµì«Σ╕ìΦ╢│Σ╗Ñσêñσ«Ü Region+Topology µò┤Σ╜ôΣ╝ÿΣ║Ä Region∩╝îµ¡úσ╝Åτ╗ôΦ«║Σ╕║ evidence inconclusiveπÇé** σ¢áµ¡ñΣ╕ìΘöüσ«Ü Topology∩╝îτ╗ºτ╗¡ v15 Region+Boundary+Topology σ«îµêÉ loss ablationπÇé
+与 v11 Region 同两例严格对照：v11 平均 Dice=`0.0546575740`、HD95=`186.0500241 mm`、ASSD=`51.5220126 mm`、Precision=`0.0342507730`、Recall=`0.1355391270`、prediction/GT foreground ratio=`3.997598×`、component error=`1548.0`、false merge=`0.5`、false break=`64.0`。因此 Topology 使 component error `1548→1540`、false break `64→62`、HD95 改善约 `2.0586 mm`、ASSD 改善约 `0.9421 mm`，且 uncertainty AUROC/AUPRC 分别约 `+0.00257/+0.01957`；但 Dice 下降约 `1.48e-4`、Precision 下降约 `0.00155`、prediction/GT foreground ratio 增加约 `1.04×`，ECE/Brier/NLL/confidence gap 均变差，Top-10% error recall 也略降。科学判断：**Region+Topology 对结构/表面指标出现一定改善信号，但代价是更强 foreground overprediction、较差 calibration 与轻微 Dice/Precision 下降；当前证据不足以判定 Region+Topology 整体优于 Region，正式结论为 evidence inconclusive。** 因此不锁定 Topology，继续 v15 Region+Boundary+Topology 完成 loss ablation。
 
-freeze/checkpoint verification τ╗ºτ╗¡ΘÇÜΦ┐ç∩╝Üv14 epoch3 `best.pt` τÜä AdamW state σà▒ 205 Σ╕¬σÅéµò░∩╝îσà╢Σ╕¡ step=`28` µ£ë 203 Σ╕¬πÇüstep=`84` µ£ë 2 Σ╕¬∩╝¢9 Σ╕¬ BatchNorm `num_batches_tracked` σ¥çΣ╕║ `28`πÇéΦ┐ÖΣ╕Ä epoch1 σà¿µ¿íσ₧ïΦ«¡τ╗âπÇüepoch2/3 σå╗τ╗ô encoder + decoder feature + BN running statsπÇüΣ╗à final `linear_pred` Σ╕ñΣ╕¬σÅéµò░τ╗ºτ╗¡µ¢┤µû░τÜäτ¡ûτòÑΣ╕ÇΦç┤πÇéstable baseline Σ╗ìΣ╕║ engineering/validation τ║º∩╝¢lock parameters=`NO`∩╝¢formal independent test ready=`NO`∩╝¢`liver_169=µ£¬Φ«┐Θù«`πÇé
+freeze/checkpoint verification 继续通过：v14 epoch3 `best.pt` 的 AdamW state 共 205 个参数，其中 step=`28` 有 203 个、step=`84` 有 2 个；9 个 BatchNorm `num_batches_tracked` 均为 `28`。这与 epoch1 全模型训练、epoch2/3 冻结 encoder + decoder feature + BN running stats、仅 final `linear_pred` 两个参数继续更新的策略一致。stable baseline 仍为 engineering/validation 级；lock parameters=`NO`；formal independent test ready=`NO`；`liver_169=未访问`。
 
-Σ╕ïΣ╕Çµ¡Ñτ¢┤µÄÑµëºΦíî v15 Region+Boundary+Topology∩╝¢σ«îµêÉσÉÄσ»╣ Region / Region+Boundary / Region+Topology / Region+Boundary+Topology σüÜτ╗ƒΣ╕Ç loss ablation σêñµû¡∩╝îσåìΦ┐¢σàÑ sampling ablationπÇé
+下一步直接执行 v15 Region+Boundary+Topology；完成后对 Region / Region+Boundary / Region+Topology / Region+Boundary+Topology 做统一 loss ablation 判断，再进入 sampling ablation。
 
 
-### 2026-08-28∩╜£Θÿ╢µ«╡ BE∩╝Üv15 ΦüöσÉêµìƒσñ▒σ«îµêÉ∩╝îloss ablation µ¡úσ╝ÅΘù¡τÄ»
+### 2026-08-28｜阶段 BE：v15 联合损失完成，loss ablation 正式闭环
 
-v15=`configs/orthopedic_ct_cpu_binary_loss_region_boundary_topology_v15.yaml`∩╝îΣ╗Ñ v11 CT-only stable mechanism Σ╕║σ¢║σ«Üσƒ║τíÇ∩╝îΣ╗àσ░å loss composition Φ«╛Σ╕║ `region=1.0 / boundary=0.1 / topology=0.1`∩╝ê`topology_iterations=10`∩╝ë∩╝¢ROIπÇüinputπÇüsamplingπÇülrπÇüschedulerπÇüseedπÇüfreeze policyπÇüvalidation Σ╕Ä inference Σ┐¥µîüΣ╕ìσÅÿπÇéformal readiness σ╖▓τ£ƒσ«₧ΘÇÜΦ┐ç∩╝Ü`ready=true / blocker_count=0`πÇéµ£ëµòê run=`experiments/20260828_142401_cpu_binary_loss_region_boundary_topology_v15_roi64`∩╝î3 epoch σ╖▓σ«îµêÉΣ╕öΣ╕ìΘçìΦ╖æ∩╝Üepoch1 train loss=`2.6507615830`πÇümean val Dice=`0.0545193722`πÇüFG/BG patches=`10/18`∩╝¢epoch2 train loss=`2.3858454398`πÇümean val Dice=`0.0545209539`πÇüFG/BG=`10/18`∩╝¢epoch3 train loss=`1.9158078730`πÇümean val Dice=`0.0544770773`πÇüFG/BG=`8/20`πÇébest Dice=`0.0545209539`∩╝îσ¢áµ¡ñ `best.pt` σ»╣σ║ö epoch2πÇé
+v15=`configs/orthopedic_ct_cpu_binary_loss_region_boundary_topology_v15.yaml`，以 v11 CT-only stable mechanism 为固定基础，仅将 loss composition 设为 `region=1.0 / boundary=0.1 / topology=0.1`（`topology_iterations=10`）；ROI、input、sampling、lr、scheduler、seed、freeze policy、validation 与 inference 保持不变。formal readiness 已真实通过：`ready=true / blocker_count=0`。有效 run=`experiments/20260828_142401_cpu_binary_loss_region_boundary_topology_v15_roi64`，3 epoch 已完成且不重跑：epoch1 train loss=`2.6507615830`、mean val Dice=`0.0545193722`、FG/BG patches=`10/18`；epoch2 train loss=`2.3858454398`、mean val Dice=`0.0545209539`、FG/BG=`10/18`；epoch3 train loss=`1.9158078730`、mean val Dice=`0.0544770773`、FG/BG=`8/20`。best Dice=`0.0545209539`，因此 `best.pt` 对应 epoch2。
 
-v15 `best.pt` validation-only detailed evaluation σ╖▓µîëτùàΣ╛ïσ«îµêÉ∩╝îµ£¬Φ«┐Θù«τï¼τ½ï test∩╝Ü`liver_7` Dice=`0.0480255358`πÇüIoU=`0.0246035677`πÇüPrecision=`0.0288159219`πÇüRecall=`0.1440615994`πÇüHD95=`195.1489 mm`πÇüASSD=`54.4414 mm`πÇüprediction/GT foreground ratio=`4.999375├ù`πÇüpred/GT components=`1539/3`πÇücomponent error=`1536`πÇüfalse merge/break=`1/64`πÇüuncertainty AUROC/AUPRC=`0.93160/0.35201`πÇüTop-10% error recall=`0.72230`πÇüECE/MCE/Brier/NLL=`0.01692/0.09481/0.06154/0.13101`πÇüconfidence gap=`0.01692`πÇüCPU inferenceΓëê`61.28 s`∩╝¢`liver_8` Dice=`0.0610163721`πÇüIoU=`0.0314682245`πÇüPrecision=`0.0371083808`πÇüRecall=`0.1715266640`πÇüHD95=`174.0029 mm`πÇüASSD=`47.0610 mm`πÇüprediction/GT foreground ratio=`4.622316├ù`πÇüpred/GT components=`1546/2`πÇücomponent error=`1544`πÇüfalse merge/break=`0/56`πÇüuncertainty AUROC/AUPRC=`0.94663/0.34604`πÇüTop-10% error recall=`0.79573`πÇüECE/MCE/Brier/NLL=`0.00975/0.05533/0.04562/0.09419`πÇüconfidence gap=`0.00975`πÇüCPU inferenceΓëê`80.42 s`πÇéΣ╕ñΣ╛ïσ╣│σ¥ç v15∩╝ÜDice=`0.0545209539`πÇüIoU=`0.0280358961`πÇüPrecision=`0.0329621513`πÇüRecall=`0.1577941317`πÇüHD95=`184.5758955 mm`πÇüASSD=`50.7511907 mm`πÇüprediction foreground fraction=`0.03056820`πÇüGT foreground fraction=`0.00632783`πÇüforeground ratio=`4.810846├ù`πÇüpred/GT components=`1542.5/2.5`πÇücomponent error=`1540.0`πÇüfalse merge=`0.5`πÇüfalse break=`60.0`πÇüuncertainty AUROC/AUPRC=`0.93911/0.34902`πÇüTop-10% error recall=`0.75901`πÇüECE/MCE/Brier/NLL=`0.01334/0.07507/0.05358/0.11260`πÇüconfidence gap=`0.01334`πÇüCPU inferenceΓëê`70.85 s`πÇé
+v15 `best.pt` validation-only detailed evaluation 已按病例完成，未访问独立 test：`liver_7` Dice=`0.0480255358`、IoU=`0.0246035677`、Precision=`0.0288159219`、Recall=`0.1440615994`、HD95=`195.1489 mm`、ASSD=`54.4414 mm`、prediction/GT foreground ratio=`4.999375×`、pred/GT components=`1539/3`、component error=`1536`、false merge/break=`1/64`、uncertainty AUROC/AUPRC=`0.93160/0.35201`、Top-10% error recall=`0.72230`、ECE/MCE/Brier/NLL=`0.01692/0.09481/0.06154/0.13101`、confidence gap=`0.01692`、CPU inference≈`61.28 s`；`liver_8` Dice=`0.0610163721`、IoU=`0.0314682245`、Precision=`0.0371083808`、Recall=`0.1715266640`、HD95=`174.0029 mm`、ASSD=`47.0610 mm`、prediction/GT foreground ratio=`4.622316×`、pred/GT components=`1546/2`、component error=`1544`、false merge/break=`0/56`、uncertainty AUROC/AUPRC=`0.94663/0.34604`、Top-10% error recall=`0.79573`、ECE/MCE/Brier/NLL=`0.00975/0.05533/0.04562/0.09419`、confidence gap=`0.00975`、CPU inference≈`80.42 s`。两例平均 v15：Dice=`0.0545209539`、IoU=`0.0280358961`、Precision=`0.0329621513`、Recall=`0.1577941317`、HD95=`184.5758955 mm`、ASSD=`50.7511907 mm`、prediction foreground fraction=`0.03056820`、GT foreground fraction=`0.00632783`、foreground ratio=`4.810846×`、pred/GT components=`1542.5/2.5`、component error=`1540.0`、false merge=`0.5`、false break=`60.0`、uncertainty AUROC/AUPRC=`0.93911/0.34902`、Top-10% error recall=`0.75901`、ECE/MCE/Brier/NLL=`0.01334/0.07507/0.05358/0.11260`、confidence gap=`0.01334`、CPU inference≈`70.85 s`。
 
-σ¢¢τ╗äσÉîΣ╕ñΣ╛ï loss ablation τ╗ƒΣ╕Çµ»öΦ╛â∩╝êσà¿Θâ¿Σ╕║ validation∩╝îΣ╕ìµÿ» independent test∩╝ë∩╝Ü
+四组同两例 loss ablation 统一比较（全部为 validation，不是 independent test）：
 
 | Loss | Dice | IoU | Precision | Recall | HD95 mm | ASSD mm | Pred/GT FG | Comp. error | False merge | False break | AUROC | AUPRC | Top-10% err recall | ECE | MCE | Brier | NLL | Conf. gap | Infer s |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| v11 Region | 0.054658 | 0.028121 | 0.034251 | 0.135539 | 186.0500 | 51.5220 | 3.9976├ù | 1548.0 | 0.5 | 64.0 | 0.93691 | 0.32938 | 0.76162 | 0.01084 | 0.05635 | 0.04693 | 0.10288 | 0.01078 | 72.88 |
-| v13 Region+Boundary | **0.054709** | **0.028148** | 0.034230 | 0.136492 | 185.9498 | 51.4865 | 4.0270├ù | 1543.5 | 0.5 | 64.5 | 0.93707 | 0.33184 | **0.76170** | 0.01093 | 0.05790 | 0.04717 | 0.10325 | 0.01089 | 75.01 |
-| v14 Region+Topology | 0.054509 | 0.028029 | 0.032696 | **0.163924** | **183.9914** | **50.5799** | 5.0342├ù | **1540.0** | 0.5 | 62.0 | **0.93948** | 0.34895 | 0.75770 | 0.01413 | 0.08105 | 0.05542 | 0.11522 | 0.01406 | 75.15 |
-| v15 Region+Boundary+Topology | 0.054521 | 0.028036 | 0.032962 | 0.157794 | 184.5759 | 50.7512 | 4.8108├ù | **1540.0** | 0.5 | **60.0** | 0.93911 | **0.34902** | 0.75901 | 0.01334 | 0.07507 | 0.05358 | 0.11260 | 0.01334 | **70.85** |
+| v11 Region | 0.054658 | 0.028121 | 0.034251 | 0.135539 | 186.0500 | 51.5220 | 3.9976× | 1548.0 | 0.5 | 64.0 | 0.93691 | 0.32938 | 0.76162 | 0.01084 | 0.05635 | 0.04693 | 0.10288 | 0.01078 | 72.88 |
+| v13 Region+Boundary | **0.054709** | **0.028148** | 0.034230 | 0.136492 | 185.9498 | 51.4865 | 4.0270× | 1543.5 | 0.5 | 64.5 | 0.93707 | 0.33184 | **0.76170** | 0.01093 | 0.05790 | 0.04717 | 0.10325 | 0.01089 | 75.01 |
+| v14 Region+Topology | 0.054509 | 0.028029 | 0.032696 | **0.163924** | **183.9914** | **50.5799** | 5.0342× | **1540.0** | 0.5 | 62.0 | **0.93948** | 0.34895 | 0.75770 | 0.01413 | 0.08105 | 0.05542 | 0.11522 | 0.01406 | 75.15 |
+| v15 Region+Boundary+Topology | 0.054521 | 0.028036 | 0.032962 | 0.157794 | 184.5759 | 50.7512 | 4.8108× | **1540.0** | 0.5 | **60.0** | 0.93911 | **0.34902** | 0.75901 | 0.01334 | 0.07507 | 0.05358 | 0.11260 | 0.01334 | **70.85** |
 
-τºæσ¡ªσêñµû¡∩╝ÜBoundary σìòτï¼σèáσàÑµù╢Σ╗àσ╕ªµ¥Ñµ₧üσ╝▒τÜä HD95/ASSD Σ╕Ä Dice µö╣σûä∩╝îΣ╕ìΦâ╜τº░Σ╕║µÿÄτí«µö╢τ¢è∩╝¢Topology∩╝êv14/v15∩╝ëσ»╣ HD95/ASSDπÇücomponent errorπÇüfalse break σÆî uncertainty AUPRC σç║τÄ░µ¢┤µÿÄµÿ╛τÜäµö╣σûäΣ┐íσÅ╖∩╝îΣ╜åσÉîµù╢µÅÉΘ½ÿ prediction/GT foreground ratioπÇüΘÖìΣ╜Ä Precision∩╝îσ╣╢Σ╜┐ ECE/MCE/Brier/NLL/confidence gap τ¢╕σ»╣ v11/v13 σÅÿσ╖«πÇév15 τ¢╕σ»╣ v14 Φâ╜σ░å false break `62ΓåÆ60`πÇüforeground ratio `5.034ΓåÆ4.811` σ╣╢τòÑµö╣σûä calibration∩╝îΣ╜åΣ╗ìµ£¬µ╢êΘÖñ Topology σ╕ªµ¥ÑτÜäσëìµÖ»Φ┐çΘóäµ╡ïΣ╗úΣ╗╖∩╝îΣ╕ö Dice Σ╗ìΣ╜ÄΣ║Ä v11/v13πÇéτ╗╝σÉêσî║σƒƒπÇüΦí¿Θ¥óπÇüτ╗ôµ₧äπÇüσëìµÖ»πÇüuncertaintyπÇücalibration Σ╕ÄΘÇƒσ║ª∩╝îσ╜ôσëìΦ»üµì«Σ╕ìΦ╢│Σ╗ÑΦ»üµÿÄ Topology τ╗äσÉêµò┤Σ╜ôΣ╝ÿΣ║Äµùá Topology µû╣µíêπÇé
+科学判断：Boundary 单独加入时仅带来极弱的 HD95/ASSD 与 Dice 改善，不能称为明确收益；Topology（v14/v15）对 HD95/ASSD、component error、false break 和 uncertainty AUPRC 出现更明显的改善信号，但同时提高 prediction/GT foreground ratio、降低 Precision，并使 ECE/MCE/Brier/NLL/confidence gap 相对 v11/v13 变差。v15 相对 v14 能将 false break `62→60`、foreground ratio `5.034→4.811` 并略改善 calibration，但仍未消除 Topology 带来的前景过预测代价，且 Dice 仍低于 v11/v13。综合区域、表面、结构、前景、uncertainty、calibration 与速度，当前证据不足以证明 Topology 组合整体优于无 Topology 方案。
 
-σ¢áµ¡ñ loss ablation τÜäσÉÄτ╗¡σ╖Ñτ¿ïσå│τ¡ûΣ╕║∩╝Ü**ΘÇëµï⌐ v13 Region+Boundary Σ╜£Σ╕║ sampling ablation baseline**πÇéτÉåτö▒Σ╕ìµÿ»ΓÇ£Boundary σ╖▓Φó½Φ»üµÿÄµÿ╛Φæùµ£ëµòêΓÇ¥∩╝îΦÇîµÿ»σ«âσ£¿σ¢¢τ╗äΣ╕¡σÅûσ╛ùµ£ÇΘ½ÿΣ╕ñΣ╛ïσ╣│σ¥ç Dice/IoU∩╝îσÉîµù╢ foreground overprediction Σ╕Ä calibration σƒ║µ£¼τ╗┤µîü v11 µ░┤σ╣│∩╝îΦí¿Θ¥óµîçµáçΣ╣ƒµ£¬µü╢σîû∩╝¢Φ┐Öµÿ»σ╜ôσëìσ░Åµá╖µ£¼ validation Σ╕ïµ£ÇΣ┐¥σ«êπÇüΘúÄΘÖ⌐µ£ÇΣ╜ÄτÜäσ╖ÑΣ╜£σƒ║τ║┐πÇéTopology Σ┐¥τòÖΣ╕║σÉÄτ╗¡σÅ»σñìµƒÑσÇÖΘÇë∩╝îΣ╜åσ╜ôσëìΣ╕ìΦ┐¢σàÑ sampling baselineπÇé`lock parameters=NO`πÇü`formal independent test ready=NO`∩╝î`ctspine1k-msd-t10-liver_169=µ£¬Φ«┐Θù«`πÇé
+因此 loss ablation 的后续工程决策为：**选择 v13 Region+Boundary 作为 sampling ablation baseline**。理由不是“Boundary 已被证明显著有效”，而是它在四组中取得最高两例平均 Dice/IoU，同时 foreground overprediction 与 calibration 基本维持 v11 水平，表面指标也未恶化；这是当前小样本 validation 下最保守、风险最低的工作基线。Topology 保留为后续可复查候选，但当前不进入 sampling baseline。`lock parameters=NO`、`formal independent test ready=NO`，`ctspine1k-msd-t10-liver_169=未访问`。
 
-Σ╕ïΣ╕Çµ¡Ñσ¢║σ«Ü v13 τÜä input/loss/lr/scheduler/ROI/freeze policy∩╝îσÅ¬σüÜ sampling σìòσÅÿΘçÅµ╢êΦ₧ì∩╝Ücurrent Bernoulli baseline ΓåÆ fixed-per-case ΓåÆ boundary hard sampling∩╝¢µ»ÅΣ╕¬Θÿ╢µ«╡τ╗ºτ╗¡Φ«░σ╜ò patches/caseπÇüFG/BGπÇüforeground fraction mean/stdπÇüσî║σƒƒ/Φí¿Θ¥ó/τ╗ôµ₧äπÇüuncertaintyπÇücalibration Σ╕Ä inference time∩╝îσåìΘÇëµï⌐ sampling baselineπÇé
+下一步固定 v13 的 input/loss/lr/scheduler/ROI/freeze policy，只做 sampling 单变量消融：current Bernoulli baseline → fixed-per-case → boundary hard sampling；每个阶段继续记录 patches/case、FG/BG、foreground fraction mean/std、区域/表面/结构、uncertainty、calibration 与 inference time，再选择 sampling baseline。
 
-### 2026-08-28∩╜£Θÿ╢µ«╡ BF∩╝Üv16/v17 sampling ablation σ«îµêÉ∩╝îΣ┐¥τòÖ v13 Bernoulli baseline
+### 2026-08-28｜阶段 BF：v16/v17 sampling ablation 完成，保留 v13 Bernoulli baseline
 
-µ£¼Θÿ╢µ«╡Σ╕Ñµá╝σ¢║σ«Ü v13 τÜä CT-onlyπÇüRegion+Boundary lossπÇü64┬│ training ROIπÇüAdamW peak lr=`5e-5`πÇüwarmup/cosine schedulerπÇüseedπÇüepoch2 Φ╡╖ encoder+decoder-feature+BN-running-stat freezeπÇüfull-volume validation Σ╕Ä inference∩╝îΣ╗àµö╣σÅÿ sampling τ¡ûτòÑπÇéτï¼τ½ï test `ctspine1k-msd-t10-liver_169` τ╗ºτ╗¡µ£¬Φ«┐Θù«∩╝¢`lock parameters=NO`πÇü`formal independent test ready=NO`πÇé
+本阶段严格固定 v13 的 CT-only、Region+Boundary loss、64³ training ROI、AdamW peak lr=`5e-5`、warmup/cosine scheduler、seed、epoch2 起 encoder+decoder-feature+BN-running-stat freeze、full-volume validation 与 inference，仅改变 sampling 策略。独立 test `ctspine1k-msd-t10-liver_169` 继续未访问；`lock parameters=NO`、`formal independent test ready=NO`。
 
-v16=`configs/orthopedic_ct_cpu_binary_sampling_fixed_per_case_v16.yaml`∩╝îµ£ëµòê run=`experiments/20260828_150343_cpu_binary_sampling_fixed_per_case_v16_roi64`πÇéΣ╕ëΦ╜« mean validation Dice=`0.04557463 ΓåÆ 0.04564599 ΓåÆ 0.04575062`πÇésampling foreground-fraction mean=`0.0645966/0.0681651/0.0734618`∩╝îΦ╖¿ epoch mean τÜä stdΓëê`0.003642`πÇürangeΓëê`0.008865`∩╝îµÿÄµÿ╛µ»ö v13 Bernoulli τÜä stdΓëê`0.013259`πÇürangeΓëê`0.031607` µ¢┤τ¿│σ«ÜπÇéΣ╜å best.pt Σ╕ñΣ╛ï detailed validation σ╣│σ¥ç Dice=`0.04575062`πÇüIoU=`0.02369179`πÇüPrecision=`0.02616929`πÇüRecall=`0.18255175`πÇüHD95=`181.2707 mm`πÇüASSD=`54.7019 mm`πÇüprediction/GT foreground ratio=`6.51485├ù`πÇücomponent error=`1302.0`πÇüfalse merge=`0.5`πÇüfalse break=`76.5`πÇüuncertainty AUROC/AUPRC=`0.92582/0.34370`πÇüTop-10% error recall=`0.66407`πÇüECE/MCE/Brier/NLL=`0.02964/0.19434/0.07493/0.17802`πÇüconfidence gap=`0.02964`πÇéσ¢áµ¡ñ fixed-per-case ΦÖ╜µö╣σûä sampling stability∩╝îΣ╜åσî║σƒƒσêåσë▓πÇüforeground overpredictionπÇüASSDπÇüfalse break Σ╕Ä calibration σ¥çµò┤Σ╜ôσèúΣ║Ä v13∩╝î**v16 Σ╕ìΘÇë**πÇé
+v16=`configs/orthopedic_ct_cpu_binary_sampling_fixed_per_case_v16.yaml`，有效 run=`experiments/20260828_150343_cpu_binary_sampling_fixed_per_case_v16_roi64`。三轮 mean validation Dice=`0.04557463 → 0.04564599 → 0.04575062`。sampling foreground-fraction mean=`0.0645966/0.0681651/0.0734618`，跨 epoch mean 的 std≈`0.003642`、range≈`0.008865`，明显比 v13 Bernoulli 的 std≈`0.013259`、range≈`0.031607` 更稳定。但 best.pt 两例 detailed validation 平均 Dice=`0.04575062`、IoU=`0.02369179`、Precision=`0.02616929`、Recall=`0.18255175`、HD95=`181.2707 mm`、ASSD=`54.7019 mm`、prediction/GT foreground ratio=`6.51485×`、component error=`1302.0`、false merge=`0.5`、false break=`76.5`、uncertainty AUROC/AUPRC=`0.92582/0.34370`、Top-10% error recall=`0.66407`、ECE/MCE/Brier/NLL=`0.02964/0.19434/0.07493/0.17802`、confidence gap=`0.02964`。因此 fixed-per-case 虽改善 sampling stability，但区域分割、foreground overprediction、ASSD、false break 与 calibration 均整体劣于 v13，**v16 不选**。
 
-v17=`configs/orthopedic_ct_cpu_binary_sampling_boundary_hard_v17.yaml`∩╝îµ£ëµòê run=`experiments/20260828_152712_cpu_binary_sampling_boundary_hard_v17_roi64`πÇéµÄÑτ«íµù╢τí«Φ«ñΦ«¡τ╗âσ╖▓τ£ƒσ«₧σ«îµêÉ∩╝îµ£¬ΘçìσñìσÉ»σè¿∩╝Üepoch1/2/3 train loss=`2.52750253/2.27737889/2.45061852`∩╝îmean validation Dice=`0.03701411 ΓåÆ 0.03715640 ΓåÆ 0.03730737`∩╝îbest.pt=epoch3πÇésampling foreground-fraction mean=`0.1123220/0.1468705/0.1491953`∩╝îFG/BG patch=`15/13πÇü18/10πÇü14/14`∩╝îΦ╖¿ epoch mean τÜä stdΓëê`0.016861`πÇürangeΓëê`0.036873`∩╝îσ╣╢µ£¬µ»ö v13 µ¢┤τ¿│σ«ÜπÇé
+v17=`configs/orthopedic_ct_cpu_binary_sampling_boundary_hard_v17.yaml`，有效 run=`experiments/20260828_152712_cpu_binary_sampling_boundary_hard_v17_roi64`。接管时确认训练已真实完成，未重复启动：epoch1/2/3 train loss=`2.52750253/2.27737889/2.45061852`，mean validation Dice=`0.03701411 → 0.03715640 → 0.03730737`，best.pt=epoch3。sampling foreground-fraction mean=`0.1123220/0.1468705/0.1491953`，FG/BG patch=`15/13、18/10、14/14`，跨 epoch mean 的 std≈`0.016861`、range≈`0.036873`，并未比 v13 更稳定。
 
-ΘÜÅσÉÄσñìτö¿σÉîΣ╕Ç v17 best.pt σ»╣ validation `liver_7/liver_8` σ«îµêÉ detailed evaluationπÇéΣ╕ñΣ╛ïσ╣│σ¥ç∩╝ÜDice=`0.03730737`πÇüIoU=`0.01900976`πÇüPrecision=`0.01917430`πÇüRecall=`0.69148852`πÇüHD95=`206.5001 mm`πÇüASSD=`58.8920 mm`πÇüprediction/GT foreground ratio=`36.2590├ù`πÇücomponent error=`568.0`πÇüfalse merge=`0.5`πÇüfalse break=`33.0`πÇüuncertainty AUROC/AUPRC=`0.87484/0.54115`πÇüTop-10% error recall=`0.24014`πÇüECE/MCE/Brier/NLL=`0.19569/0.46998/0.40404/1.20141`πÇüconfidence gap=`0.19569`πÇüCPU inferenceΓëê`72.85 s`πÇéΦÖ╜τä╢ component error/false break Σ╕Ä uncertainty AUPRC Φí¿Θ¥óΣ╕èµö╣σûä∩╝îΣ╜åΦ┐Öµÿ»Σ╝┤ΘÜÅµ₧üτ½» foreground overpredictionπÇüµ₧üΘ½ÿ RecallπÇüΣ╜Ä PrecisionπÇüµü╢σîû surface distance Σ╕ÄΣ╕ÑΘçì calibration σ┤⌐σ¥Åσç║τÄ░τÜä∩╝îΣ╕ìΦâ╜ΦºåΣ╕║µò┤Σ╜ôτ╗ôµ₧äΦ┤¿ΘçÅµÅÉσìçπÇé**v17 µÿÄµÿ╛σñ▒Φ┤Ñ∩╝îSTOP∩╝îΣ╕ìτ╗ºτ╗¡µ╡¬Φ┤╣ CPUπÇé**
+随后复用同一 v17 best.pt 对 validation `liver_7/liver_8` 完成 detailed evaluation。两例平均：Dice=`0.03730737`、IoU=`0.01900976`、Precision=`0.01917430`、Recall=`0.69148852`、HD95=`206.5001 mm`、ASSD=`58.8920 mm`、prediction/GT foreground ratio=`36.2590×`、component error=`568.0`、false merge=`0.5`、false break=`33.0`、uncertainty AUROC/AUPRC=`0.87484/0.54115`、Top-10% error recall=`0.24014`、ECE/MCE/Brier/NLL=`0.19569/0.46998/0.40404/1.20141`、confidence gap=`0.19569`、CPU inference≈`72.85 s`。虽然 component error/false break 与 uncertainty AUPRC 表面上改善，但这是伴随极端 foreground overprediction、极高 Recall、低 Precision、恶化 surface distance 与严重 calibration 崩坏出现的，不能视为整体结构质量提升。**v17 明显失败，STOP，不继续浪费 CPU。**
 
-Σ╕ëτ╗ä sampling τ╗ƒΣ╕Ç comparison∩╝êvalidation Σ╕ñΣ╛ïσ╣│σ¥ç∩╝¢Σ╕ìµÿ» independent test∩╝ë∩╝Ü
+三组 sampling 统一 comparison（validation 两例平均；不是 independent test）：
 
 | Sampling | Dice | IoU | Precision | Recall | HD95 mm | ASSD mm | Pred/GT FG | Comp. error | False break | AUROC | AUPRC | Top-10% err recall | ECE | Brier | NLL | Sampling mean std |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| v13 Bernoulli | **0.054709** | **0.028148** | **0.034230** | 0.136492 | 185.9498 | **51.4865** | **4.0270├ù** | 1543.5 | 64.5 | **0.93707** | 0.33184 | **0.76170** | **0.01093** | **0.04717** | **0.10325** | 0.013259 |
-| v16 fixed-per-case | 0.045751 | 0.023692 | 0.026169 | 0.182552 | **181.2707** | 54.7019 | 6.5148├ù | 1302.0 | 76.5 | 0.92582 | 0.34370 | 0.66407 | 0.02964 | 0.07493 | 0.17802 | **0.003642** |
-| v17 boundary-hard | 0.037307 | 0.019010 | 0.019174 | **0.691489** | 206.5001 | 58.8920 | 36.2590├ù | **568.0** | **33.0** | 0.87484 | **0.54115** | 0.24014 | 0.19569 | 0.40404 | 1.20141 | 0.016861 |
+| v13 Bernoulli | **0.054709** | **0.028148** | **0.034230** | 0.136492 | 185.9498 | **51.4865** | **4.0270×** | 1543.5 | 64.5 | **0.93707** | 0.33184 | **0.76170** | **0.01093** | **0.04717** | **0.10325** | 0.013259 |
+| v16 fixed-per-case | 0.045751 | 0.023692 | 0.026169 | 0.182552 | **181.2707** | 54.7019 | 6.5148× | 1302.0 | 76.5 | 0.92582 | 0.34370 | 0.66407 | 0.02964 | 0.07493 | 0.17802 | **0.003642** |
+| v17 boundary-hard | 0.037307 | 0.019010 | 0.019174 | **0.691489** | 206.5001 | 58.8920 | 36.2590× | **568.0** | **33.0** | 0.87484 | **0.54115** | 0.24014 | 0.19569 | 0.40404 | 1.20141 | 0.016861 |
 
-µ£Çτ╗ê sampling σå│τ¡û∩╝Ü**τ╗ºτ╗¡Σ╜┐τö¿ v13 current Bernoulli sampling∩╝êforeground_probability=`0.25`πÇüpatches_per_case=`4`∩╝ëΣ╜£Σ╕║σÉÄτ╗¡ augmentation / difficult-sample validation baselineπÇé** ΘÇëµï⌐Σ╛¥µì«Σ╕ìµÿ» sampling stability σìòµîçµáç∩╝îΦÇîµÿ»σî║σƒƒπÇüσëìµÖ»µ»öΣ╛ïπÇüΦí¿Θ¥óπÇüτ╗ôµ₧äπÇüuncertainty Σ╕Ä calibration τÜäτ╗╝σÉê validation τ╗ôµ₧£πÇév16 Φ»üµÿÄΓÇ£µ¢┤τ¿│σ«ÜτÜä sampling statisticsΓÇ¥µ£¼Φ║½Σ╕ìΦ╢│Σ╗Ñσ╕ªµ¥Ñµ¢┤σÑ╜τÜä segmentation∩╝¢v17 Φ»üµÿÄσ╜ôσëì boundary-hard µû╣µíêΣ╝ÜΣ╕ÑΘçìµÄ¿Θ½ÿ foreground prior σ╣╢τá┤σ¥Å calibrationπÇéΣ╕ïΣ╕ÇΘÿ╢µ«╡σ¢║σ«Ü v13 input/loss/sampling/ROI/lr/scheduler/freeze policy∩╝îΣ╝ÿσàêσüÜ standard augmentation Σ╕Ä intensity/HU augmentation τÜäµ£Çσ░ÅσìòσÅÿΘçÅ validation∩╝¢σ╜ôσëìµò░µì«Σ╕ìΦ╢│Σ╗Ñτ£ƒσ«₧µ₧äΘÇá metal artifact / fracture / low-density / thick-slice difficult subset µù╢σ┐àΘí╗µÿÄτí«Φ«░Σ╕║ΓÇ£µò░µì«Σ╕ìΦ╢│ / µ£¬σ«îµêÉΓÇ¥πÇé
-
-
-### 2026-08-29∩╜£Θÿ╢µ«╡ BG∩╝Üv18 standard augmentation σ«îµêÉσ╣╢σêñσ«ÜΣ╕ìΘÇë
-
-µÄÑτ«íµù╢Θçìµû░µá╕Θ¬îµ£¼σ£░τ£ƒσ«₧µû¡τé╣∩╝Ü`HEAD=origin/main=9fbf35d23e1dc829c8e3bf5287089efe00bba27f`∩╝îσ╖ÑΣ╜£µáæΣ╗àµ£ëµ£¬Φ╖ƒΦ╕¬τÜä `configs/orthopedic_ct_cpu_binary_aug_standard_v18.yaml`∩╝¢Windows σ╜ôσëìµ▓íµ£ëΘí╣τ¢«Φ«¡τ╗â Python Φ┐¢τ¿ïπÇéµ£ëµòê run=`experiments/20260828_163229_cpu_binary_aug_standard_v18_roi64` σ╖▓Σ║Ä 2026-08-28 16:48:59 σ«îµêÉ 3 epoch∩╝îµ£¬ΘçìΦ╖æπÇé`history.csv`∩╝Üepoch1/2/3 train loss=`2.41104026/2.16369422/1.65625836`∩╝îmean full-volume validation Dice=`0.05534875 ΓåÆ 0.05466724 ΓåÆ 0.05402823`∩╝îbest=`epoch1`πÇésampling foreground-fraction mean=`0.0786631/0.0863857/0.0552617`∩╝îFG/BG patch=`10/18πÇü10/18πÇü8/20`πÇé
-
-ΘÜÅσÉÄσñìτö¿σÉîΣ╕Ç `best.pt`∩╝îσêåσê½σ«îµêÉ validation `ctspine1k-msd-t10-liver_7` Σ╕Ä `...liver_8` detailed evaluation∩╝îformal preflight σ¥ç `ready=true / 0 error / 0 warning`∩╝îµ£¬Φ«┐Θù« `liver_169`πÇéΣ╕ñΣ╛ïσ╣│σ¥ç∩╝ÜDice=`0.05534875`πÇüIoU=`0.02846219`πÇüPrecision=`0.03134055`πÇüRecall=`0.23691342`πÇüHD95=`176.8493 mm`πÇüASSD=`51.3895 mm`πÇüprediction/GT foreground ratio=`7.55673├ù`πÇücomponent error=`1271.0`πÇüfalse merge=`0.5`πÇüfalse break=`44.5`πÇüuncertainty AUROC/AUPRC=`0.94844/0.42240`πÇüTop-10% error recall=`0.77338`πÇüECE/MCE/Brier/NLL=`0.02716/0.22515/0.07557/0.14512`πÇüconfidence gap=`0.02714`πÇüCPU inferenceΓëê`67.46 s`πÇé
-
-Σ╕Ä v13 Bernoulli + Region+Boundary baseline∩╝êDice=`0.05470944`πÇüPrecision=`0.03423040`πÇüHD95/ASSD=`185.9498/51.4865 mm`πÇüforeground ratio=`4.02696├ù`πÇücomponent error=`1543.5`πÇüAUROC/AUPRC=`0.93707/0.33184`πÇüTop-10% error recall=`0.76170`πÇüECE/MCE/Brier/NLL=`0.01093/0.05790/0.04717/0.10325`∩╝ëµ»öΦ╛â∩╝Üv18 τÜä Dice Σ╗àµÅÉΘ½ÿτ║ª `0.000639`∩╝îHD95πÇücomponent errorπÇüuncertainty µîçµáçµ£ëµö╣σûäΣ┐íσÅ╖∩╝îΣ╜å Precision Σ╕ïΘÖìπÇüforeground overprediction Σ╗Äτ║ª `4.03├ù` σó₧Φç│ `7.56├ù`∩╝îσ╣╢Σ╕ö ECE/MCE/Brier/NLL σà¿Θ¥óµü╢σîûπÇéΦ»Ñσ░Åµá╖µ£¼ validation Σ╕ï∩╝îstandard rotation/scale τÜäµ₧üσ╝▒ Dice µö╢τ¢èΣ╕ìΦ╢│Σ╗Ñµè╡µ╢êσëìµÖ»σàêΘ¬îΣ╕Ä calibration ΘúÄΘÖ⌐πÇé
-
-µ£Çτ╗ê standard augmentation σå│τ¡û∩╝Ü**v18 Σ╕ìΘÇë∩╝¢σÉÄτ╗¡ geometric augmentation τè╢µÇüσ¢₧σê░ v13 τÜäµùóµ£ë flip-only baselineπÇé** Σ╕ïΣ╕Çµ¡ÑσÅ¬µö╣σÅÿ intensity augmentation∩╝îσêåσê½Θ¬îΦ»ü gammaπÇüGaussian noiseπÇüHU shift∩╝¢τ╗ºτ╗¡σ¢║σ«Ü CT-onlyπÇüRegion+BoundaryπÇüBernoulli sampling∩╝êforeground_probability=`0.25`πÇüpatches_per_case=`4`∩╝ëπÇüROIπÇülrπÇüschedulerπÇüseedπÇüfreeze policyπÇüfull-volume validation Σ╕Ä inferenceπÇé`lock parameters=NO`πÇü`formal independent test ready=NO`∩╝î`ctspine1k-msd-t10-liver_169=µ£¬Φ«┐Θù«`πÇé
+最终 sampling 决策：**继续使用 v13 current Bernoulli sampling（foreground_probability=`0.25`、patches_per_case=`4`）作为后续 augmentation / difficult-sample validation baseline。** 选择依据不是 sampling stability 单指标，而是区域、前景比例、表面、结构、uncertainty 与 calibration 的综合 validation 结果。v16 证明“更稳定的 sampling statistics”本身不足以带来更好的 segmentation；v17 证明当前 boundary-hard 方案会严重推高 foreground prior 并破坏 calibration。下一阶段固定 v13 input/loss/sampling/ROI/lr/scheduler/freeze policy，优先做 standard augmentation 与 intensity/HU augmentation 的最小单变量 validation；当前数据不足以真实构造 metal artifact / fracture / low-density / thick-slice difficult subset 时必须明确记为“数据不足 / 未完成”。
 
 
-### 2026-08-29∩╜£Θÿ╢µ«╡ BH∩╝Üv19ΓÇôv21 intensity augmentation σ«îµêÉ∩╝îµ£Çτ╗êΣ┐¥τòÖ v13
+### 2026-08-29｜阶段 BG：v18 standard augmentation 完成并判定不选
 
-µ£¼Φ╜«Θçìµû░µá╕Θ¬îσÉÄτí«Φ«ñ `HEAD=origin/main=9fbf35d23e1dc829c8e3bf5287089efe00bba27f`∩╝îΣ╕èΣ╕ÇΘÿ╢µ«╡ v18 µûçµíúΣ╕Ä v18ΓÇôv21 config σ░Üµ£¬µÅÉΣ║ñ∩╝¢τï¼τ½ï test `ctspine1k-msd-t10-liver_169` µ£¼Φ╜«Σ╗ìµ£¬Φ«┐Θù«πÇé
+接管时重新核验本地真实断点：`HEAD=origin/main=9fbf35d23e1dc829c8e3bf5287089efe00bba27f`，工作树仅有未跟踪的 `configs/orthopedic_ct_cpu_binary_aug_standard_v18.yaml`；Windows 当前没有项目训练 Python 进程。有效 run=`experiments/20260828_163229_cpu_binary_aug_standard_v18_roi64` 已于 2026-08-28 16:48:59 完成 3 epoch，未重跑。`history.csv`：epoch1/2/3 train loss=`2.41104026/2.16369422/1.65625836`，mean full-volume validation Dice=`0.05534875 → 0.05466724 → 0.05402823`，best=`epoch1`。sampling foreground-fraction mean=`0.0786631/0.0863857/0.0552617`，FG/BG patch=`10/18、10/18、8/20`。
 
-**v19 gamma augmentation∩╝ê0.9ΓÇô1.1∩╝ë**∩╝Üσö»Σ╕Çτ£ƒσ«₧ run=`experiments/20260829_021301_cpu_binary_aug_gamma_v19_roi64`πÇé`history.csv` σÅ¬µ£ëΣ╕ñΦ╜«∩╝Üepoch1 train loss=`2.55083960`πÇümean full-volume validation Dice=`0.04723427`∩╝¢epoch2 train loss=`2.06645347`πÇüDice=`0.04693522`πÇéΦ┐₧τ╗¡Σ╕ñΦ╜«µÿÄµÿ╛Σ╜ÄΣ║Ä v13 baseline `0.05470944` Σ╕öµ▓íµ£ëµüóσñìΦ╢ïσè┐∩╝îσ¢áµ¡ñσ╖▓µîë CPU STOP ΦºäσêÖτ╗êµ¡ó∩╝îΣ╕ìΦ╖æ epoch3∩╝îΣ╕ìΘçìµû░σÉ»σè¿πÇéτ╗ôΦ«║∩╝Ü**v19 FAIL / Σ╕ìΘÇë**πÇé
+随后复用同一 `best.pt`，分别完成 validation `ctspine1k-msd-t10-liver_7` 与 `...liver_8` detailed evaluation，formal preflight 均 `ready=true / 0 error / 0 warning`，未访问 `liver_169`。两例平均：Dice=`0.05534875`、IoU=`0.02846219`、Precision=`0.03134055`、Recall=`0.23691342`、HD95=`176.8493 mm`、ASSD=`51.3895 mm`、prediction/GT foreground ratio=`7.55673×`、component error=`1271.0`、false merge=`0.5`、false break=`44.5`、uncertainty AUROC/AUPRC=`0.94844/0.42240`、Top-10% error recall=`0.77338`、ECE/MCE/Brier/NLL=`0.02716/0.22515/0.07557/0.14512`、confidence gap=`0.02714`、CPU inference≈`67.46 s`。
 
-**v20 Gaussian noise∩╝êstd 0ΓÇô0.02∩╝ë**∩╝Üσö»Σ╕Çτ£ƒσ«₧ run=`experiments/20260829_022332_cpu_binary_aug_gaussian_v20_roi64` σ╖▓σ«îµò┤σ«îµêÉ 3 epoch∩╝îµ£¬ΘçìΦ╖æπÇéepoch1/2/3 train loss=`2.51865584/2.33694819/1.86678295`∩╝îmean full-volume validation Dice=`0.05281761 ΓåÆ 0.05426826 ΓåÆ 0.05530480`∩╝îbest=epoch3πÇésampling foreground-fraction mean=`0.07907336/0.08840765/0.05680016`∩╝îFG/BG patch=`10/18πÇü10/18πÇü8/20`πÇéΘÜÅσÉÄσñìτö¿σÉîΣ╕Ç `best.pt` σ»╣ validation `liver_7/liver_8` σ«îµêÉ detailed evaluation∩╝¢Σ╕ñΣ╛ï Dice=`0.03964278/0.07096681`∩╝îσ╣│σ¥ç Dice=`0.05530480`πÇüIoU=`0.02850551`πÇüPrecision=`0.03774130`πÇüRecall=`0.10365574`πÇüHD95=`194.1709 mm`πÇüASSD=`54.1179 mm`πÇüprediction/GT foreground ratio=`2.79203├ù`πÇücomponent error=`1635.5`πÇüfalse merge=`0.5`πÇüfalse break=`68.0`πÇüuncertainty AUROC/AUPRC=`0.92906/0.29070`πÇüTop-10% error recall=`0.74789`πÇüECE/MCE/Brier/NLL=`0.00827/0.03347/0.03679/0.09091`πÇüconfidence gap=`0.00820`πÇüCPU inferenceΓëê`68.26 s`πÇé
+与 v13 Bernoulli + Region+Boundary baseline（Dice=`0.05470944`、Precision=`0.03423040`、HD95/ASSD=`185.9498/51.4865 mm`、foreground ratio=`4.02696×`、component error=`1543.5`、AUROC/AUPRC=`0.93707/0.33184`、Top-10% error recall=`0.76170`、ECE/MCE/Brier/NLL=`0.01093/0.05790/0.04717/0.10325`）比较：v18 的 Dice 仅提高约 `0.000639`，HD95、component error、uncertainty 指标有改善信号，但 Precision 下降、foreground overprediction 从约 `4.03×` 增至 `7.56×`，并且 ECE/MCE/Brier/NLL 全面恶化。该小样本 validation 下，standard rotation/scale 的极弱 Dice 收益不足以抵消前景先验与 calibration 风险。
 
-Σ╕Ä v13 σ»╣µ»ö∩╝îv20 mean Dice Σ╗àµÅÉΘ½ÿ `0.00059536`∩╝îPrecisionπÇüforeground overpredictionπÇüECE/MCE/Brier/NLL Σ╕Ä CPU inference µ£ëµö╣σûä∩╝¢Σ╜å Recall Σ╕ïΘÖìτ║ª `0.03284`∩╝îHD95 µü╢σîûτ║ª `8.22 mm`∩╝îASSD µü╢σîûτ║ª `2.63 mm`∩╝îcomponent error σó₧σèá `92`∩╝îfalse break σó₧σèá `3.5`∩╝îuncertainty AUROC/AUPRC/Top-10% error recall σêåσê½Σ╕ïΘÖìτ║ª `0.00802/0.04114/0.01381`πÇéσ¢áµ¡ñσ░Åµá╖µ£¼ validation Σ╕ïΦ»üµì«Θ½ÿσ║ªµ╖╖σÉê∩╝îµ₧üσ╝▒ Dice σó₧τ¢èΣ╕ìΦ╢│Σ╗Ñµè╡µ╢êΦí¿Θ¥óπÇüτ╗ôµ₧äΣ╕Ä uncertainty ranking τÜäΘÇÇσîûπÇéτ╗ôΦ«║∩╝Ü**v20 µ£ëσ▒ÇΘâ¿µö╣σûäΣ┐íσÅ╖∩╝îΣ╜åτ╗╝σÉêΣ╕ìσÅûΣ╗ú v13**πÇé
+最终 standard augmentation 决策：**v18 不选；后续 geometric augmentation 状态回到 v13 的既有 flip-only baseline。** 下一步只改变 intensity augmentation，分别验证 gamma、Gaussian noise、HU shift；继续固定 CT-only、Region+Boundary、Bernoulli sampling（foreground_probability=`0.25`、patches_per_case=`4`）、ROI、lr、scheduler、seed、freeze policy、full-volume validation 与 inference。`lock parameters=NO`、`formal independent test ready=NO`，`ctspine1k-msd-t10-liver_169=未访问`。
 
-**v21 HU shift∩╝ê-50∩╜₧+50 HU∩╝ë**∩╝Üσ╖▓τí«Φ«ñ Dataset τÜä `ct_normalized` σ╝║σ║ªσó₧σ╝║Σ╜┐τö¿ preprocessing metadata τÜä `clipped_mean_hu/clipped_std_hu`∩╝îΣ╗Ñ HU-domain τ¡ëΣ╗╖µû╣σ╝Åσ«₧µû╜ shift∩╝îΣ╕ìµèè z-score ΘöÖΦ»»Φúüσë¬σê░ `[0,1]`πÇéσö»Σ╕Çτ£ƒσ«₧ run=`experiments/20260829_025018_cpu_binary_aug_hu_shift_v21_roi64`πÇéepoch1 train loss=`2.55658871`πÇüDice=`0.03671569`∩╝¢µîëΦºäσêÖσàüΦ«╕ epoch2 σñìµá╕∩╝îepoch2 train loss=`2.43075695`πÇüDice=`0.03871272`πÇéΦÖ╜τä╢τòÑµ£ëσ¢₧σìç∩╝îΣ╜åΣ╗ìµ»ö v13 Σ╜Äτ║ª `0.0160`∩╝îΦ┐£µ£¬µüóσñìσê░σÅ»τ½₧Σ║ëσî║Θù┤∩╝îσ¢áµ¡ñσ╖▓Σ╕╗σè¿σü£µ¡óτê╢/σ¡ÉΦ«¡τ╗âΦ┐¢τ¿ï∩╝îΣ╕ìΦ╖æ epoch3πÇéΦ»Ñ STOP run µ▓íµ£ëΣ╝¬ΘÇá `summary.json`∩╝¢Σ┐¥τòÖτ£ƒσ«₧ `history.csv`πÇü`sampling_stats.csv`πÇü`best.pt/last.pt`πÇéτ╗ôΦ«║∩╝Ü**v21 FAIL / Σ╕ìΘÇë**πÇé
 
-µ£Çτ╗ê augmentation σå│τ¡û∩╝Ü**v18 standard geometric Σ╕ìΘÇëπÇüv19 gamma Σ╕ìΘÇëπÇüv20 Gaussian Σ╕ìσÅûΣ╗ú baselineπÇüv21 HU shift Σ╕ìΘÇë∩╝¢µ¡úσ╝ÅΣ┐¥τòÖ v13 σÄƒµ£ë flip-only augmentationπÇé** σ╜ôσëìσ¢║σ«Ü validation baseline τ╗ºτ╗¡Σ╕║∩╝ÜCT-only + Region+Boundary + Bernoulli sampling∩╝êforeground_probability=`0.25`πÇüpatches_per_case=`4`∩╝ë+ flip-only geometric augmentation + ROI=`64┬│` training + AdamW peak lr=`5e-5` + µùóσ«Ü scheduler/seed + epoch2 Φ╡╖ encoder/decoder-feature/BN-running-stat freeze + full-volume validationπÇéσ╜ôσëìΣ╗ìΣ╕║ `lock parameters=NO`πÇü`formal independent test ready=NO`∩╝îΣ╕ïΣ╕ÇΘÿ╢µ«╡Φ┐¢σàÑ uncertainty/calibrationπÇüτ£ƒσ«₧ difficult-sample σêåµ₧ÉΣ╕Ä refinement∩╝¢µëÇµ£ëΘÿêσÇ╝/τ¡ûτòÑΣ╗ìσÅ¬Φâ╜τö▒ `liver_7/liver_8` validation σå│σ«ÜπÇé
+### 2026-08-29｜阶段 BH：v19–v21 intensity augmentation 完成，最终保留 v13
 
-### 2026-08-29∩╜£Θÿ╢µ«╡ BI∩╝Üv13 uncertainty / calibration Σ╕ñΣ╛ïτ¿│σ«ÜµÇºσêåµ₧Éσ«îµêÉ
+本轮重新核验后确认 `HEAD=origin/main=9fbf35d23e1dc829c8e3bf5287089efe00bba27f`，上一阶段 v18 文档与 v18–v21 config 尚未提交；独立 test `ctspine1k-msd-t10-liver_169` 本轮仍未访问。
 
-Θçìµû░µÄÑτ«íσÉÄτ£ƒσ«₧µá╕Θ¬î∩╝Ü`HEAD=origin/main=c090514c6611c295d5ca5932f937e10713ea5bf7`∩╝îσ╖ÑΣ╜£µáæ clean∩╝¢µ▓íµ£ëΘí╣τ¢«Φ«¡τ╗â Python Φ┐¢τ¿ïπÇév13 `best.pt` σ¡ÿσ£¿∩╝îΣ╕ö `experiments/evaluation_20260828_v13e3_liver7` / `...liver8` Σ╕¡τÜä `prediction.nii.gz`πÇü`predictive_entropy.nii.gz`πÇü`metrics_per_case.csv`πÇü`summary.json` σ¥çσ«îµò┤∩╝îσ¢áµ¡ñµ£¼Θÿ╢µ«╡**τ¢┤µÄÑσñìτö¿σ╖▓µ£ë validation inference∩╝îΣ╕ìΘçìσñìµÄ¿τÉå**πÇéτï¼τ½ï test `ctspine1k-msd-t10-liver_169` µ£¬Φ«┐Θù«πÇé
+**v19 gamma augmentation（0.9–1.1）**：唯一真实 run=`experiments/20260829_021301_cpu_binary_aug_gamma_v19_roi64`。`history.csv` 只有两轮：epoch1 train loss=`2.55083960`、mean full-volume validation Dice=`0.04723427`；epoch2 train loss=`2.06645347`、Dice=`0.04693522`。连续两轮明显低于 v13 baseline `0.05470944` 且没有恢复趋势，因此已按 CPU STOP 规则终止，不跑 epoch3，不重新启动。结论：**v19 FAIL / 不选**。
 
-ΘÇÉτùàΣ╛ïτ£ƒσ«₧ uncertainty / calibration∩╝Ü
+**v20 Gaussian noise（std 0–0.02）**：唯一真实 run=`experiments/20260829_022332_cpu_binary_aug_gaussian_v20_roi64` 已完整完成 3 epoch，未重跑。epoch1/2/3 train loss=`2.51865584/2.33694819/1.86678295`，mean full-volume validation Dice=`0.05281761 → 0.05426826 → 0.05530480`，best=epoch3。sampling foreground-fraction mean=`0.07907336/0.08840765/0.05680016`，FG/BG patch=`10/18、10/18、8/20`。随后复用同一 `best.pt` 对 validation `liver_7/liver_8` 完成 detailed evaluation；两例 Dice=`0.03964278/0.07096681`，平均 Dice=`0.05530480`、IoU=`0.02850551`、Precision=`0.03774130`、Recall=`0.10365574`、HD95=`194.1709 mm`、ASSD=`54.1179 mm`、prediction/GT foreground ratio=`2.79203×`、component error=`1635.5`、false merge=`0.5`、false break=`68.0`、uncertainty AUROC/AUPRC=`0.92906/0.29070`、Top-10% error recall=`0.74789`、ECE/MCE/Brier/NLL=`0.00827/0.03347/0.03679/0.09091`、confidence gap=`0.00820`、CPU inference≈`68.26 s`。
 
-| µîçµáç | liver_7 | liver_8 | Σ╕ñΣ╛ïσ¥çσÇ╝ | Σ╕ñΣ╛ïτ╗¥σ»╣σ╖« |
+与 v13 对比，v20 mean Dice 仅提高 `0.00059536`，Precision、foreground overprediction、ECE/MCE/Brier/NLL 与 CPU inference 有改善；但 Recall 下降约 `0.03284`，HD95 恶化约 `8.22 mm`，ASSD 恶化约 `2.63 mm`，component error 增加 `92`，false break 增加 `3.5`，uncertainty AUROC/AUPRC/Top-10% error recall 分别下降约 `0.00802/0.04114/0.01381`。因此小样本 validation 下证据高度混合，极弱 Dice 增益不足以抵消表面、结构与 uncertainty ranking 的退化。结论：**v20 有局部改善信号，但综合不取代 v13**。
+
+**v21 HU shift（-50～+50 HU）**：已确认 Dataset 的 `ct_normalized` 强度增强使用 preprocessing metadata 的 `clipped_mean_hu/clipped_std_hu`，以 HU-domain 等价方式实施 shift，不把 z-score 错误裁剪到 `[0,1]`。唯一真实 run=`experiments/20260829_025018_cpu_binary_aug_hu_shift_v21_roi64`。epoch1 train loss=`2.55658871`、Dice=`0.03671569`；按规则允许 epoch2 复核，epoch2 train loss=`2.43075695`、Dice=`0.03871272`。虽然略有回升，但仍比 v13 低约 `0.0160`，远未恢复到可竞争区间，因此已主动停止父/子训练进程，不跑 epoch3。该 STOP run 没有伪造 `summary.json`；保留真实 `history.csv`、`sampling_stats.csv`、`best.pt/last.pt`。结论：**v21 FAIL / 不选**。
+
+最终 augmentation 决策：**v18 standard geometric 不选、v19 gamma 不选、v20 Gaussian 不取代 baseline、v21 HU shift 不选；正式保留 v13 原有 flip-only augmentation。** 当前固定 validation baseline 继续为：CT-only + Region+Boundary + Bernoulli sampling（foreground_probability=`0.25`、patches_per_case=`4`）+ flip-only geometric augmentation + ROI=`64³` training + AdamW peak lr=`5e-5` + 既定 scheduler/seed + epoch2 起 encoder/decoder-feature/BN-running-stat freeze + full-volume validation。当前仍为 `lock parameters=NO`、`formal independent test ready=NO`，下一阶段进入 uncertainty/calibration、真实 difficult-sample 分析与 refinement；所有阈值/策略仍只能由 `liver_7/liver_8` validation 决定。
+
+### 2026-08-29｜阶段 BI：v13 uncertainty / calibration 两例稳定性分析完成
+
+重新接管后真实核验：`HEAD=origin/main=c090514c6611c295d5ca5932f937e10713ea5bf7`，工作树 clean；没有项目训练 Python 进程。v13 `best.pt` 存在，且 `experiments/evaluation_20260828_v13e3_liver7` / `...liver8` 中的 `prediction.nii.gz`、`predictive_entropy.nii.gz`、`metrics_per_case.csv`、`summary.json` 均完整，因此本阶段**直接复用已有 validation inference，不重复推理**。独立 test `ctspine1k-msd-t10-liver_169` 未访问。
+
+逐病例真实 uncertainty / calibration：
+
+| 指标 | liver_7 | liver_8 | 两例均值 | 两例绝对差 |
 |---|---:|---:|---:|---:|
-| uncertaintyΓåÆerror AUROC | 0.929493 | 0.944655 | 0.937074 | 0.015163 |
-| uncertaintyΓåÆerror AUPRC | 0.333540 | 0.330136 | 0.331838 | 0.003403 |
+| uncertainty→error AUROC | 0.929493 | 0.944655 | 0.937074 | 0.015163 |
+| uncertainty→error AUPRC | 0.333540 | 0.330136 | 0.331838 | 0.003403 |
 | Top-10% error recall | 0.728909 | 0.794498 | 0.761704 | 0.065589 |
 | mean entropy on error | 0.562366 | 0.593707 | 0.578037 | 0.031341 |
 | mean entropy on correct | 0.054027 | 0.047809 | 0.050918 | 0.006218 |
@@ -2520,162 +2520,162 @@ v17=`configs/orthopedic_ct_cpu_binary_sampling_boundary_hard_v17.yaml`∩╝îµ
 | NLL | 0.120785 | 0.085713 | 0.103249 | 0.035072 |
 | confidence gap | 0.014109 | 0.007673 | 0.010891 | 0.006436 |
 
-Σ╕ñΣ╛ï error voxel τÜäσ╣│σ¥ç entropy σêåσê½τ║ªΣ╕║ correct voxel τÜä `10.41├ù` Σ╕Ä `12.42├ù`∩╝¢σÉîµù╢ AUROC Σ╕ñΣ╛ïσ¥ç >`0.92`πÇüTop-10% uncertainty σî║σƒƒσÅ»Φªåτ¢ûτ║ª `72.9%/79.4%` τÜäτ£ƒσ«₧ΘöÖΦ»»πÇé**σ¢áµ¡ñσ£¿σ╜ôσëìΣ╕ñΣ╛ï validation Σ╕è∩╝îuncertainty σÅ»Σ╗ÑΣ╜£Σ╕║Φ╛âσ╝║τÜä error indicator∩╝îσ╣╢σà╖σñç QC signal Σ╕Ä ROI refinement trigger τÜäτ¢┤µÄÑσ«ÜΘçÅΣ╛¥µì«πÇé** AUPRC Σ╕ñΣ╛ïτ║ª `0.33` Σ╕öΘ¥₧σ╕╕µÄÑΦ┐æ∩╝îΦ»┤µÿÄ ranking σ£¿Σ╕ñΣ╛ïΣ╣ïΘù┤µ£ëΣ╕Çσ«ÜΣ╕ÇΦç┤µÇº∩╝¢Σ╜å error prevalence Σ╗àτ║ª `3.50%/2.55%`∩╝îAUPRC Σ╕ìσ║öΣ╕Ä AUROCΦä▒τª╗σƒ║τ║┐σìòτï¼σñ╕σñºπÇé
+两例 error voxel 的平均 entropy 分别约为 correct voxel 的 `10.41×` 与 `12.42×`；同时 AUROC 两例均 >`0.92`、Top-10% uncertainty 区域可覆盖约 `72.9%/79.4%` 的真实错误。**因此在当前两例 validation 上，uncertainty 可以作为较强的 error indicator，并具备 QC signal 与 ROI refinement trigger 的直接定量依据。** AUPRC 两例约 `0.33` 且非常接近，说明 ranking 在两例之间有一定一致性；但 error prevalence 仅约 `3.50%/2.55%`，AUPRC 不应与 AUROC脱离基线单独夸大。
 
-calibration µû╣Θ¥ó ECE / confidence gap Θâ╜Φ╛âΣ╜Ä∩╝î`liver_8` σÑ╜Σ║Ä `liver_7`∩╝îΣ╜å MCEπÇüBrierπÇüNLL Σ╗ìσ¡ÿσ£¿µÿÄµÿ╛τùàΣ╛ïσ╖«σ╝é∩╝¢µ¢┤ΘçìΦªüτÜäµÿ»σ╜ôσëì segmentation Dice Σ╗ìΣ╗à `0.04531/0.06411`∩╝îΣ╜Ä ECE Σ╕╗ΦªüσÅìµÿáτ╗¥σñºσñÜµò░ΦâîµÖ»Σ╜ôτ┤áΣ╕èτÜäµò┤Σ╜ôτ╜«Σ┐íΦíîΣ╕║∩╝î**Σ╕ìΦâ╜µì«µ¡ñσ«úτº░µ¿íσ₧ïσ£¿Θ¬¿τ╗ôµ₧äσëìµÖ»Σ╕èΓÇ£σ╖▓µáíσçåΓÇ¥µêûΣ╕┤σ║èσÅ»Θ¥á**πÇéσ╜ôσëìΣ╕ÑΦ░¿τ╗ôΦ«║Σ╕║∩╝Üuncertainty ranking τÜäΣ╕ñΣ╛ïτ¿│σ«ÜµÇºΦ╛âσÑ╜∩╝¢calibration τÜäµÇ╗Σ╜ôµò░σÇ╝Φ╛âΣ╜ÄΣ╜åτùàΣ╛ïΘù┤Σ╗ìµ£ëσ╖«σ╝é∩╝îΣ╕öσÅùΣ╕ÑΘçìτ▒╗σê½Σ╕ìσ╣│Φííσ╜▒σôì∩╝îσÅ¬Φâ╜Σ╜£Σ╕║ validation σ╖Ñτ¿ïΦ»üµì«πÇé
+calibration 方面 ECE / confidence gap 都较低，`liver_8` 好于 `liver_7`，但 MCE、Brier、NLL 仍存在明显病例差异；更重要的是当前 segmentation Dice 仍仅 `0.04531/0.06411`，低 ECE 主要反映绝大多数背景体素上的整体置信行为，**不能据此宣称模型在骨结构前景上“已校准”或临床可靠**。当前严谨结论为：uncertainty ranking 的两例稳定性较好；calibration 的总体数值较低但病例间仍有差异，且受严重类别不平衡影响，只能作为 validation 工程证据。
 
-τºæτáöΘù«Θóÿτ╗ôΦ«║∩╝Ü1) error indicator=`YES∩╝êvalidation evidence∩╝ë`∩╝¢2) QC signal=`YES∩╝êσÅ»τö¿Σ║ÄΘ½ÿΘúÄΘÖ⌐σî║σƒƒµÅÉτñ║∩╝îΣ╜åΘ£Çµ¢┤σñÜτùàΣ╛ïΘ¬îΦ»ü∩╝ë`∩╝¢3) refinement trigger=`YES∩╝êΣ╝ÿσàêΣ╜┐τö¿ percentile/top-percent ROI∩╝îΘÿêσÇ╝σÅ¬Φâ╜τö▒ liver_7/liver_8 σå│σ«Ü∩╝ë`∩╝¢4) Σ╕ñΣ╛ï stability=`Θâ¿σêåµö»µîü`∩╝îAUROC/AUPRC σÆî error-vs-correct entropy Σ╕ÇΦç┤µÇºΦ╛âσÑ╜∩╝îTop-10% recall Σ╕Ä calibration µîçµáçσ¡ÿσ£¿τùàΣ╛ïσ╖«∩╝¢5) µö»µîüµîçµáçΣ╕║ AUROCπÇüAUPRCπÇüTop-10% error recallπÇüerror/correct entropy gap∩╝îΘÖÉσê╢µîçµáç/Φ»üµì«Σ╕║Σ╗à 2 Σ╕¬ validation τùàΣ╛ïπÇüΣ╜Ä DiceπÇüτ▒╗σê½Σ╕ìσ╣│ΦííσÅè MCE/Brier/NLL τÜäτùàΣ╛ïσ╖«σ╝éπÇé
+科研问题结论：1) error indicator=`YES（validation evidence）`；2) QC signal=`YES（可用于高风险区域提示，但需更多病例验证）`；3) refinement trigger=`YES（优先使用 percentile/top-percent ROI，阈值只能由 liver_7/liver_8 决定）`；4) 两例 stability=`部分支持`，AUROC/AUPRC 和 error-vs-correct entropy 一致性较好，Top-10% recall 与 calibration 指标存在病例差；5) 支持指标为 AUROC、AUPRC、Top-10% error recall、error/correct entropy gap，限制指标/证据为仅 2 个 validation 病例、低 Dice、类别不平衡及 MCE/Brier/NLL 的病例差异。
 
-µ£¼Θÿ╢µ«╡Σ╕ìµö╣σÅÿ v13 baseline∩╝îΣ╕ìΘöüσÅé∩╝Ü`lock parameters=NO`πÇü`formal independent test ready=NO`πÇéΣ╕ïΣ╕Çµ¡ÑΦ┐¢σàÑ high-loss / high-uncertainty difficult mining Σ╕Äτ£ƒσ«₧ thick-slice/data-evidence µá╕Θ¬î∩╝îτä╢σÉÄσåìσüÜ ROI refinementπÇé
+本阶段不改变 v13 baseline，不锁参：`lock parameters=NO`、`formal independent test ready=NO`。下一步进入 high-loss / high-uncertainty difficult mining 与真实 thick-slice/data-evidence 核验，然后再做 ROI refinement。
 
-### 2026-08-29∩╜£Θÿ╢µ«╡ BJ∩╝Üµ¿íσ₧ïΘ⌐▒σè¿σ¢░ΘÜ╛µá╖µ£¼µ╢êΦ₧ìσ«îµêÉ
+### 2026-08-29｜阶段 BJ：模型驱动困难样本消融完成
 
-Θçìµû░µá╕Θ¬îσÉÄτí«Φ«ñµ▓íµ£ëσà╢σ«âµÿéΦ┤╡ CPU training∩╝¢τï¼τ½ï test `ctspine1k-msd-t10-liver_169` σà¿τ¿ïµ£¬Φ«┐Θù«πÇéσå╗τ╗ô v13 guidance σ╖▓Φªåτ¢û 7 Σ╕¬ train case∩╝î`high_loss` Σ╕Ä `high_uncertainty` µ»ÅτùàΣ╛ïσ¥çσ╖▓µ£ë `hard_centers.nii.gz + scores.json`∩╝îcandidate_per_branch=`16`πÇütop_percent=`25`∩╝îΣ╕öΣ╕ñτºì score σà▒τö¿σÉîΣ╕Çµ¼íσå╗τ╗ôµ¿íσ₧ïσëìσÉæπÇé
+重新核验后确认没有其它昂贵 CPU training；独立 test `ctspine1k-msd-t10-liver_169` 全程未访问。冻结 v13 guidance 已覆盖 7 个 train case，`high_loss` 与 `high_uncertainty` 每病例均已有 `hard_centers.nii.gz + scores.json`，candidate_per_branch=`16`、top_percent=`25`，且两种 score 共用同一次冻结模型前向。
 
-**v22 high-loss**∩╝Üσö»Σ╕Çµ£ëµòê run=`experiments/20260829_032649_cpu_binary_sampling_high_loss_v22_roi64`πÇéepoch1 train loss=`2.6903853459`πÇümean full-volume validation Dice=`0.0472883854`πÇüstd=`0.0066568593`∩╝¢µîë STOP ΦºäσêÖΣ╗ÄσÉîΣ╕Ç `checkpoint/last.pt` resume σê░ epoch2∩╝îtrain loss=`1.6340184872`πÇüDice=`0.0472845707`πÇüstd=`0.0066129727`πÇéΣ╕ñΦ╜«σ¥çµÿÄµÿ╛Σ╜ÄΣ║Ä v13=`0.0547094410`∩╝îepoch2 µ▓íµ£ëµüóσñì∩╝îσ¢áµ¡ñ **v22 FAIL / Σ╕ìΘÇë / Σ╕ìΦ╖æ epoch3**πÇésampling foreground/background patch=`12/16 ΓåÆ 13/15`∩╝îforeground-fraction mean=`0.0996883 ΓåÆ 0.0896146`πÇé
+**v22 high-loss**：唯一有效 run=`experiments/20260829_032649_cpu_binary_sampling_high_loss_v22_roi64`。epoch1 train loss=`2.6903853459`、mean full-volume validation Dice=`0.0472883854`、std=`0.0066568593`；按 STOP 规则从同一 `checkpoint/last.pt` resume 到 epoch2，train loss=`1.6340184872`、Dice=`0.0472845707`、std=`0.0066129727`。两轮均明显低于 v13=`0.0547094410`，epoch2 没有恢复，因此 **v22 FAIL / 不选 / 不跑 epoch3**。sampling foreground/background patch=`12/16 → 13/15`，foreground-fraction mean=`0.0996883 → 0.0896146`。
 
-**v23 high-uncertainty**∩╝Üτ¼¼Σ╕Çµ¼íσ╖Ñσà╖µù╢ΘÖÉΣ╕¡µû¡σÅæτöƒσ£¿ epoch1 full-volume validation σëìσÉÄ∩╝¢Φ»ÑΣ╕ìσ«îµò┤ run σÅ¬σåÖσç║Σ║å samplingπÇüµ▓íµ£ë history/checkpoint/summary∩╝îσ¢áµ¡ñµÿÄτí«Σ╕ìΣ╜£Σ╕║τ╗ôµ₧£πÇéσ«îµêÉΦ┐¢τ¿ï/µûçΣ╗╢µá╕Θ¬îσÉÄ∩╝îΘçìµû░Φ┐ÉΦíîσÉîΣ╕Çτí«σ«ÜµÇº epoch1∩╝îµ¡úσ╝Åµ£ëµòê run=`experiments/20260829_035559_cpu_binary_sampling_high_uncertainty_v23_roi64`πÇéepoch1 train loss=`2.4463565562`πÇüDice=`0.0096347464`πÇüstd=`0.0028995002`∩╝¢τö▒Σ║ÄµÿÄµÿ╛σñ▒Φ┤Ñ∩╝îΣ╗àσàüΦ«╕Σ╗ÄσÉîΣ╕Ç `last.pt` resume σê░ epoch2 σñìµá╕πÇéepoch2 train loss=`2.7288374603`πÇüDice=`0.0101023163`πÇüstd=`0.0028699958`πÇéΦÖ╜µ»ö epoch1 τòÑσìç∩╝îΣ╜åΣ╗ìΦ┐£Σ╜ÄΣ║Ä v13∩╝îσ¢áµ¡ñ **v23 FAIL / Σ╕ìΘÇë / STOP∩╝îΣ╕ìΦ╖æ epoch3**πÇésampling foreground/background patch=`9/19 ΓåÆ 10/18`∩╝îforeground-fraction mean=`0.0825232 ΓåÆ 0.0850695`πÇé
+**v23 high-uncertainty**：第一次工具时限中断发生在 epoch1 full-volume validation 前后；该不完整 run 只写出了 sampling、没有 history/checkpoint/summary，因此明确不作为结果。完成进程/文件核验后，重新运行同一确定性 epoch1，正式有效 run=`experiments/20260829_035559_cpu_binary_sampling_high_uncertainty_v23_roi64`。epoch1 train loss=`2.4463565562`、Dice=`0.0096347464`、std=`0.0028995002`；由于明显失败，仅允许从同一 `last.pt` resume 到 epoch2 复核。epoch2 train loss=`2.7288374603`、Dice=`0.0101023163`、std=`0.0028699958`。虽比 epoch1 略升，但仍远低于 v13，因此 **v23 FAIL / 不选 / STOP，不跑 epoch3**。sampling foreground/background patch=`9/19 → 10/18`，foreground-fraction mean=`0.0825232 → 0.0850695`。
 
-**τ£ƒσ«₧ data-evidence**∩╝Ütrain Σ╕¡ `liver_0/liver_1` σÄƒσºï z-spacingΓëê`5.0 mm`∩╝îσà╢Σ╜Ö train σñÜΣ╕║Γëê`0.8ΓÇô1.0 mm`∩╝¢validation `liver_7/liver_8` σ¥çΣ╕║ `1.0 mm`πÇéσå╗τ╗ô v13 guidance τÜäτ£ƒσ«₧Φ«¡τ╗â patch τ╗ƒΦ«íµÿ╛τñ║∩╝îΣ╕ñΣ╛ï 5 mm thick-slice case τÜäσ╣│σ¥ç candidate loss µ»öσà╢Σ╜Ö train Θ½ÿτ║ª `12.9%`∩╝îσ╣│σ¥ç uncertainty Θ½ÿτ║ª `13.0%`πÇéσ¢áµ¡ñσ╜ôσëìσÅ¬Φâ╜σåÖ∩╝Ü**thick-slice train cases σ£¿σ╜ôσëì v13 patch-level model score Σ╕èσæêτÄ░µ¢┤Θ½ÿ difficulty signal**πÇévalidation µ▓íµ£ë thick-slice τùàΣ╛ï∩╝îµëÇΣ╗Ñ **validation thick-slice subgroup µò░µì«Σ╕ìΦ╢│**∩╝îΣ╕ìΦâ╜Σ╝¬ΘÇá subgroup DiceπÇéσ╜ôσëì metadata / τùàΣ╛ïΦ«░σ╜òΣ╣ƒΣ╕ìΦ╢│Σ╗ÑσÅ»Θ¥áµáçΦ«░ metal artifactπÇüfractureπÇülow-density τùàΣ╛ï∩╝îσ¢áµ¡ñΦ┐ÖΣ║¢ subgroup τ╗ºτ╗¡Φ«░Σ╕║ΓÇ£µò░µì«Σ╕ìΦ╢│ / µ£¬σ«îµêÉΓÇ¥∩╝îτªüµ¡óΣ║║Σ╕║µîçσ«ÜτùàΣ╛ïπÇé
+**真实 data-evidence**：train 中 `liver_0/liver_1` 原始 z-spacing≈`5.0 mm`，其余 train 多为≈`0.8–1.0 mm`；validation `liver_7/liver_8` 均为 `1.0 mm`。冻结 v13 guidance 的真实训练 patch 统计显示，两例 5 mm thick-slice case 的平均 candidate loss 比其余 train 高约 `12.9%`，平均 uncertainty 高约 `13.0%`。因此当前只能写：**thick-slice train cases 在当前 v13 patch-level model score 上呈现更高 difficulty signal**。validation 没有 thick-slice 病例，所以 **validation thick-slice subgroup 数据不足**，不能伪造 subgroup Dice。当前 metadata / 病例记录也不足以可靠标记 metal artifact、fracture、low-density 病例，因此这些 subgroup 继续记为“数据不足 / 未完成”，禁止人为指定病例。
 
-µ£Çτ╗ê difficult-sample σå│τ¡û∩╝Ü**boundary-hardπÇühigh-lossπÇühigh-uncertainty σ¥çµ£¬σ╕ªµ¥ÑσÅ»µÄÑσÅù validation µö╣σûä∩╝îτ╗ºτ╗¡Σ┐¥τòÖ v13 Bernoulli sampling∩╝êforeground_probability=`0.25`πÇüpatches_per_case=`4`∩╝ëΣ╜£Σ╕║µ£Çτ╗ê validation baselineπÇé** σ╜ôσëìΣ╗ìΣ╕║ `lock parameters=NO`πÇü`formal independent test ready=NO`∩╝¢Σ╕ïΣ╕ÇΘÿ╢µ«╡τ¢┤µÄÑΦ┐¢σàÑ ROI refinement∩╝îσ╣╢Σ╝ÿσàêσñìτö¿ v13 σ╖▓µ£ë prediction + entropy∩╝îΘü┐σàìΘçìσñì coarse inferenceπÇé
+最终 difficult-sample 决策：**boundary-hard、high-loss、high-uncertainty 均未带来可接受 validation 改善，继续保留 v13 Bernoulli sampling（foreground_probability=`0.25`、patches_per_case=`4`）作为最终 validation baseline。** 当前仍为 `lock parameters=NO`、`formal independent test ready=NO`；下一阶段直接进入 ROI refinement，并优先复用 v13 已有 prediction + entropy，避免重复 coarse inference。
 
-### 2026-08-29∩╜£Θÿ╢µ«╡ BK∩╝ÜΣ╕ìτí«σ«ÜµÇº ROI τ▓╛Σ┐«τ£ƒσ«₧ validation σ«îµêÉσ╣╢σêñσ«Ü FAIL
+### 2026-08-29｜阶段 BK：不确定性 ROI 精修真实 validation 完成并判定 FAIL
 
-σàêµüóσñìτ£ƒσ«₧µû¡τé╣σ╣╢µá╕Θ¬îΦ┐¢τ¿ï∩╝Ü`HEAD==origin/main==55c10f9`∩╝îGit Σ╜£ΦÇàΣ╕║ `927242768-dotcom <927242768@qq.com>`∩╝¢σÅæτÄ░σÄƒ refinement validation launcher PID=`21024`πÇüchild Python PID=`40108` Σ╗ìσ£¿τ£ƒσ«₧ CPU Φ«íτ«ù∩╝îσ¢áµ¡ñσà¿τ¿ïσñìτö¿σÄƒΦ┐¢τ¿ï∩╝îµ£¬σÉ»σè¿τ¼¼Σ║îΣ╗╜ validation∩╝îΣ╣ƒµ£¬Θçìµû░Φ«¡τ╗â refinementπÇéµ£ƒΘù┤ @PYB σñÜµ¼íτ₧¼µû¡∩╝îΣ╜åσ¥çσàêσñìµá╕σÉîΣ╕Ç PID Σ╕ÄµûçΣ╗╢µ¢┤µû░µù╢Θù┤∩╝îµ▓íµ£ëσ¢áσ╖Ñσà╖ timeout/µû¡τ║┐ΘçìσÉ»µÿéΦ┤╡Σ╗╗σèíπÇéµ£Çτ╗ê run=`experiments/20260829_044259_v13_uncertainty_roi_refinement_v1` Σ║Ä `2026-08-29T13:32:13` σ«îµêÉ∩╝îΣ╕ñΣ╛ïσà¿Θâ¿ 9 Σ╕¬ ROI candidate Σ╕Ä full-volume second-pass predictionπÇü`metrics_per_case.csv`πÇü`summary_by_candidate.csv`πÇü`summary.json` σ╖▓τöƒµêÉπÇé
+先恢复真实断点并核验进程：`HEAD==origin/main==55c10f9`，Git 作者为 `927242768-dotcom <927242768@qq.com>`；发现原 refinement validation launcher PID=`21024`、child Python PID=`40108` 仍在真实 CPU 计算，因此全程复用原进程，未启动第二份 validation，也未重新训练 refinement。期间 @PYB 多次瞬断，但均先复核同一 PID 与文件更新时间，没有因工具 timeout/断线重启昂贵任务。最终 run=`experiments/20260829_044259_v13_uncertainty_roi_refinement_v1` 于 `2026-08-29T13:32:13` 完成，两例全部 9 个 ROI candidate 与 full-volume second-pass prediction、`metrics_per_case.csv`、`summary_by_candidate.csv`、`summary.json` 已生成。
 
-canonical reconstruction blocker σ╖▓τí«Φ«ñΦºúΘÖñ∩╝Ü`liver_7/liver_8` τÜä `canonical_reconstruction_prediction_mismatch_voxels=0`∩╝îΣ╕ñΣ╛ï entropy max abs error σ¥çτ║ª `9.8618e-7`∩╝¢Top-5/10/20% ├ù dilation 0/1/2 τÜäµëÇµ£ë ROI-only candidate σ¥çµ╗íΦ╢│ `outside_roi_changed_fraction=0`∩╝îΦ»üµÿÄ ROI σñû prediction ΘÇÉΣ╜ôτ┤áΣ┐¥µîüΣ╕ìσÅÿπÇérefinement checkpoint σÅ¬µ¥ÑΦç¬ 7 Σ╕¬ train cases τÜäµùóµ£ë `checkpoint/last.pt`∩╝¢µ£¼Φ╜«µÿ» validation-only∩╝î`test_accessed=false`∩╝îµ▓íµ£ëΦ«┐Θù«τï¼τ½ï testπÇé
+canonical reconstruction blocker 已确认解除：`liver_7/liver_8` 的 `canonical_reconstruction_prediction_mismatch_voxels=0`，两例 entropy max abs error 均约 `9.8618e-7`；Top-5/10/20% × dilation 0/1/2 的所有 ROI-only candidate 均满足 `outside_roi_changed_fraction=0`，证明 ROI 外 prediction 逐体素保持不变。refinement checkpoint 只来自 7 个 train cases 的既有 `checkpoint/last.pt`；本轮是 validation-only，`test_accessed=false`，没有访问独立 test。
 
-coarse v13 Σ╕ñΣ╛ïσ¥çσÇ╝∩╝ÜDice=`0.05470944`πÇüIoU=`0.02814807`πÇüPrecision=`0.03423040`πÇüRecall=`0.13649179`πÇüHD95/ASSD=`185.9498/51.4865 mm`πÇüforeground ratio=`4.02696├ù`πÇücomponent error=`1543.5`πÇüfalse break=`64.5`πÇüglobal error=`0.03025086`πÇüpipeline time=`75.0131 s`πÇéROI-only µò░σÇ╝µ£Çσ╝║σÇÖΘÇë Top-20%+dilation2∩╝ÜDice=`0.07407384`πÇüIoU=`0.03865424`πÇüPrecision=`0.08146804`πÇüRecall=`0.06965428`πÇüHD95/ASSD=`175.9586/47.1264 mm`πÇüforeground ratio=`0.96487├ù`πÇücomponent error=`2397.5`πÇüfalse break=`138`πÇüglobal error=`0.01173338`πÇüpipeline time=`99.9478 s`πÇéfull-volume second-pass τÜäσêåσë▓µîçµáçΣ╕ÄΦ»ÑσÇÖΘÇëτ¢╕σÉî∩╝îΣ╜åµ▓íµ£ëσ╜óµêÉΘó¥σñûΘÇëµï⌐Σ╝ÿσè┐πÇé
+coarse v13 两例均值：Dice=`0.05470944`、IoU=`0.02814807`、Precision=`0.03423040`、Recall=`0.13649179`、HD95/ASSD=`185.9498/51.4865 mm`、foreground ratio=`4.02696×`、component error=`1543.5`、false break=`64.5`、global error=`0.03025086`、pipeline time=`75.0131 s`。ROI-only 数值最强候选 Top-20%+dilation2：Dice=`0.07407384`、IoU=`0.03865424`、Precision=`0.08146804`、Recall=`0.06965428`、HD95/ASSD=`175.9586/47.1264 mm`、foreground ratio=`0.96487×`、component error=`2397.5`、false break=`138`、global error=`0.01173338`、pipeline time=`99.9478 s`。full-volume second-pass 的分割指标与该候选相同，但没有形成额外选择优势。
 
-τùàΣ╛ïτ¿│σ«ÜµÇºσÉªσ«ÜΣ║åΓÇ£σÅ¬τ£ïσ¥çσÇ╝ DiceΓÇ¥τÜä PASS∩╝Ü`liver_7` Dice Σ╗à `0.04531ΓåÆ0.04783`∩╝îRecall `0.11879ΓåÆ0.05268`∩╝îHD95 `197.39ΓåÆ201.25 mm`πÇüASSD `55.36ΓåÆ57.79 mm` σÅìΦÇîµü╢σîû∩╝îcomponent error `1561ΓåÆ2470`πÇüfalse break `69ΓåÆ132`∩╝¢`liver_8` ΦÖ╜ Dice `0.06411ΓåÆ0.10032`πÇüHD95/ASSD `174.51/47.61ΓåÆ150.67/36.47 mm` µÿÄµÿ╛µö╣σûä∩╝îΣ╜å Recall `0.15420ΓåÆ0.08663`πÇücomponent error `1526ΓåÆ2325`πÇüfalse break `60ΓåÆ144` σÉîµá╖µü╢σîûπÇéτ╗╝σÉêσî║σƒƒπÇüΦí¿Θ¥óπÇüforeground ratioπÇüµïôµëæπÇüROI/global errorπÇüµÄ¿τÉåµù╢Θù┤σÆîΣ╕ñΣ╛ïτ¿│σ«ÜµÇºσÉÄ∩╝îµ¡úσ╝Åσêñσ«Ü∩╝Ü**REFINEMENT=FAIL**πÇéσ¢áµ¡ñΣ╕ìµèè refinement σåÖµêÉµêÉσèƒµû╣µ│ò∩╝îµ£Çτ╗ê validation pipeline τ╗ºτ╗¡Σ╜┐τö¿ v13 coarse `best.pt`∩╝¢σ╜ôσëì `lock parameters=NO`πÇü`formal independent test ready=NO`∩╝îΣ╕ïΣ╕Çµ¡ÑσÅ¬σüÜ v13 validation prediction τÜä 3D/SDF/Web τ£ƒσ«₧Θ¬îµö╢σÆîσÅéµò░µ£Çτ╗êΘöüσ«Ü∩╝îτä╢σÉÄµëìσàüΦ«╕τï¼τ½ï testπÇé
+病例稳定性否定了“只看均值 Dice”的 PASS：`liver_7` Dice 仅 `0.04531→0.04783`，Recall `0.11879→0.05268`，HD95 `197.39→201.25 mm`、ASSD `55.36→57.79 mm` 反而恶化，component error `1561→2470`、false break `69→132`；`liver_8` 虽 Dice `0.06411→0.10032`、HD95/ASSD `174.51/47.61→150.67/36.47 mm` 明显改善，但 Recall `0.15420→0.08663`、component error `1526→2325`、false break `60→144` 同样恶化。综合区域、表面、foreground ratio、拓扑、ROI/global error、推理时间和两例稳定性后，正式判定：**REFINEMENT=FAIL**。因此不把 refinement 写成成功方法，最终 validation pipeline 继续使用 v13 coarse `best.pt`；当前 `lock parameters=NO`、`formal independent test ready=NO`，下一步只做 v13 validation prediction 的 3D/SDF/Web 真实验收和参数最终锁定，然后才允许独立 test。
 
 
-### 2026-08-29∩╜£Θÿ╢µ«╡ BL∩╝Üv0.3.0 µ¡úσ╝ÅΘù¡τÄ»σÉÄτÜäµ£Çτ╗êµûçµíúΣ╕ÇΦç┤µÇºΣ╕Äσ▒òτñ║µ¥ÉµûÖµö╢σ░╛
+### 2026-08-29｜阶段 BL：v0.3.0 正式闭环后的最终文档一致性与展示材料收尾
 
-µ£¼Φ╜«Σ╗Ä `HEAD == origin/main == 1037c44dafd636903da1716fe175295f74bcdaea`πÇüworking tree clean µÄÑτ«í∩╝îGit `user.name/user.email` τ£ƒσ«₧µá╕Θ¬îΣ╕║ `927242768-dotcom / 927242768@qq.com`πÇéΣ╕Ñµá╝Θü╡σ«êµ£Çτ╗êµ╡ïΦ»òσå╗τ╗ôΦºäσêÖ∩╝Ü**µ▓íµ£ëΘçìµû░Φ«¡τ╗â v1∩╜₧v23∩╝îµ▓íµ£ëΘçìµû░Φ┐ÉΦíî validation∩╝îµ▓íµ£ëσåìµ¼íΦ┐ÉΦíî `evaluate.py` σ»╣ `liver_169` σüÜµ£Çτ╗êµ¡úσ╝Åµ¿íσ₧ïµÄ¿τÉå**∩╝¢µëÇµ£ë independent-test µò░σ¡ùπÇüprediction/entropyπÇümesh/SDF/Web τ╗ôΦ«║σÅ¬σñìτö¿µùóµ£ëµ¡úσ╝ÅΣ║ºτë⌐Σ╕Äσ╖▓σå╗τ╗ôµûçµíúΦ«░σ╜òπÇé
+本轮从 `HEAD == origin/main == 1037c44dafd636903da1716fe175295f74bcdaea`、working tree clean 接管，Git `user.name/user.email` 真实核验为 `927242768-dotcom / 927242768@qq.com`。严格遵守最终测试冻结规则：**没有重新训练 v1～v23，没有重新运行 validation，没有再次运行 `evaluate.py` 对 `liver_169` 做最终正式模型推理**；所有 independent-test 数字、prediction/entropy、mesh/SDF/Web 结论只复用既有正式产物与已冻结文档记录。
 
-Θçìµû░µá╕σ»╣µ£Çτ╗êΘÿ╢µ«╡Θô╛∩╝Üvalidation prediction 3D/Web µÅÉΣ║ñ=`2f333ba`∩╝¢µ£Çτ╗êσÅéµò░Θöüσ«Ü=`eb0a824`∩╝¢σö»Σ╕ÇΣ╕Çµ¼íµ¡úσ╝Å independent test=`20311d8`∩╝¢µ¡úσ╝Åµ╡ïΦ»òΦ«║µûç/Σ╕¡µ£ƒσÉîµ¡Ñ=`6f69d80`∩╝¢µ£Çτ╗êΘ¬îµö╢Σ╕Ä Release σƒ║τ║┐=`4981dba`∩╝êtag `v0.3.0`∩╝ë∩╝¢README σ╜ôσëìσ╖Ñτ¿ïΘÿ╢µ«╡τ▓╛τ«Ç=`1037c44`πÇéGitHub Φ┐£τ½»σ╖▓τí«Φ«ñ `v0.3.0 - Formal Independent Test & Research Pipeline Closure` σ¡ÿσ£¿∩╝îRelease µ¡úτí«Σ┐¥τòÖΣ╜Ä DiceπÇüΘ¥₧Σ╕┤σ║èσÆîµ£¬µ¥Ñσ╝║ baseline/µë⌐µá╖µ£¼ΘÖÉσê╢∩╝îσ¢áµ¡ñµ£¼Φ╜«τ║»µûçµíúΣ╕Äσ▒òτñ║µ¥ÉµûÖµö╢σ░╛**Σ╕ìµû░σ╗║Θçìσñì Release**πÇé
+重新核对最终阶段链：validation prediction 3D/Web 提交=`2f333ba`；最终参数锁定=`eb0a824`；唯一一次正式 independent test=`20311d8`；正式测试论文/中期同步=`6f69d80`；最终验收与 Release 基线=`4981dba`（tag `v0.3.0`）；README 当前工程阶段精简=`1037c44`。GitHub 远端已确认 `v0.3.0 - Formal Independent Test & Research Pipeline Closure` 存在，Release 正确保留低 Dice、非临床和未来强 baseline/扩样本限制，因此本轮纯文档与展示材料收尾**不新建重复 Release**。
 
-µ£¼Φ╜«σ«₧ΘÖàσ«îµêÉ∩╝Ü
+本轮实际完成：
 
-- Σ┐«σñì README τÜäΦ«║µûçτ╗ôµ₧£τè╢µÇüΣ╕Ä CPU/GPU σ╜ôσëìσÅúσ╛ä∩╝îσ╣╢µèèµ£Çτ╗êΘöüσÅéπÇüµ¡úσ╝Åτï¼τ½ïµ╡ïΦ»òπÇüv0.3.0 σ▒òτñ║µÅÉτ║▓σèáσàÑΘªûΘí╡σ»╝Φê¬∩╝¢
-- Σ┐«σñì `TASKS.md` Σ╕¡µùº `ready=false`πÇüfuture overlayπÇü108 tests τ¡ëΦ┐çµ£ƒµ¥íτ¢«∩╝îΘçìµû░σî║σêåΓÇ£σ╜ôσëìµèÇµ£»τ¿┐σ╖▓σ«îµêÉΓÇ¥σÆîΓÇ£Θ£ÇΦªüσñûΘâ¿µ¥íΣ╗╢/µ¿íµ¥┐τÜäτ£ƒµ¡úσ╛àσè₧ΓÇ¥∩╝¢
-- τ│╗τ╗ƒµ╕àτÉå `PROJECT_STATUS.md` σ╜ôσëìτè╢µÇüσî║τÜäµùº 94/103 testsπÇüResults TBDπÇüΣ║║σ╖Ñ QC µ£¬τ¡╛σ¡ùπÇüGPU µÿ»µ¡úσ╝Åσ«₧Θ¬î blockerπÇüΣ╗╗σèíµ£¬Θöüσ«ÜπÇüWeb/prediction/3D σ░Üσ╛àσ«îµêÉτ¡ëΦ┐çµ£ƒσÅúσ╛ä∩╝¢µîëµùÑµ£ƒΣ┐¥τòÖσÄåσÅ▓Θÿ╢µ«╡Φ«░σ╜ò∩╝îΣ╕ìσÅìσÉæτ»íµö╣σ╜ôµù╢Σ║ïσ«₧∩╝¢
-- σ░åµùºΓÇ£Σ╕ïΣ╕Çµ¡ÑΣ╗╗σèíΓÇ¥µÿÄτí«σ╜ÆµíúΣ╕║ validation Θÿ╢µ«╡σÄåσÅ▓µ╕àσìò∩╝îσ╣╢µû░σó₧ v0.3.0 µö╢σ░╛σÉÄτÜäτ£ƒσ«₧σ╛àσè₧∩╝Üµë⌐µá╖µ£¼πÇüµû░Θóäµ│¿σåî splitπÇüσ╝║ baselineπÇüσ¢░ΘÜ╛ subgroupπÇüσÉêµ│òΣ╕┤σ║è/σñÜΣ╕¡σ┐âΘ¬îΦ»üπÇüτ╗ƒΦ«íσêåµ₧ÉπÇüσ¢╜σåàΘóÿσ╜òµá╕Θ¬îΣ╕Äµ£Çτ╗êµá╝σ╝Å∩╝¢
-- `docs/05_midterm_materials.md` µ¢┤µû░Φç│ v0.3∩╝îΣ┐«µ¡ú CPU `--allow-cpu` / formal readiness σÅúσ╛äσ╣╢Θô╛µÄÑτ╗ƒΣ╕Çσ▒òτñ║µ¥ÉµûÖ∩╝¢
-- µû░σó₧ `docs/12_final_presentation_outline.md`∩╝îσ╜óµêÉσÅ»τ¢┤µÄÑτö¿Σ║ÄΣ╕¡µ£ƒ/τ╗ôΘóÿ PPT τÜä 10 Θí╡σ▒òτñ║µ║Éµ¥ÉµûÖ∩╝îσ«îµò┤Σ┐¥τòÖ validation mean Dice=`0.05471`πÇüindependent Dice=`0.02878288`πÇü`REFINEMENT=FAIL`πÇüuncertaintyπÇü3D/SDF/Web Σ╕ÄΘ¥₧Σ╕┤σ║èΘÖÉσê╢∩╝¢
-- `paper/manuscript_zh_v0.1.md` Σ┐«µ¡úµ¡úσ╝Å binary task σ╖▓Θöüσ«ÜτÜäΦí¿Φ┐░∩╝îΦíÑΘ╜É SegFormer/SegFormer3DπÇünnU-NetπÇüUNETRπÇünnFormerπÇüCTSpine1KπÇüVerSeπÇüVerFormerπÇüBoundary LossπÇüclDiceπÇüEDUE/UCTNet τ¡ëΣ╕╗ΦªüΘí║σ║Åσ╝òτö¿∩╝¢µû░σó₧ nnU-Net σÅéΦÇâµûçτî«τ╝ûσÅ╖ 22∩╝¢σ╜ôσëìτ╝ûσÅ╖ 1∩╜₧22 Φ┐₧τ╗¡∩╝îµ¡úµûçσ╝òτö¿µùáΦ╢èτòî∩╝¢
-- GitHub σà¼σ╝ÇΣ╗ôσ║ôσàâµò░µì«σñìµá╕σÅæτÄ░ description µ¡úσ╕╕πÇü`v0.3.0` Release µ¡úσ╕╕∩╝¢σ╜ôσëìΣ╗ôσ║ôµ£¬σú░µÿÄ `LICENSE`∩╝îΦ»ÑΣ║ïΘí╣µ╢ëσÅèΦç¬τáöΣ╗úτáüΦ«╕σÅ»Σ╕Ä SegFormer3D GPL-3.0 Φ╛╣τòî∩╝îσ╖▓Σ╜£Σ╕║Θ£ÇΦªüΘí╣τ¢«Φ┤ƒΦ┤úΣ║║µÿÄτí«ΘÇëµï⌐τÜäσ╛àσè₧∩╝îΣ╕ìµôàΦç¬Σ╗úΘÇëπÇé
+- 修复 README 的论文结果状态与 CPU/GPU 当前口径，并把最终锁参、正式独立测试、v0.3.0 展示提纲加入首页导航；
+- 修复 `TASKS.md` 中旧 `ready=false`、future overlay、108 tests 等过期条目，重新区分“当前技术稿已完成”和“需要外部条件/模板的真正待办”；
+- 系统清理 `PROJECT_STATUS.md` 当前状态区的旧 94/103 tests、Results TBD、人工 QC 未签字、GPU 是正式实验 blocker、任务未锁定、Web/prediction/3D 尚待完成等过期口径；按日期保留历史阶段记录，不反向篡改当时事实；
+- 将旧“下一步任务”明确归档为 validation 阶段历史清单，并新增 v0.3.0 收尾后的真实待办：扩样本、新预注册 split、强 baseline、困难 subgroup、合法临床/多中心验证、统计分析、国内题录核验与最终格式；
+- `docs/05_midterm_materials.md` 更新至 v0.3，修正 CPU `--allow-cpu` / formal readiness 口径并链接统一展示材料；
+- 新增 `docs/12_final_presentation_outline.md`，形成可直接用于中期/结题 PPT 的 10 页展示源材料，完整保留 validation mean Dice=`0.05471`、independent Dice=`0.02878288`、`REFINEMENT=FAIL`、uncertainty、3D/SDF/Web 与非临床限制；
+- `paper/manuscript_zh_v0.1.md` 修正正式 binary task 已锁定的表述，补齐 SegFormer/SegFormer3D、nnU-Net、UNETR、nnFormer、CTSpine1K、VerSe、VerFormer、Boundary Loss、clDice、EDUE/UCTNet 等主要顺序引用；新增 nnU-Net 参考文献编号 22；当前编号 1～22 连续，正文引用无越界；
+- GitHub 公开仓库元数据复核发现 description 正常、`v0.3.0` Release 正常；当前仓库未声明 `LICENSE`，该事项涉及自研代码许可与 SegFormer3D GPL-3.0 边界，已作为需要项目负责人明确选择的待办，不擅自代选。
 
-µ£¼Φ╜«µ£Çτ╗êΘù¿τªü∩╝Ü
+本轮最终门禁：
 
 ```text
 pytest tests -q
-ΓåÆ 138 passed, 153 warnings
+→ 138 passed, 153 warnings
 
 ruff check src web tests
-ΓåÆ All checks passed!
+→ All checks passed!
 
 node --check web/frontend/app.js
 node --check web/frontend/qc_review.js
 node --check web/frontend/research_3d.js
 node --check web/frontend/results_review.js
-ΓåÆ PASS
+→ PASS
 
 git diff --check
-ΓåÆ PASS∩╝êΣ╗à Windows LFΓåÆCRLF µÅÉτñ║∩╝îµùá whitespace error∩╝ë
+→ PASS（仅 Windows LF→CRLF 提示，无 whitespace error）
 
-σà¼σ╝ÇΣ╗ôσ║ôτªüµ¡óµûçΣ╗╢µúÇµƒÑ
-ΓåÆ DICOM/NIfTI/checkpoint/experiments/.venv/runtime/third_party checkout: PASS
-ΓåÆ .env/private-key/certificate filename pattern: PASS
+公开仓库禁止文件检查
+→ DICOM/NIfTI/checkpoint/experiments/.venv/runtime/third_party checkout: PASS
+→ .env/private-key/certificate filename pattern: PASS
 ```
 
-σ╜ôσëìτºæτáöΦ╛╣τòîΣ╕ìσÅÿ∩╝Üµ¡úσ╝Å `liver_169` τ╗ôµ₧£σ╖▓τ╗Åσå╗τ╗ô∩╝îτ╗¥σ»╣µÇºΦâ╜Σ╕ìµ╗íΦ╢│Σ╕┤σ║èσ║öτö¿∩╝¢µë⌐σñºµò░µì«πÇüσ╝║ baselineπÇüΣ╕┤σ║è/σñÜΣ╕¡σ┐âΘ¬îΦ»üσÆîτ╗ƒΦ«íµÿ╛ΦæùµÇºΣ╗ìµ£¬σ«îµêÉ∩╝îΣ╕ìσ╛ùσ£¿Φ«║µûçπÇüREADMEπÇüRelease µêûτ¡öΦ╛⌐Σ╕¡Σ╝¬ΘÇáπÇé
+当前科研边界不变：正式 `liver_169` 结果已经冻结，绝对性能不满足临床应用；扩大数据、强 baseline、临床/多中心验证和统计显著性仍未完成，不得在论文、README、Release 或答辩中伪造。
 
 
-### 2026-08-30∩╜£Θÿ╢µ«╡ BM∩╝Üσ¢╜σåàΣ╕¡µûçΘóÿσ╜òΣ╕Çµëïµò░µì«σ║ôµá╕Θ¬îΘù¡τÄ»
+### 2026-08-30｜阶段 BM：国内中文题录一手数据库核验闭环
 
-Σ╗Ä `HEAD == origin/main == 817e2b817eea4a62aae9eb4e831043f27a12bb11`πÇüworking tree clean µÄÑτ«íπÇéΣ╕Ñµá╝Σ┐¥µîüµ£Çτ╗ê independent test σå╗τ╗ô∩╝Üµ£¼Θÿ╢µ«╡σÅ¬σñäτÉåµûçτî«Σ╕Äµûçµíú∩╝îΣ╕ìΘçìµû░Φ«¡τ╗âπÇüΣ╕ìΘçìµû░ validation∩╝îΣ╣ƒΣ╕ìσåìµ¼íΦ«┐Θù« `liver_169` σüÜµ¿íσ₧ïµÄ¿τÉåπÇé
+从 `HEAD == origin/main == 817e2b817eea4a62aae9eb4e831043f27a12bb11`、working tree clean 接管。严格保持最终 independent test 冻结：本阶段只处理文献与文档，不重新训练、不重新 validation，也不再次访问 `liver_169` 做模型推理。
 
-µ£¼Θÿ╢µ«╡σ«îµêÉΣ╕ñµ¥íσÄƒσàêµáçΦ«░Σ╕║ΓÇ£σ¢╜σåàµò░µì«σ║ôσ╛àσñìµá╕ΓÇ¥τÜäΣ╕¡µûçµûçτî«Σ╕Çµëïµá╕Θ¬î∩╝Ü
+本阶段完成两条原先标记为“国内数据库待复核”的中文文献一手核验：
 
-- Σ╝ìσ┐ùσÅæπÇüσêÿµóªτºïπÇüσÉ┤σ¿çΦë│πÇüσêÿσ╜▒∩╝ÜπÇèσƒ║Σ║Äµ╖▒σ║ªσ¡ªΣ╣áτÜä CT σ¢╛σâÅΦéïΘ¬¿Φç¬σè¿σêåσë▓Σ╕ÄΣ╕ëτ╗┤Θçìτ╗äτáöτ⌐╢πÇï∩╝îπÇèΣ╕┤σ║èµö╛σ░äσ¡ªµ¥éσ┐ùπÇï2022, 41(2):351-356πÇéΣ╕çµû╣σî╗σ¡ªτ╜æΣ╕ÇµëïΘí╡Θ¥óτí«Φ«ñΣ╜£ΦÇàπÇüσì╖µ£ƒπÇüΘí╡τáüπÇü130 Σ╛ïΦâ╕Θâ¿ CTπÇüσ¢¢τºì 3D σêåσë▓τ╜æτ╗£πÇüΣ╕ëσÅ░Θó¥σñû CT Φ«╛σñçτï¼τ½ïΘ¬îΦ»üσÅèσƒ║ΘçæΣ┐íµü»∩╝¢Θí╡Θ¥óµ£¬σêù DOI∩╝îσ¢áµ¡ñΣ╕ìΦíÑΘÇá DOIπÇé
-- Φë╛σ┐╡πÇüσæ¿Θ¢¬Θÿ│πÇüΦûäσ«Åσ«çπÇüσºÜΘ╣ÅπÇüσæ¿µ╜ÿ∩╝ÜπÇèσƒ║Σ║Äµ«ïσ╖« U-net τÑ₧τ╗Åτ╜æτ╗£σ«₧τÄ░µñÄΣ╜ôΦ╜¼τº╗τÿñµö╛τûùΘ¥╢σî║τÜäΦç¬σè¿σï╛τö╗τáöτ⌐╢πÇï∩╝îπÇèΣ╕¡σ¢╜σî╗σ¡ªΦúàσñçπÇï2026, 23(5):28-32πÇéπÇèΣ╕¡σ¢╜σî╗σ¡ªΦúàσñçπÇïµ£ƒσêèσ«ÿτ╜æ/CNKI µ£ƒσêèΘí╡τí«Φ«ñΣ╜£ΦÇàπÇüσì╖µ£ƒπÇüΘí╡τáüπÇü87 Σ╛ïσî┐σÉìσîû CTπÇü2D/3D U-Net Σ╕Ä ResUNet σ»╣τàºπÇüDSC/IoU/HD Φ»äΣ╗╖σÅèσƒ║ΘçæΣ┐íµü»∩╝¢Θí╡Θ¥ó DOI σ¡ùµ«╡Σ╕║τ⌐║∩╝îσ¢áµ¡ñΣ╕ìΦíÑΘÇá DOIπÇé
+- 伍志发、刘梦秋、吴娇艳、刘影：《基于深度学习的 CT 图像肋骨自动分割与三维重组研究》，《临床放射学杂志》2022, 41(2):351-356。万方医学网一手页面确认作者、卷期、页码、130 例胸部 CT、四种 3D 分割网络、三台额外 CT 设备独立验证及基金信息；页面未列 DOI，因此不补造 DOI。
+- 艾念、周雪阳、薄宏宇、姚鹏、周潘：《基于残差 U-net 神经网络实现椎体转移瘤放疗靶区的自动勾画研究》，《中国医学装备》2026, 23(5):28-32。《中国医学装备》期刊官网/CNKI 期刊页确认作者、卷期、页码、87 例匿名化 CT、2D/3D U-Net 与 ResUNet 对照、DSC/IoU/HD 评价及基金信息；页面 DOI 字段为空，因此不补造 DOI。
 
-σÉîµ¡Ñµ¢┤µû░ `docs/02_literature_survey.md`πÇü`docs/08_literature_matrix.md`πÇü`docs/05_midterm_materials.md`πÇü`paper/references.bib`πÇü`paper/manuscript_zh_v0.1.md`πÇü`README.md`πÇü`TASKS.md` Σ╕Äµ£¼Σ╕╗σÅ░Φ┤ªπÇéµûçτî«σ║ôσ╜ôσëìΣ╕║ 44 µ¥íµ£║σÖ¿σÅ»τö¿ BibTeX∩╝Ü42 µ¥íΦï▒µûçµá╕σ┐â + 2 µ¥íσ╖▓µá╕Θ¬îΣ╕¡µûçµûçτî«∩╝¢44 µ¥íτ╗ôµ₧äσîûµûçτî«τƒ⌐Θÿ╡σ£¿σ╜ôσëìΘÿ╢µ«╡σ¥çσ╖▓µ£ëσÅ»Φ┐╜µ║»Θóÿσ╜òΣ╛¥µì«πÇé
+同步更新 `docs/02_literature_survey.md`、`docs/08_literature_matrix.md`、`docs/05_midterm_materials.md`、`paper/references.bib`、`paper/manuscript_zh_v0.1.md`、`README.md`、`TASKS.md` 与本主台账。文献库当前为 44 条机器可用 BibTeX：42 条英文核心 + 2 条已核验中文文献；44 条结构化文献矩阵在当前阶段均已有可追溯题录依据。
 
-Σ╗ìµ£¬σ«îµêÉΣ╕öΣ╕ìσ╛ùΣ╝¬ΘÇá∩╝Üµë⌐σñºτùàΣ╛ïΦºäµ¿íσÉÄτÜäΣ╕╗σ«₧Θ¬îπÇüµû░Θóäµ│¿σåî splitπÇüτ£ƒσ«₧ nnU-Net/Residual-Encoder nnU-Net σ╝║ baselineπÇüσÅ»Θ¥á difficult subgroupπÇüσÉêµ│òΣ╕┤σ║è/σñÜΣ╕¡σ┐âΘ¬îΦ»üπÇüτ╗ƒΦ«íσêåµ₧É∩╝îΣ╗ÑσÅèτ¢«µáçµ£ƒσêè/σ¡ªµáíµ¿íµ¥┐τí«σ«ÜσÉÄτÜäµ£Çτ╗êµá╝σ╝Åσ«Üτ¿┐πÇé
+仍未完成且不得伪造：扩大病例规模后的主实验、新预注册 split、真实 nnU-Net/Residual-Encoder nnU-Net 强 baseline、可靠 difficult subgroup、合法临床/多中心验证、统计分析，以及目标期刊/学校模板确定后的最终格式定稿。
 
-µ£¼Θÿ╢µ«╡µ£Çτ╗êΘù¿τªü∩╝Ü`pytest tests -q`=`138 passed, 153 warnings`∩╝¢`ruff check src web tests`=`All checks passed!`∩╝¢4 Σ╕¬σëìτ½» JS `node --check` σà¿Θâ¿ΘÇÜΦ┐ç∩╝¢BibTeX=`44 entries / 0 duplicate key / brace balance=0`∩╝¢`git diff --check`=PASSπÇé
+本阶段最终门禁：`pytest tests -q`=`138 passed, 153 warnings`；`ruff check src web tests`=`All checks passed!`；4 个前端 JS `node --check` 全部通过；BibTeX=`44 entries / 0 duplicate key / brace balance=0`；`git diff --check`=PASS。
 
 
-### 2026-08-30∩╜£Θÿ╢µ«╡ BN∩╝Üµ£Çτ╗êµûçµíúΣ╕ÇΦç┤µÇºπÇüΣ╕ïΦ╜╜σÅ»Θ¥áµÇºΣ╕Ä GitHub σ▒òτñ║σñìµá╕
+### 2026-08-30｜阶段 BN：最终文档一致性、下载可靠性与 GitHub 展示复核
 
-Σ╗Äτ£ƒσ«₧τè╢µÇü `HEAD == origin/main == 949be766e5276fefef3bdaa6e21176aada737808` µÄÑτ«í∩╝¢Git Φ║½Σ╗╜Σ╕║ `927242768-dotcom <927242768@qq.com>`πÇéµÄÑτ«íµù╢σ╖ÑΣ╜£σî║σ╖▓µ£ëΣ╕Çσñäµ£¬µÅÉΣ║ñτÜä `env/download_ctspine1k_sample.ps1` µö╣σè¿∩╝îµ£¼Θÿ╢µ«╡σàêµúÇµƒÑσåàσ«╣Σ╕ÄΘúÄΘÖ⌐σÉÄΣ┐¥τòÖσ╣╢τ║│σàÑΘ¬îΦ»ü∩╝îµ▓íµ£ëΦªåτ¢ûµêûΘçìΦ╖æΣ╗╗Σ╜òσå╗τ╗ôσ«₧Θ¬îπÇé
+从真实状态 `HEAD == origin/main == 949be766e5276fefef3bdaa6e21176aada737808` 接管；Git 身份为 `927242768-dotcom <927242768@qq.com>`。接管时工作区已有一处未提交的 `env/download_ctspine1k_sample.ps1` 改动，本阶段先检查内容与风险后保留并纳入验证，没有覆盖或重跑任何冻结实验。
 
-µ£¼Θÿ╢µ«╡σ«îµêÉΣ╗ÑΣ╕ïσÅ»σ£¿σ╜ôσëìµ¥íΣ╗╢Σ╕ïσ«ëσà¿µö╢σ░╛τÜäΣ║ïΘí╣∩╝Ü
+本阶段完成以下可在当前条件下安全收尾的事项：
 
-- Σ┐«µ¡úΣ╕╗σÅ░Φ┤ªΓÇ£σ╜ôσëìτè╢µÇüΓÇ¥µùÑµ£ƒΣ╕║ 2026-08-30∩╝îσ╣╢µ╕àτÉåσ╜ôσëìµúÇµƒÑµ«╡ΦÉ╜Σ╕¡ΘüùτòÖτÜä `references.bib: 42 entries` Φ┐çµ£ƒµÅÅΦ┐░∩╝¢µûçτî«σ║ôτ£ƒσ«₧τè╢µÇüτ╗ƒΣ╕ÇΣ╕║ 44 entries∩╝¢
-- Φ«║µûçµ¡úµûçΦíÑΘ╜Éµ¡ñσëìσêùΦí¿Σ╕¡σ¡ÿσ£¿Σ╜åµ¡úµûçµ£¬σ╝òτö¿τÜä `[7]` TotalSegmentator σ╝òτö¿∩╝îΣ╜┐σ╜ôσëìΘí║σ║Åσ╝òτö¿Φªåτ¢û 1ΓÇô22∩╝¢σÉîµù╢µÿÄτí« `paper/references.bib` µÿ» 44 µ¥íΘí╣τ¢«µë⌐σ▒òµûçτî«σ║ô∩╝îµ¡úσ╝Åµèòτ¿┐µù╢σÅ¬σ»╝σç║σ╜ôσëìµ¡úµûçσ«₧ΘÖàσ╝òτö¿µ¥íτ¢«∩╝¢
-- `docs/12_final_presentation_outline.md` µ¢┤µû░µùÑµ£ƒσÉîµ¡Ñσê░ 2026-08-30∩╝¢
-- `env/download_ctspine1k_sample.ps1` σó₧σèá `.part` σÄƒσ¡ÉΣ╕ïΦ╜╜πÇüσ╖▓µ£ë/µû░Σ╕ïΦ╜╜ `.nii.gz` τÜä gzip Φ»╗σÅûΦç│ EOF σ«îµò┤µÇºµáíΘ¬îπÇüσ╝éσ╕╕ partial µ╕àτÉå∩╝îσ╣╢µèèµûçΣ╗╢σñºσ░ÅσÆîσ«îµò┤µÇºµúÇµƒÑτè╢µÇüσåÖσàÑΣ╕ïΦ╜╜ manifest∩╝îΘü┐σàìµê¬µû¡µûçΣ╗╢Φó½Θ¥ÖΘ╗ÿσñìτö¿∩╝¢README/TASKS σ╖▓σÉîµ¡ÑΦ»Ñσ╖Ñτ¿ïµö╣σè¿∩╝¢
-- GitHub Φ┐£τ½»σñìµá╕∩╝ÜΣ╗ôσ║ô description σ╖▓Σ╕║τ«Çµ┤üτºæτáöΘí╣τ¢«µÅÅΦ┐░∩╝¢µ£Çµû░ Release Σ╗ìΣ╕║ `v0.3.0 - Formal Independent Test & Research Pipeline Closure`∩╝¢`949be76` σ»╣σ║ö GitHub Actions CI Σ╕║ success∩╝¢Σ╗ôσ║ôσ╜ôσëì `license=null`∩╝îτ╗ºτ╗¡Σ┐¥µîüσ╛àΦ┤ƒΦ┤úΣ║║σå│τ¡û∩╝¢Topics σ╜ôσëìΣ╕║τ⌐║∩╝îµ£¼Φ╜«µ▓íµ£ëσÅ»σ«ëσà¿Φ░âτö¿τÜäΣ╗ôσ║ôσàâµò░µì«σåÖµÄÑσÅú∩╝îσ¢áµ¡ñΣ╕ìΘÇÜΦ┐çΣ╕ìτ¿│σ«Üµ╡ÅΦºêσÖ¿µôìΣ╜£σåÆΘÖ⌐Σ┐«µö╣πÇé
+- 修正主台账“当前状态”日期为 2026-08-30，并清理当前检查段落中遗留的 `references.bib: 42 entries` 过期描述；文献库真实状态统一为 44 entries；
+- 论文正文补齐此前列表中存在但正文未引用的 `[7]` TotalSegmentator 引用，使当前顺序引用覆盖 1–22；同时明确 `paper/references.bib` 是 44 条项目扩展文献库，正式投稿时只导出当前正文实际引用条目；
+- `docs/12_final_presentation_outline.md` 更新日期同步到 2026-08-30；
+- `env/download_ctspine1k_sample.ps1` 增加 `.part` 原子下载、已有/新下载 `.nii.gz` 的 gzip 读取至 EOF 完整性校验、异常 partial 清理，并把文件大小和完整性检查状态写入下载 manifest，避免截断文件被静默复用；README/TASKS 已同步该工程改动；
+- GitHub 远端复核：仓库 description 已为简洁科研项目描述；最新 Release 仍为 `v0.3.0 - Formal Independent Test & Research Pipeline Closure`；`949be76` 对应 GitHub Actions CI 为 success；仓库当前 `license=null`，继续保持待负责人决策；Topics 当前为空，本轮没有可安全调用的仓库元数据写接口，因此不通过不稳定浏览器操作冒险修改。
 
-µ£¼Θÿ╢µ«╡µ£¬Φ┐ÉΦíîΣ╗╗Σ╜òΦ«¡τ╗âπÇüvalidation µêû `liver_169` µ¿íσ₧ïµÄ¿τÉå∩╝îµ¡úσ╝Å independent test σå╗τ╗ôτè╢µÇüΣ┐¥µîüΣ╕ìσÅÿπÇé
+本阶段未运行任何训练、validation 或 `liver_169` 模型推理，正式 independent test 冻结状态保持不变。
 
-µ£¼Θÿ╢µ«╡Φ┤¿ΘçÅΘù¿τªü∩╝Ü
+本阶段质量门禁：
 
 ```text
 pytest tests -q
-ΓåÆ 138 passed, 153 warnings
+→ 138 passed, 153 warnings
 
 ruff check src web tests
-ΓåÆ All checks passed!
+→ All checks passed!
 
-PowerShell parser∩╝êenv / web / µá╣τ¢«σ╜ò *.ps1∩╝ë
-ΓåÆ PASS
+PowerShell parser（env / web / 根目录 *.ps1）
+→ PASS
 
-download_ctspine1k_sample.ps1 dry plan∩╝êµùá -Download∩╝ë
-ΓåÆ PASS∩╝¢µ£¬Σ╕ïΦ╜╜µêûµö╣σè¿τ£ƒσ«₧µò░µì«
+download_ctspine1k_sample.ps1 dry plan（无 -Download）
+→ PASS；未下载或改动真实数据
 
 node --check web/frontend/app.js
 node --check web/frontend/qc_review.js
 node --check web/frontend/research_3d.js
 node --check web/frontend/results_review.js
-ΓåÆ PASS
+→ PASS
 
 Markdown code fences
-ΓåÆ PASS
+→ PASS
 
 manuscript citation numbers
-ΓåÆ 1ΓÇô22 Φ┐₧τ╗¡Φªåτ¢û
+→ 1–22 连续覆盖
 
 paper/references.bib
-ΓåÆ 44 entries / 0 duplicate key / brace balance=0
+→ 44 entries / 0 duplicate key / brace balance=0
 
-σà¼σ╝ÇΣ╗ôσ║ô tracked-file τªüµ¡óµ¿íσ╝ÅµúÇµƒÑ
-ΓåÆ DICOM/NIfTI/checkpoint/experiments/.venv/.python/runtime/third_party checkout: PASS
-ΓåÆ .env/private-key/certificate filename pattern: PASS
+公开仓库 tracked-file 禁止模式检查
+→ DICOM/NIfTI/checkpoint/experiments/.venv/.python/runtime/third_party checkout: PASS
+→ .env/private-key/certificate filename pattern: PASS
 
 git diff --check
-ΓåÆ PASS∩╝êΣ╗à Windows LFΓåÆCRLF µÅÉτñ║∩╝îµùá whitespace error∩╝ë
+→ PASS（仅 Windows LF→CRLF 提示，无 whitespace error）
 ```
 
-Σ╗ìµ£¬σ«îµêÉΣ╕öσ┐àΘí╗τ╗ºτ╗¡Σ┐¥µîüτ£ƒσ«₧µ£¬σ«îµêÉ∩╝Üµë⌐σñºτùàΣ╛ïΦºäµ¿íπÇüτ£ƒσ«₧ nnU-Net/Residual-Encoder nnU-Net τ¡ëσ╝║ baselineπÇüσÅ»Θ¥á metal/fracture/low-density subgroupπÇüσÉêµ│òµÄêµ¥âΣ╕┤σ║èΦä▒µòÅµò░µì«πÇüσñûΘâ¿/σñÜΣ╕¡σ┐âΘ¬îΦ»üπÇüτ╗ƒΦ«íµÿ╛ΦæùµÇºπÇüτ£ƒσ«₧ GPU µÿ╛σ¡ÿµò░µì«πÇüτ¢«µáçµ£ƒσêè/σ¡ªµáíµ¿íµ¥┐σÉÄτÜäµ£Çτ╗êµá╝σ╝ÅπÇüµ£Çτ╗ê PPT∩╝îΣ╗ÑσÅèΦç¬τáöΣ╗úτáü LICENSE σå│τ¡ûπÇéµÖ«ΘÇÜµûçµíú/Σ╕ïΦ╜╜σÅ»Θ¥áµÇºµö╢σ░╛Σ╕ìΦ╢│Σ╗Ñσê¢σ╗║ `v0.3.1` ReleaseπÇé
+仍未完成且必须继续保持真实未完成：扩大病例规模、真实 nnU-Net/Residual-Encoder nnU-Net 等强 baseline、可靠 metal/fracture/low-density subgroup、合法授权临床脱敏数据、外部/多中心验证、统计显著性、真实 GPU 显存数据、目标期刊/学校模板后的最终格式、最终 PPT，以及自研代码 LICENSE 决策。普通文档/下载可靠性收尾不足以创建 `v0.3.1` Release。
 
 
 ---
 
-## 2026-09-17 v6 HR Decoder full-volume validation197 σ«îµêÉΦ«░σ╜ò
+## 2026-09-17 v6 HR Decoder full-volume validation197 完成记录
 
-- `20260916_163356_ctspine1k_v6_segformer3d_hr_full610_val197/full_volume_validation197` σ╖▓σ«îµêÉ `197/197` validation full-volume sliding-window evaluationπÇé
-- σ«îµêÉΣ╛¥µì«∩╝Ü`metrics_per_case.csv` σà▒ 197 case Φíî∩╝¢`evaluation_status.json` µáçΦ«░ `phase=completed`πÇü`completed_case_count=197`∩╝îΣ╕ìµÿ»Σ╛¥µì« running τè╢µÇüσêñµû¡πÇé
-- σìÅΦ««τí«Φ«ñ∩╝ÜSegFormer3D HR DecoderπÇü`roi=[64,64,64]`πÇüoverlap=0.5πÇüBN runningπÇüpostprocessing `min_component_voxels=0` Σ┐¥µîüπÇé
-- full-volume mean metrics∩╝ÜDice=`0.4845272`∩╝îIoU=`0.3309158`∩╝îPrecision=`0.3433618`∩╝îRecall=`0.8686251`∩╝îHD95=`166.1029 mm`∩╝îASSD=`38.3297 mm`πÇé
-- Σ╕╗Φªüτô╢ΘóêΦ»üµì«∩╝Üprediction foreground ratio=`3.7127├ù`∩╝îPrecision µÿÄµÿ╛Σ╜ÄΣ║Ä Recall∩╝îcomponent_count_error=`1803`∩╝îΦ»┤µÿÄσ╜ôσëìΣ╕╗ΦªüΘù«ΘóÿΣ╕║σüçΘÿ│µÇºΦå¿ΦâÇ + Σ╕ÑΘçìτóÄτëçσîû∩╝îΦÇîΣ╕ìµÿ»σìòτ║»µ╝ÅµúÇπÇé
-- σ╖▓σ«îµêÉ validation-only connected-component filter sweep∩╝êτªüµ¡ó test∩╝ë∩╝ÜΘÿêσÇ╝ 0~8192 voxelsπÇéµ£ÇΣ╜│σ╜ôσëìσÇÖΘÇëΣ╕║ `8192` voxels∩╝ÜDice=`0.5207784`∩╝îPrecision=`0.3810848`∩╝îRecall=`0.8675519`∩╝îcomponent_error=`1.3553`πÇéΦ»Ñτ╗ôµ₧£Σ╗àΣ╜£Σ╕║ validation σÉÄσñäτÉåΘÇëµï⌐Σ╛¥µì«∩╝îΣ╕ìΣ╗úΦí¿σå╗τ╗ôΘàìτ╜«πÇé
-- Σ╕ïΣ╕ÇΘÿ╢µ«╡σ║öσƒ║Σ║Ä validation Φ»üµì«Φ«╛Φ«íµû░τÜäΦ«¡τ╗â/µÄ¿τÉåσ«₧Θ¬î∩╝îΣ╕ìΦ»╗σÅû test198∩╝îΣ╕ìµÅÉΣ║ñ checkpoint/cache/experiment µûçΣ╗╢πÇé
+- `20260916_163356_ctspine1k_v6_segformer3d_hr_full610_val197/full_volume_validation197` 已完成 `197/197` validation full-volume sliding-window evaluation。
+- 完成依据：`metrics_per_case.csv` 共 197 case 行；`evaluation_status.json` 标记 `phase=completed`、`completed_case_count=197`，不是依据 running 状态判断。
+- 协议确认：SegFormer3D HR Decoder、`roi=[64,64,64]`、overlap=0.5、BN running、postprocessing `min_component_voxels=0` 保持。
+- full-volume mean metrics：Dice=`0.4845272`，IoU=`0.3309158`，Precision=`0.3433618`，Recall=`0.8686251`，HD95=`166.1029 mm`，ASSD=`38.3297 mm`。
+- 主要瓶颈证据：prediction foreground ratio=`3.7127×`，Precision 明显低于 Recall，component_count_error=`1803`，说明当前主要问题为假阳性膨胀 + 严重碎片化，而不是单纯漏检。
+- 已完成 validation-only connected-component filter sweep（禁止 test）：阈值 0~8192 voxels。最佳当前候选为 `8192` voxels：Dice=`0.5207784`，Precision=`0.3810848`，Recall=`0.8675519`，component_error=`1.3553`。该结果仅作为 validation 后处理选择依据，不代表冻结配置。
+- 下一阶段应基于 validation 证据设计新的训练/推理实验，不读取 test198，不提交 checkpoint/cache/experiment 文件。
 
 
 ### 2026-09-18 | v7 hard-negative precision experiment recovery + native monitor
@@ -2689,36 +2689,36 @@ git diff --check
 - Native monitor window verified open as `SegFormer3D v7 Training Monitor`.
 
 
-### 2026-09-19 | v7.1 residual-FP hard-case refinement σÉ»σè¿Φ«░σ╜ò
+### 2026-09-19 | v7.1 residual-FP hard-case refinement 启动记录
 
-- v7 Σ╕╗Φ«¡τ╗âΣ╕Ä validation197 σ╖▓σ«îµò┤Θù¡τÄ»∩╝¢v7 best patch Dice=`0.9402015`∩╝îfull-volume validation197 mean Dice=`0.7933430`πÇüPrecision=`0.7862014`πÇüRecall=`0.8244633`πÇüFG ratio=`1.6849015`πÇévalidation Θò┐σ░╛Σ╕║ Dice<0.5: 32πÇüDice<0.7: 37πÇüPrecision<0.5: 32πÇüFG ratio>2: 28πÇé
-- validation-only component sweep σ╖▓σ«îµêÉ∩╝îµ£ÇΣ╜│ `min_component_voxels=32768` Σ╗àσ░å mean Dice µÅÉΦç│ `0.7980875`∩╝îτí«Φ«ñτô╢ΘóêΣ╕ìσåìµÿ»τ«Çσìò component threshold∩╝¢Σ╕ìτ╗ºτ╗¡µë⌐σñºΦ»ÑΘÿêσÇ╝µÉ£τ┤óπÇé
-- v7.1 σ¢║σ«ÜσÄƒσêÖ∩╝ÜΣ╗àΣ╗Ä v7 `best.pt` σê¥σºïσîû∩╝¢residual-FP guidance Σ╗àτö▒ train610 Φç¬Φ║½ prediction + GT τöƒµêÉ∩╝¢validation197 σÅ¬τö¿Σ║Äµ¿íσ₧ïΘÇëµï⌐∩╝îtest_private/test198 Σ╕ìΦ»╗σÅûπÇüΣ╕ìΦ»äΣ╝░πÇüΣ╕ìτö¿Σ║Ä guidanceπÇé
-- Σ┐«σñì `src/modeling/generate_residual_fp_guidance.py` τÜä HR Decoder σà╝σ«╣µÇº∩╝Üµ¿íσ₧ïµ₧äσ╗║µö╣Σ╕║σñìτö¿ `model_factory.build_segmentation_model`∩╝îΣ╕Ä train/evaluate σÉîσÅúσ╛äπÇétrain-only σìòτùàΣ╛ï smoke σ╖▓ΘÇÜΦ┐ç∩╝îresidual FP=3917 voxelsπÇü2 Σ╕¬ hard center∩╝¢guidance Σ╕Ä label shape σ¥çΣ╕║ `267x267x322`∩╝îaffine max diff=0πÇé
-- µû░σó₧ `configs/orthopedic_ct_full_large_scale_v7_1_segformer3d_hr_residual_fp_refinement.yaml`∩╝ÜΣ┐¥µîü v7 HR Decoder / loss / ROI / augmentation Σ╕╗Σ╜ô∩╝îLR=`3e-5`∩╝î6 epoch τƒ¡τ¿ï fine-tune∩╝îresidual-FP preferred probability=`0.35`∩╝îscheduler Σ┐¥µîü v7 µö»µîüτÜä cosine warm-restarts σ«╢µùÅ∩╝êT0=6, warmup=0, min_lr=3e-6∩╝ëπÇé
-- µû░σó₧µ£¼σ£░ Tkinter `v7_1_monitor_gui.py`∩╝î4 τºÆσê╖µû░∩╝îµö»µîü Epoch/Step/progress/ETA/loss/Val Dice/Precision/Recall/FG ratio/Best Dice/LR/status/update timeπÇé
-- σ╖Ñτ¿ïΘù¿τªü∩╝Üengineering preflight `ready=true`πÇüsplit=`610 train / 197 validation / 0 test`πÇü0 issue∩╝¢focused tests `9 passed`πÇéformal preflight µ£¬Σ╝¬ΘÇáΘÇÜΦ┐ç∩╝Üσ╜ôσëìσñºΦºäµ¿í split σÄåσÅ▓µáçΦ«░ `formal_experiment=false` Σ╕öµùá 807 Σ╛ïΣ║║σ╖Ñ QC∩╝îσ¢áµ¡ñΣ╗ìΣ┐¥µîü engineering/validation σ«ÜΣ╜ìπÇé
-- µ¡úσ╝Å train610 residual-FP guidance σ╖▓σÉ»σè¿σê░ `experiments/hard_mining_guidance_v7_1_residual_fp_train610`∩╝îΣ╜┐τö¿ v7 best.ptπÇürunning BNπÇüROI96πÇüoverlap=0.5πÇüpostprocess 8192/conn3πÇü`--resume`∩╝¢ΘªûΣ╛ïσ╖▓σ«îµêÉ∩╝îstatus=`running`∩╝îexpected=610πÇév7.1 Φ«¡τ╗âσ░Üµ£¬σÉ»σè¿∩╝îσ┐àΘí╗τ¡ë 610 Σ╛ï guidance σ«îµêÉσ╣╢ΘÇÜΦ┐çσà¿ΘçÅ shape/affine/train-ID σ«íΦ«íσÉÄσåìσÉ»σè¿πÇé
+- v7 主训练与 validation197 已完整闭环；v7 best patch Dice=`0.9402015`，full-volume validation197 mean Dice=`0.7933430`、Precision=`0.7862014`、Recall=`0.8244633`、FG ratio=`1.6849015`。validation 长尾为 Dice<0.5: 32、Dice<0.7: 37、Precision<0.5: 32、FG ratio>2: 28。
+- validation-only component sweep 已完成，最佳 `min_component_voxels=32768` 仅将 mean Dice 提至 `0.7980875`，确认瓶颈不再是简单 component threshold；不继续扩大该阈值搜索。
+- v7.1 固定原则：仅从 v7 `best.pt` 初始化；residual-FP guidance 仅由 train610 自身 prediction + GT 生成；validation197 只用于模型选择，test_private/test198 不读取、不评估、不用于 guidance。
+- 修复 `src/modeling/generate_residual_fp_guidance.py` 的 HR Decoder 兼容性：模型构建改为复用 `model_factory.build_segmentation_model`，与 train/evaluate 同口径。train-only 单病例 smoke 已通过，residual FP=3917 voxels、2 个 hard center；guidance 与 label shape 均为 `267x267x322`，affine max diff=0。
+- 新增 `configs/orthopedic_ct_full_large_scale_v7_1_segformer3d_hr_residual_fp_refinement.yaml`：保持 v7 HR Decoder / loss / ROI / augmentation 主体，LR=`3e-5`，6 epoch 短程 fine-tune，residual-FP preferred probability=`0.35`，scheduler 保持 v7 支持的 cosine warm-restarts 家族（T0=6, warmup=0, min_lr=3e-6）。
+- 新增本地 Tkinter `v7_1_monitor_gui.py`，4 秒刷新，支持 Epoch/Step/progress/ETA/loss/Val Dice/Precision/Recall/FG ratio/Best Dice/LR/status/update time。
+- 工程门禁：engineering preflight `ready=true`、split=`610 train / 197 validation / 0 test`、0 issue；focused tests `9 passed`。formal preflight 未伪造通过：当前大规模 split 历史标记 `formal_experiment=false` 且无 807 例人工 QC，因此仍保持 engineering/validation 定位。
+- 正式 train610 residual-FP guidance 已启动到 `experiments/hard_mining_guidance_v7_1_residual_fp_train610`，使用 v7 best.pt、running BN、ROI96、overlap=0.5、postprocess 8192/conn3、`--resume`；首例已完成，status=`running`，expected=610。v7.1 训练尚未启动，必须等 610 例 guidance 完成并通过全量 shape/affine/train-ID 审计后再启动。
 
 
 ---
 
-## 2026-09-22 v7.1 µ£Çτ╗êΘ¬îµö╢Σ╕ÄΦ«¡τ╗âτ║┐σå╗τ╗ô
+## 2026-09-22 v7.1 最终验收与训练线冻结
 
-- v7.1 run∩╝Ü`experiments/20260921_130417_ctspine1k_v7_1_segformer3d_hr_residual_fp_refinement`πÇé
-- train610 residual-FP guidance σ╖▓σ«îµêÉ 610/610∩╝¢σ«íΦ«íτ╗ôµ₧£∩╝Ümissing=0πÇüextra=0πÇüvalidation overlap=0πÇüshape_bad=0πÇüaffine_bad=0πÇübad_count=0∩╝îzero-guidance case=1∩╝îtotal_nonzero_centers=1218πÇé
-- v7.1 Φ«¡τ╗âσ£¿ epoch5 early stopping∩╝¢best checkpoint Σ╕║ epoch2∩╝îpatch-validation selector Dice=`0.6680869599572375`πÇéµ£¬ΦíÑΦ╖æ epoch6πÇé
-- validation197 full-volume σ╖▓Σ║Ä 2026-09-22 σ«îµêÉ 197/197∩╝îΣ╜┐τö¿ v7.1 `best.pt`πÇüBN runningπÇüROI96πÇüoverlap=0.5πÇüpostprocessing 8192/conn3∩╝¢µ£¬Φ«┐Θù« testπÇé
-- v7.1 Σ╕╗σìÅΦ«« mean∩╝ÜDice=`0.7026965`∩╝îIoU=`0.5877550`∩╝îPrecision=`0.6121711`∩╝îRecall=`0.8796528`∩╝îHD95=`132.5347 mm`∩╝îASSD=`24.1858 mm`πÇé
-- v7.1 foreground∩╝Üprediction fraction=`0.0198481`∩╝îtarget fraction=`0.0070930`∩╝îprediction/target ratio=`2.8933023├ù`πÇé
-- v7.1 structure∩╝Ücomponent_count_error=`1.7106599`∩╝îfalse_merge=`0.2893401`∩╝îfalse_break=`0.0253807`πÇé
-- v7.1 hard failures∩╝ÜDice<0.5 = `29/197`∩╝îDice<0.7 = `46/197`∩╝îPrecision<0.5 = `38/197`∩╝îFG ratio>2 = `31/197`πÇé
-- Dice σêåσ╕â∩╝ÜP25=`0.7033848`∩╝îMedian=`0.7905313`∩╝îP75=`0.8474664`πÇé
-- σêåµ¥Ñµ║É∩╝ÜCOLONOG n=152∩╝îDice=`0.7393422`∩╝¢COVID-19 n=10∩╝îDice=`0.7733267`∩╝¢HNSCC-3DCT-RT n=5∩╝îDice=`0.3843717`∩╝¢MSD-T10 n=30∩╝îDice=`0.5465359`πÇéHNSCC Σ╕Ä MSD-T10 Σ╗ìµÿ»Σ╕╗Φªüσñ▒Φ┤Ñµ¥Ñµ║ÉπÇé
-- validation-only σ¢║σ«Ü secondary comparison Σ╗àΦ»äΣ╝░ `min_component_voxels=32768`∩╝îµ▓íµ£ëτ╗ºτ╗¡ sweep∩╝Üv7.1 Dice=`0.7836175`πÇüPrecision=`0.7439597`πÇüRecall=`0.8796052`πÇüFG ratio=`2.6382305├ù`πÇücomponent error=`1.0050761`πÇé
-- v7 σÄƒσºï 8192∩╝ÜDice=`0.7933430`πÇüPrecision=`0.7862014`πÇüRecall=`0.8244633`πÇüFG ratio=`1.6849015├ù`πÇüHD95=`37.9465 mm`πÇüASSD=`8.8100 mm`πÇé
-- v7 validation-only 32768∩╝ÜDice=`0.7980875`πÇüPrecision=`0.7969523`πÇüRecall=`0.8215013`πÇüFG ratio=`1.6512499├ù`πÇücomponent error=`1.0812183`πÇé
-- τ╗ôΦ«║∩╝Üv7.1 ΦÖ╜µèè Dice<0.5 Σ╗Ä 32 Σ╛ïΘÖìΦç│ 29 Σ╛ïπÇüRecall µÅÉΘ½ÿ∩╝îΣ╜å mean Dice/Precision/FG ratio/HD95/ASSD Σ╗ÑσÅè Dice<0.7πÇüPrecision<0.5πÇüFG ratio>2 σ¥çµò┤Σ╜ôµü╢σîû∩╝¢32768 σ¢║σ«ÜσÉÄσñäτÉåΣ╣ƒµ£¬Φ╢àΦ┐ç v7πÇé
-- µ£Çτ╗êσå╗τ╗ôσå│σ«Ü∩╝Ü**Σ┐¥τòÖ v7∩╝îv7.1 Σ╜£Σ╕║σñ▒Φ┤ÑτÜä final refinement σ«₧Θ¬îσ╜Æµíú∩╝îΣ╕ìΣ╜£Σ╕║Σ╕╗µ¿íσ₧ïπÇé**
-- **Φ«¡τ╗âτ║┐µ¡úσ╝Åτ╗ôµ¥ƒπÇéΣ╕ìσ╛ùσåìσ╝ÇσÉ» v8/v9 µêûτ╗ºτ╗¡σ¢┤τ╗ò validation197 µùáΘÖÉΦ░âσÅéπÇé**
-- σÉÄτ╗¡σªéτ╗ºτ╗¡Θí╣τ¢«∩╝îσÅ¬σüÜΦ«¡τ╗âσñûΣ╗╗σèí∩╝Üτ╗ôµ₧£µò┤τÉåπÇüΦ«║µûç/τ¡öΦ╛⌐πÇüWeb/3D σ▒òτñ║πÇüΦ╖¿µ₧╢µ₧ä baselineπÇüσÉêµ│òσñûΘâ¿/Σ╕┤σ║èΘ¬îΦ»üτ¡ë∩╝¢Φ┐ÖΣ║¢Σ╕ìµö╣σÅÿµ£¼µ¼í v7/v7.1 σå╗τ╗ôτ╗ôΦ«║πÇé
+- v7.1 run：`experiments/20260921_130417_ctspine1k_v7_1_segformer3d_hr_residual_fp_refinement`。
+- train610 residual-FP guidance 已完成 610/610；审计结果：missing=0、extra=0、validation overlap=0、shape_bad=0、affine_bad=0、bad_count=0，zero-guidance case=1，total_nonzero_centers=1218。
+- v7.1 训练在 epoch5 early stopping；best checkpoint 为 epoch2，patch-validation selector Dice=`0.6680869599572375`。未补跑 epoch6。
+- validation197 full-volume 已于 2026-09-22 完成 197/197，使用 v7.1 `best.pt`、BN running、ROI96、overlap=0.5、postprocessing 8192/conn3；未访问 test。
+- v7.1 主协议 mean：Dice=`0.7026965`，IoU=`0.5877550`，Precision=`0.6121711`，Recall=`0.8796528`，HD95=`132.5347 mm`，ASSD=`24.1858 mm`。
+- v7.1 foreground：prediction fraction=`0.0198481`，target fraction=`0.0070930`，prediction/target ratio=`2.8933023×`。
+- v7.1 structure：component_count_error=`1.7106599`，false_merge=`0.2893401`，false_break=`0.0253807`。
+- v7.1 hard failures：Dice<0.5 = `29/197`，Dice<0.7 = `46/197`，Precision<0.5 = `38/197`，FG ratio>2 = `31/197`。
+- Dice 分布：P25=`0.7033848`，Median=`0.7905313`，P75=`0.8474664`。
+- 分来源：COLONOG n=152，Dice=`0.7393422`；COVID-19 n=10，Dice=`0.7733267`；HNSCC-3DCT-RT n=5，Dice=`0.3843717`；MSD-T10 n=30，Dice=`0.5465359`。HNSCC 与 MSD-T10 仍是主要失败来源。
+- validation-only 固定 secondary comparison 仅评估 `min_component_voxels=32768`，没有继续 sweep：v7.1 Dice=`0.7836175`、Precision=`0.7439597`、Recall=`0.8796052`、FG ratio=`2.6382305×`、component error=`1.0050761`。
+- v7 原始 8192：Dice=`0.7933430`、Precision=`0.7862014`、Recall=`0.8244633`、FG ratio=`1.6849015×`、HD95=`37.9465 mm`、ASSD=`8.8100 mm`。
+- v7 validation-only 32768：Dice=`0.7980875`、Precision=`0.7969523`、Recall=`0.8215013`、FG ratio=`1.6512499×`、component error=`1.0812183`。
+- 结论：v7.1 虽把 Dice<0.5 从 32 例降至 29 例、Recall 提高，但 mean Dice/Precision/FG ratio/HD95/ASSD 以及 Dice<0.7、Precision<0.5、FG ratio>2 均整体恶化；32768 固定后处理也未超过 v7。
+- 最终冻结决定：**保留 v7，v7.1 作为失败的 final refinement 实验归档，不作为主模型。**
+- **训练线正式结束。不得再开启 v8/v9 或继续围绕 validation197 无限调参。**
+- 后续如继续项目，只做训练外任务：结果整理、论文/答辩、Web/3D 展示、跨架构 baseline、合法外部/临床验证等；这些不改变本次 v7/v7.1 冻结结论。
