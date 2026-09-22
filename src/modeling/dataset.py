@@ -551,14 +551,19 @@ class ProcessedOrthopedicCTDataset(Dataset):
                 if not guidance_root_raw:
                     raise ValueError(f"{hard_strategy} hard mining 必须配置 guidance_root")
                 guidance_path = Path(str(guidance_root_raw)) / case_id / "hard_centers.nii.gz"
-                preferred_mask = _load_nifti(guidance_path, np.float32)
-                preferred_mask = np.transpose(preferred_mask, (2, 1, 0)) > 0.5
-                if preferred_mask.shape != label.shape:
-                    raise ValueError(
-                        f"{case_id}: hard guidance shape 不一致: "
-                        f"{preferred_mask.shape} vs {label.shape}"
-                    )
-                preferred_probability = float(hard_cfg.get("preferred_probability", 0.5))
+                if guidance_path.exists():
+                    preferred_mask = _load_nifti(guidance_path, np.float32)
+                    preferred_mask = np.transpose(preferred_mask, (2, 1, 0)) > 0.5
+                else:
+                    # guidance 不完整时回退普通采样，避免单个缺失 hard case 阻断训练。
+                    preferred_mask = None
+                    preferred_probability = 0.0
+                if preferred_mask is not None:
+                    if preferred_mask.shape != label.shape:
+                        # guidance 与当前缓存空间不一致时回退普通采样。
+                        preferred_mask = None
+                        preferred_probability = 0.0
+                preferred_probability = float(hard_cfg.get("preferred_probability", 0.5)) if preferred_mask is not None else 0.0
                 if not (0.0 <= preferred_probability <= 1.0):
                     raise ValueError("preferred_probability 必须位于 [0,1]")
                 if not np.any(preferred_mask):
@@ -568,7 +573,9 @@ class ProcessedOrthopedicCTDataset(Dataset):
                         preferred_mask = None
                         preferred_probability = 0.0
                     else:
-                        raise ValueError(f"{case_id}: hard guidance 为空: {guidance_path}")
+                        # 单个无有效困难区域 case 回退普通采样。
+                        preferred_mask = None
+                        preferred_probability = 0.0
                 preferred_respects_foreground_branch = True
             elif hard_enabled and hard_strategy not in {"", "none", "tbd_after_baseline"}:
                 raise ValueError(f"暂不支持 hard_sampling.strategy={hard_strategy!r}")

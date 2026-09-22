@@ -55,6 +55,7 @@ RUNTIME_DIR = PROJECT_ROOT / "web" / "runtime"
 CASES_DIR = RUNTIME_DIR / "cases"
 MODEL_DIR = PROJECT_ROOT / "models"
 RESEARCH_PROCESSED_ROOT = PROJECT_ROOT / "data" / "processed_ctspine1k_real"
+LARGE_SCALE_PROCESSED_ROOT = Path("H:/CTSpine1K_compact_1p5mm_nibsafe_v6")
 EXPERIMENTS_ROOT = PROJECT_ROOT / "experiments"
 
 MAX_FILES_PER_CASE = 4000
@@ -115,22 +116,45 @@ def _research_case_dir(case_id: str) -> Path:
     """只允许访问本项目已标准化公开研究病例，不接受任意文件路径。"""
     if not case_id or any(ch in case_id for ch in "/\\") or ".." in case_id:
         raise HTTPException(status_code=400, detail="非法 research case_id")
-    path = RESEARCH_PROCESSED_ROOT / case_id
-    if not path.is_dir():
-        raise HTTPException(status_code=404, detail="研究病例不存在")
-    return path
+    for root in (RESEARCH_PROCESSED_ROOT, LARGE_SCALE_PROCESSED_ROOT):
+        path = root / case_id
+        if root.is_dir() and path.is_dir():
+            return path
+    raise HTTPException(status_code=404, detail="研究病例不存在")
+
+
+def _evaluation_id(evaluation_dir: Path) -> str:
+    return "::".join(evaluation_dir.relative_to(EXPERIMENTS_ROOT).parts)
 
 
 def _evaluation_dir(evaluation_id: str) -> Path:
-    """只允许读取 experiments 根目录下一层评估目录。"""
+    """只允许读取 experiments 根目录内最多两层的真实评估目录。"""
     if not evaluation_id or any(ch in evaluation_id for ch in "/\\") or ".." in evaluation_id:
         raise HTTPException(status_code=400, detail="非法 evaluation_id")
-    path = EXPERIMENTS_ROOT / evaluation_id
+    parts = evaluation_id.split("::")
+    if not 1 <= len(parts) <= 2 or any(not part for part in parts):
+        raise HTTPException(status_code=400, detail="非法 evaluation_id")
+    path = EXPERIMENTS_ROOT.joinpath(*parts)
     if not path.is_dir():
         raise HTTPException(status_code=404, detail="评估目录不存在")
     if not (path / "summary.json").exists() or not (path / "metrics_per_case.csv").exists():
         raise HTTPException(status_code=422, detail="目录不是完整 evaluate.py 输出")
     return path
+
+
+def _iter_evaluation_dirs() -> list[Path]:
+    if not EXPERIMENTS_ROOT.is_dir():
+        return []
+    found: list[Path] = []
+    for top in EXPERIMENTS_ROOT.iterdir():
+        if not top.is_dir():
+            continue
+        if (top / "summary.json").exists() and (top / "metrics_per_case.csv").exists():
+            found.append(top)
+        for child in top.iterdir():
+            if child.is_dir() and (child / "summary.json").exists() and (child / "metrics_per_case.csv").exists():
+                found.append(child)
+    return found
 
 
 def _read_metrics_per_case(evaluation_dir: Path) -> list[dict[str, object]]:
@@ -169,7 +193,8 @@ def _evaluation_summary(evaluation_dir: Path) -> dict[str, object]:
         raise HTTPException(status_code=422, detail=f"summary.json 无法解析: {exc}") from exc
     rows = _read_metrics_per_case(evaluation_dir)
     return {
-        "evaluation_id": evaluation_dir.name,
+        "evaluation_id": _evaluation_id(evaluation_dir),
+        "display_name": evaluation_dir.parent.name + " / " + evaluation_dir.name if evaluation_dir.parent != EXPERIMENTS_ROOT else evaluation_dir.name,
         "split": summary.get("split"),
         "evaluated_at": summary.get("evaluated_at"),
         "device": summary.get("device"),
@@ -316,7 +341,8 @@ def _evaluation_surface_mesh_paths(
     surface: str,
     sdf_sigma_mm: float,
 ) -> tuple[Path, Path]:
-    output_dir = evaluation_dir / "reconstruction" / case_id / source
+    evaluation_token = _evaluation_id(evaluation_dir).replace("::", "__")
+    output_dir = RUNTIME_DIR / "evaluation_reconstruction" / evaluation_token / case_id / source
     return _surface_mesh_paths(
         output_dir,
         None,
@@ -417,6 +443,21 @@ def _label_rgb(label_plane: np.ndarray) -> np.ndarray:
     return rgb
 
 
+def _load_bone_display(case_dir: Path) -> tuple[sitk.Image, np.ndarray]:
+    bone_path = case_dir / "image_bone_window.nii.gz"
+    if bone_path.exists():
+        image = sitk.ReadImage(sitk_io_path(bone_path))
+        return image, np.clip(sitk.GetArrayFromImage(image).astype(np.float32), 0.0, 1.0)
+    compact_path = case_dir / "image_normalized_u16.nii.gz"
+    if compact_path.exists():
+        image = sitk.ReadImage(sitk_io_path(compact_path))
+        normalized = sitk.GetArrayFromImage(image).astype(np.float32) / 65535.0
+        hu = -1000.0 + 3000.0 * normalized
+        bone = np.clip((hu + 500.0) / 2000.0, 0.0, 1.0)
+        return image, bone
+    raise HTTPException(status_code=404, detail="研究病例缺少可显示 CT 体数据")
+
+
 def _research_mpr_png(
     case_dir: Path,
     *,
@@ -425,15 +466,13 @@ def _research_mpr_png(
     overlay: bool,
     alpha: float,
 ) -> tuple[bytes, int]:
-    bone_path = case_dir / "image_bone_window.nii.gz"
     label_path = case_dir / "label.nii.gz"
-    if not bone_path.exists() or not label_path.exists():
-        raise HTTPException(status_code=404, detail="研究病例缺少 bone-window 或 label")
-    bone_image = sitk.ReadImage(sitk_io_path(bone_path))
+    if not label_path.exists():
+        raise HTTPException(status_code=404, detail="研究病例缺少 label")
+    bone_image, bone = _load_bone_display(case_dir)
     label_image = sitk.ReadImage(sitk_io_path(label_path))
     if bone_image.GetSize() != label_image.GetSize():
-        raise HTTPException(status_code=422, detail="bone-window 与 label size 不一致")
-    bone = sitk.GetArrayFromImage(bone_image).astype(np.float32)
+        raise HTTPException(status_code=422, detail="CT 与 label size 不一致")
     label = sitk.GetArrayFromImage(label_image)
     bone_plane, index = _extract_research_plane_zyx(
         bone,
@@ -480,56 +519,69 @@ def _evaluation_mpr_png(
     *,
     plane: Literal["axial", "coronal", "sagittal"],
     position: float,
-    mode: Literal["prediction", "uncertainty"],
+    mode: Literal["raw", "prediction", "gt", "error", "uncertainty"],
     alpha: float,
 ) -> tuple[bytes, int]:
-    bone_path = case_dir / "image_bone_window.nii.gz"
-    if not bone_path.exists():
-        raise HTTPException(status_code=404, detail="研究病例缺少 image_bone_window.nii.gz")
-    bone_image = sitk.ReadImage(sitk_io_path(bone_path))
-    bone = sitk.GetArrayFromImage(bone_image).astype(np.float32)
+    bone_image, bone = _load_bone_display(case_dir)
     bone_plane, index = _extract_research_plane_zyx(bone, plane=plane, position=position)
     gray = np.clip(bone_plane, 0.0, 1.0)
     rgb = np.repeat(gray[..., None], 3, axis=2)
     blend = float(np.clip(alpha, 0.0, 1.0))
 
-    if mode == "prediction":
+    prediction_plane = None
+    if mode in {"prediction", "error"}:
         artifact_path = evaluation_dir / "predictions" / case_id / "prediction.nii.gz"
         if not artifact_path.exists():
             raise HTTPException(status_code=404, detail="该评估病例没有 prediction.nii.gz")
         artifact_image = sitk.ReadImage(sitk_io_path(artifact_path))
         if not _same_sitk_geometry(bone_image, artifact_image):
             raise HTTPException(status_code=422, detail="prediction 与处理后 CT 物理空间不一致")
-        prediction = sitk.GetArrayFromImage(artifact_image)
-        pred_plane, pred_index = _extract_research_plane_zyx(
-            prediction, plane=plane, position=position
+        prediction_plane, pred_index = _extract_research_plane_zyx(
+            sitk.GetArrayFromImage(artifact_image), plane=plane, position=position
         )
         if pred_index != index:
             raise RuntimeError("prediction MPR index 不一致")
-        mask = pred_plane > 0
-        if np.any(mask):
-            colors = _label_rgb(pred_plane)
-            rgb[mask] = (1.0 - blend) * rgb[mask] + blend * colors[mask]
-    else:
-        artifact_path = (
-            evaluation_dir / "uncertainty" / case_id / "predictive_entropy.nii.gz"
+
+    gt_plane = None
+    if mode in {"gt", "error"}:
+        label_path = case_dir / "label.nii.gz"
+        if not label_path.exists():
+            raise HTTPException(status_code=404, detail="该病例没有 GT label")
+        label_image = sitk.ReadImage(sitk_io_path(label_path))
+        if not _same_sitk_geometry(bone_image, label_image):
+            raise HTTPException(status_code=422, detail="GT 与处理后 CT 物理空间不一致")
+        gt_plane, gt_index = _extract_research_plane_zyx(
+            sitk.GetArrayFromImage(label_image), plane=plane, position=position
         )
+        if gt_index != index:
+            raise RuntimeError("GT MPR index 不一致")
+
+    if mode == "prediction" and prediction_plane is not None:
+        mask = prediction_plane > 0
+        rgb[mask] = (1.0 - blend) * rgb[mask] + blend * np.array([0.18, 0.62, 0.98], dtype=np.float32)
+    elif mode == "gt" and gt_plane is not None:
+        mask = gt_plane > 0
+        rgb[mask] = (1.0 - blend) * rgb[mask] + blend * np.array([0.18, 0.78, 0.48], dtype=np.float32)
+    elif mode == "error" and prediction_plane is not None and gt_plane is not None:
+        pred = prediction_plane > 0
+        gt = gt_plane > 0
+        tp, fp, fn = pred & gt, pred & ~gt, ~pred & gt
+        rgb[tp] = (1.0 - blend) * rgb[tp] + blend * np.array([0.18, 0.76, 0.48], dtype=np.float32)
+        rgb[fp] = (1.0 - blend) * rgb[fp] + blend * np.array([0.95, 0.38, 0.22], dtype=np.float32)
+        rgb[fn] = (1.0 - blend) * rgb[fn] + blend * np.array([0.10, 0.72, 0.92], dtype=np.float32)
+    elif mode == "uncertainty":
+        artifact_path = evaluation_dir / "uncertainty" / case_id / "predictive_entropy.nii.gz"
         if not artifact_path.exists():
             raise HTTPException(status_code=404, detail="该评估病例没有 predictive_entropy.nii.gz")
         artifact_image = sitk.ReadImage(sitk_io_path(artifact_path))
         if not _same_sitk_geometry(bone_image, artifact_image):
             raise HTTPException(status_code=422, detail="uncertainty 与处理后 CT 物理空间不一致")
         uncertainty = sitk.GetArrayFromImage(artifact_image).astype(np.float32)
-        unc_plane, unc_index = _extract_research_plane_zyx(
-            uncertainty, plane=plane, position=position
-        )
+        unc_plane, unc_index = _extract_research_plane_zyx(uncertainty, plane=plane, position=position)
         if unc_index != index:
             raise RuntimeError("uncertainty MPR index 不一致")
         score = np.clip(unc_plane, 0.0, 1.0)
-        heat = np.zeros(score.shape + (3,), dtype=np.float32)
-        heat[..., 0] = score
-        heat[..., 1] = np.clip(1.0 - np.abs(score - 0.5) * 2.0, 0.0, 1.0)
-        heat[..., 2] = 1.0 - score
+        heat = np.stack([score, np.clip(1.0 - np.abs(score - 0.5) * 2.0, 0.0, 1.0), 1.0 - score], axis=-1)
         local_alpha = (blend * score)[..., None]
         rgb = (1.0 - local_alpha) * rgb + local_alpha * heat
 
@@ -884,25 +936,34 @@ def results_review_page() -> FileResponse:
     return FileResponse(page)
 
 
+@app.get("/teaching")
+def teaching_page() -> FileResponse:
+    page = FRONTEND_DIR / "teaching.html"
+    if not page.exists():
+        raise HTTPException(status_code=500, detail="teaching 页面不存在")
+    return FileResponse(page)
+
+
 @app.get("/api/research/evaluations")
 def list_evaluations() -> dict:
-    if not EXPERIMENTS_ROOT.is_dir():
-        return {"research_only": True, "evaluations": [], "total": 0}
     evaluations: list[dict[str, object]] = []
-    for path in sorted(EXPERIMENTS_ROOT.iterdir(), reverse=True):
-        if not path.is_dir():
-            continue
-        if not (path / "summary.json").exists() or not (path / "metrics_per_case.csv").exists():
-            continue
+    for path in _iter_evaluation_dirs():
         try:
-            evaluations.append(_evaluation_summary(path))
+            item = _evaluation_summary(path)
+            if "test" in str(item.get("split") or "").lower():
+                continue
+            evaluations.append(item)
         except HTTPException:
             continue
+    evaluations.sort(
+        key=lambda item: (str(item.get("evaluated_at") or ""), int(item.get("case_count") or 0)),
+        reverse=True,
+    )
     return {
         "research_only": True,
         "total": len(evaluations),
         "evaluations": evaluations,
-        "note": "只列出 evaluate.py 产生的可追溯评估目录；不存在真实评估时保持空列表。",
+        "note": "只列出磁盘中真实 evaluate.py 评估产物，包含大型实验下的 full-volume 评估。",
     }
 
 
@@ -921,7 +982,7 @@ def get_evaluation(evaluation_id: str) -> dict:
 def evaluation_case_mpr(
     evaluation_id: str,
     case_id: str,
-    mode: Literal["prediction", "uncertainty"] = Query("prediction"),
+    mode: Literal["raw", "prediction", "gt", "error", "uncertainty"] = Query("prediction"),
     plane: Literal["axial", "coronal", "sagittal"] = Query("axial"),
     position: float = Query(0.5, ge=0.0, le=1.0),
     alpha: float = Query(0.45, ge=0.0, le=1.0),
@@ -937,484 +998,3 @@ def evaluation_case_mpr(
             case_dir,
             case_id,
             plane=plane,
-            position=position,
-            mode=mode,
-            alpha=alpha,
-        )
-    except HTTPException:
-        raise
-    except Exception as exc:
-        raise HTTPException(
-            status_code=422,
-            detail=f"评估 MPR 生成失败: {type(exc).__name__}: {exc}",
-        ) from exc
-    return Response(
-        content=png,
-        media_type="image/png",
-        headers={
-            "X-Evaluation-Id": evaluation_id,
-            "X-Case-Id": case_id,
-            "X-MPR-Plane": plane,
-            "X-MPR-Index": str(index),
-            "X-Overlay-Mode": mode,
-        },
-    )
-
-
-@app.post("/api/research/evaluations/{evaluation_id}/cases/{case_id}/mesh/build")
-def build_evaluation_case_mesh(
-    evaluation_id: str,
-    case_id: str,
-    source: Literal["prediction", "gt"] = Query("prediction"),
-    simplify_mm: float | None = Query(None, gt=0, le=10),
-    surface: Literal["mask", "sdf"] = Query("mask"),
-    sdf_sigma_mm: float = Query(0.4, gt=0, le=3),
-    feature_preservation_strength: float = Query(8.0, ge=0, le=100),
-) -> dict:
-    evaluation_dir = _evaluation_dir(evaluation_id)
-    _evaluation_case_row(evaluation_dir, case_id)
-    case_dir = _research_case_dir(case_id)
-    if source == "prediction":
-        input_path = evaluation_dir / "predictions" / case_id / "prediction.nii.gz"
-        if not input_path.exists():
-            raise HTTPException(status_code=404, detail="该评估病例没有 prediction.nii.gz")
-    else:
-        input_path = case_dir / "label.nii.gz"
-        if not input_path.exists():
-            raise HTTPException(status_code=404, detail="该病例缺少 label.nii.gz")
-
-    ply_path, json_path = _evaluation_surface_mesh_paths(
-        evaluation_dir,
-        case_id,
-        source=source,
-        simplify_mm=simplify_mm,
-        surface=surface,
-        sdf_sigma_mm=sdf_sigma_mm,
-    )
-    try:
-        if surface == "sdf":
-            summary = export_nifti_sdf_surface(
-                input_path,
-                ply_path,
-                sigma_mm=sdf_sigma_mm,
-                summary_path=json_path,
-                require_component_preservation=True,
-            )
-        else:
-            summary = export_nifti_mask_mesh(
-                input_path,
-                ply_path,
-                summary_path=json_path,
-                simplify_cluster_mm=simplify_mm,
-                feature_preservation_strength=feature_preservation_strength,
-            )
-    except ValueError as exc:
-        raise HTTPException(status_code=422, detail=str(exc)) from exc
-    except Exception as exc:
-        raise HTTPException(
-            status_code=500,
-            detail=f"evaluation mesh 生成失败: {type(exc).__name__}: {exc}",
-        ) from exc
-
-    return {
-        "status": "built",
-        "evaluation_id": evaluation_id,
-        "case_id": case_id,
-        "source": source,
-        "surface": surface,
-        "simplify_mm": simplify_mm,
-        "sdf_sigma_mm": sdf_sigma_mm if surface == "sdf" else None,
-        "feature_preservation_strength": (
-            feature_preservation_strength if surface == "mask" and simplify_mm is not None else None
-        ),
-        "summary": summary,
-        "research_only": True,
-        "note": "只从已保存的真实 evaluation prediction 或对应 GT label 构建 3D；不重新运行模型推理。",
-    }
-
-
-@app.get("/api/research/evaluations/{evaluation_id}/cases/{case_id}/mesh")
-def get_evaluation_case_mesh(
-    evaluation_id: str,
-    case_id: str,
-    source: Literal["prediction", "gt"] = Query("prediction"),
-    simplify_mm: float | None = Query(None, gt=0, le=10),
-    surface: Literal["mask", "sdf"] = Query("mask"),
-    sdf_sigma_mm: float = Query(0.4, gt=0, le=3),
-) -> FileResponse:
-    evaluation_dir = _evaluation_dir(evaluation_id)
-    _evaluation_case_row(evaluation_dir, case_id)
-    ply_path, _ = _evaluation_surface_mesh_paths(
-        evaluation_dir,
-        case_id,
-        source=source,
-        simplify_mm=simplify_mm,
-        surface=surface,
-        sdf_sigma_mm=sdf_sigma_mm,
-    )
-    if not ply_path.exists():
-        raise HTTPException(status_code=404, detail="evaluation mesh 尚未生成")
-    if surface == "sdf":
-        _read_sdf_summary_checked(ply_path.with_suffix(".json"))
-    return FileResponse(ply_path, media_type="application/octet-stream", filename=ply_path.name)
-
-
-@app.get("/api/research/evaluations/{evaluation_id}/cases/{case_id}/mesh/summary")
-def get_evaluation_case_mesh_summary(
-    evaluation_id: str,
-    case_id: str,
-    source: Literal["prediction", "gt"] = Query("prediction"),
-    simplify_mm: float | None = Query(None, gt=0, le=10),
-    surface: Literal["mask", "sdf"] = Query("mask"),
-    sdf_sigma_mm: float = Query(0.4, gt=0, le=3),
-) -> dict:
-    evaluation_dir = _evaluation_dir(evaluation_id)
-    _evaluation_case_row(evaluation_dir, case_id)
-    _, json_path = _evaluation_surface_mesh_paths(
-        evaluation_dir,
-        case_id,
-        source=source,
-        simplify_mm=simplify_mm,
-        surface=surface,
-        sdf_sigma_mm=sdf_sigma_mm,
-    )
-    if surface == "sdf":
-        return _read_sdf_summary_checked(json_path)
-    if not json_path.exists():
-        raise HTTPException(status_code=404, detail="evaluation mesh summary 尚未生成")
-    try:
-        return json.loads(json_path.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        raise HTTPException(status_code=422, detail=f"evaluation mesh summary 无法解析: {exc}") from exc
-
-
-@app.get("/research-3d")
-def research_3d_page() -> FileResponse:
-    page = FRONTEND_DIR / "research_3d.html"
-    if not page.exists():
-        raise HTTPException(status_code=500, detail="3D research 页面不存在")
-    return FileResponse(page)
-
-
-@app.get("/api/research/cases")
-def list_research_cases() -> dict:
-    if not RESEARCH_PROCESSED_ROOT.is_dir():
-        return {"research_only": True, "cases": [], "total": 0}
-    source_splits = _research_source_split_map()
-    case_dirs = sorted(
-        path
-        for path in RESEARCH_PROCESSED_ROOT.iterdir()
-        if path.is_dir()
-        and (path / "label.nii.gz").exists()
-        and "test" not in source_splits.get(path.name, "unknown").lower()
-    )
-    cases = [
-        _research_case_summary(path, source_splits.get(path.name))
-        for path in case_dirs
-    ]
-    return {
-        "research_only": True,
-        "dataset": "CTSpine1K/MSD-T10 engineering subset",
-        "total": len(cases),
-        "cases": cases,
-        "note": "当前 3D 演示使用公开数据真值 label；不是模型预测或诊断结果。",
-    }
-
-
-@app.post("/api/research/cases/{case_id}/mesh/build")
-def build_research_mesh(
-    case_id: str,
-    class_id: int | None = Query(None, ge=1, description="可选标签类别；为空则导出所有 >0 前景"),
-    simplify_mm: float | None = Query(
-        None,
-        gt=0,
-        le=10,
-        description="可选物理空间 vertex-clustering 网格大小，单位 mm",
-    ),
-    surface: Literal["mask", "sdf"] = Query("mask"),
-    sdf_sigma_mm: float = Query(0.4, gt=0, le=3),
-) -> dict:
-    case_dir = _research_case_dir(case_id)
-    label_path = case_dir / "label.nii.gz"
-    if not label_path.exists():
-        raise HTTPException(status_code=404, detail="该病例缺少 label.nii.gz")
-    ply_path, json_path = _surface_mesh_paths(
-        case_dir,
-        class_id,
-        simplify_mm,
-        surface=surface,
-        sdf_sigma_mm=sdf_sigma_mm,
-    )
-    try:
-        if surface == "sdf":
-            summary = export_nifti_sdf_surface(
-                label_path,
-                ply_path,
-                class_id=class_id,
-                sigma_mm=sdf_sigma_mm,
-                summary_path=json_path,
-                require_component_preservation=True,
-            )
-        else:
-            summary = export_nifti_mask_mesh(
-                label_path,
-                ply_path,
-                class_id=class_id,
-                summary_path=json_path,
-                simplify_cluster_mm=simplify_mm,
-            )
-    except ValueError as exc:
-        raise HTTPException(status_code=422, detail=str(exc)) from exc
-    except Exception as exc:
-        raise HTTPException(
-            status_code=500,
-            detail=f"mesh 生成失败: {type(exc).__name__}: {exc}",
-        ) from exc
-    return {
-        "status": "built",
-        "case_id": case_id,
-        "class_id": class_id,
-        "simplify_mm": simplify_mm,
-        "surface": surface,
-        "sdf_sigma_mm": sdf_sigma_mm if surface == "sdf" else None,
-        "mesh_url": f"/api/research/cases/{case_id}/mesh"
-        + _mesh_query_string(
-            class_id=class_id,
-            simplify_mm=simplify_mm,
-            surface=surface,
-            sdf_sigma_mm=sdf_sigma_mm,
-        ),
-        "summary": summary,
-        "research_only": True,
-    }
-
-
-@app.get("/api/research/cases/{case_id}/mesh")
-def get_research_mesh(
-    case_id: str,
-    class_id: int | None = Query(None, ge=1),
-    simplify_mm: float | None = Query(None, gt=0, le=10),
-    surface: Literal["mask", "sdf"] = Query("mask"),
-    sdf_sigma_mm: float = Query(0.4, gt=0, le=3),
-) -> FileResponse:
-    case_dir = _research_case_dir(case_id)
-    ply_path, _ = _surface_mesh_paths(
-        case_dir,
-        class_id,
-        simplify_mm,
-        surface=surface,
-        sdf_sigma_mm=sdf_sigma_mm,
-    )
-    if not ply_path.exists():
-        raise HTTPException(status_code=404, detail="mesh 尚未生成，请先调用 build")
-    if surface == "sdf":
-        _read_sdf_summary_checked(ply_path.with_suffix(".json"))
-    return FileResponse(ply_path, media_type="application/octet-stream", filename=ply_path.name)
-
-
-@app.get("/api/research/cases/{case_id}/mesh/summary")
-def get_research_mesh_summary(
-    case_id: str,
-    class_id: int | None = Query(None, ge=1),
-    simplify_mm: float | None = Query(None, gt=0, le=10),
-    surface: Literal["mask", "sdf"] = Query("mask"),
-    sdf_sigma_mm: float = Query(0.4, gt=0, le=3),
-) -> dict:
-    case_dir = _research_case_dir(case_id)
-    _, json_path = _surface_mesh_paths(
-        case_dir,
-        class_id,
-        simplify_mm,
-        surface=surface,
-        sdf_sigma_mm=sdf_sigma_mm,
-    )
-    if surface == "sdf":
-        return _read_sdf_summary_checked(json_path)
-    if not json_path.exists():
-        raise HTTPException(status_code=404, detail="mesh summary 尚未生成")
-    return json.loads(json_path.read_text(encoding="utf-8"))
-
-
-@app.post("/api/research/measure/distance")
-def measure_distance(request: DistanceMeasurementRequest) -> dict:
-    try:
-        value = distance_mm(request.point_a.xyz(), request.point_b.xyz())
-    except ValueError as exc:
-        raise HTTPException(status_code=422, detail=str(exc)) from exc
-    return {
-        "distance_mm": value,
-        "point_a_xyz_mm": list(request.point_a.xyz()),
-        "point_b_xyz_mm": list(request.point_b.xyz()),
-        "research_only": True,
-        "note": "纯几何物理距离，不是临床诊断结论。",
-    }
-
-
-@app.post("/api/research/measure/angle")
-def measure_angle(request: AngleMeasurementRequest) -> dict:
-    try:
-        value = angle_degrees(
-            request.point_a.xyz(),
-            request.vertex_b.xyz(),
-            request.point_c.xyz(),
-        )
-    except ValueError as exc:
-        raise HTTPException(status_code=422, detail=str(exc)) from exc
-    return {
-        "angle_degrees": value,
-        "point_a_xyz_mm": list(request.point_a.xyz()),
-        "vertex_b_xyz_mm": list(request.vertex_b.xyz()),
-        "point_c_xyz_mm": list(request.point_c.xyz()),
-        "research_only": True,
-        "note": "纯几何三点夹角，不是临床诊断结论。",
-    }
-
-
-@app.get("/api/health")
-def health() -> dict:
-    checkpoint_candidates = []
-    if MODEL_DIR.exists():
-        for pattern in ("*.pt", "*.pth", "*.ckpt", "*.bin"):
-            checkpoint_candidates.extend(MODEL_DIR.rglob(pattern))
-
-    return {
-        "status": "ok",
-        "app_version": app.version,
-        "research_only": True,
-        "project_root": str(PROJECT_ROOT),
-        "runtime_ready": CASES_DIR.exists(),
-        "model_checkpoint_count": len(checkpoint_candidates),
-        "inference_ready": False,
-        "message": "Web 数据上传/质控/预览已可用；模型推理需完成 SegFormer3D checkpoint 与推理适配后启用。",
-    }
-
-
-@app.post("/api/cases/upload")
-async def upload_case(
-    files: Annotated[list[UploadFile], File(description="一个病例的 DICOM 文件或单个 NIfTI")],
-) -> dict:
-    if not files:
-        raise HTTPException(status_code=400, detail="未选择文件")
-    if len(files) > MAX_FILES_PER_CASE:
-        raise HTTPException(status_code=413, detail=f"单病例文件数超过 {MAX_FILES_PER_CASE}")
-
-    case_id = f"case_{datetime.now().strftime('%Y%m%d')}_{uuid.uuid4().hex[:10]}"
-    case_path = CASES_DIR / case_id
-    upload_dir = case_path / "uploads"
-    upload_dir.mkdir(parents=True, exist_ok=False)
-
-    saved_files = []
-    total_bytes = 0
-
-    try:
-        for index, upload in enumerate(files, start=1):
-            suffix = _safe_suffix(upload.filename)
-            internal_name = f"file_{index:05d}{suffix}"
-            target = upload_dir / internal_name
-            file_bytes = 0
-
-            with target.open("wb") as f:
-                while True:
-                    chunk = await upload.read(CHUNK_SIZE)
-                    if not chunk:
-                        break
-                    total_bytes += len(chunk)
-                    file_bytes += len(chunk)
-                    if total_bytes > MAX_TOTAL_UPLOAD_BYTES:
-                        raise HTTPException(status_code=413, detail="单病例总上传体量超过 2 GiB")
-                    f.write(chunk)
-
-            saved_files.append(
-                {
-                    "internal_name": internal_name,
-                    "size_bytes": file_bytes,
-                    "format_hint": "nifti" if suffix in {".nii", ".nii.gz"} else "unknown_or_dicom",
-                }
-            )
-            await upload.close()
-
-        manifest = {
-            "case_id": case_id,
-            "created_at_utc": datetime.now(timezone.utc).isoformat(),
-            "file_count": len(saved_files),
-            "total_bytes": total_bytes,
-            "files": saved_files,
-            "research_only": True,
-        }
-        _manifest_path(case_path).write_text(
-            json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8"
-        )
-
-    except Exception:
-        shutil.rmtree(case_path, ignore_errors=True)
-        raise
-
-    return {
-        "status": "uploaded",
-        "case_id": case_id,
-        "file_count": len(saved_files),
-        "total_bytes": total_bytes,
-        "next": f"/api/cases/{case_id}/inspect",
-    }
-
-
-@app.get("/api/cases/{case_id}/inspect")
-def inspect_case(case_id: str) -> dict:
-    case_path = _case_dir(case_id)
-    manifest = _read_manifest(case_path)
-    nifti_path = _find_nifti(case_path)
-
-    if nifti_path is not None:
-        inspection = _inspect_nifti(nifti_path)
-    else:
-        inspection = _inspect_dicom(case_path)
-
-    return {
-        "case_id": case_id,
-        "manifest": {
-            "file_count": manifest["file_count"],
-            "total_bytes": manifest["total_bytes"],
-            "created_at_utc": manifest["created_at_utc"],
-        },
-        "inspection": inspection,
-        "research_only": True,
-    }
-
-
-@app.get("/api/cases/{case_id}/preview")
-def preview_case(
-    case_id: str,
-    center: float = Query(500.0, description="显示窗位，仅用于预览"),
-    width: float = Query(2000.0, gt=0, description="显示窗宽，仅用于预览"),
-    plane: Literal["axial", "coronal", "sagittal"] = Query(
-        "axial", description="MPR 平面"
-    ),
-    position: float = Query(0.5, ge=0.0, le=1.0, description="沿该平面的归一化位置"),
-) -> Response:
-    case_path = _case_dir(case_id)
-    nifti_path = _find_nifti(case_path)
-
-    try:
-        if nifti_path is not None:
-            png = _preview_from_nifti(nifti_path, center, width, plane, position)
-        else:
-            png = _preview_from_dicom(case_path, center, width, plane, position)
-    except HTTPException:
-        raise
-    except Exception as exc:
-        raise HTTPException(status_code=422, detail=f"预览生成失败: {type(exc).__name__}: {exc}") from exc
-
-    return Response(content=png, media_type="image/png")
-
-
-@app.post("/api/cases/{case_id}/infer")
-def infer_case(case_id: str) -> JSONResponse:
-    _case_dir(case_id)
-    return JSONResponse(
-        status_code=501,
-        content={
-            "status": "not_ready",
-            "case_id": case_id,
-            "message": "真实 SegFormer3D baseline/checkpoint 尚未完成，当前不伪造分割结果。待模型训练与推理适配完成后启用此接口。",
-        },
-    )

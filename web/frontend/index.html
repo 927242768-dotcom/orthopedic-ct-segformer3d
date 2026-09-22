@@ -1,146 +1,16 @@
 <!doctype html>
-<html lang="zh-CN">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>骨科 CT 智能辅助分析研究平台</title>
-  <link rel="stylesheet" href="/static/styles.css" />
-</head>
-<body>
-  <header class="topbar">
-    <div>
-      <div class="eyebrow">ORTHOPEDIC CT RESEARCH</div>
-      <h1>骨科 CT 智能辅助分析研究平台</h1>
-      <p>科研原型 · DICOM/NIfTI 质控 · CT 预览 · SegFormer3D 分割 · 三维重建</p>
-    </div>
-    <div class="header-actions">
-      <a class="btn btn-secondary" href="/qc-review">审核真实 QC</a>
-      <a class="btn btn-secondary" href="/research-3d">真实 3D 工程查看</a>
-      <a class="btn btn-secondary" href="/results-review">评估结果复核</a>
-      <div id="healthBadge" class="badge badge-neutral">正在检查系统…</div>
-    </div>
-  </header>
-
-  <main class="layout">
-    <section class="card hero-card">
-      <div class="card-head">
-        <div>
-          <span class="step">01</span>
-          <h2>导入研究病例</h2>
-        </div>
-        <span class="tag">本机处理</span>
-      </div>
-
-      <div class="notice warning">
-        <strong>科研用途声明：</strong> 本系统当前不是医疗器械，不输出独立临床诊断。上传临床数据前必须完成合法授权与脱敏。
-      </div>
-
-      <label class="upload-zone" for="caseFiles">
-        <input id="caseFiles" type="file" multiple />
-        <div class="upload-icon">＋</div>
-        <div>
-          <strong>选择一个病例的 DICOM 文件，或单个 NIfTI</strong>
-          <p>浏览器将文件发送到本机 FastAPI 服务；后端使用随机 case ID，不保留原始文件名。</p>
-        </div>
-      </label>
-
-      <div class="actions">
-        <button id="uploadBtn" class="btn btn-primary">上传并检查</button>
-        <button id="clearBtn" class="btn btn-secondary">清空界面</button>
-      </div>
-      <div id="uploadMessage" class="message"></div>
-    </section>
-
-    <section class="card">
-      <div class="card-head">
-        <div>
-          <span class="step">02</span>
-          <h2>影像质量与空间信息</h2>
-        </div>
-        <span id="caseId" class="mono tag">尚未创建病例</span>
-      </div>
-      <div id="inspectionEmpty" class="empty-state">上传后将在这里显示 series、尺寸、spacing、QC warning 等信息。</div>
-      <pre id="inspectionJson" class="json-panel hidden"></pre>
-    </section>
-
-    <section class="card preview-card">
-      <div class="card-head">
-        <div>
-          <span class="step">03</span>
-          <h2>MPR 三视图预览</h2>
-        </div>
-        <div class="window-controls">
-          <label>窗位 <input id="windowCenter" type="number" value="500" /></label>
-          <label>窗宽 <input id="windowWidth" type="number" value="2000" min="1" /></label>
-          <label>位置 <input id="slicePosition" type="range" value="50" min="0" max="100" /></label>
-          <button id="refreshPreviewBtn" class="btn btn-small">刷新</button>
-        </div>
-      </div>
-      <div id="previewPlaceholder" class="preview-placeholder">等待病例上传</div>
-      <div id="mprGrid" class="mpr-grid hidden">
-        <figure>
-          <figcaption>Axial · 轴位</figcaption>
-          <img id="previewAxial" class="ct-preview" alt="CT axial preview" />
-        </figure>
-        <figure>
-          <figcaption>Coronal · 冠状位</figcaption>
-          <img id="previewCoronal" class="ct-preview" alt="CT coronal preview" />
-        </figure>
-        <figure>
-          <figcaption>Sagittal · 矢状位</figcaption>
-          <img id="previewSagittal" class="ct-preview" alt="CT sagittal preview" />
-        </figure>
-      </div>
-    </section>
-
-    <section class="card pipeline-card">
-      <div class="card-head">
-        <div>
-          <span class="step">04</span>
-          <h2>模型与三维分析</h2>
-        </div>
-        <span class="tag tag-muted">逐步接入</span>
-      </div>
-
-      <div class="pipeline">
-        <div class="pipeline-node active">DICOM/NIfTI</div>
-        <div class="pipeline-arrow">→</div>
-        <div class="pipeline-node active">QC / 预处理</div>
-        <div class="pipeline-arrow">→</div>
-        <div class="pipeline-node pending">SegFormer3D</div>
-        <div class="pipeline-arrow">→</div>
-        <div class="pipeline-node pending">不确定性精修</div>
-        <div class="pipeline-arrow">→</div>
-        <div class="pipeline-node pending">3D / 测量</div>
-      </div>
-
-      <div class="actions">
-        <button id="inferBtn" class="btn btn-primary">尝试模型分割</button>
-      </div>
-      <div id="inferMessage" class="message"></div>
-    </section>
-
-    <section class="card status-card">
-      <div class="card-head">
-        <div>
-          <span class="step">STATUS</span>
-          <h2>当前研究状态</h2>
-        </div>
-      </div>
-      <div class="status-grid">
-        <div><span class="dot ok"></span><strong>Web 上传 / QC / MPR</strong><small>上传、基础 QC 与三视图预览已建立</small></div>
-        <div><span class="dot work"></span><strong>DICOM 标准化 pipeline</strong><small>代码首版，等待公开数据验证</small></div>
-        <div><span class="dot wait"></span><strong>SegFormer3D baseline</strong><small>等待 Python 3.11 / 数据 / 训练环境</small></div>
-        <div><span class="dot work"></span><strong>联合损失与精修</strong><small>联合 loss 与 uncertainty refinement 工程候选已实现，等待真实消融</small></div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <span>基于 SegFormer 的骨科 CT 影像智能分割与三维重建研究</span>
-    <span>Research prototype · v0.1</span>
-  </footer>
-
-  <script src="/static/app.js"></script>
-</body>
-</html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>智骨云析｜AI辅助骨科CT影像教学与三维实训平台</title><link rel="stylesheet" href="/static/aic.css?v=20260922-mededu"></head>
+<body class="home-page mededu-page"><header class="topnav"><div class="shell navrow"><a class="brand" href="/">智骨<span>云析</span></a><nav class="navlinks"><a class="active" href="/">学习首页</a><a href="/teaching#mpr">CT 三平面学习</a><a href="/teaching#locate">骨性结构实训</a><a href="/research-3d">三维解剖</a><a href="/teaching#practice">病例练习</a><a href="/results-review">AI / 科研拓展</a></nav></div></header>
+<main>
+<section class="hero mededu-hero"><div class="shell hero-grid"><div><div class="eyebrow">ORTHOPEDIC CT EDUCATION · AI ASSISTED</div><h1>AI 辅助骨科 CT 影像教学<br>与三维实训平台</h1><p class="lead">通过真实 CT 病例、三平面联动、AI 辅助定位与三维解剖，建立从二维切片到空间结构的影像认知。</p><div class="hero-pills"><span>真实 CT 病例</span><span>三平面 MPR</span><span>AI 辅助定位</span><span>2D ↔ 3D</span></div><div class="actions"><a class="btn primary" href="/teaching">开始今天的 CT 学习</a><a class="btn" href="/research-3d">进入三维解剖</a></div></div>
+<aside class="card learning-console"><div class="learning-badge">今日学习路径</div><ol class="learning-steps"><li><b>看懂三平面</b><span>认识 Axial / Coronal / Sagittal 与 X/Y/Z</span></li><li><b>先自己找结构</b><span>关闭提示，在原始 CT 中完成定位</span></li><li><b>再让 AI 帮忙</b><span>打开 AI 辅助高亮，修正自己的判断</span></li><li><b>最后看专家参考</b><span>用标准标注完成自我核对</span></li><li><b>进入三维实训</b><span>旋转观察并完成距离 / 角度测量</span></li></ol></aside></div></section>
+<section class="section"><div class="shell"><div class="section-title"><div><h2>从“会看”到“会定位、会对应、会测量”</h2><p>每个入口都对应一个可操作的影像学习任务，AI 只在需要时出现。</p></div><span class="badge">医学生模式</span></div>
+<div class="study-grid">
+<a class="card study-card" href="/teaching#mpr"><span>01</span><b>CT 三平面认知</b><p>独立控制 X/Y/Z 坐标，点击任一平面完成十字定位联动，理解三个正交方向。</p><em>学什么：方向与空间对应 · 做什么：拖动与点击定位</em></a>
+<a class="card study-card" href="/teaching#locate"><span>02</span><b>骨性结构学习</b><p>先看原始 CT 自主寻找目标结构，再按需打开 AI 辅助定位和专家参考。</p><em>学什么：骨性结构位置 · 做什么：点击结构完成判断</em></a>
+<a class="card study-card" href="/teaching#trace"><span>03</span><b>连续切片追踪</b><p>沿轴位连续移动，观察结构出现、形态变化与消失，并在其他平面核对。</p><em>学什么：连续性 · 做什么：完成规定切片移动任务</em></a>
+<a class="card study-card" href="/research-3d"><span>04</span><b>2D—3D 解剖对应</b><p>把当前 CT 结构映射到三维表面，从前、后、侧方建立空间认知。</p><em>学什么：空间关系 · 做什么：旋转模型并观察</em></a>
+<a class="card study-card" href="/research-3d#measurement"><span>05</span><b>空间测量训练</b><p>在物理空间完成 A-B 距离与三点夹角测量，理解毫米尺度的空间量化。</p><em>学什么：基本影像测量 · 做什么：距离 / 角度实训</em></a>
+<a class="card study-card" href="/teaching#practice"><span>06</span><b>病例练习</b><p>完成方向判断、结构定位、连续追踪等小任务，并获得即时反馈。</p><em>学什么：综合阅读 · 做什么：作答并核对</em></a></div></div></section>
+<section class="section ai-extension"><div class="shell"><div class="section-title"><div><h2>AI / 科研拓展</h2><p>Prediction、专家标注、Error Map、FP/FN、Dice、Uncertainty、Mesh/SDF 等原有科研能力完整保留，但不打断医学生主学习路径。</p></div><a class="btn" href="/results-review">进入医学 AI 实验室</a></div><div id="metricGrid" class="metric-grid"></div><p id="evalCaption" class="subtle">正在读取最终主模型真实评估结果…</p></div></section>
+</main><footer class="footer"><div class="shell">智骨云析 · AI 是影像学习助教，不替代教师指导与临床诊断</div></footer><script src="/static/app.js?v=20260922-mededu"></script></body></html>

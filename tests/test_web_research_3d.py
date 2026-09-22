@@ -45,7 +45,7 @@ def test_research_3d_api_builds_and_serves_local_physical_mesh(tmp_path: Path, m
     with TestClient(webapp.app) as client:
         page = client.get("/research-3d")
         assert page.status_code == 200
-        assert "真实骨结构 3D 工程查看器" in page.text
+        assert "三维解剖与空间测量" in page.text
 
         cases = client.get("/api/research/cases")
         assert cases.status_code == 200

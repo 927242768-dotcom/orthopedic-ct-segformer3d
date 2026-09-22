@@ -464,7 +464,9 @@ async function loadEvaluations() {
   const response = await fetch("/api/research/evaluations");
   const data = await response.json();
   if (!response.ok) throw new Error(data.detail || JSON.stringify(data));
-  viewerState.evaluations = data.evaluations || [];
+  const allEvaluations = data.evaluations || [];
+  viewerState.evaluations = allEvaluations.filter((item) => String(item.display_name || "").includes("20260917_185941") || String(item.display_name || "").includes("20260916_163356"));
+  if (!viewerState.evaluations.length) viewerState.evaluations = allEvaluations.slice(0, 2);
   const select = el("evaluationSelect");
   select.innerHTML = "";
   for (const item of viewerState.evaluations) {
@@ -475,6 +477,9 @@ async function loadEvaluations() {
   }
   if (!viewerState.evaluations.length) {
     select.innerHTML = '<option value="">暂无真实 evaluation</option>';
+  } else {
+    const requested = new URLSearchParams(location.search).get("evaluation");
+    if (requested && viewerState.evaluations.some((item) => item.evaluation_id === requested)) select.value = requested;
   }
 }
 
@@ -493,6 +498,12 @@ async function loadEvaluationDetail() {
   viewerState.currentEvaluation = data;
   const cases = (data.cases || []).filter((item) => item.prediction_available);
   populateCaseSelect(cases, (item) => `${item.case_id} · Dice ${metricValueText(item.dice)}`);
+  const requestedCase = new URLSearchParams(location.search).get("case");
+  if (requestedCase && cases.some((item) => item.case_id === requestedCase)) {
+    el("caseSelect").value = requestedCase;
+    populateClassSelect(selectedCase());
+    renderEvaluationMetrics();
+  }
   setViewerStatus(`${cases.length} 例 prediction`, cases.length ? "ok" : "error");
   setViewerMessage(
     cases.length
@@ -756,6 +767,12 @@ el("loadBtn").addEventListener("click", loadMesh);
 el("resetViewBtn").addEventListener("click", resetView);
 el("distanceBtn").addEventListener("click", calculateDistance);
 el("angleBtn").addEventListener("click", calculateAngle);
+el("advancedToggle").addEventListener("click", () => {
+  document.body.classList.toggle("advanced-mode");
+  const advanced = document.body.classList.contains("advanced-mode");
+  el("advancedToggle").textContent = advanced ? "返回教学模式" : "高级 / 科研设置";
+  setViewerMessage(advanced ? "已展开科研参数：Marching Cubes、SDF 与网格精度。" : "已返回教学模式：突出三维解剖观察与空间测量。", "work");
+});
 
 try {
   updateSurfaceControls();

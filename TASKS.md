@@ -496,3 +496,35 @@
 4. 正式实验必须能追溯 config + split + seed + checkpoint + metrics；
 5. 涉及医学数据时遵守隐私、授权、伦理要求；
 6. 实质修改完成后更新 `PROJECT_STATUS.md`。
+
+
+---
+
+## 2026-09-19 v7.1 final hard-case refinement
+
+- [x] 读取 v7 config / residual-FP 历史配置 / generator / dataset / train，并确认 v7 不推翻。
+- [x] 确认 split 为 train610 / validation197 / test0；新 guidance 不存在，v7 best.pt 存在。
+- [x] 修复 residual-FP generator 对 `segformer3d_hr_decoder` checkpoint 的模型工厂兼容问题。
+- [x] 完成 train-only 单病例 guidance smoke；shape/affine 与 cache label 完全一致。
+- [x] 创建独立 v7.1 config，不覆盖 v7；LR=3e-5、6 epoch、residual-FP preferred_probability=0.35。
+- [x] 创建 `v7_1_monitor_gui.py`，原生 Tkinter，4 秒刷新，覆盖要求的训练指标。
+- [x] engineering preflight ready=true；focused tests 9 passed。
+- [x] train610 residual-FP guidance 全量生成：610/610 completed；validation/test 未参与。
+- [x] 对全部 610 guidance 完成 case-ID、spatial shape、affine 与 train split 严格审计；missing/extra/validation-overlap/shape_bad/affine_bad/bad_count 均为 0。
+- [x] 从 v7 best.pt 完成 v7.1 短程 fine-tune；epoch5 early stop，best epoch=2。
+- [x] v7.1 已完成 validation197 full-volume：197/197，并统计全部区域、表面、结构与 hard-failure 指标。
+- [x] 按停止规则回退并冻结 v7；v7.1 作为 negative refinement 归档，训练线关闭。
+- [x] 最终 Git 安全原则确认：checkpoint/cache/NIfTI/大 prediction/experiments 不提交。
+
+
+### 2026-09-22 v7.1 最终收尾结论
+
+- [x] train610 residual-FP guidance：610/610 completed；validation/test 未参与。
+- [x] guidance 全量审计：missing=0、extra=0、validation overlap=0、shape_bad=0、affine_bad=0、bad_count=0。
+- [x] v7.1 fine-tune 完成：epoch5 early stop；best epoch=2；best selector Dice=0.6680869599572375。
+- [x] validation197 full-volume：197/197 completed；主协议 Dice=0.7026965、Precision=0.6121711、Recall=0.8796528、FG ratio=2.8933023、HD95=132.5347 mm、ASSD=24.1858 mm。
+- [x] hard failures：Dice<0.5=29、Dice<0.7=46、Precision<0.5=38、FG ratio>2=31。
+- [x] 固定 32768 secondary：Dice=0.7836175、Precision=0.7439597、Recall=0.8796052、FG ratio=2.6382305；仍未超过 v7。
+- [x] 最终冻结：**保留 v7；v7.1 归档为未成功替代 baseline 的 final refinement。**
+- [x] **训练线正式结束；不再开启 v8/v9，不再围绕 validation197 继续调参。**
+- [x] 后续仅进入训练外收尾：文档/论文/答辩/Web/3D/跨架构 baseline/合法外部验证。

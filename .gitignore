@@ -76,3 +76,12 @@ scripts/_tmp_*.py
 scripts/_patch_*.py
 *.bak_*
 preflight/
+
+# Local previews / desktop packaging outputs
+_0916_preview/
+_0916_training_curve.png
+web/desktop_build/
+web/desktop_dist/
+web/frontend_backup_*/
+web/preview_*.png
+web/*_dom_*.html

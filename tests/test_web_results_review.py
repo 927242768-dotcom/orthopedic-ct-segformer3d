@@ -36,7 +36,7 @@ def _prepare_evaluation(processed_root: Path, experiments_root: Path) -> tuple[s
         json.dumps(
             {
                 "evaluated_at": "2026-08-16T19:30:00",
-                "split": "test",
+                "split": "validation",
                 "device": "cpu",
                 "checkpoint": "checkpoint.pt",
                 "config": "config.yaml",
@@ -91,7 +91,7 @@ def test_results_review_lists_evaluation_and_serves_prediction_uncertainty_mpr(
     with TestClient(webapp.app) as client:
         page = client.get("/results-review")
         assert page.status_code == 200
-        assert "模型评估结果复核" in page.text
+        assert "医学 AI 与科研拓展" in page.text
 
         listing = client.get("/api/research/evaluations")
         assert listing.status_code == 200
@@ -107,6 +107,21 @@ def test_results_review_lists_evaluation_and_serves_prediction_uncertainty_mpr(
         assert case["dice"] == 0.8125
         assert case["prediction_available"] is True
         assert case["uncertainty_available"] is True
+
+        geometry = client.get(
+            f"/api/research/evaluations/{evaluation_id}/cases/{case_id}/geometry"
+        )
+        assert geometry.status_code == 200
+        assert geometry.json()["size_xyz"] == [16, 14, 12]
+        assert np.allclose(geometry.json()["spacing_xyz_mm"], [0.8, 1.0, 1.2])
+
+        teaching_hit = client.get(
+            f"/api/research/evaluations/{evaluation_id}/cases/{case_id}/teaching-hit",
+            params={"x": 0.5, "y": 0.5, "z": 0.5},
+        )
+        assert teaching_hit.status_code == 200
+        assert teaching_hit.json()["hit"] is True
+        assert teaching_hit.json()["label_value"] == 24
 
         prediction = client.get(
             f"/api/research/evaluations/{evaluation_id}/cases/{case_id}/mpr",

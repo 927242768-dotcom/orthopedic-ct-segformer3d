@@ -15,4 +15,4 @@ def test_web_health_and_index() -> None:
         index = client.get("/")
         assert index.status_code == 200
         assert "text/html" in index.headers.get("content-type", "")
-        assert "骨科 CT 智能辅助分析研究平台" in index.text
+        assert "AI 辅助骨科 CT 影像教学" in index.text

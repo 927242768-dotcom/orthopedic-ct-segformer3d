@@ -32,6 +32,7 @@ from torch.utils.data import DataLoader
 
 from src.modeling.dataset import ProcessedOrthopedicCTDataset
 from src.modeling.diagnostics import batchnorm_batch_stats_mode
+from src.modeling.model_factory import build_segmentation_model
 from src.modeling.metrics import (
     compute_binary_metrics,
     compute_multiclass_metrics,
@@ -39,7 +40,7 @@ from src.modeling.metrics import (
 )
 from src.modeling.postprocessing import postprocess_prediction
 from src.modeling.preflight import run_preflight
-from src.modeling.segformer3d_adapter import build_orthopedic_segformer3d, upstream_provenance
+from src.modeling.segformer3d_adapter import upstream_provenance
 from src.modeling.train import PROJECT_ROOT, _model_predictor, _resolve_project_path, logits_to_prediction
 from src.modeling.uncertainty import (
     predictive_entropy,
@@ -353,7 +354,7 @@ def evaluate_checkpoint(
     loader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=0)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = build_orthopedic_segformer3d(config).to(device)
+    model = build_segmentation_model(config).to(device)
     checkpoint = torch.load(checkpoint_path, map_location=device)
     state_dict = checkpoint.get("model_state_dict", checkpoint)
     model.load_state_dict(state_dict, strict=True)

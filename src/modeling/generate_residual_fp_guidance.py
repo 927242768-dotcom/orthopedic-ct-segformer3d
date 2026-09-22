@@ -26,8 +26,8 @@ from monai.inferers import sliding_window_inference
 from scipy.ndimage import generate_binary_structure, label as connected_components
 
 from src.modeling.dataset import ProcessedOrthopedicCTDataset
+from src.modeling.model_factory import build_segmentation_model
 from src.modeling.postprocessing import postprocess_prediction
-from src.modeling.segformer3d_adapter import build_orthopedic_segformer3d
 from src.modeling.train import (
     _model_predictor,
     _resolve_project_path,
@@ -40,7 +40,16 @@ def _write_json_atomic(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temp = path.with_suffix(path.suffix + ".tmp")
     temp.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    temp.replace(path)
+    last_error: PermissionError | None = None
+    for _ in range(20):
+        try:
+            temp.replace(path)
+            return
+        except PermissionError as exc:
+            last_error = exc
+            time.sleep(0.1)
+    if last_error is not None:
+        raise last_error
 
 
 def _save_center_mask(
@@ -175,7 +184,7 @@ def generate_residual_fp_guidance(
         dataset.case_ids = _select_evenly_spaced(dataset.case_ids, max_cases)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = build_orthopedic_segformer3d(config).to(device)
+    model = build_segmentation_model(config).to(device)
     checkpoint = torch.load(checkpoint_path, map_location=device)
     model.load_state_dict(checkpoint.get("model_state_dict", checkpoint), strict=True)
     model.eval()

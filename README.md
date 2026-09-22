@@ -17,7 +17,9 @@
 9. [`docs/10_final_parameter_lock.md`](./docs/10_final_parameter_lock.md) —— 最终 v13 参数锁定记录；
 10. [`docs/11_final_independent_test.md`](./docs/11_final_independent_test.md) —— 唯一一次正式独立测试记录；
 11. [`docs/12_final_presentation_outline.md`](./docs/12_final_presentation_outline.md) —— v0.3.0 中期/结题展示提纲；
-12. [`paper/outline.md`](./paper/outline.md) —— 论文持续写作框架。
+12. [`docs/13_v7_final_model_freeze.md`](./docs/13_v7_final_model_freeze.md) —— 当前 v7 最终模型冻结记录；
+13. [`docs/14_training_line_final_handoff.md`](./docs/14_training_line_final_handoff.md) —— 训练线最终交接；
+14. [`paper/outline.md`](./paper/outline.md) —— 论文持续写作框架。
 
 **所有实质性修改完成后必须同步更新 `PROJECT_STATUS.md`。**
 
@@ -104,12 +106,12 @@ powershell -ExecutionPolicy Bypass -File .\env\setup_env.ps1
 
 ## 当前工程阶段
 
-> **状态：研究型工程闭环已完成，当前进入扩大数据与提升模型性能阶段。**
+> **状态：v7 已冻结为当前唯一工程主模型；v7.1 已归档为 negative refinement；TRAINING LINE CLOSED。**
 
 | 项目 | 当前状态 |
 |---|---|
 | 数据与流程 | ✅ CTSpine1K 10 例真实 CT 已完成标准化、QC 与 7/2/1 patient-level split |
-| 最终模型 | ✅ 锁定 v13：SegFormer3D + CT-only + Region/Boundary + Bernoulli sampling |
+| 最终模型 | ✅ **v7**：SegFormer3D HR Decoder hard-negative precision，validation197 已完成并冻结 |
 | 正式独立测试 | ✅ 已按锁参协议完成一次 `liver_169` FINAL FORMAL INDEPENDENT TEST |
 | 不确定性与精修 | ✅ uncertainty/calibration 已完成；ROI refinement 综合判定 **FAIL**，正式流程禁用 |
 | 三维与 Web | ✅ prediction / uncertainty / mesh / SDF / MPR / WebGL2 科研复核链已打通 |
@@ -119,7 +121,15 @@ powershell -ExecutionPolicy Bypass -File .\env\setup_env.ps1
 
 > 当前模型绝对分割精度仍较低，因此项目定位是 **科研工程原型与方法验证平台**，不是临床医疗器械。详细实验过程、v11～v23 消融和历史记录请查看 [`PROJECT_STATUS.md`](./PROJECT_STATUS.md)。
 
-## 当前最终实验结果（formal pipeline pilot）
+## 当前最终模型（v7）
+
+当前唯一工程主模型为 **v7**：`configs/orthopedic_ct_full_large_scale_v7_segformer3d_hr_hard_negative_precision.yaml` + 对应实验 `checkpoint/best.pt`。full-volume validation197 已完成 197/197；主协议为 ROI=96、overlap=0.5、BatchNorm running、component filter=8192、connectivity=3。
+
+v7 validation197：Dice=`0.7933430`、IoU=`0.7346736`、Precision=`0.7862014`、Recall=`0.8244633`、HD95=`37.9465 mm`、ASSD=`8.8100 mm`、FG ratio=`1.6849015×`。v7.1 虽提高 Recall，但 Dice/Precision/FG ratio/HD95/ASSD 及多项 hard-failure 指标整体恶化，因此未替换 v7。详见 [`docs/13_v7_final_model_freeze.md`](./docs/13_v7_final_model_freeze.md)。
+
+本训练线已正式关闭：不再继续 v8/v9 式迭代、不再围绕 validation197 调参、不重新运行已完成 validation，也不访问 test 辅助模型选择。
+
+## 历史 formal-pipeline pilot（v13，保留追溯，不代表当前主模型）
 
 当前公开 pilot 共 10 例 CTSpine1K `MSD-T10`：7 train / 2 validation / 1 官方 `test_private` independent test。所有模型/阈值/后处理选择都在 `liver_7/liver_8` validation 完成；最终参数通过 `docs/10_final_parameter_lock.md` 锁定并提交为 `eb0a824`，确认远端一致后才首次按最终锁定协议执行 `liver_169` 的 FINAL FORMAL INDEPENDENT TEST。仓库中更早的 5-epoch pilot test 仅保留为历史工程链证据，不属于本次最终锁定测试，也未用于 v13 参数选择。最终锁定协议下的正式 independent test 只运行一次，测试后没有继续调参。
 
